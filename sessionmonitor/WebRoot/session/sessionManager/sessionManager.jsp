@@ -86,7 +86,7 @@ function queryList(appkey ,reset,loadextendattrs){
 	}
 	
 	var condition = $("#queryForm").serialize();
-    $("#sessionContainer").load("<%=request.getContextPath()%>/session/sessionManager/querySessionData.page #customContent", 
+    $("#sessionContainer").load("<%=request.getContextPath()%>/session/sessionManager/querySessionData.page", 
     		condition,
     	function(){});
     

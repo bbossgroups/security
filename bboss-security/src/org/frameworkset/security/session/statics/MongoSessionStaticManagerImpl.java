@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -19,6 +18,7 @@ import org.frameworkset.security.session.impl.SessionHelper;
 import org.frameworkset.spi.InitializingBean;
 
 import com.frameworkset.util.StringUtil;
+import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -304,7 +304,28 @@ public class MongoSessionStaticManagerImpl implements SessionStaticManager,Initi
 		String validate = (String) queryParams.get("validate");
 		if (!StringUtil.isEmpty(validate)) {
 			boolean _validate = Boolean.parseBoolean(validate);
-			query.append("_validate", _validate);
+			
+			
+			if(_validate)
+			{
+				query.append("_validate", _validate);
+				BasicDBList values = new BasicDBList();
+				values.add(new BasicDBObject("maxInactiveInterval", new BasicDBObject("$lte", 0)));
+				values.add(new BasicDBObject("$where","return this.lastAccessedTime + this.maxInactiveInterval >="+ System.currentTimeMillis()));
+				query.append("$or", values);
+//				query.append("maxInactiveInterval", new BasicDBObject("$lte", 0));
+//				query.append("lastAccessedTime + maxInactiveInterval", new BasicDBObject("$gte", System.currentTimeMillis()));
+			}
+			else
+			{
+				query.append("maxInactiveInterval", new BasicDBObject("$gt", 0));
+				BasicDBList values = new BasicDBList();
+				values.add(new BasicDBObject("_validate", false));
+				 
+				values.add(new BasicDBObject("$where","return this.lastAccessedTime + this.maxInactiveInterval <"+ System.currentTimeMillis()));
+				query.append("$or", values);
+			}
+			
 		}
 
 		AttributeInfo[] attributeInfos = sessionConfig == null?null:sessionConfig.getExtendAttributeInfos();

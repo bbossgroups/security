@@ -8,9 +8,9 @@
 日期：2014-06-04
  --%>	
 
-<div id="customContent">
+ 
 
-	   <pg:pager scope="request"  data="sessionList" desc="true" isList="false" containerid="sessionContainer" selector="customContent">
+	   <pg:pager scope="request"  data="sessionList" desc="true" isList="false" containerid="sessionContainer">
 		<pg:param name="sessionid"/>
 		<pg:param name="appkey"/>
 		<pg:param name="referip"/>
@@ -18,6 +18,9 @@
 		<pg:param name="createtime_end"/>
 		<pg:param name="host"/>
 		<pg:param name="validate"/>
+		<pg:list requestKey="monitorAttributes" var="attribute">
+			<pg:param name="${attribute.name}"/>
+		</pg:list>
 		<!-- 加入 class="tableOutline" 可控制表格宽度，滚动条展示 -->
 		<div id="changeColor">
 		 <table width="100%" border="0" cellpadding="0" cellspacing="0" class="stable" id="tb">
@@ -55,7 +58,7 @@
 						</pg:empty>
 						</td>
 					</tr >
-			    </pg:yes>
+			    </pg:yes> 
 			    <pg:no>
 				      <pg:list >
 				   		<tr >
@@ -112,5 +115,4 @@
 	
 	    </pg:pager>
     
-
-</div>		
+ 
