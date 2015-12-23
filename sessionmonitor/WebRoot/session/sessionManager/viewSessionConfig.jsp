@@ -180,14 +180,7 @@
 							<td width="400"><pg:cell colName="rootDomain" /></td>
 
 						</tr>
-						<tr>
-							<th width="150"><strong>path:</strong></th>
-							<td width="400" colspan="2"><pg:cell colName="path" /></td>
-
-
-
-
-						</tr>
+					
 						<tr>
 							<th width="150"><strong>shareSessionAttrs :</strong></th>
 							<td width="400"><pg:cell colName="shareSessionAttrs" /></td>
@@ -200,7 +193,7 @@
 						class="stable" id="tb">
 						<tr>
 
-							<th>应用路径</th>
+							<th>应用上下文</th>
 
 
 							<th>私有属性命名空间</th>
