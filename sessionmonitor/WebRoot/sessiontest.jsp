@@ -35,13 +35,13 @@ String userAccount = (String)session.getAttribute("userAccount");//session应用
 out.println("<br>");
 session.setAttribute("privateAttr", "this sessionmonitor's private attribute.");
 out.println("<br>");
-String privateAttr = (String)session.getAttribute("privateAttr");//session应用设置的共享会话属性
+String privateAttr = (String)session.getAttribute("privateAttr");//session应用设置的私有会话属性
 out.println("sessionmonitor's private attribute:"+privateAttr+"<br>");
 out.println("shared attribute userAccount:"+userAccount+"<br>");
 session.setAttribute("userAccount", "sessionmonitor 张三");
 userAccount = (String)session.getAttribute("userAccount");
 out.println("after modify shared attribute userAccount:"+userAccount+"<br>");
-out.println("shared attribute testVO:"+testVO.getId()+"<br>");
+out.println("attribute testVO:"+testVO.getId()+"<br>");
  %>
  
  <a href="http://session.bbossgroups.com" target="demo">session跨域测试</a>
