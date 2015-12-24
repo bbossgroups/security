@@ -110,7 +110,7 @@ public class SessionManager extends org.frameworkset.spi.BaseApplicationContextA
 			sessionMonitor.start();
 		}
 	}
-	public void initSessionConfig(String appcode)
+	public void initSessionConfig(String appcode,String monitorScope)
 	{
 		if(this.appcode == null)
 			this.appcode = appcode;
@@ -120,7 +120,7 @@ public class SessionManager extends org.frameworkset.spi.BaseApplicationContextA
 		SessionConfig sessionConfig = new SessionConfig();
 		sessionConfig.setAppcode(this.appcode);
 		sessionConfig.setCookiename(this.cookiename);
-		
+		sessionConfig.setMonitorScope(monitorScope);
 		if(this.crossDomain != null)
 			try {
 				sessionConfig.setCrossDomain(ObjectSerializable.toXML(this.crossDomain));

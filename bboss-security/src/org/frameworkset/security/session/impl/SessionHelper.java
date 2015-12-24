@@ -76,11 +76,17 @@ public class SessionHelper {
 				BaseApplicationContext context = DefaultApplicationContext.getApplicationContext("sessionconf.xml");
 				SessionManager sessionManager = context.getTBeanObject("sessionManager", SessionManager.class);
 				SessionStaticManager sessionStaticManager = null;
+				String monitorScope = null;
 				if(!sessionManager.usewebsession())
+				{
 					sessionStaticManager = context.getTBeanObject("sessionStaticManager", SessionStaticManager.class);
+					monitorScope = sessionStaticManager.getMonitorScope();
+				}
 				else
 					sessionStaticManager = new NullSessionStaticManagerImpl();
-				sessionManager.initSessionConfig(contextpath);
+				if(monitorScope == null)
+					monitorScope = SessionStaticManager.MONITOR_SCOPE_SELF;
+				sessionManager.initSessionConfig(contextpath,monitorScope);
 				SessionHelper.sessionManager = sessionManager;
 				SessionHelper.sessionStaticManager = sessionStaticManager;
 			}

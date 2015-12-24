@@ -6,7 +6,9 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 public interface SessionStaticManager {
-
+	public static final String MONITOR_SCOPE_ALL = "all";
+	public static final String MONITOR_SCOPE_SELF = "self";
+	public String getMonitorScope();
 	/**
 	 * 获取应用概览列表数据
 	 * 

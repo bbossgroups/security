@@ -27,6 +27,8 @@ public class SessionConfig implements Serializable {
 	 
 	private String sessionListeners;
 	
+	private String monitorScope ; 
+	
 	/**
 	 * session超时检测时间间隔，默认为-1，不检测
 	 * 如果需要检测，那么只要令牌持续时间超过sessionscaninterval
@@ -149,6 +151,12 @@ public class SessionConfig implements Serializable {
 	}
 	public void setUpdateTime(Date updateTime) {
 		this.updateTime = updateTime;
+	}
+	public String getMonitorScope() {
+		return monitorScope;
+	}
+	public void setMonitorScope(String monitorScope) {
+		this.monitorScope = monitorScope;
 	}
 
 }

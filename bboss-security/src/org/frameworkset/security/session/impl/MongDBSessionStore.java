@@ -119,8 +119,8 @@ public class MongDBSessionStore extends BaseSessionStore{
 		.append("secure", config.isSecure())
 		.append("monitorAttributes", config.getMonitorAttributes())
 		
-		.append("startLifeScan", config.isStartLifeScan());
-		
+		.append("startLifeScan", config.isStartLifeScan()).append("monitorScope", config.getMonitorScope());
+		 
 		if(object == null)
 		{
 			Date date = new Date();
@@ -446,6 +446,8 @@ public class MongDBSessionStore extends BaseSessionStore{
 		keys.put("monitorAttributes", 1);
 		keys.put("createTime", 1);
 		keys.put("updateTime", 1);
+		keys.put("monitorScope", 1);
+		
 		 
 		
 		DBObject object = sessionconf.findOne(new BasicDBObject("appcode",appkey) ,keys);
@@ -463,6 +465,7 @@ public class MongDBSessionStore extends BaseSessionStore{
 			if(st!= null)
 				sessionConfig.setScanStartTime(new Date(st.longValue()));
 			sessionConfig.setSessionListeners((String)object.get("sessionListeners")); 
+			sessionConfig.setMonitorScope((String)object.get("monitorScope"));
 			sessionConfig.setSessionscaninterval((Long)object.get("sessionscaninterval")); 
 			sessionConfig.setSessionStore((String)object.get("sessionStore"));
 			sessionConfig.setSessionTimeout((Long)object.get("sessionTimeout")); 

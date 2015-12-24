@@ -37,8 +37,7 @@ public class MongoSessionStaticManagerImpl implements SessionStaticManager,Initi
 	all:表示监控管理所有应用的会话数据
 	 */
 	private String monitorScope;
-	public static final String MONITOR_SCOPE_ALL = "all";
-	public static final String MONITOR_SCOPE_SELF = "self";
+	
 
 	public MongoSessionStaticManagerImpl() {
 		mongoClient = MongoDBHelper

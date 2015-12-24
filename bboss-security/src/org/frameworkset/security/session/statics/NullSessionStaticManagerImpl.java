@@ -103,5 +103,11 @@ public class NullSessionStaticManagerImpl implements SessionStaticManager {
 		return null;
 	}
 
+	@Override
+	public String getMonitorScope() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
  
 }
