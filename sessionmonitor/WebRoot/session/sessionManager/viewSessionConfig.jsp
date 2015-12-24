@@ -124,7 +124,7 @@
 					
 					 
 						<table width="100%" border="0" cellpadding="0" cellspacing="0"
-						class="stable" id="tb">
+						class="stable">
 							<tr>
 
 							<th>属性名称</th>
@@ -180,7 +180,7 @@
 							<td width="400"><pg:cell colName="rootDomain" /></td>
 
 						</tr>
-					
+						
 						<tr>
 							<th width="150"><strong>shareSessionAttrs :</strong></th>
 							<td width="400"><pg:cell colName="shareSessionAttrs" /></td>
@@ -190,7 +190,7 @@
 
 					</table>
 					<table width="100%" border="0" cellpadding="0" cellspacing="0"
-						class="stable" id="tb">
+						class="stable"  >
 						<tr>
 
 							<th>应用上下文</th>
