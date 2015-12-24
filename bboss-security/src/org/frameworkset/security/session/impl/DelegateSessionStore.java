@@ -20,6 +20,7 @@ import java.util.Enumeration;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
+import org.frameworkset.security.session.InvalidateCallback;
 import org.frameworkset.security.session.Session;
 import org.frameworkset.security.session.SessionBasicInfo;
 import org.frameworkset.security.session.SessionEvent;
@@ -52,10 +53,10 @@ public class DelegateSessionStore implements SessionStore {
 		sessionStore.livecheck();
 
 	}
-	public HttpSession createHttpSession(ServletContext servletContext,SessionBasicInfo sessionBasicInfo,String contextpath)
+	public HttpSession createHttpSession(ServletContext servletContext,SessionBasicInfo sessionBasicInfo,String contextpath,InvalidateCallback invalidateCallback)
 	{
 		Session session = createSession(sessionBasicInfo);
-		HttpSession httpsession = new HttpSessionImpl(session,servletContext,contextpath);
+		HttpSession httpsession = new HttpSessionImpl(session,servletContext,contextpath,invalidateCallback);
 		if(SessionHelper.haveSessionListener())
 		{
 			SessionHelper.dispatchEvent(new SessionEventImpl(httpsession,SessionEvent.EventType_create));

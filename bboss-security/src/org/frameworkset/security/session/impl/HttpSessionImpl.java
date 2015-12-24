@@ -21,6 +21,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionContext;
 
+import org.frameworkset.security.session.InvalidateCallback;
 import org.frameworkset.security.session.Session;
 
 /**
@@ -36,11 +37,14 @@ public class HttpSessionImpl implements HttpSession {
 	private Session session = null;
 	private ServletContext servletContext;
 	private String contextpath;
-	public HttpSessionImpl(Session session,ServletContext servletContext,String contextpath)
+	private InvalidateCallback invalidateCallback;
+	public HttpSessionImpl(Session session,ServletContext servletContext,String contextpath,InvalidateCallback invalidateCallback)
 	{
 		this.session = session;
+		this.session.initInvalidateCallback(invalidateCallback);
 		this.servletContext = servletContext;
 		this.contextpath = contextpath;
+		this.invalidateCallback = invalidateCallback;
 	}
 	@Override
 	public Object getAttribute(String attribute) {
@@ -100,7 +104,7 @@ public class HttpSessionImpl implements HttpSession {
 
 	@Override
 	public void invalidate() {
-		this.session.invalidate(this,contextpath);
+		this.session.invalidate(this,contextpath);		
 
 	}
 

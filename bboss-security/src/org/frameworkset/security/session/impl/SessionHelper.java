@@ -26,6 +26,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.frameworkset.security.session.InvalidateCallback;
 import org.frameworkset.security.session.Session;
 import org.frameworkset.security.session.SessionBasicInfo;
 import org.frameworkset.security.session.domain.CrossDomain;
@@ -289,9 +290,9 @@ public class SessionHelper {
 		return sessionStaticManager;
 	}
 	
-	public static HttpSession createSession(ServletContext servletContext,SessionBasicInfo sessionBasicInfo,String contextpath)
+	public static HttpSession createSession(ServletContext servletContext,SessionBasicInfo sessionBasicInfo,String contextpath,InvalidateCallback invalidateCallback)
 	{
-		HttpSession session = sessionManager.getSessionStore().createHttpSession(   servletContext,  sessionBasicInfo,  contextpath);
+		HttpSession session = sessionManager.getSessionStore().createHttpSession(   servletContext,  sessionBasicInfo,  contextpath,  invalidateCallback);
 		
 		return session;
 	}

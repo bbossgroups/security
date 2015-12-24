@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.frameworkset.security.session.InvalidateCallback;
 import org.frameworkset.security.session.Session;
 import org.frameworkset.security.session.SessionBasicInfo;
 import org.frameworkset.security.session.domain.App;
@@ -41,7 +42,7 @@ import com.frameworkset.util.StringUtil;
  * @author biaoping.yin
  * @version 3.8.0
  */
-public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper {
+public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper implements InvalidateCallback {
 	private String sessionid;
 	private HttpSessionImpl session;
 	private HttpServletResponse response;
@@ -77,7 +78,7 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 		if( SessionHelper.getSessionManager().usewebsession())
 		{
 			// TODO Auto-generated method stub
-			return super.getSession();
+			return super.getSession(create);
 		}
 		if(sessionid == null)
 		{
@@ -90,7 +91,7 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 				sessionBasicInfo.setReferip(StringUtil.getClientIP(this));
 				sessionBasicInfo.setRequesturi(this.getRequestUrl());
 				
-				this.session = (HttpSessionImpl) SessionHelper.createSession(servletContext,sessionBasicInfo,this.getContextPath());				
+				this.session = (HttpSessionImpl) SessionHelper.createSession(servletContext,sessionBasicInfo,this.getContextPath(),this);				
 				sessionid = session.getId();
 				 
 
@@ -123,7 +124,7 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 					sessionBasicInfo.setReferip(StringUtil.getClientIP(this));
 					sessionBasicInfo.setRequesturi(this.getRequestUrl());
 					
-					this.session = (HttpSessionImpl) SessionHelper.createSession(servletContext,sessionBasicInfo,this.getContextPath());
+					this.session = (HttpSessionImpl) SessionHelper.createSession(servletContext,sessionBasicInfo,this.getContextPath(),this);
 					sessionid = session.getId();
 					
 
@@ -132,7 +133,7 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 			}
 			else
 			{
-				this.session =  new HttpSessionImpl(session,servletContext,this.getContextPath());
+				this.session =  new HttpSessionImpl(session,servletContext,this.getContextPath(),this);
 			}
 			return this.session;
 		}
@@ -154,7 +155,7 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 					this.sessionid = null;
 					return;
 				}
-				this.session =  new HttpSessionImpl(session_,servletContext,this.getContextPath());
+				this.session =  new HttpSessionImpl(session_,servletContext,this.getContextPath(),this);
 			}
 			if(session != null && !session.isNew() )
 			{
@@ -293,6 +294,13 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 			return false;
 		else
 			return session.getInnerSession().isValidate();
+	}
+
+	@Override
+	public void invalidateCallback() {
+		this.session = null;
+		this.sessionid = null;
+		
 	}
 
 }

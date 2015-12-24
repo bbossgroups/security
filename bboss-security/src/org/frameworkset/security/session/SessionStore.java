@@ -38,7 +38,7 @@ public interface SessionStore{
 	String getName();
 
 	void livecheck();
-	public HttpSession createHttpSession(ServletContext servletContext,SessionBasicInfo sessionBasicInfo,String contextpath);
+	public HttpSession createHttpSession(ServletContext servletContext,SessionBasicInfo sessionBasicInfo,String contextpath,InvalidateCallback invalidateCallback);
 //	Session createSession(String appKey,String referip,String reqesturi);
 	Session createSession(SessionBasicInfo sessionBasicInfo);
 

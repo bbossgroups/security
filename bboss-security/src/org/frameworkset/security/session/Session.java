@@ -6,7 +6,7 @@ import javax.servlet.http.HttpSession;
 
 public interface Session {
 
-	
+	public void initInvalidateCallback(InvalidateCallback invalidateCallback);
 	public Object getAttribute(HttpSession session,String attribute,String contextpath) ;
 
 	public Object getCacheAttribute(String attribute);

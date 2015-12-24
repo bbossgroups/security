@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+import org.frameworkset.security.session.InvalidateCallback;
 import org.frameworkset.security.session.Session;
 import org.frameworkset.security.session.SessionStore;
 
@@ -28,6 +29,7 @@ public class SimpleSessionImpl implements Session{
 	private boolean httpOnly;
 	private boolean secure;
 	private String lastAccessedHostIP;
+	private InvalidateCallback invalidateCallback;
 	public SimpleSessionImpl()
 	{
 		attributes = new HashMap<String,Object>();
@@ -157,9 +159,16 @@ public class SimpleSessionImpl implements Session{
 			this.dovalidate = true;
 			if(validate)
 			{
-				sessionStore.invalidate(session,appKey, contextpath,id);
-				this.validate =false;
-				this.attributes.clear();
+				try
+				{
+					sessionStore.invalidate(session,appKey, contextpath,id);
+					this.validate =false;
+					this.attributes.clear();
+				}
+				finally
+				{
+					invalidateCallback.invalidateCallback();
+				}
 			}
 		}
 		
@@ -325,6 +334,11 @@ public class SimpleSessionImpl implements Session{
 	}
 	public void setLastAccessedHostIP(String lastAccessedHostIP) {
 		this.lastAccessedHostIP = lastAccessedHostIP;
+	}
+	@Override
+	public void initInvalidateCallback(InvalidateCallback invalidateCallback) {
+		this.invalidateCallback = invalidateCallback;
+		
 	}
 	
 

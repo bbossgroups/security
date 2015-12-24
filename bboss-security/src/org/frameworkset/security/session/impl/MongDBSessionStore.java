@@ -15,6 +15,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 import org.frameworkset.nosql.mongodb.MongoDB;
 import org.frameworkset.nosql.mongodb.MongoDBHelper;
+import org.frameworkset.security.session.InvalidateCallback;
 import org.frameworkset.security.session.Session;
 import org.frameworkset.security.session.SessionBasicInfo;
 import org.frameworkset.security.session.statics.SessionConfig;
@@ -540,7 +541,7 @@ public class MongDBSessionStore extends BaseSessionStore{
 	}
 	@Override
 	public HttpSession createHttpSession(ServletContext servletContext,
-			SessionBasicInfo sessionBasicInfo, String contextpath) {
+			SessionBasicInfo sessionBasicInfo, String contextpath,InvalidateCallback invalidateCallback) {
 		// TODO Auto-generated method stub
 		return null;
 	}
