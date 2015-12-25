@@ -31,44 +31,52 @@
 								<td width="300"><pg:cell colName="sessionid" /></td>
 								<th width="100"><strong>创建时间:</strong></th>
 								<td width="150"><pg:cell colName="creationTime" dateformat="yyyy-MM-dd HH:mm:ss"/></td>
-								<th width="100"><strong>最后访问时间:</strong></th>
+								<th width="100"><strong>最近访问时间:</strong></th>
 								<td width="150"><pg:cell colName="lastAccessedTime" dateformat="yyyy-MM-dd HH:mm:ss"/></td>
-								<th width="100"><strong>客户端:</strong></th>
+								<th width="100"><strong>客户端IP:</strong></th>
 								<td width="200"><pg:cell colName="referip"/></td>
 							</tr>
 							<tr>
-								<th width="60"><strong>服务端:</strong></th>
+								<th width="60"><strong>创建会话服务器:</strong></th>
 								<td width="300"><pg:cell colName="host" /></td>
 								<th width="100"><strong>有效期:</strong></th>
-								<td width="150"><pg:cell colName="maxInactiveInterval" /></td>
-								<th width="100"><strong>失效时间:</strong></th>
-								<td width="150"><pg:cell colName="loseTime" dateformat="yyyy-MM-dd HH:mm:ss"/></td>
+								<td width="150"> <strong><font color="red"><pg:cell colName="maxInactiveInterval" /></font></strong> </td>
+								<th width="100"><strong>预计失效时间:</strong></th>
+								<td width="150"><pg:notnull colName="loseTime" evalbody="true">
+				       		<pg:yes><strong><font color="red"><pg:cell colName="loseTime" dateformat="yyyy-MM-dd HH:mm:ss"/></font></strong></pg:yes>
+				       		<pg:no><strong><font color="red"><pg:cell colName="maxInactiveInterval"  /></font></strong></pg:no>
+				       		</pg:notnull ></td>
 								<th width="100"><strong>状态:</strong></th>
 								<td width="150">
-									<pg:true colName="validate"  evalbody="true"><pg:yes>有效</pg:yes><pg:no>无效</pg:no></pg:true>
+									<pg:true colName="validate" evalbody="true">
+						       		<pg:yes><strong><font color="green">有效</font></strong></pg:yes>
+						       		<pg:no><strong><font color="red">无效</font></strong></pg:no>
+					       		</pg:true>
 					       		</td>
 							</tr>
 							<tr>
 								<th width="60"><strong>Cookie HttpOnly:</strong></th>
-								<td width="300" ><pg:true colName="httpOnly" evalbody="true">
-									<pg:yes>启用</pg:yes>
-									<pg:no><span style=" color: red;">关闭</span></pg:no>
-								</pg:true>
+								<td width="300" ><pg:true colName="httpOnly"  evalbody="true">
+					       			<pg:yes><strong><font color="green">启用</font></strong></pg:yes>
+					       			<pg:no><strong><font color="red">关闭</font></strong></pg:no>
+					       		</pg:true>
 	       						</td>	
 								<th width="60"><strong>Cookie Secure:</strong></th>
-								<td width="300" colspan="10"><pg:true colName="secure" evalbody="true"><pg:yes>启用</pg:yes>
-									<pg:no><span style=" color: red;">关闭</span></pg:no></pg:true>
+								<td width="300" colspan="10"><pg:true colName="secure" evalbody="true">
+						       		<pg:yes><strong><font color="green">启用</font></strong></pg:yes>
+						       		<pg:no><strong><font color="red">关闭</font></strong></pg:no>
+					       		</pg:true>
 	       						</td>									
 							</tr>
 							<tr>
-								<th width="60"><strong>请求地址:</strong></th>
+								<th width="60"><strong>创建会话url:</strong></th>
 								<td width="300" ><pg:cell colName="requesturi" /></td>	
-								<th width="60"><strong>上次访问地址:</strong></th>
+								<th width="60"><strong>最近访问会话url:</strong></th>
 								<td width="300" colspan="10"><pg:cell colName="lastAccessedUrl" /></td>									
 							</tr>
 							<tr>
 							
-								<th width="60"><strong>上次访问主机IP:</strong></th>
+								<th width="60"><strong>最近访问服务器:</strong></th>
 								<td width="300" colspan="10"><pg:cell colName="lastAccessedHostIP"/></td>									
 							</tr>
 							

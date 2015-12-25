@@ -392,7 +392,7 @@ function delAllSessions () {
 									<tr>
 										<th>SessionID：</th>
 										<td><input id="sessionid" name="sessionid" type="text" class="w120"/></td>
-										<th>客户端：</th>
+										<th>客户端IP：</th>
 										<td><input id="referip" name="referip" type="text" class="w120"/></td>
 										<th>创建时间：</th>
 										<td><input id="createtime_start" name="createtime_start" type="text"
@@ -411,7 +411,7 @@ function delAllSessions () {
 													<option value="0">无效</option>
 											</select>
 										</td>
-										<th>服务端：</th>
+										<th>创建会话服务器：</th>
 										<td><input id="host" name="host" type="text" class="w120"/></td>
 									</tr>
 								</table>

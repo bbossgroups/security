@@ -21,6 +21,15 @@ public class SessionInfoBean {
 	private Date lastAccessedTime;// 最后访问时间
 	private Date loseTime;//失效时间
 	private String maxInactiveInterval;// 有效期
+	private long longMaxInactiveInterval;// 有效期(long,毫秒)
+	public long getLongMaxInactiveInterval() {
+		return longMaxInactiveInterval;
+	}
+
+	public void setLongMaxInactiveInterval(long longMaxInactiveInterval) {
+		this.longMaxInactiveInterval = longMaxInactiveInterval;
+	}
+
 	private String referip;// 客户端
 	private boolean validate;// 状态
 	private Map<String, Object> attributes;// 属性

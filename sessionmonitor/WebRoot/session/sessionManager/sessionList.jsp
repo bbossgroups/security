@@ -31,19 +31,18 @@
 				<pg:list requestKey="monitorAttributes"><th><pg:cell colName="cname"/></th></pg:list>
 				
 	       		<th>创建时间</th>
-	       		<th>最后访问时间</th>
-	       		<th>失效时间</th>
-	       		<th>请求地址</th>
-	       		<th>上次访问地址</th>
-	       		<th>上次访问主机IP</th>
-	       		<th>客户端IP</th>
-	       		<th>初始服务端IP</th>
-	       		<th>有效期</th>       		
+	       		<th>最近访问时间</th>
+	       		<th>有效期</th>
 	       		<th>状态</th>
+	       		<th>预计失效时间</th>
 	       		<th>httpOnly</th>
 	       		<th>secure</th>
-	       		<th>操作</th>
-	       		
+	       		<th>创建会话url</th>
+	       		<th>最近访问会话url</th>	   
+	       		<th>创建会话服务器</th>
+	       		<th>最近访问服务器</th>
+	       		<th>客户端IP</th>	       		    		
+	       		<th>操作</th>	       		
 	       	</pg:header>	
 			<pg:empty actual="${sessionList}" evalbody="true">
 				<pg:yes>			
@@ -74,33 +73,40 @@
 				            	<td><pg:cell colName="value" /></td>
 				            </pg:list>    
 				    		<td><pg:cell colName="creationTime" dateformat="yyyy-MM-dd HH:mm:ss"/></td>
-				    		<td><pg:cell colName="lastAccessedTime" dateformat="yyyy-MM-dd HH:mm:ss"/></td>       
-				       		<td><pg:cell colName="loseTime" dateformat="yyyy-MM-dd HH:mm:ss"/></td>
-				       		<td><pg:cell colName="requesturi"/></td>
-				       		<td ><pg:cell colName="lastAccessedUrl" htmlEncode="true"/></td>
-				       		<td><pg:cell colName="lastAccessedHostIP"/></td>
-				       		<td><pg:cell colName="referip"/></td>
-				       		<td><pg:cell colName="host" /></td>
-				       		<td><pg:cell colName="maxInactiveInterval" /></td>
-				       		<td>
+				    		<td><pg:cell colName="lastAccessedTime" dateformat="yyyy-MM-dd HH:mm:ss"/></td>  
+				    		<td><strong><font color="red"><pg:cell colName="maxInactiveInterval" /></font></strong></td>
+				    		<td>
 					       		<pg:true colName="validate" evalbody="true">
-						       		<pg:yes>有效</pg:yes>
-						       		<pg:no><span style=" color: red;">无效</span></pg:no>
+						       		<pg:yes><strong><font color="green">有效</font></strong></pg:yes>
+						       		<pg:no><strong><font color="red">无效</font></strong></pg:no>
 					       		</pg:true>
 					       		
 				       		</td>
+				       		<td><pg:notnull colName="loseTime" evalbody="true">
+				       		<pg:yes><strong><font color="red"><pg:cell colName="loseTime" dateformat="yyyy-MM-dd HH:mm:ss"/></font></strong></pg:yes>
+				       		<pg:no><strong><font color="red"><pg:cell colName="maxInactiveInterval"  /></font></strong></pg:no>
+				       		</pg:notnull ></td>
 				       		<td> 
 					       		<pg:true colName="httpOnly"  evalbody="true">
-					       			<pg:yes>启用</pg:yes>
-					       			<pg:no><span style=" color: red;">关闭</span></pg:no>
+					       			<pg:yes><strong><font color="green">启用</font></strong></pg:yes>
+					       			<pg:no><strong><font color="red">关闭</font></strong></pg:no>
 					       		</pg:true>
 				       		</td>
 				       		<td>
 					       		<pg:true colName="secure" evalbody="true">
-						       		<pg:yes>启用</pg:yes>
-						       		<pg:no><span style=" color: red;">关闭</span></pg:no>
+						       		<pg:yes><strong><font color="green">启用</font></strong></pg:yes>
+						       		<pg:no><strong><font color="red">关闭</font></strong></pg:no>
 					       		</pg:true>
-				       		</td>
+				       		</td>     
+				       		
+				       		<td><pg:cell colName="requesturi"/></td>
+				       		<td ><pg:cell colName="lastAccessedUrl" htmlEncode="true"/></td>
+				       		<td><pg:cell colName="host" /></td>
+				       		<td><pg:cell colName="lastAccessedHostIP"/></td>
+				       		<td><pg:cell colName="referip"/></td>
+				       		
+				       		
+				       		
 				            <td class="td_center">
 				            	<pg:notequal colName="sessionid" value="${currentsessionid}"><a href="javascript:void(0)" id="viewTaskDetailInfo" onclick="delSession('<pg:cell colName="sessionid" />')">删除</a>|</pg:notequal>
 				            	<a href="javascript:void(0)" id="viewTaskDetailInfo" onclick="sessionInfo('<pg:cell colName="sessionid" />')">详情</a>

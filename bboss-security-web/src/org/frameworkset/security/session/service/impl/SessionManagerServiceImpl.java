@@ -61,28 +61,38 @@ public class SessionManagerServiceImpl implements SessionManagerService {
 					bean.setCreationTime(info.getCreationTime());
 					bean.setHost(info.getHost());
 					bean.setLastAccessedTime(info.getLastAccessedTime());
-					bean.setMaxInactiveInterval(SimpleStringUtil.formatTimeToString(info
-							.getMaxInactiveInterval()));
+					bean.setLongMaxInactiveInterval(info.getMaxInactiveInterval());
+					if(info
+							.getMaxInactiveInterval() > 0)
+					{
+						bean.setMaxInactiveInterval(SimpleStringUtil.formatTimeToString(info
+								.getMaxInactiveInterval()));
+						GregorianCalendar gc = new GregorianCalendar();
+						gc.setTime(info.getLastAccessedTime());
+						gc.add(Calendar.MILLISECOND,
+								(int) info.getMaxInactiveInterval());
+
+						bean.setLoseTime(gc.getTime());
+						if(bean.getLoseTime().getTime() < ctime)
+						{
+							bean.setValidate(false);
+						}
+						else
+							bean.setValidate(info.isValidate());
+
+					}
+					else
+					{						
+						bean.setValidate(info.isValidate());
+						if(info.isValidate())
+							bean.setMaxInactiveInterval("永不过期（注销session时才会失效）");
+						else
+							bean.setMaxInactiveInterval("已过期");
+					}
 					bean.setReferip(info.getReferip());
 					bean.setSessionid(info.getSessionid());
 					
-					GregorianCalendar gc = new GregorianCalendar();
-					gc.setTime(info.getLastAccessedTime());
-					gc.add(Calendar.MILLISECOND,
-							(int) info.getMaxInactiveInterval());
-
-					bean.setLoseTime(gc.getTime());
-					if(info.getMaxInactiveInterval() <= 0)
-					{
-						bean.setValidate(true);
-					}
-					else if(bean.getLoseTime().getTime() < ctime)
-					{
-						bean.setValidate(false);
-					}
-					else
-						bean.setValidate(info.isValidate());
-
+					
 					bean.setRequesturi(info.getRequesturi());
 					bean.setLastAccessedUrl(info.getLastAccessedUrl());
 					bean.setSecure(info.isSecure());
@@ -157,31 +167,45 @@ public class SessionManagerServiceImpl implements SessionManagerService {
 			bean.setCreationTime(info.getCreationTime());
 			bean.setHost(info.getHost());
 			bean.setLastAccessedTime(info.getLastAccessedTime());
-			bean.setMaxInactiveInterval(SimpleStringUtil.formatTimeToString(info
-					.getMaxInactiveInterval()));
+			
 
 			bean.setReferip(info.getReferip());
 			bean.setSessionid(info.getSessionid());
 			
 			bean.setRequesturi(info.getRequesturi());
 			bean.setLastAccessedUrl(info.getLastAccessedUrl());
-			GregorianCalendar gc = new GregorianCalendar();
-			gc.setTime(info.getLastAccessedTime());
-			gc.add(Calendar.MILLISECOND, (int) info.getMaxInactiveInterval());
+			
 			bean.setSecure(info.isSecure());
 			bean.setHttpOnly(info.isHttpOnly());
-			bean.setLoseTime(gc.getTime());
-			if(info.getMaxInactiveInterval() <= 0)
+			
+			bean.setLongMaxInactiveInterval(info.getMaxInactiveInterval());
+			if(info
+					.getMaxInactiveInterval() > 0)
 			{
-				bean.setValidate(true);
-			}
-			else if(bean.getLoseTime().getTime() < System.currentTimeMillis())
-			{
-				
-				bean.setValidate(false);
+				bean.setMaxInactiveInterval(SimpleStringUtil.formatTimeToString(info
+						.getMaxInactiveInterval()));
+				GregorianCalendar gc = new GregorianCalendar();
+				gc.setTime(info.getLastAccessedTime());
+				gc.add(Calendar.MILLISECOND,
+						(int) info.getMaxInactiveInterval());
+
+				bean.setLoseTime(gc.getTime());
+				if(bean.getLoseTime().getTime() < System.currentTimeMillis())
+				{
+					bean.setValidate(false);
+				}
+				else
+					bean.setValidate(info.isValidate());
+
 			}
 			else
+			{						
 				bean.setValidate(info.isValidate());
+				if(info.isValidate())
+					bean.setMaxInactiveInterval("永不过期（注销session时才会失效）");
+				else
+					bean.setMaxInactiveInterval("已过期");
+			}
 			bean.setLastAccessedHostIP(info.getLastAccessedHostIP());
 
 			return bean;
