@@ -268,6 +268,9 @@ public class SessionManager extends org.frameworkset.spi.BaseApplicationContextA
 					} catch (InterruptedException e) {
 						break;
 					}
+					catch (Throwable e) {
+						break;
+					}
 				}
 				if(killdown)
 					break;

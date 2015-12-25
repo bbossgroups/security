@@ -24,6 +24,6 @@ package org.frameworkset.web.token;
  * @author biaoping.yin
  * @version 3.6
  */
-public class DTokenValidateFailedException extends Exception {
+public class DTokenValidateFailedException extends RuntimeException {
 
 }

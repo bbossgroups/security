@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.frameworkset.util.annotations.MethodData;
 
 import com.frameworkset.util.StringUtil;
 
@@ -414,6 +415,34 @@ public class TokenFilter implements Filter{
 				throw new DTokenValidateFailedException();
 			}
 		}
+	}
+	
+	public static void assertDToken(ServletRequest request,
+			ServletResponse response, MethodData handlerMethod)
+			throws IOException, DTokenValidateFailedException {
+		if (handlerMethod.getMethodInfo().isRequiredDToken()) {
+			
+			if (!TokenHelper.isEnableToken())
+				return;
+			TokenHelper.doDTokencheck(request, response);
+			// if(!memTokenManager.assertDTokenSetted(request))
+			// {
+			// if(request instanceof HttpServletRequest)
+			// {
+			// memTokenManager.sendRedirect((HttpServletRequest)
+			// request,(HttpServletResponse) response);
+			// }
+			// else
+			// {
+			// throw new DTokenValidateFailedException();
+			// }
+			// }
+		}
+		else if (handlerMethod.getMethodInfo().isRequireTicket())
+		{			
+			TokenHelper.doTicketcheck(request, response);
+		}
+
 	}
 	
 
