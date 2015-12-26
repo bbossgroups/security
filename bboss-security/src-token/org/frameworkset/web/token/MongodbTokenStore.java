@@ -6,7 +6,6 @@ import org.frameworkset.nosql.mongodb.MongoDBHelper;
 import org.frameworkset.security.ecc.SimpleKeyPair;
 
 import com.mongodb.BasicDBObject;
-import com.mongodb.CommandResult;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
@@ -21,8 +20,7 @@ public class MongodbTokenStore extends BaseTokenStore{
 //	private  Map<String,MemToken> dualtokens = new HashMap<String,MemToken>();
 //	private final Object checkLock = new Object();
 //	private final Object dualcheckLock = new Object();
-	private Mongo mongoClient;
-	
+	 
 	private DB db = null;
 	private DBCollection temptokens = null;
 	private DBCollection authtemptokens = null;
@@ -55,8 +53,7 @@ public class MongodbTokenStore extends BaseTokenStore{
 	
 	public MongodbTokenStore()
 	{
-		mongoClient = MongoDBHelper.getMongoClient(MongoDBHelper.defaultMongoDB);
-		db = mongoClient.getDB( "tokendb" );
+		db = MongoDBHelper.getDB(MongoDBHelper.defaultMongoDB, "tokendb" );
 		authtemptokens = db.getCollection("authtemptokens");
 		authtemptokens.createIndex(new BasicDBObject("appid", 1).append("token", 1));
 		temptokens = db.getCollection("temptokens");
@@ -71,14 +68,7 @@ public class MongodbTokenStore extends BaseTokenStore{
 	public void destory()
 	{
 		
-		if(mongoClient != null)
-		{
-			try {
-				mongoClient.close();
-			} catch (Exception e) {
-				log.error("", e);
-			}
-		}
+		MongoDBHelper.destory();
 		
 	}
 	public void livecheck()

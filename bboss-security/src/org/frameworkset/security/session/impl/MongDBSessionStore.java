@@ -23,39 +23,26 @@ import org.frameworkset.security.session.statics.SessionConfig;
 import com.frameworkset.util.SimpleStringUtil;
 import com.frameworkset.util.StringUtil;
 import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
-import com.mongodb.Mongo;
 import com.mongodb.WriteConcern;
 
 public class MongDBSessionStore extends BaseSessionStore{
-	private Mongo mongoClient;
-	private DB db = null;
-	private DB configdb = null;
+	
 	private static Logger log = Logger.getLogger(MongDBSessionStore.class);
 	public MongDBSessionStore()
 	{
-		mongoClient = MongoDBHelper.getMongoClient(MongoDBHelper.defaultMongoDB);
-		db = mongoClient.getDB( "sessiondb" );
-		configdb = mongoClient.getDB( "sessionconfdb" );
+		MongoDBHelper.initSessionDB();
 	}
 	public void destory()
 	{
 		
-		if(mongoClient != null)
-		{
-			try {
-				mongoClient.close();
-			} catch (Exception e) {
-				log.error("", e);
-			}
-		}
+		MongoDBHelper.destory();
 		
 	}
 	@Override
 	public void livecheck() {
-		Set<String> apps = db.getCollectionNames();
+		Set<String> apps = MongoDBHelper.getSessionDBCollectionNames();
 		if(apps == null || apps.size() == 0)
 			return;
 		long curtime = System.currentTimeMillis();
@@ -80,7 +67,7 @@ public class MongDBSessionStore extends BaseSessionStore{
 			String app = itr.next();
 			if(app.endsWith("_sessions"))
 			{
-				DBCollection appsessions = db.getCollection(app);
+				DBCollection appsessions = MongoDBHelper.getSessionCollection(app);
 				MongoDB.remove(appsessions,new BasicDBObject("$where",temp),WriteConcern.UNACKNOWLEDGED);
 			}
 		}
@@ -90,17 +77,19 @@ public class MongDBSessionStore extends BaseSessionStore{
 	
 	private DBCollection getAppSessionDBCollection(String appKey)
 	{
-		 DBCollection sessions = db.getCollection(MongoDBHelper.getAppSessionTableName( appKey));
-//		 sessions.ensureIndex("sessionid");
-		 sessions.createIndex(new BasicDBObject( "sessionid" , 1 ));
-		 return sessions;
+		
+		 
+		 return MongoDBHelper.getAppSessionDBCollection(appKey);
 	}
-	
+	private DBCollection getConfigSessionDBCollection()
+	{
+		
+		return MongoDBHelper.getConfigSessionDBCollection();
+	}
 	public void saveSessionConfig(SessionConfig config)
 	{
-		DBCollection sessionconf = configdb.getCollection("sessionconf");
-//		 sessions.ensureIndex("sessionid");
-		sessionconf.createIndex(new BasicDBObject( "appcode" , 1 ));
+		DBCollection sessionconf = getConfigSessionDBCollection();
+		
 		BasicDBObject keys = new BasicDBObject();
 		keys.put("appcode", 1);
 	 
@@ -428,9 +417,7 @@ public class MongDBSessionStore extends BaseSessionStore{
 	public SessionConfig getSessionConfig(String appkey) {
 		if(appkey == null || appkey.equals(""))
 			return null;
-		DBCollection sessionconf = configdb.getCollection("sessionconf");
-//		 sessions.ensureIndex("sessionid");
-		sessionconf.createIndex(new BasicDBObject( "appcode" , 1 ));
+		DBCollection sessionconf = getConfigSessionDBCollection();
 		BasicDBObject keys = new BasicDBObject();
 		keys.put("appcode", 1);
 		keys.put("cookiename", 1);
