@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.frameworkset.spi.BaseApplicationContext;
@@ -135,5 +136,11 @@ public class TokenHelper {
 		tokenFilter = null;
 		inited = false;
 		
+	}
+	public static String buildDToken(String elementType, String jsonsplit,
+			HttpServletRequest request, String fid, boolean cache)
+			throws TokenException
+	{
+		return TokenHelper.getTokenService().buildDToken(elementType,jsonsplit,request,fid,cache);
 	}
 }
