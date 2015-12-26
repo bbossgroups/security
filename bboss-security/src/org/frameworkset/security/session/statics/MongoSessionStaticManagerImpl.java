@@ -247,8 +247,7 @@ public class MongoSessionStaticManagerImpl implements SessionStaticManager,Initi
 		}
 
 		// 获取当前表
-		DBCollection sessions = MongoDBHelper.getAppSessionDBCollection(MongoDBHelper
-				.getAppSessionTableName(appKey));
+		DBCollection sessions = MongoDBHelper.getAppSessionDBCollection(appKey);
 //		sessions.createIndex(new BasicDBObject("sessionid",1));
 
 		// 查询条件
@@ -423,8 +422,7 @@ public class MongoSessionStaticManagerImpl implements SessionStaticManager,Initi
 
 		if (!StringUtil.isEmpty(appKey) && !StringUtil.isEmpty(sessionid)) {
 			// 获取当前表
-			DBCollection sessions = MongoDBHelper.getAppSessionDBCollection(MongoDBHelper
-					.getAppSessionTableName(appKey));
+			DBCollection sessions = MongoDBHelper.getAppSessionDBCollection(appKey);
 //			sessions.createIndex(new BasicDBObject("sessionid", 1));
 
 			// 查询条件
@@ -499,8 +497,7 @@ public class MongoSessionStaticManagerImpl implements SessionStaticManager,Initi
 	public void removeSessionInfo(String appKey, String sessionid) {
 		if (!StringUtil.isEmpty(appKey) && !StringUtil.isEmpty(sessionid)) {
 
-			DBCollection sessions = MongoDBHelper.getAppSessionDBCollection(MongoDBHelper
-					.getAppSessionTableName(appKey));
+			DBCollection sessions = MongoDBHelper.getAppSessionDBCollection(appKey);
 //			sessions.createIndex(new BasicDBObject("sessionid",1));
 
 			// 条件
@@ -530,8 +527,7 @@ public class MongoSessionStaticManagerImpl implements SessionStaticManager,Initi
 	public void removeAllSession(String appKey,String currentappkey,String currentsessionid) {
 		if (!StringUtil.isEmpty(appKey)) {
 
-			DBCollection sessions = MongoDBHelper.getAppSessionDBCollection(MongoDBHelper
-					.getAppSessionTableName(appKey));
+			DBCollection sessions = MongoDBHelper.getAppSessionDBCollection(appKey);
 
 			// 条件
 			BasicDBObject wheresql = null;
@@ -640,8 +636,7 @@ public class MongoSessionStaticManagerImpl implements SessionStaticManager,Initi
 
 	@Override
 	public boolean deleteApp(String appKey) throws Exception {
-		DBCollection table = MongoDBHelper.getAppSessionDBCollection(MongoDBHelper
-				.getAppSessionTableName(appKey));
+		DBCollection table = MongoDBHelper.getAppSessionDBCollection(appKey);
 		table.drop();
 		return true;
 	}
