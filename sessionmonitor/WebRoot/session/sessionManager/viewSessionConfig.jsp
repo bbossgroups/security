@@ -1,5 +1,6 @@
-<%@page import="com.frameworkset.util.StringUtil"%>
-<%@ page language="java" pageEncoding="UTF-8"%>
+<%@ page language="java" pageEncoding="UTF-8"  session="false"%>
+<%@page import="com.frameworkset.util.StringUtil" %>
+
 <%@ taglib uri="/WEB-INF/pager-taglib.tld" prefix="pg"%>
 <br>
 <pg:empty actual="${message }" evalbody="true">

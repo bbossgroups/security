@@ -1,5 +1,6 @@
-<%@page import="com.frameworkset.util.StringUtil"%>
-<%@ page language="java" pageEncoding="UTF-8"%>
+<%@ page language="java" pageEncoding="UTF-8"  session="false"%>
+<%@page import="com.frameworkset.util.StringUtil" %>
+
 <%@ taglib uri="/WEB-INF/pager-taglib.tld" prefix="pg"%>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">

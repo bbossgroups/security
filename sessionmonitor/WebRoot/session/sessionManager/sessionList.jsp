@@ -1,4 +1,4 @@
-<%@ page language="java"  pageEncoding="utf-8"%>
+<%@ page language="java"  pageEncoding="utf-8" session="false"%>
 <%@ taglib uri="/WEB-INF/pager-taglib.tld" prefix="pg"%>
 
 <%--
