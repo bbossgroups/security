@@ -50,6 +50,9 @@ public abstract class AuthenticateFilter extends TokenFilter{
 	public static final String accesscontrol_check_result_fail = "fail";
 	public static final String referpath_parametername = "accesscontrol_check_referpath";
 	
+	public static final String failedbackpath_parametername = "accesscontrol_check_failedbackpath";
+	
+	
 	
 	public static final String accesscontrol_permissioncheck_result = "com.frameworkset.platform.security.accesscontrol_permissioncheck_result";
 	public static final String accesscontrol_permissioncheck_result_ok = "ok";
@@ -294,42 +297,53 @@ public abstract class AuthenticateFilter extends TokenFilter{
 		}
 		return false;
 	}
-	private void appendReferBackPath(HttpServletRequest request,StringBuffer path,boolean hasParams) throws UnsupportedEncodingException
+	private void appendReferBackPath(HttpServletRequest request,StringBuffer path,boolean hasParams,boolean failedback) throws UnsupportedEncodingException
 	{
 //		String referer = request.getHeader("Referer");
 		String uri = new UrlPathHelper().getPathWithinApplication(request);
-		if(!needfailedback(uri)) 
-			return;
-		
-		
-		StringBuffer referer = new StringBuffer();
-		referer.append(request.getRequestURI());
-		Enumeration<String> names = request.getParameterNames();
-		boolean first = true;
-		while(names.hasMoreElements())
+		if(hasParams)
+			path.append("&").append(failedbackpath_parametername).append("=").append(java.net.URLEncoder.encode(uri, "UTF-8"));
+		else
+			path.append("?").append(failedbackpath_parametername).append("=").append(java.net.URLEncoder.encode(uri, "UTF-8"));
+		if(!failedback)
 		{
-			String name = names.nextElement();
-			String[] values = request.getParameterValues(name);
-			for(int i = 0; values != null && i < values.length; i ++)
-			{
-				if(name.equals(TokenStore.temptoken_param_name))//忽略令牌参数
-					continue;
-				if(first)
-				{
-					referer.append("?").append(name).append("=").append(values[i]);
-					first = false;
-				}
-				else
-				{
-					referer.append("&").append(name).append("=").append(values[i]);						
-				}
-			}
 			
 		}
-		if(hasParams)
-			path.append("&").append(referpath_parametername).append("=").append(java.net.URLEncoder.encode(referer.toString(), "UTF-8"));
 		else
-			path.append("?").append(referpath_parametername).append("=").append(java.net.URLEncoder.encode(referer.toString(), "UTF-8"));
+		{
+			if(!needfailedback(uri)) 
+				return;
+			
+			
+			StringBuffer referer = new StringBuffer();
+			referer.append(request.getRequestURI());
+			Enumeration<String> names = request.getParameterNames();
+			boolean first = true;
+			while(names.hasMoreElements())
+			{
+				String name = names.nextElement();
+				String[] values = request.getParameterValues(name);
+				for(int i = 0; values != null && i < values.length; i ++)
+				{
+					if(name.equals(TokenStore.temptoken_param_name))//忽略令牌参数
+						continue;
+					if(first)
+					{
+						referer.append("?").append(name).append("=").append(values[i]);
+						first = false;
+					}
+					else
+					{
+						referer.append("&").append(name).append("=").append(values[i]);						
+					}
+				}
+				
+			}
+//			if(hasParams)
+				path.append("&").append(referpath_parametername).append("=").append(java.net.URLEncoder.encode(referer.toString(), "UTF-8"));
+//			else
+//				path.append("?").append(referpath_parametername).append("=").append(java.net.URLEncoder.encode(referer.toString(), "UTF-8"));
+		}
 		
 	}
     protected boolean _preHandle(HttpServletRequest request,
@@ -362,8 +376,7 @@ public abstract class AuthenticateFilter extends TokenFilter{
 						targetUrl.append(request.getContextPath());
 					}
 					targetUrl.append(dispatcherPath);
-					if(failedback)
-						this.appendReferBackPath(request, targetUrl, dispatcherPath != null?dispatcherPath.indexOf("?")>=0:false);
+					 this.appendReferBackPath(request, targetUrl, dispatcherPath != null?dispatcherPath.indexOf("?")>=0:false,failedback);
 					sendRedirect(request, response, targetUrl.toString(), http10Compatible,this.isforward(),this.isinclude);
 				}
 				return false;
