@@ -27,7 +27,7 @@
 				}});]]>
 		
 	</description>
-		<listener-class>org.frameworkset.web.listener.IOCApplicationLifeListener</listener-class>
+		<listener-class>org.frameworkset.web.listener.ApplicationLifeListener</listener-class>
 	</listener>
     <filter>
 	    <filter-name>sessionFilter</filter-name>
