@@ -292,13 +292,20 @@ public class MongoDB {
 				builder.socketKeepAlive(socketKeepAlive);
 	            MongoClientOptions options = builder.build();//new MongoClientOptions();
 	            MongoClient mongoClient = null;
+	            List<ServerAddress> servers = parserAddress();
 	            if(mongoCredentials == null || mongoCredentials.size() == 0)
 	            {
-	            	mongoClient = new MongoClient(parserAddress(),options);
+	            	if(servers.size() > 1)
+	            		mongoClient = new MongoClient(servers,options);
+	            	else
+	            		mongoClient = new MongoClient(servers.get(0),options);
 	            }
 	            else
 	            {
-	            	mongoClient = new MongoClient(parserAddress(),mongoCredentials,options);
+	            	if(servers.size() > 1)
+	            		mongoClient = new MongoClient(servers,mongoCredentials,options);
+	            	else
+	            		mongoClient = new MongoClient(servers.get(0),mongoCredentials,options);
 	            }
 				int[] ops = parserOption();
 				for(int i = 0; ops != null && i < ops.length; i ++)
@@ -307,9 +314,12 @@ public class MongoDB {
 				if(wc != null)
 					mongoClient.setWriteConcern(wc);
 		//ReadPreference.secondaryPreferred();
-				ReadPreference rf = _getReadPreference();
-				if(rf != null)
-					mongoClient.setReadPreference(ReadPreference.nearest());
+//				if(servers.size() > 1)
+				{
+					ReadPreference rf = _getReadPreference();
+					if(rf != null)
+						mongoClient.setReadPreference(ReadPreference.nearest());
+				}
 		//		mongoClient.setReadPreference(ReadPreference.primaryPreferred());
 				this.mongoclient = mongoClient;
 			}
