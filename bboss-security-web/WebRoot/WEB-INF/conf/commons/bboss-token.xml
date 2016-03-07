@@ -13,4 +13,14 @@
 	<property name="/checktoken/*.freepage" ws:servicePort="checktokenService" 
 	hessian:servicePort="checktokenService"
 	class="org.frameworkset.web.token.ws.CheckTokenContoller" />
+	
+	<property name="/token/v2/*.freepage" ws:servicePort="v2tokenService" 
+	hessian:servicePort="v2tokenService"
+	class="org.frameworkset.web.token.ws.v2.TokenController" />
+	<!-- 
+	校验令牌服务
+	-->
+	<property name="/checktoken/v2/*.freepage" ws:servicePort="v2checktokenService" 
+	hessian:servicePort="v2checktokenService"
+	class="org.frameworkset.web.token.ws.v2.CheckTokenContoller" />
 </properties>

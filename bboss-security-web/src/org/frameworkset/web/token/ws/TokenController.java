@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.frameworkset.util.annotations.ResponseBody;
+import org.frameworkset.web.token.Ticket;
 import org.frameworkset.web.token.TokenException;
 import org.frameworkset.web.token.TokenHelper;
 import org.frameworkset.web.token.TokenStore;
@@ -209,8 +210,10 @@ public class TokenController implements TokenService {
 
 		TicketGetResponse tokenGetResponse = new TicketGetResponse();
 		try {
-			String ticket =  TokenHelper.getTokenService().genTicket( account, worknumber, appid, secret);
-			tokenGetResponse.setTicket(ticket);
+			Ticket ticket =  TokenHelper.getTokenService().genTicket( account, worknumber, appid, secret);
+			
+				tokenGetResponse.setTicket(ticket.getToken());
+			
 			tokenGetResponse.setResultcode(TokenStore.RESULT_OK);
 			
 		} catch (TokenException e) {
@@ -227,8 +230,11 @@ public class TokenController implements TokenService {
 	@Override
 	public @ResponseBody String genTicket(String account, String worknumber, String appid,
 			String secret) throws Exception {
-		String ticket =  TokenHelper.getTokenService().genTicket( account, worknumber, appid, secret);
-		return  ticket;
+		Ticket ticket =  TokenHelper.getTokenService().genTicket( account, worknumber, appid, secret);
+		if(ticket != null)
+			return  ticket.getToken();
+		else
+			return null;
 	}
 
 	@Override

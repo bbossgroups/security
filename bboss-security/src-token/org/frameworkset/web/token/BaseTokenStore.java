@@ -112,7 +112,7 @@ public abstract class BaseTokenStore implements TokenStore {
 		}
 			
 	}
-	public String genTicket(String account, String worknumber,
+	public Ticket genTicket(String account, String worknumber,
 			String appid, String secret) throws TokenException
 	{
 		
@@ -154,7 +154,7 @@ public abstract class BaseTokenStore implements TokenStore {
 			_ticket.setToken(token);
 			_ticket.setLastVistTime(createTime);
 			this.persisteTicket(_ticket);
-			return token;
+			return _ticket;
 		} catch (TokenException e) {
 			throw e;
 		} catch (Exception e) {

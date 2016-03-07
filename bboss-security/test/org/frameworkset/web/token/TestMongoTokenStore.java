@@ -21,8 +21,8 @@ public class TestMongoTokenStore {
 		mongodbTokenStore.setDualtokenlivetime(TokenStore.DEFAULT_DUALTOKENLIVETIME);
 		mongodbTokenStore.setECCCoder(ECCHelper.getECCCoder());
 		mongodbTokenStore.setValidateApplication(new NullValidateApplication());
-		String ticket = mongodbTokenStore.genTicket(account, worknumber, appid, secret);
-		MemToken token = mongodbTokenStore.genDualToken(appid,ticket,secret,TokenStore.DEFAULT_DUALTOKENLIVETIME);
+		Ticket ticket = mongodbTokenStore.genTicket(account, worknumber, appid, secret);
+		MemToken token = mongodbTokenStore.genDualToken(appid,ticket.getToken(),secret,TokenStore.DEFAULT_DUALTOKENLIVETIME);
 		Assert.assertTrue(TokenStore.token_request_validateresult_ok == mongodbTokenStore.checkToken(appid,secret,token.getToken()).getResult());
 	}
 	@Test
@@ -36,9 +36,9 @@ public class TestMongoTokenStore {
 	@Test
 	public void gendualtokenAndValidate() throws Exception
 	{
-		String ticket = mongodbTokenStore.genTicket(account, worknumber, appid, secret);
+		Ticket ticket = mongodbTokenStore.genTicket(account, worknumber, appid, secret);
 		//long start = System.currentTimeMillis();
-		MemToken token = mongodbTokenStore.genDualToken(appid,ticket,secret,TokenStore.DEFAULT_DUALTOKENLIVETIME);
+		MemToken token = mongodbTokenStore.genDualToken(appid,ticket.getToken(),secret,TokenStore.DEFAULT_DUALTOKENLIVETIME);
 		//long end = System.currentTimeMillis();
 		//System.out.println(end - start);
 		//start = System.currentTimeMillis();
@@ -51,8 +51,8 @@ public class TestMongoTokenStore {
 	@Test
 	public void gentempauthortokenAndValidate() throws Exception
 	{
-		String ticket = mongodbTokenStore.genTicket(account, worknumber, appid, secret);
-		MemToken token = mongodbTokenStore.genAuthTempToken(appid,ticket,secret);
+		Ticket ticket = mongodbTokenStore.genTicket(account, worknumber, appid, secret);
+		MemToken token = mongodbTokenStore.genAuthTempToken(appid,ticket.getToken(),secret);
 		Assert.assertTrue(TokenStore.token_request_validateresult_ok == mongodbTokenStore.checkToken(appid,secret,token.getToken()).getResult());
 	}
 	
@@ -66,7 +66,7 @@ public class TestMongoTokenStore {
 	@Test
 	public void testticket() throws Exception
 	{
-		String ticket = mongodbTokenStore.genTicket(account, worknumber, appid, secret);
+		Ticket ticket = mongodbTokenStore.genTicket(account, worknumber, appid, secret);
 //		System.out.println("aer:"+mongodbTokenStore.getLastError() +":\n"+ticket);
 	}
 	

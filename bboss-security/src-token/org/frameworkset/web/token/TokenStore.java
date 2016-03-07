@@ -108,7 +108,7 @@ public interface TokenStore {
 
 	public SimpleKeyPair getKeyPair(String appid,String secret) throws TokenException;
 
-	public abstract String genTicket(String account, String worknumber,
+	public abstract Ticket genTicket(String account, String worknumber,
 			String appid, String secret)throws TokenException;
 //	public String[] decodeTicket(String ticket,
 //			String appid, String secret) throws TokenException;

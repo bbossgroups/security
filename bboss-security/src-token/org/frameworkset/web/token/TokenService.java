@@ -641,7 +641,7 @@ public class TokenService implements TokenServiceInf,InitializingBean {
 	 * @see org.frameworkset.web.token.TokenServiceInf#genTicket(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public String genTicket(String account,String worknumber,String appid,String secret) throws TokenException
+	public Ticket genTicket(String account,String worknumber,String appid,String secret) throws TokenException
 	{
 		return this.tokenStore.genTicket( account, worknumber, appid, secret);
 	}

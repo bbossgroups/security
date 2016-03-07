@@ -108,7 +108,7 @@ public class DummyTokenService implements TokenServiceInf {
 	}
 
 	@Override
-	public String genTicket(String account, String worknumber, String appid, String secret) throws TokenException {
+	public Ticket genTicket(String account, String worknumber, String appid, String secret) throws TokenException {
 		// TODO Auto-generated method stub
 		return null;
 	}

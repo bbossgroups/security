@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.frameworkset.web.token.ws;
+package org.frameworkset.web.token.ws.v2;
 
 import javax.jws.WebService;
 
@@ -25,6 +25,8 @@ import org.frameworkset.web.token.TokenResult;
 import org.frameworkset.web.token.TokenService;
 import org.frameworkset.web.token.TokenStore;
 
+import com.frameworkset.util.StringUtil;
+
 /**
  * <p>Title: CheckTokenContoller.java</p> 
  * <p>Description: </p>
@@ -34,7 +36,7 @@ import org.frameworkset.web.token.TokenStore;
  * @author biaoping.yin
  * @version 3.8.0
  */
-@WebService(name="CheckTokenService",targetNamespace="org.frameworkset.web.token.ws.CheckTokenService")
+@WebService(name="CheckTokenService",targetNamespace="org.frameworkset.web.token.ws.v2.CheckTokenService")
 public class CheckTokenContoller implements CheckTokenService{
 	private static final Logger log = Logger.getLogger(TokenController.class);
 	public @ResponseBody(datatype="json") TokenCheckResponse checkToken(String appid,String secret,String token) 
@@ -54,10 +56,14 @@ public class CheckTokenContoller implements CheckTokenService{
 			
 		} catch (TokenException e) {
 			tokenCheckResponse.setResultcode(e.getMessage());
+			tokenCheckResponse.setMessage(StringUtil.exceptionToString(e));
+			
 		}
 		 catch (Exception e) {
 			 log.debug(TokenStore.ERROR_CODE_BACKENDERROR, e);
-			 tokenCheckResponse.setResultcode(TokenStore.ERROR_CODE_BACKENDERROR+":" +e.getMessage());
+			 tokenCheckResponse.setResultcode(TokenStore.ERROR_CODE_BACKENDERROR);
+				tokenCheckResponse.setMessage(StringUtil.exceptionToString(e));
+//			 tokenCheckResponse.setResultcode(TokenStore.ERROR_CODE_BACKENDERROR+":" +e.getMessage());
 		}
 		return tokenCheckResponse;
 	}
@@ -78,10 +84,12 @@ public class CheckTokenContoller implements CheckTokenService{
 			
 		} catch (TokenException e) {
 			tokenCheckResponse.setResultcode(e.getMessage());
+			tokenCheckResponse.setMessage(StringUtil.exceptionToString(e));
 		}
 		 catch (Exception e) {
 			 log.debug(TokenStore.ERROR_CODE_BACKENDERROR, e);
-			 tokenCheckResponse.setResultcode(TokenStore.ERROR_CODE_BACKENDERROR+":" +e.getMessage());
+			 tokenCheckResponse.setResultcode(TokenStore.ERROR_CODE_BACKENDERROR);
+				tokenCheckResponse.setMessage(StringUtil.exceptionToString(e));
 		}
 		return tokenCheckResponse;
 	}
@@ -93,10 +101,12 @@ public class CheckTokenContoller implements CheckTokenService{
 				tokenCheckResponse.setResultcode(TokenStore.RESULT_OK);
 			} catch (TokenException e) {
 				tokenCheckResponse.setResultcode(e.getMessage());
+				tokenCheckResponse.setMessage(StringUtil.exceptionToString(e));
 			}
 			 catch (Exception e) {
 				 log.debug(TokenStore.ERROR_CODE_BACKENDERROR, e);
-				 tokenCheckResponse.setResultcode(TokenStore.ERROR_CODE_BACKENDERROR+":" +e.getMessage());
+				 tokenCheckResponse.setResultcode(TokenStore.ERROR_CODE_BACKENDERROR);
+					tokenCheckResponse.setMessage(StringUtil.exceptionToString(e));
 				}
 			return tokenCheckResponse;
 	}

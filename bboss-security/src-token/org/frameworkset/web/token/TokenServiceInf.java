@@ -78,7 +78,7 @@ public interface TokenServiceInf {
 	public abstract String genAuthTempToken(String appid, String secret,
 			String ticket) throws Exception;
 
-	public abstract String genTicket(String account, String worknumber,
+	public abstract Ticket genTicket(String account, String worknumber,
 			String appid, String secret) throws TokenException;
 
 	public abstract boolean isEnableToken();
