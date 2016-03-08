@@ -21,7 +21,6 @@ import org.frameworkset.web.servlet.handler.HandlerMeta;
 import org.frameworkset.web.token.TokenFilter;
 import org.frameworkset.web.token.TokenStore;
 import org.frameworkset.web.util.UrlPathHelper;
-import org.frameworkset.web.util.WebUtils;
 
 import com.frameworkset.util.StringUtil;
 
@@ -67,6 +66,10 @@ public abstract class AuthenticateFilter extends TokenFilter{
 	
 	protected boolean isforward = false;
 	protected boolean isinclude = false;
+	/**
+	 * 是否对接收到的token进行签名解析处理
+	 */
+	protected boolean sign = true;
 	
 	/**
 	 * redirect
@@ -649,7 +652,12 @@ public abstract class AuthenticateFilter extends TokenFilter{
 		{
 			setPreventDispatchLoop(true);
 		}
-		;
+		
+		String sign_ = arg0.getInitParameter("sign");
+		if(sign_ != null && sign_.trim().equals("false"))
+		{
+			this.sign = false;
+		}
 		String failedback = arg0.getInitParameter("failedback");
 		
 		if(failedback != null && failedback.equals("true"))
@@ -782,6 +790,13 @@ public abstract class AuthenticateFilter extends TokenFilter{
 		}
 		String[] as = new String[temp.size()];
 		this.failedbackurlpattern = (String[]) temp.toArray(as);
+	}
+
+
+	@Override
+	protected boolean issign() {
+		// TODO Auto-generated method stub
+		return this.sign;
 	} 
 	
 	/*************Filter接口实现结束********************/

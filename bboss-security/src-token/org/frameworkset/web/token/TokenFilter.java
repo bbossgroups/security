@@ -39,7 +39,7 @@ import com.frameworkset.util.StringUtil;
  */
 public class TokenFilter implements Filter{
 	private static Logger log = Logger.getLogger(TokenFilter.class);
-	
+	protected boolean sign = true;
 	protected String redirectpath = "/login.jsp";
 	private TokenServiceInf tokenService = null;
 	private boolean inited =false;
@@ -203,7 +203,7 @@ public class TokenFilter implements Filter{
 		_inited();
 		if(this.tokenService.isEnableToken())
 		{
-			return tokenService.appendDTokenToURL(request, targetUrl);
+			return tokenService.appendDTokenToURL(request, targetUrl,issign());
 		}
 		else
 		{
@@ -291,7 +291,10 @@ public class TokenFilter implements Filter{
 
 		this.redirectpath = redirecturl;
 	}
-	
+	protected boolean issign()
+	{
+		return true;
+	}
 	/**
 	 * 判断令牌或者ticket是否有效，一次请求只判断一次，避免多次判断
 	 * 同时记录判断结果，以便后续处理操作获取这个结果进行相应的处理
@@ -346,7 +349,7 @@ public class TokenFilter implements Filter{
 						
 						String appid= tokenService.getAppid();
 						String secret= tokenService.getSecret();
-						TokenResult tokenResult = this.tokenService.checkTicket(appid, secret, ticket);
+						TokenResult tokenResult = this.tokenService.checkTicket(appid, secret, ticket,issign());
 						request.setAttribute(TokenStore.token_request_validatetoken_key, tokenResult);
 						if( tokenResult != null )
 						{
@@ -364,7 +367,7 @@ public class TokenFilter implements Filter{
 //					String secret= request.getParameter(TokenStore.app_secret_param_name);
 					String appid= tokenService.getAppid();
 					String secret= tokenService.getSecret();
-					TokenResult tokenResult = this.tokenService.checkToken(appid,secret,token);
+					TokenResult tokenResult = this.tokenService.checkToken(appid,secret,token,issign());
 					request.setAttribute(TokenStore.token_request_validatetoken_key, tokenResult);
 					if( tokenResult != null )
 					{

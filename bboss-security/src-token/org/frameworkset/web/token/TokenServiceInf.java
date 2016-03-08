@@ -9,14 +9,14 @@ public interface TokenServiceInf {
 			boolean cache,boolean sign) throws TokenException;
 
 	public abstract String buildDToken(String elementType,
-			HttpServletRequest request) throws TokenException;
+			HttpServletRequest request,boolean sign) throws TokenException;
 
 	public abstract String buildDToken(String elementType, String jsonsplit,
-			HttpServletRequest request, String fid) throws TokenException;
+			HttpServletRequest request, String fid,boolean sign) throws TokenException;
 	public String getTokenfailpath();
-	public TokenResult checkTicket(String appid,String secret,String ticket) throws TokenException;
-	public TokenResult checkToken(String appid,String secret,String token) throws TokenException;
-	public int checkTempToken(String token) throws TokenException;
+	public TokenResult checkTicket(String appid,String secret,String ticket,boolean sign) throws TokenException;
+	public TokenResult checkToken(String appid,String secret,String token,boolean sign) throws TokenException;
+	public int checkTempToken(String token,boolean sign) throws TokenException;
 	/**
 	 * 生成隐藏域令牌,输出值为：
 	 * <input type="hidden" name="_dt_token_" value="-1518435257">
@@ -24,9 +24,9 @@ public interface TokenServiceInf {
 	 * @return
 	 * @throws TokenException 
 	 */
-	public abstract String buildHiddenDToken(HttpServletRequest request)
+	public abstract String buildHiddenDToken(HttpServletRequest request,boolean sign)
 			throws TokenException;
-	public String appendDTokenToURL(HttpServletRequest request,String url) throws TokenException;
+	public String appendDTokenToURL(HttpServletRequest request,String url,boolean sign) throws TokenException;
 	/**
 	 * 生成json串令牌
 	 * 如果jsonsplit为'，则输出值为：
@@ -39,7 +39,7 @@ public interface TokenServiceInf {
 	 * @throws TokenException 
 	 */
 	public abstract String buildJsonDToken(String jsonsplit,
-			HttpServletRequest request) throws TokenException;
+			HttpServletRequest request,boolean sign) throws TokenException;
 
 	/**
 	 * 生成url参数串令牌
@@ -49,7 +49,7 @@ public interface TokenServiceInf {
 	 * @return
 	 * @throws TokenException 
 	 */
-	public abstract String buildParameterDToken(HttpServletRequest request)
+	public abstract String buildParameterDToken(HttpServletRequest request,boolean sign)
 			throws TokenException;
 
 	/**
@@ -60,24 +60,24 @@ public interface TokenServiceInf {
 	 * @return
 	 * @throws TokenException 
 	 */
-	public abstract String buildDToken(HttpServletRequest request)
+	public abstract String buildDToken(HttpServletRequest request,boolean sign)
 			throws TokenException;
 
 	public abstract String buildDToken(String elementType, String jsonsplit,
 			HttpServletRequest request, String fid, boolean cache,boolean sign)
 			throws TokenException;
 
-	public abstract String genTempToken() throws Exception;
+	public abstract String genTempToken(boolean sign) throws Exception;
 
 	public abstract String genDualToken(String appid, String secret,
-			String ticket, long dualtime) throws Exception;
+			String ticket, long dualtime,boolean sign) throws Exception;
 
 	public abstract String genDualTokenWithDefaultLiveTime(String appid,
-			String secret, String ticket) throws Exception;
+			String secret, String ticket,boolean sign) throws Exception;
 
 	public abstract String genAuthTempToken(String appid, String secret,
-			String ticket) throws Exception;
-	public Ticket genTempTicket(String account,String worknumber,String appid,String secret) throws TokenException;
+			String ticket,boolean sign) throws Exception;
+	public Ticket genTempTicket(String account,String worknumber,String appid,String secret,boolean sign) throws TokenException;
 	public abstract Ticket genTicket(String account, String worknumber,
 			String appid, String secret,boolean sign) throws TokenException;
 

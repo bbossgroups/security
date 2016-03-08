@@ -257,14 +257,14 @@ public class TokenService implements TokenServiceInf,InitializingBean {
 	 * @return
 	 * @throws TokenException 
 	 */
-	public String appendDTokenToURL(HttpServletRequest request,String url) throws TokenException
+	public String appendDTokenToURL(HttpServletRequest request,String url,boolean sign) throws TokenException
 	{
 		if(url == null)
 			return url;
 		if(url.indexOf(TokenStore.temptoken_param_name_word) > 0)
 			return url;
 		StringBuilder ret = new StringBuilder();
-		String token = this.buildDToken(request);
+		String token = this.buildDToken(request,  sign);
 		int idx = url.indexOf("?");
 		if(idx > 0)
 		{
@@ -414,49 +414,49 @@ public class TokenService implements TokenServiceInf,InitializingBean {
 	 * @see org.frameworkset.web.token.TokenServiceInf#buildDToken(java.lang.String, javax.servlet.http.HttpServletRequest)
 	 */
 	@Override
-	public String buildDToken(String elementType,HttpServletRequest request) throws TokenException
+	public String buildDToken(String elementType,HttpServletRequest request,boolean sign) throws TokenException
 	{
-		return buildDToken(elementType,"'",request,null);
+		return buildDToken(elementType,"'",request,null,  sign);
 	}
 	/* (non-Javadoc)
 	 * @see org.frameworkset.web.token.TokenServiceInf#buildDToken(java.lang.String, java.lang.String, javax.servlet.http.HttpServletRequest, java.lang.String)
 	 */
 	@Override
-	public String buildDToken(String elementType,String jsonsplit,HttpServletRequest request,String fid) throws TokenException
+	public String buildDToken(String elementType,String jsonsplit,HttpServletRequest request,String fid,boolean sign) throws TokenException
 	{
-		return buildDToken(elementType,jsonsplit,request,fid,true);
+		return buildDToken(elementType,jsonsplit,request,fid,true,  sign);
 	}
 	/* (non-Javadoc)
 	 * @see org.frameworkset.web.token.TokenServiceInf#buildHiddenDToken(javax.servlet.http.HttpServletRequest)
 	 */
 	@Override
-	public String buildHiddenDToken(HttpServletRequest request) throws TokenException
+	public String buildHiddenDToken(HttpServletRequest request,boolean sign) throws TokenException
 	{
-		return buildDToken("input",null,request,null,true);
+		return buildDToken("input",null,request,null,true, sign);
 	}
 	/* (non-Javadoc)
 	 * @see org.frameworkset.web.token.TokenServiceInf#buildJsonDToken(java.lang.String, javax.servlet.http.HttpServletRequest)
 	 */
 	@Override
-	public String buildJsonDToken(String jsonsplit,HttpServletRequest request) throws TokenException
+	public String buildJsonDToken(String jsonsplit,HttpServletRequest request,boolean sign) throws TokenException
 	{
-		return buildDToken("json","'",request,null,true);
+		return buildDToken("json","'",request,null,true,  sign);
 	}
 	/* (non-Javadoc)
 	 * @see org.frameworkset.web.token.TokenServiceInf#buildParameterDToken(javax.servlet.http.HttpServletRequest)
 	 */
 	@Override
-	public String buildParameterDToken(HttpServletRequest request) throws TokenException
+	public String buildParameterDToken(HttpServletRequest request,boolean sign) throws TokenException
 	{
-		return buildDToken("param",null,request,null,true);
+		return buildDToken("param",null,request,null,true,  sign);
 	}
 	/* (non-Javadoc)
 	 * @see org.frameworkset.web.token.TokenServiceInf#buildDToken(javax.servlet.http.HttpServletRequest)
 	 */
 	@Override
-	public String buildDToken(HttpServletRequest request) throws TokenException
+	public String buildDToken(HttpServletRequest request,boolean sign) throws TokenException
 	{
-		return buildDToken("token",null,request,null,true);
+		return buildDToken("token",null,request,null,true,  sign);
 	}
 	
 	/* (non-Javadoc)
