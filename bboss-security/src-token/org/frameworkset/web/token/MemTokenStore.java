@@ -159,7 +159,7 @@ public class MemTokenStore extends BaseTokenStore{
 	
 
 	@Override
-	public MemToken _genTempToken() throws TokenException {
+	public MemToken _genTempToken(boolean sign) throws TokenException {
 		String token = this.randomToken();
 		MemToken token_m = new MemToken(token,System.currentTimeMillis());
 		synchronized(checkLock)
@@ -168,15 +168,15 @@ public class MemTokenStore extends BaseTokenStore{
 			temptokens.put(token, token_m);
 			
 		}
-		this.signToken(token_m, type_temptoken, null,null);
+		this.signToken(token_m, type_temptoken, null,null,  sign);
 		return token_m;
 		
 	}
 
 	@Override
-	protected MemToken _genDualToken(String appid,String ticket, String secret, long livetime) throws TokenException {
+	protected MemToken _genDualToken(String appid,String ticket, String secret, long livetime,boolean sign) throws TokenException {
 		String[] accountinfo = decodeTicket( ticket,
-				 appid,  secret);
+				 appid,  secret,  sign);
 		String token = this.randomToken();
 		String key = appid ;
 		MemToken token_m = null;
@@ -195,7 +195,7 @@ public class MemTokenStore extends BaseTokenStore{
 							createTime, livetime);
 					token_m.setAppid(appid);
 					token_m.setSecret(secret);
-					this.signToken(token_m, TokenStore.type_authtemptoken, accountinfo,ticket);
+					this.signToken(token_m, TokenStore.type_authtemptoken, accountinfo,ticket,  sign);
 					dualtokens.put(key, token_m);
 				}
 			}
@@ -206,7 +206,7 @@ public class MemTokenStore extends BaseTokenStore{
 						createTime, livetime);
 				token_m.setAppid(appid);
 				token_m.setSecret(secret);
-				this.signToken(token_m, TokenStore.type_authtemptoken, accountinfo,ticket);
+				this.signToken(token_m, TokenStore.type_authtemptoken, accountinfo,ticket,  sign);
 				dualtokens.put(key, token_m);
 			}
 		}
@@ -216,9 +216,9 @@ public class MemTokenStore extends BaseTokenStore{
 	}
 	
 	@Override
-	protected MemToken _genAuthTempToken(String appid,String ticket, String secret) throws TokenException {
+	protected MemToken _genAuthTempToken(String appid,String ticket, String secret,boolean sign) throws TokenException {
 		String[] accountinfo = decodeTicket( ticket,
-				 appid,  secret);
+				 appid,  secret,  sign);
 		String token = this.randomToken();
 		String key = appid + ":"+token;
 		MemToken token_m = null;
@@ -231,7 +231,7 @@ public class MemTokenStore extends BaseTokenStore{
 					createTime, this.tempTokendualtime);
 			token_m.setAppid(appid);
 			token_m.setSecret(secret);
-			this.signToken(token_m, TokenStore.type_authtemptoken, accountinfo,ticket);
+			this.signToken(token_m, TokenStore.type_authtemptoken, accountinfo,ticket,  sign);
 			this.authtemptokens.put(key, token_m);
 			
 		}
@@ -283,7 +283,15 @@ public class MemTokenStore extends BaseTokenStore{
 		{
 			long lastVistTime =  System.currentTimeMillis();
 			assertExpiredTicket(ticket,appid,lastVistTime);
-			ticket.setLastVistTime(lastVistTime);
+			if(!this.istempticket(token))
+			{
+				ticket.setLastVistTime(lastVistTime);
+			}
+			else//一次性票据，获取后立马销毁
+			{
+				this.destroyTicket(token, appid);
+			}
+			
 		}
 		
 		return ticket;

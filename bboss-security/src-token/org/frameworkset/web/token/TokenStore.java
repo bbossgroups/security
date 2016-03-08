@@ -7,6 +7,8 @@ import org.frameworkset.web.token.BaseTokenStore.TokenInfo;
 
 public interface TokenStore {
 	public static final String type_temptoken = "tt";
+	public static final String type_tempticket = "tmptk_";
+	
 	public static final String type_authtemptoken = "at";
 	public static final String type_dualtoken = "dt";
 	
@@ -86,8 +88,8 @@ public interface TokenStore {
 	public abstract void destory();
 
 	public abstract void livecheck();
-	public abstract TokenResult checkTicket(String appid,String secret,String ticket)  throws TokenException;
-	public abstract TokenResult checkToken(String appid,String secret,String tokeninfo)  throws TokenException;
+	public abstract TokenResult checkTicket(String appid,String secret,String ticket,boolean sign)  throws TokenException;
+	public abstract TokenResult checkToken(String appid,String secret,String tokeninfo,boolean sign)  throws TokenException;
 
 //	public abstract Integer checkTempToken(TokenInfo tokeninfo)throws TokenException;
 //	public abstract Integer checkAuthTempToken(TokenInfo tokeninfo)throws TokenException;
@@ -101,15 +103,16 @@ public interface TokenStore {
 //
 //	public abstract void setSession(Session session);
 	
-	public MemToken genTempToken()  throws TokenException ;
-	public MemToken genDualToken(String appid,String ticket,String secret,long livetime)throws TokenException;
-	public MemToken genDualTokenWithDefaultLiveTime(String appid,String ticket,String secret)throws TokenException;
-	public MemToken genAuthTempToken(String appid, String ticket,String secret)throws TokenException;
+	public MemToken genTempToken(boolean sign)  throws TokenException ;
+	public MemToken genDualToken(String appid,String ticket,String secret,long livetime,boolean sign)throws TokenException;
+	public MemToken genDualTokenWithDefaultLiveTime(String appid,String ticket,String secret,boolean sign)throws TokenException;
+	public MemToken genAuthTempToken(String appid, String ticket,String secret,boolean sign)throws TokenException;
 
 	public SimpleKeyPair getKeyPair(String appid,String secret) throws TokenException;
-
+	public Ticket genTempTicket(String account, String worknumber,
+			String appid, String secret,boolean sign) throws TokenException;
 	public abstract Ticket genTicket(String account, String worknumber,
-			String appid, String secret)throws TokenException;
+			String appid, String secret,boolean sign)throws TokenException;
 //	public String[] decodeTicket(String ticket,
 //			String appid, String secret) throws TokenException;
 	public void setTicketdualtime(long ticketdualtime);

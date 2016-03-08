@@ -149,4 +149,10 @@ public class DummyTokenService implements TokenServiceInf {
 		return TokenStore.token_request_validateresult_notenabletoken;
 	}
 
+	@Override
+	public Ticket genTempTicket(String account, String worknumber, String appid, String secret) throws TokenException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

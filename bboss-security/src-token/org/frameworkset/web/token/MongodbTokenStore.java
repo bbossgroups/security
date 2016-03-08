@@ -385,19 +385,19 @@ public class MongodbTokenStore extends BaseTokenStore{
 	}
 
 	@Override
-	public MemToken _genTempToken() throws TokenException {
+	public MemToken _genTempToken( boolean sign) throws TokenException {
 		String token = this.randomToken();
 		MemToken token_m = new MemToken(token,System.currentTimeMillis());
 		MongoDB.insert(temptokens,new BasicDBObject("token",token_m.getToken()).append("createTime", token_m.getCreateTime()).append("livetime", this.tempTokendualtime).append("validate", true));
-		this.signToken(token_m, type_temptoken, null,null);
+		this.signToken(token_m, type_temptoken, null,null,  sign);
 		return token_m;
 		
 	}
 	
 	@Override
-	protected MemToken _genDualToken(String appid,String ticket, String secret, long livetime) throws TokenException {
+	protected MemToken _genDualToken(String appid,String ticket, String secret, long livetime,boolean sign) throws TokenException {
 		
-		String accountinfo[] = this.decodeTicket(ticket, appid, secret);
+		String accountinfo[] = this.decodeTicket(ticket, appid, secret,  sign);
 		MemToken token_m = null;
 //		synchronized(this.dualcheckLock)
 		
@@ -416,7 +416,7 @@ public class MongodbTokenStore extends BaseTokenStore{
 						createTime, livetime);
 				token_m.setAppid(appid);
 				token_m.setSecret(secret);
-				this.signToken(token_m,TokenStore.type_dualtoken,accountinfo,ticket);
+				this.signToken(token_m,TokenStore.type_dualtoken,accountinfo,ticket,  sign);
 				updateDualToken(token_m);
 				
 			}
@@ -429,7 +429,7 @@ public class MongodbTokenStore extends BaseTokenStore{
 					createTime, livetime);
 			token_m.setAppid(appid);
 			token_m.setSecret(secret);
-			this.signToken(token_m,TokenStore.type_dualtoken,accountinfo,ticket);
+			this.signToken(token_m,TokenStore.type_dualtoken,accountinfo,ticket,  sign);
 			this.insertDualToken(this.dualtokens,token_m);
 		}
 		
@@ -444,8 +444,8 @@ public class MongodbTokenStore extends BaseTokenStore{
 	 * @return
 	 * @throws TokenException 
 	 */
-	protected MemToken _genAuthTempToken(String appid,String ticket, String secret) throws TokenException {
-		String accountinfo[] = this.decodeTicket(ticket, appid, secret);
+	protected MemToken _genAuthTempToken(String appid,String ticket, String secret,boolean sign) throws TokenException {
+		String accountinfo[] = this.decodeTicket(ticket, appid, secret,  sign);
 		String token = this.randomToken();//需要将appid,secret,token进行混合加密，生成最终的token进行存储，校验时，只对令牌进行拆分校验
 		
 		MemToken token_m = null;
@@ -456,7 +456,7 @@ public class MongodbTokenStore extends BaseTokenStore{
 				createTime, this.tempTokendualtime);
 		token_m.setAppid(appid);
 		token_m.setSecret(secret);
-		this.signToken(token_m,TokenStore.type_authtemptoken,accountinfo,ticket);
+		this.signToken(token_m,TokenStore.type_authtemptoken,accountinfo,ticket,  sign);
 		this.insertDualToken(this.authtemptokens,token_m);
 		
 		
@@ -572,11 +572,7 @@ public class MongodbTokenStore extends BaseTokenStore{
 		{
 			long lastVistTime =  System.currentTimeMillis();
 			DBObject value = tickets.findOne(new BasicDBObject("token", token));
-			MongoDB.update(tickets,new BasicDBObject("token", token), 
-												   new BasicDBObject("$set",
-														  			new BasicDBObject("lastVistTime", lastVistTime)
-														  		    )
-			,WriteConcern.JOURNAL_SAFE);
+		
 			if(value != null)
 			{
 				Ticket ticket = new Ticket();
@@ -588,6 +584,18 @@ public class MongodbTokenStore extends BaseTokenStore{
 				ticket.setToken(token);
 				
 				assertExpiredTicket(ticket,appid,lastVistTime);
+				if(!this.istempticket(token))
+				{
+					MongoDB.update(tickets,new BasicDBObject("token", token), 
+							   new BasicDBObject("$set",
+									  			new BasicDBObject("lastVistTime", lastVistTime)
+									  		    )
+							   			,WriteConcern.UNACKNOWLEDGED);
+				}
+				else//一次性票据，获取后立马销毁
+				{
+					this.destroyTicket(token, appid);
+				}
 				return ticket;
 				
 			}

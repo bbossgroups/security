@@ -29,6 +29,13 @@ public interface TokenService {
 			@WebParam(name = "appid", partName = "partAppid") String appid,
 			@WebParam(name = "secret", partName = "partSecret") String secret)throws Exception;
 	
+	public @WebResult(name = "ticket", partName = "partTicket")  
+	String genTempTicket(
+			@WebParam(name = "account", partName = "partAccount") String account,
+			@WebParam(name = "worknumber", partName = "partWorknumber") String worknumber,
+			@WebParam(name = "appid", partName = "partAppid") String appid,
+			@WebParam(name = "secret", partName = "partSecret") String secret)throws Exception;
+	
 	
 	
 	public @WebResult(name = "authTempToken", partName = "partAuthTempToken")
@@ -53,6 +60,12 @@ public interface TokenService {
 	public @WebResult(name = "tempToken", partName = "partTempToken") TokenGetResponse getTempToken() throws Exception;
 	public @WebResult(name = "ticket", partName = "partTicket")  
 	TicketGetResponse getTicket(
+			@WebParam(name = "account", partName = "partAccount") String account,
+			@WebParam(name = "worknumber", partName = "partWorknumber") String worknumber,
+			@WebParam(name = "appid", partName = "partAppid") String appid,
+			@WebParam(name = "secret", partName = "partSecret") String secret)throws Exception;
+	public @WebResult(name = "ticket", partName = "partTicket")  
+	TicketGetResponse getTempTicket(
 			@WebParam(name = "account", partName = "partAccount") String account,
 			@WebParam(name = "worknumber", partName = "partWorknumber") String worknumber,
 			@WebParam(name = "appid", partName = "partAppid") String appid,

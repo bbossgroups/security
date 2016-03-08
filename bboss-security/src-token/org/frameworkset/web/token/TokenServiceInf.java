@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 public interface TokenServiceInf {
 
 	public abstract String genToken(ServletRequest request, String fid,
-			boolean cache) throws TokenException;
+			boolean cache,boolean sign) throws TokenException;
 
 	public abstract String buildDToken(String elementType,
 			HttpServletRequest request) throws TokenException;
@@ -64,7 +64,7 @@ public interface TokenServiceInf {
 			throws TokenException;
 
 	public abstract String buildDToken(String elementType, String jsonsplit,
-			HttpServletRequest request, String fid, boolean cache)
+			HttpServletRequest request, String fid, boolean cache,boolean sign)
 			throws TokenException;
 
 	public abstract String genTempToken() throws Exception;
@@ -77,9 +77,9 @@ public interface TokenServiceInf {
 
 	public abstract String genAuthTempToken(String appid, String secret,
 			String ticket) throws Exception;
-
+	public Ticket genTempTicket(String account,String worknumber,String appid,String secret) throws TokenException;
 	public abstract Ticket genTicket(String account, String worknumber,
-			String appid, String secret) throws TokenException;
+			String appid, String secret,boolean sign) throws TokenException;
 
 	public abstract boolean isEnableToken();
 	public String getSecret();

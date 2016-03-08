@@ -35,8 +35,15 @@ public class NullValidateApplication implements ValidateApplication {
 	}
 	
 	@Override
-	public AppValidateResult validateApp(String appid, String secret) throws TokenException {		
-		return null;
+	public AppValidateResult validateApp(String appid, String secret) throws TokenException {
+		AppValidateResult result = new AppValidateResult();
+		Application app = new Application();
+		app.setAppid(appid);
+		app.setSecret(secret);
+		app.setTicketlivetime(-2);
+		result.setApplication(app);
+		result.setResult(true);
+		return result;
 	}
 
 }

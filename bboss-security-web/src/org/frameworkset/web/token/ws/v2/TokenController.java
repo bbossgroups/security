@@ -236,11 +236,49 @@ public class TokenController implements TokenService {
 		return tokenGetResponse;
 		
 	}
+	
+	public @ResponseBody(datatype="json") TicketGetResponse getTempTicket(String account,String worknumber,String appid,String secret) throws TokenException
+	{
+
+		TicketGetResponse tokenGetResponse = new TicketGetResponse();
+		try {
+			Ticket ticket =  TokenHelper.getTokenService().genTempTicket( account, worknumber, appid, secret);
+			tokenGetResponse.setTicket(ticket.getToken());
+			tokenGetResponse.setLivetime(ticket.getLivetime());
+			tokenGetResponse.setResultcode(TokenStore.RESULT_OK);
+			
+		} catch (TokenException e) {
+			tokenGetResponse.setResultcode(TokenStore.ERROR_CODE_BACKENDERROR);
+			tokenGetResponse.setMessage(StringUtil.exceptionToString(e));
+		
+		} catch (Exception e) {
+			log.debug(TokenStore.ERROR_CODE_BACKENDERROR, e);
+			tokenGetResponse.setResultcode(TokenStore.ERROR_CODE_BACKENDERROR);
+			tokenGetResponse.setMessage(StringUtil.exceptionToString(e));
+		}
+		return tokenGetResponse;
+		
+	}
 
 	@Override
 	public @ResponseBody String genTicket(String account, String worknumber, String appid,
 			String secret) throws Exception {
 		Ticket ticket =  TokenHelper.getTokenService().genTicket( account, worknumber, appid, secret);
+		if(ticket != null)
+		{
+			String ticket_ =  ticket.getToken();
+			return  ticket_;
+		}
+		else
+		{
+			return null;
+		}
+	}
+	
+	@Override
+	public @ResponseBody String genTempTicket(String account, String worknumber, String appid,
+			String secret) throws Exception {
+		Ticket ticket =  TokenHelper.getTokenService().genTempTicket( account, worknumber, appid, secret);
 		if(ticket != null)
 		{
 			String ticket_ =  ticket.getToken();

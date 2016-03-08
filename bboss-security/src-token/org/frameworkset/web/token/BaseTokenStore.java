@@ -16,6 +16,10 @@ public abstract class BaseTokenStore implements TokenStore {
 	protected long dualtokenlivetime;
 	protected ECCCoderInf ECCCoder = null;
 	protected ValidateApplication validateApplication;
+	/**
+	 * 是否需要进行ticket和token签名
+	 */
+//	protected boolean sign = false;
 	protected abstract boolean destroyTicket(String token,String appid);
 	protected abstract boolean refreshTicket(String token,String appid);
 	
@@ -91,9 +95,9 @@ public abstract class BaseTokenStore implements TokenStore {
 //		return token.getSigntoken();
 //			
 //	}
-	public MemToken genDualTokenWithDefaultLiveTime(String appid,String ticket,String secret)throws TokenException
+	public MemToken genDualTokenWithDefaultLiveTime(String appid,String ticket,String secret,boolean sign)throws TokenException
 	{
-		return genDualToken(appid,ticket, secret, TokenStore.DEFAULT_DUALTOKENLIVETIME) ;
+		return genDualToken(appid,ticket, secret, TokenStore.DEFAULT_DUALTOKENLIVETIME,  sign) ;
 	}
 	
 	protected Application assertApplication(String appid,String secret) throws TokenException
@@ -112,8 +116,38 @@ public abstract class BaseTokenStore implements TokenStore {
 		}
 			
 	}
+	/**
+	 * 零时ticket一次性有效，在有效期了只能用一次，用过即删除掉，超过指定时间即为无效ticket，要删除
+	 * @param account
+	 * @param worknumber
+	 * @param appid
+	 * @param secret
+	 * @return
+	 * @throws TokenException
+	 */
+	public Ticket genTempTicket(String account, String worknumber,
+			String appid, String secret,boolean sign) throws TokenException
+	{
+		return _genTicket(account, worknumber,
+				appid, secret,true,sign) ;
+	}
 	public Ticket genTicket(String account, String worknumber,
-			String appid, String secret) throws TokenException
+			String appid, String secret,boolean sign) throws TokenException
+	{
+		return _genTicket(account, worknumber,
+				appid, secret,false,sign) ;
+	}
+	protected boolean istempticket(String ticket)
+	{
+		if(ticket.startsWith(TokenStore.type_tempticket))
+		{
+			return true;
+		}
+		else
+			return false;
+	}
+	public Ticket _genTicket(String account, String worknumber,
+			String appid, String secret,boolean istemp,boolean sign) throws TokenException
 	{
 		
 		Application application = this.assertApplication(appid, secret);
@@ -128,20 +162,25 @@ public abstract class BaseTokenStore implements TokenStore {
 		}
 		try {
 			String token = this.randomToken();
+			if(istemp)
+				token = TokenStore.type_tempticket+token;
 			String ticket = account+"|"+worknumber +"|"+createTime;
-			SimpleKeyPair keyPairs = _getKeyPair(appid,secret,false);
-			byte[] data =  null;
-			if(keyPairs.getPubKey() != null)
+			if(sign)
 			{
-				
-				data = ECCCoder.encrypt(ticket.getBytes(), keyPairs.getPubKey());
-				ticket= Hex.toHexString(data);
-				
-			}
-			else
-			{
-				data = ECCCoder.encrypt(ticket.getBytes(), keyPairs.getPublicKey());
-				ticket= Hex.toHexString(data);
+				SimpleKeyPair keyPairs = _getKeyPair(appid,secret,false);
+				byte[] data =  null;
+				if(keyPairs.getPubKey() != null)
+				{
+					
+					data = ECCCoder.encrypt(ticket.getBytes(), keyPairs.getPubKey());
+					ticket= Hex.toHexString(data);
+					
+				}
+				else
+				{
+					data = ECCCoder.encrypt(ticket.getBytes(), keyPairs.getPublicKey());
+					ticket= Hex.toHexString(data);
+				}
 			}
 			Ticket _ticket = new Ticket();
 			_ticket.setAppid(appid);
@@ -307,7 +346,7 @@ public abstract class BaseTokenStore implements TokenStore {
 	 * 0 account 1 worknumber
 	 */
 	protected String[] decodeTicket(String ticket,
-			String appid, String secret) throws TokenException
+			String appid, String secret,boolean sign) throws TokenException
 	{
 		
 		try {
@@ -317,22 +356,29 @@ public abstract class BaseTokenStore implements TokenStore {
 				throw new TokenException(TokenStore.ERROR_CODE_TICKETNOTEXIST);
 			}
 			String accountinfo = null;
-			SimpleKeyPair keyPairs = _getKeyPair(appid,secret,false);
-			byte[] data =  null;
-			
-			if(keyPairs.getPriKey() != null)
+			if(sign)
 			{
+				SimpleKeyPair keyPairs = _getKeyPair(appid,secret,false);
+				byte[] data =  null;
 				
-				data = ECCCoder.decrypt(Hex.decode(_ticket.getTicket()), keyPairs.getPriKey());
-				accountinfo = new String(data);
-				
-//			return signtoken;
+				if(keyPairs.getPriKey() != null)
+				{
+					
+					data = ECCCoder.decrypt(Hex.decode(_ticket.getTicket()), keyPairs.getPriKey());
+					accountinfo = new String(data);
+					
+	//			return signtoken;
+				}
+				else
+				{
+					data = ECCCoder.decrypt(Hex.decode(_ticket.getTicket()), keyPairs.getPrivateKey());
+					accountinfo = new String(data);
+	//			return signtoken;
+				}
 			}
 			else
 			{
-				data = ECCCoder.decrypt(Hex.decode(_ticket.getTicket()), keyPairs.getPrivateKey());
-				accountinfo = new String(data);
-//			return signtoken;
+				accountinfo = _ticket.getTicket();
 			}
 			String infs[] = accountinfo.split("\\|");
 			long createTime = Long.parseLong(infs[2]);
@@ -350,7 +396,7 @@ public abstract class BaseTokenStore implements TokenStore {
 		
 	}
 	
-	protected void signToken(MemToken token,String tokentype,String accountinfo[],String ticket) throws TokenException
+	protected void signToken(MemToken token,String tokentype,String accountinfo[],String ticket,boolean sign) throws TokenException
 	{
 		try {
 			if(tokentype == null || tokentype.equals(TokenStore.type_temptoken))
@@ -358,46 +404,62 @@ public abstract class BaseTokenStore implements TokenStore {
 				token.setSigntoken( token.getToken());
 			}
 			else if(tokentype.equals(TokenStore.type_authtemptoken))
-			{			
-				SimpleKeyPair keyPairs = _getKeyPair(token.getAppid(),token.getSecret(),false);
+			{	
 				String input = accountinfo[0] + "|" + accountinfo[1] + "|" + token.getToken();
-				byte[] data =  null;
-				if(keyPairs.getPubKey() != null)
+				if(sign)
 				{
+					SimpleKeyPair keyPairs = _getKeyPair(token.getAppid(),token.getSecret(),false);
 					
-					data = ECCCoder.encrypt(input.getBytes(), keyPairs.getPubKey());
-					String signtoken = Hex.toHexString(data);
-					token.setSigntoken(signtoken);
-//					return signtoken;
+					byte[] data =  null;
+					if(keyPairs.getPubKey() != null)
+					{
+						
+						data = ECCCoder.encrypt(input.getBytes(), keyPairs.getPubKey());
+						String signtoken = Hex.toHexString(data);
+						token.setSigntoken(signtoken);
+	//					return signtoken;
+					}
+					else
+					{
+						data = ECCCoder.encrypt(input.getBytes(), keyPairs.getPublicKey());
+						String signtoken = Hex.toHexString(data);
+						token.setSigntoken(signtoken);
+	//					return signtoken;
+					}
 				}
 				else
 				{
-					data = ECCCoder.encrypt(input.getBytes(), keyPairs.getPublicKey());
-					String signtoken = Hex.toHexString(data);
-					token.setSigntoken(signtoken);
-//					return signtoken;
+					token.setSigntoken(input);
 				}
 				
 				
 			}
 			else if(tokentype.equals(TokenStore.type_dualtoken))
-			{			
-				SimpleKeyPair keyPairs = _getKeyPair(token.getAppid(),token.getSecret(),false);
+			{	
 				String input = accountinfo[0] + "|" + accountinfo[1] +  "|" + token.getToken();
-				byte[] data =  null;
-				if(keyPairs.getPubKey() != null)
-				{				
-					data = ECCCoder.encrypt(input.getBytes(), keyPairs.getPubKey());
-					String signtoken = Hex.toHexString(data);
-					token.setSigntoken(signtoken);
-//					return signtoken;
+				if(sign)
+				{
+					SimpleKeyPair keyPairs = _getKeyPair(token.getAppid(),token.getSecret(),false);
+					
+					byte[] data =  null;
+					if(keyPairs.getPubKey() != null)
+					{				
+						data = ECCCoder.encrypt(input.getBytes(), keyPairs.getPubKey());
+						String signtoken = Hex.toHexString(data);
+						token.setSigntoken(signtoken);
+	//					return signtoken;
+					}
+					else
+					{
+						data = ECCCoder.encrypt(input.getBytes(), keyPairs.getPublicKey());
+						String signtoken = Hex.toHexString(data);
+						token.setSigntoken(signtoken);
+	//					return signtoken;
+					}
 				}
 				else
 				{
-					data = ECCCoder.encrypt(input.getBytes(), keyPairs.getPublicKey());
-					String signtoken = Hex.toHexString(data);
-					token.setSigntoken(signtoken);
-//					return signtoken;
+					token.setSigntoken(input);
 				}
 				
 				
@@ -438,7 +500,7 @@ public abstract class BaseTokenStore implements TokenStore {
 			this.dynamictoken = dynamictoken;
 		}
 	}
-	protected TokenInfo decodeToken(String appid,String secret,String token) throws TokenException
+	protected TokenInfo decodeToken(String appid,String secret,String token,boolean sign) throws TokenException
 	{
 		TokenResult decodetokenResult = new TokenResult();
 		TokenInfo tokenInfo = new TokenInfo();
@@ -485,10 +547,16 @@ public abstract class BaseTokenStore implements TokenStore {
 					tokenInfo.setTokenInfo(memtoken);
 					decodetokenResult.setTokentype(tokentype);
 					signtoken = memtoken.getSigntoken();
-					SimpleKeyPair keyPairs = _getKeyPair(appid,secret,false);
+					String mw = signtoken;
 					
-					decodetokenResult.setAppid(appid);
-					String mw = new String(ECCCoder.decrypt(Hex.decode(signtoken), keyPairs.getPrivateKey()));
+					if(sign)
+					{
+						SimpleKeyPair keyPairs = _getKeyPair(appid,secret,false);
+						
+						decodetokenResult.setAppid(appid);
+						mw = new String(ECCCoder.decrypt(Hex.decode(signtoken), keyPairs.getPrivateKey()));
+					}
+//					String mw = new String(ECCCoder.decrypt(Hex.decode(signtoken), keyPairs.getPrivateKey()));
 					String[] t = mw.split("\\|");
 					decodetokenResult.setToken(t[2]);
 					decodetokenResult.setWorknumber(t[1]);
@@ -518,10 +586,14 @@ public abstract class BaseTokenStore implements TokenStore {
 					tokenInfo.setTokenInfo(memtoken);
 					decodetokenResult.setTokentype(tokentype);
 					signtoken = memtoken.getSigntoken();
-					SimpleKeyPair keyPairs = _getKeyPair(appid,secret,false);
-					
-					decodetokenResult.setAppid(appid);
-					String mw = new String(ECCCoder.decrypt(Hex.decode(signtoken), keyPairs.getPrivateKey()));
+					String mw = signtoken;
+					if(sign)
+					{
+						SimpleKeyPair keyPairs = _getKeyPair(appid,secret,false);
+						
+						decodetokenResult.setAppid(appid);
+						mw = new String(ECCCoder.decrypt(Hex.decode(signtoken), keyPairs.getPrivateKey()));
+					}
 					String[] t = mw.split("\\|");
 					decodetokenResult.setToken(t[2]);
 					decodetokenResult.setWorknumber(t[1]);
@@ -575,27 +647,27 @@ public abstract class BaseTokenStore implements TokenStore {
 		this.tempTokendualtime = tempTokendualtime;
 		
 	}
-	protected abstract MemToken _genTempToken() throws TokenException;
-	public MemToken genTempToken() throws TokenException
+	protected abstract MemToken _genTempToken(boolean sign) throws TokenException;
+	public MemToken genTempToken(boolean sign) throws TokenException
 	{
-		MemToken tt = _genTempToken();
+		MemToken tt = _genTempToken( sign);
 		tt.setToken(TokenStore.type_temptoken+"_" +tt.getToken());
 		return tt;
 	}
-	public MemToken genAuthTempToken(String appid, String ticket,String secret)  throws TokenException 
+	public MemToken genAuthTempToken(String appid, String ticket,String secret,boolean sign)  throws TokenException 
 	{
 		this.assertApplication(appid, secret);
 		
-		MemToken tt = _genAuthTempToken(appid, ticket,secret);
+		MemToken tt = _genAuthTempToken(appid, ticket,secret,  sign);
 		tt.setToken(TokenStore.type_authtemptoken+"_" +tt.getToken());
 		return tt;
 	}
 	
-	protected abstract MemToken _genAuthTempToken(String appid, String ticket,String secret)  throws TokenException;
+	protected abstract MemToken _genAuthTempToken(String appid, String ticket,String secret,boolean sign)  throws TokenException;
 	
 	
 	
-	public TokenResult checkToken(String appid,String secret,String token) throws TokenException
+	public TokenResult checkToken(String appid,String secret,String token,boolean sign) throws TokenException
 	{
 		
 		if(token == null)
@@ -605,7 +677,7 @@ public abstract class BaseTokenStore implements TokenStore {
 			return result; 
 		}
 		
-		TokenInfo tokeninfo = this.decodeToken(appid,secret,token);
+		TokenInfo tokeninfo = this.decodeToken(appid,secret,token,  sign);
 		Integer result = null;
 		
 		if(tokeninfo.getDecoderesult().getTokentype().equals(TokenStore.type_temptoken))//无需认证的临时令牌
@@ -634,7 +706,7 @@ public abstract class BaseTokenStore implements TokenStore {
 			
 	}
 	
-	public TokenResult checkTicket(String appid,String secret,String ticket) throws TokenException
+	public TokenResult checkTicket(String appid,String secret,String ticket,boolean sign) throws TokenException
 	{
 		assertApplication( appid, secret);
 		if(ticket == null)
@@ -643,7 +715,7 @@ public abstract class BaseTokenStore implements TokenStore {
 			result.setResult(TokenStore.token_request_validateresult_nodtoken);
 			return result; 
 		}
-		String[] accountinfos = this.decodeTicket(ticket, appid, secret);
+		String[] accountinfos = this.decodeTicket(ticket, appid, secret,  sign);
 		TokenResult result = new TokenResult();
 		result.setAccount(accountinfos[0]);
 		result.setWorknumber(accountinfos[1]);
@@ -698,23 +770,24 @@ public abstract class BaseTokenStore implements TokenStore {
 	
 	@Override
 	public MemToken genDualToken(String appid, String ticket, String secret,
-			long livetime) throws TokenException {
+			long livetime,boolean sign) throws TokenException {
 		assertApplication( appid, secret);
 		MemToken tt = _genDualToken( appid,  ticket,  secret,
-				 livetime);
+				 livetime,  sign);
 		tt.setToken(TokenStore.type_dualtoken + "_"+tt.getToken());
 		return tt;
 		
 	}
 	
 	protected abstract MemToken _genDualToken(String appid, String ticket, String secret,
-			long livetime) throws TokenException ;
+			long livetime,boolean sign) throws TokenException ;
 	public ValidateApplication getValidateApplication() {
 		return validateApplication;
 	}
 	public void setValidateApplication(ValidateApplication validateApplication) {
 		this.validateApplication = validateApplication;
 	}
+	 
 	
 	
 
