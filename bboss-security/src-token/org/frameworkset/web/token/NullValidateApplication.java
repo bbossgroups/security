@@ -40,6 +40,7 @@ public class NullValidateApplication implements ValidateApplication {
 		Application app = new Application();
 		app.setAppid(appid);
 		app.setSecret(secret);
+		app.setSign(false);
 		app.setTicketlivetime(-2);
 		result.setApplication(app);
 		result.setResult(true);

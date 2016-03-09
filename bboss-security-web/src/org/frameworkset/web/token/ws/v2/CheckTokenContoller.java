@@ -44,7 +44,7 @@ public class CheckTokenContoller implements CheckTokenService{
 	{
 		TokenCheckResponse tokenCheckResponse = new TokenCheckResponse();
 		try {
-			TokenResult result = TokenHelper.getTokenService().checkToken(appid,secret,token,false);
+			TokenResult result = TokenHelper.getTokenService().checkToken(appid,secret,token);
 			if(result.getResult() == null)
 				tokenCheckResponse.setResultcode(TokenStore.RESULT_NOTENABLETOKEN );
 			else
@@ -72,7 +72,7 @@ public class CheckTokenContoller implements CheckTokenService{
 	{
 		TokenCheckResponse tokenCheckResponse = new TokenCheckResponse();
 		try {
-			TokenResult result = TokenHelper.getTokenService().checkTicket(appid,secret,ticket,false);
+			TokenResult result = TokenHelper.getTokenService().checkTicket(appid,secret,ticket);
 			if(result.getResult() == null)
 				tokenCheckResponse.setResultcode(TokenStore.RESULT_NOTENABLETOKEN );
 			else
@@ -98,7 +98,7 @@ public class CheckTokenContoller implements CheckTokenService{
 	{
 		TokenCheckResponse tokenCheckResponse = new TokenCheckResponse();
 			try {
-				tokenCheckResponse.setValidateResult(TokenService.assertDToken(TokenHelper.getTokenService().checkTempToken(token,false)));
+				tokenCheckResponse.setValidateResult(TokenService.assertDToken(TokenHelper.getTokenService().checkTempToken(token)));
 				tokenCheckResponse.setResultcode(TokenStore.RESULT_OK);
 			} catch (TokenException e) {
 				tokenCheckResponse.setResultcode(e.getMessage());

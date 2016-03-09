@@ -11,6 +11,7 @@ public class Application {
 	private long ticketlivetime;
 	private long dualtokenlivetime;
 	private long temptokenlivetime;
+	private Boolean sign = true;
 	public String getAppid() {
 		return appid;
 	}
@@ -40,6 +41,12 @@ public class Application {
 	}
 	public void setTemptokenlivetime(long temptokenlivetime) {
 		this.temptokenlivetime = temptokenlivetime;
+	}
+	public Boolean isSign() {
+		return sign;
+	}
+	public void setSign(Boolean sign) {
+		this.sign = sign;
 	}
 
 }

@@ -95,9 +95,9 @@ public abstract class BaseTokenStore implements TokenStore {
 //		return token.getSigntoken();
 //			
 //	}
-	public MemToken genDualTokenWithDefaultLiveTime(String appid,String ticket,String secret,boolean sign)throws TokenException
+	public MemToken genDualTokenWithDefaultLiveTime(String appid,String ticket,String secret)throws TokenException
 	{
-		return genDualToken(appid,ticket, secret, TokenStore.DEFAULT_DUALTOKENLIVETIME,  sign) ;
+		return genDualToken(appid,ticket, secret, TokenStore.DEFAULT_DUALTOKENLIVETIME) ;
 	}
 	
 	protected Application assertApplication(String appid,String secret) throws TokenException
@@ -126,16 +126,16 @@ public abstract class BaseTokenStore implements TokenStore {
 	 * @throws TokenException
 	 */
 	public Ticket genTempTicket(String account, String worknumber,
-			String appid, String secret,boolean sign) throws TokenException
+			String appid, String secret) throws TokenException
 	{
 		return _genTicket(account, worknumber,
-				appid, secret,true,sign) ;
+				appid, secret,true) ;
 	}
 	public Ticket genTicket(String account, String worknumber,
-			String appid, String secret,boolean sign) throws TokenException
+			String appid, String secret) throws TokenException
 	{
 		return _genTicket(account, worknumber,
-				appid, secret,false,sign) ;
+				appid, secret,false) ;
 	}
 	protected boolean istempticket(String ticket)
 	{
@@ -147,7 +147,7 @@ public abstract class BaseTokenStore implements TokenStore {
 			return false;
 	}
 	public Ticket _genTicket(String account, String worknumber,
-			String appid, String secret,boolean istemp,boolean sign) throws TokenException
+			String appid, String secret,boolean istemp) throws TokenException
 	{
 		
 		Application application = this.assertApplication(appid, secret);
@@ -165,7 +165,7 @@ public abstract class BaseTokenStore implements TokenStore {
 			if(istemp)
 				token = TokenStore.type_tempticket+token;
 			String ticket = account+"|"+worknumber +"|"+createTime;
-			if(sign)
+			if(application.isSign())
 			{
 				SimpleKeyPair keyPairs = _getKeyPair(appid,secret,false);
 				byte[] data =  null;
@@ -500,7 +500,7 @@ public abstract class BaseTokenStore implements TokenStore {
 			this.dynamictoken = dynamictoken;
 		}
 	}
-	protected TokenInfo decodeToken(String appid,String secret,String token,boolean sign) throws TokenException
+	protected TokenInfo decodeToken(String appid,String secret,String token) throws TokenException
 	{
 		TokenResult decodetokenResult = new TokenResult();
 		TokenInfo tokenInfo = new TokenInfo();
@@ -532,7 +532,7 @@ public abstract class BaseTokenStore implements TokenStore {
 			else if(tokentype.equals(TokenStore.type_authtemptoken))//需要认证的临时令牌
 			{
 				try {
-					assertApplication( appid, secret);
+					Application appliction = assertApplication( appid, secret);
 					tokenInfo.setDynamictoken(token.substring(3));
 					
 					MemToken memtoken = this.getAuthTempMemToken(tokenInfo.getDynamictoken(), appid);
@@ -549,7 +549,7 @@ public abstract class BaseTokenStore implements TokenStore {
 					signtoken = memtoken.getSigntoken();
 					String mw = signtoken;
 					
-					if(sign)
+					if(appliction.isSign())
 					{
 						SimpleKeyPair keyPairs = _getKeyPair(appid,secret,false);
 						
@@ -572,7 +572,7 @@ public abstract class BaseTokenStore implements TokenStore {
 			else if(tokentype.equals(TokenStore.type_dualtoken))//有效期令牌校验
 			{
 				try {
-					assertApplication( appid, secret);
+					Application appliction = assertApplication( appid, secret);
 					tokenInfo.setDynamictoken(token.substring(3));
 					long lastVistTime = System.currentTimeMillis(); 
 					MemToken memtoken = this.getDualMemToken(tokenInfo.getDynamictoken(), appid, lastVistTime);
@@ -587,7 +587,7 @@ public abstract class BaseTokenStore implements TokenStore {
 					decodetokenResult.setTokentype(tokentype);
 					signtoken = memtoken.getSigntoken();
 					String mw = signtoken;
-					if(sign)
+					if(appliction.isSign())
 					{
 						SimpleKeyPair keyPairs = _getKeyPair(appid,secret,false);
 						
@@ -647,18 +647,18 @@ public abstract class BaseTokenStore implements TokenStore {
 		this.tempTokendualtime = tempTokendualtime;
 		
 	}
-	protected abstract MemToken _genTempToken(boolean sign) throws TokenException;
-	public MemToken genTempToken(boolean sign) throws TokenException
+	protected abstract MemToken _genTempToken( ) throws TokenException;
+	public MemToken genTempToken( ) throws TokenException
 	{
-		MemToken tt = _genTempToken( sign);
+		MemToken tt = _genTempToken(  );
 		tt.setToken(TokenStore.type_temptoken+"_" +tt.getToken());
 		return tt;
 	}
-	public MemToken genAuthTempToken(String appid, String ticket,String secret,boolean sign)  throws TokenException 
+	public MemToken genAuthTempToken(String appid, String ticket,String secret)  throws TokenException 
 	{
-		this.assertApplication(appid, secret);
+		Application appliction = this.assertApplication(appid, secret);
 		
-		MemToken tt = _genAuthTempToken(appid, ticket,secret,  sign);
+		MemToken tt = _genAuthTempToken(appid, ticket,secret,  appliction.isSign());
 		tt.setToken(TokenStore.type_authtemptoken+"_" +tt.getToken());
 		return tt;
 	}
@@ -667,7 +667,7 @@ public abstract class BaseTokenStore implements TokenStore {
 	
 	
 	
-	public TokenResult checkToken(String appid,String secret,String token,boolean sign) throws TokenException
+	public TokenResult checkToken(String appid,String secret,String token) throws TokenException
 	{
 		
 		if(token == null)
@@ -677,7 +677,7 @@ public abstract class BaseTokenStore implements TokenStore {
 			return result; 
 		}
 		
-		TokenInfo tokeninfo = this.decodeToken(appid,secret,token,  sign);
+		TokenInfo tokeninfo = this.decodeToken(appid,secret,token);
 		Integer result = null;
 		
 		if(tokeninfo.getDecoderesult().getTokentype().equals(TokenStore.type_temptoken))//无需认证的临时令牌
@@ -706,16 +706,16 @@ public abstract class BaseTokenStore implements TokenStore {
 			
 	}
 	
-	public TokenResult checkTicket(String appid,String secret,String ticket,boolean sign) throws TokenException
+	public TokenResult checkTicket(String appid,String secret,String ticket) throws TokenException
 	{
-		assertApplication( appid, secret);
+		Application appliction = assertApplication( appid, secret);
 		if(ticket == null)
 		{
 			TokenResult result = new TokenResult();
 			result.setResult(TokenStore.token_request_validateresult_nodtoken);
 			return result; 
 		}
-		String[] accountinfos = this.decodeTicket(ticket, appid, secret,  sign);
+		String[] accountinfos = this.decodeTicket(ticket, appid, secret,appliction.isSign());
 		TokenResult result = new TokenResult();
 		result.setAccount(accountinfos[0]);
 		result.setWorknumber(accountinfos[1]);
@@ -770,10 +770,10 @@ public abstract class BaseTokenStore implements TokenStore {
 	
 	@Override
 	public MemToken genDualToken(String appid, String ticket, String secret,
-			long livetime,boolean sign) throws TokenException {
-		assertApplication( appid, secret);
+			long livetime) throws TokenException {
+		Application application = assertApplication( appid, secret);
 		MemToken tt = _genDualToken( appid,  ticket,  secret,
-				 livetime,  sign);
+				 livetime,  application.isSign());
 		tt.setToken(TokenStore.type_dualtoken + "_"+tt.getToken());
 		return tt;
 		

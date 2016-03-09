@@ -385,11 +385,11 @@ public class MongodbTokenStore extends BaseTokenStore{
 	}
 
 	@Override
-	public MemToken _genTempToken( boolean sign) throws TokenException {
+	public MemToken _genTempToken( ) throws TokenException {
 		String token = this.randomToken();
 		MemToken token_m = new MemToken(token,System.currentTimeMillis());
 		MongoDB.insert(temptokens,new BasicDBObject("token",token_m.getToken()).append("createTime", token_m.getCreateTime()).append("livetime", this.tempTokendualtime).append("validate", true));
-		this.signToken(token_m, type_temptoken, null,null,  sign);
+		this.signToken(token_m, type_temptoken, null,null,false);
 		return token_m;
 		
 	}

@@ -793,11 +793,7 @@ public abstract class AuthenticateFilter extends TokenFilter{
 	}
 
 
-	@Override
-	protected boolean issign() {
-		// TODO Auto-generated method stub
-		return this.sign;
-	} 
+	
 	
 	/*************Filter接口实现结束********************/
 }

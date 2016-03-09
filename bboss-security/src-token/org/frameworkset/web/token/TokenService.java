@@ -257,14 +257,14 @@ public class TokenService implements TokenServiceInf,InitializingBean {
 	 * @return
 	 * @throws TokenException 
 	 */
-	public String appendDTokenToURL(HttpServletRequest request,String url,boolean sign) throws TokenException
+	public String appendDTokenToURL(HttpServletRequest request,String url) throws TokenException
 	{
 		if(url == null)
 			return url;
 		if(url.indexOf(TokenStore.temptoken_param_name_word) > 0)
 			return url;
 		StringBuilder ret = new StringBuilder();
-		String token = this.buildDToken(request,  sign);
+		String token = this.buildDToken(request);
 		int idx = url.indexOf("?");
 		if(idx > 0)
 		{
@@ -312,7 +312,7 @@ public class TokenService implements TokenServiceInf,InitializingBean {
 	 * @see org.frameworkset.web.token.TokenServiceInf#genToken(javax.servlet.ServletRequest, java.lang.String, boolean)
 	 */
 	@Override
-	public String genToken(ServletRequest request,String fid,boolean cache,boolean sign) throws TokenException
+	public String genToken(ServletRequest request,String fid,boolean cache) throws TokenException
 	{
 		String tmp = null;
 		String k = null;
@@ -326,7 +326,7 @@ public class TokenService implements TokenServiceInf,InitializingBean {
 		
 		
 		{
-			tmp = genMemToken( cache,  sign);
+			tmp = genMemToken( cache);
 		}
 		if(fid != null)
 		{
@@ -336,7 +336,7 @@ public class TokenService implements TokenServiceInf,InitializingBean {
 	}
 	
 	
-	private String genMemToken(boolean cache,boolean sign) throws TokenException
+	private String genMemToken(boolean cache) throws TokenException
 	{
 		
 		
@@ -346,7 +346,7 @@ public class TokenService implements TokenServiceInf,InitializingBean {
 		if(cache)
 		{
 
-			return this.tokenStore.genTempToken( sign).getToken();
+			return this.tokenStore.genTempToken( ).getToken();
 		}
 		else
 		{
@@ -414,78 +414,78 @@ public class TokenService implements TokenServiceInf,InitializingBean {
 	 * @see org.frameworkset.web.token.TokenServiceInf#buildDToken(java.lang.String, javax.servlet.http.HttpServletRequest)
 	 */
 	@Override
-	public String buildDToken(String elementType,HttpServletRequest request,boolean sign) throws TokenException
+	public String buildDToken(String elementType,HttpServletRequest request) throws TokenException
 	{
-		return buildDToken(elementType,"'",request,null,  sign);
+		return buildDToken(elementType,"'",request,null);
 	}
 	/* (non-Javadoc)
 	 * @see org.frameworkset.web.token.TokenServiceInf#buildDToken(java.lang.String, java.lang.String, javax.servlet.http.HttpServletRequest, java.lang.String)
 	 */
 	@Override
-	public String buildDToken(String elementType,String jsonsplit,HttpServletRequest request,String fid,boolean sign) throws TokenException
+	public String buildDToken(String elementType,String jsonsplit,HttpServletRequest request,String fid) throws TokenException
 	{
-		return buildDToken(elementType,jsonsplit,request,fid,true,  sign);
+		return buildDToken(elementType,jsonsplit,request,fid,true);
 	}
 	/* (non-Javadoc)
 	 * @see org.frameworkset.web.token.TokenServiceInf#buildHiddenDToken(javax.servlet.http.HttpServletRequest)
 	 */
 	@Override
-	public String buildHiddenDToken(HttpServletRequest request,boolean sign) throws TokenException
+	public String buildHiddenDToken(HttpServletRequest request) throws TokenException
 	{
-		return buildDToken("input",null,request,null,true, sign);
+		return buildDToken("input",null,request,null,true);
 	}
 	/* (non-Javadoc)
 	 * @see org.frameworkset.web.token.TokenServiceInf#buildJsonDToken(java.lang.String, javax.servlet.http.HttpServletRequest)
 	 */
 	@Override
-	public String buildJsonDToken(String jsonsplit,HttpServletRequest request,boolean sign) throws TokenException
+	public String buildJsonDToken(String jsonsplit,HttpServletRequest request) throws TokenException
 	{
-		return buildDToken("json","'",request,null,true,  sign);
+		return buildDToken("json","'",request,null,true);
 	}
 	/* (non-Javadoc)
 	 * @see org.frameworkset.web.token.TokenServiceInf#buildParameterDToken(javax.servlet.http.HttpServletRequest)
 	 */
 	@Override
-	public String buildParameterDToken(HttpServletRequest request,boolean sign) throws TokenException
+	public String buildParameterDToken(HttpServletRequest request) throws TokenException
 	{
-		return buildDToken("param",null,request,null,true,  sign);
+		return buildDToken("param",null,request,null,true);
 	}
 	/* (non-Javadoc)
 	 * @see org.frameworkset.web.token.TokenServiceInf#buildDToken(javax.servlet.http.HttpServletRequest)
 	 */
 	@Override
-	public String buildDToken(HttpServletRequest request,boolean sign) throws TokenException
+	public String buildDToken(HttpServletRequest request) throws TokenException
 	{
-		return buildDToken("token",null,request,null,true,  sign);
+		return buildDToken("token",null,request,null,true);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.frameworkset.web.token.TokenServiceInf#buildDToken(java.lang.String, java.lang.String, javax.servlet.http.HttpServletRequest, java.lang.String, boolean)
 	 */
 	@Override
-	public String buildDToken(String elementType,String jsonsplit,HttpServletRequest request,String fid,boolean cache,boolean sign) throws TokenException
+	public String buildDToken(String elementType,String jsonsplit,HttpServletRequest request,String fid,boolean cache) throws TokenException
 	{
 //		if(!this.enableTokStringBuilderturn "";
 		StringBuilder buffer = new StringBuilder();
 		if(StringUtil.isEmpty(elementType) || elementType.equals("input"))
 		{
-			buffer.append("<input type=\"hidden\" name=\"").append(TokenStore.temptoken_param_name).append("\" value=\"").append(this.genToken(request,fid, cache,  sign)).append("\">");
+			buffer.append("<input type=\"hidden\" name=\"").append(TokenStore.temptoken_param_name).append("\" value=\"").append(this.genToken(request,fid, cache)).append("\">");
 		}
 		else if(elementType.equals("json"))//json
 		{
-			buffer.append(TokenStore.temptoken_param_name).append(":").append(jsonsplit).append(this.genToken(request,fid,cache,  sign)).append(jsonsplit);
+			buffer.append(TokenStore.temptoken_param_name).append(":").append(jsonsplit).append(this.genToken(request,fid,cache)).append(jsonsplit);
 		}
 		else if(elementType.equals("param"))//参数
 		{
-			buffer.append(TokenStore.temptoken_param_name).append("=").append(this.genToken(request,fid,cache,  sign));
+			buffer.append(TokenStore.temptoken_param_name).append("=").append(this.genToken(request,fid,cache));
 		}
 		else if(elementType.equals("token"))//只输出token
 		{
-			buffer.append(this.genToken(request,fid,cache,  sign));
+			buffer.append(this.genToken(request,fid,cache));
 		}
 		else
 		{
-			buffer.append("<input type=\"hidden\" name=\"").append(TokenStore.temptoken_param_name).append("\" value=\"").append(this.genToken(request,fid, cache,  sign)).append("\">");
+			buffer.append("<input type=\"hidden\" name=\"").append(TokenStore.temptoken_param_name).append("\" value=\"").append(this.genToken(request,fid, cache)).append("\">");
 		}
 		return buffer.toString();
 	}
@@ -522,9 +522,9 @@ public class TokenService implements TokenServiceInf,InitializingBean {
 	 * @see org.frameworkset.web.token.TokenServiceInf#genTempToken()
 	 */
 	@Override
-	public String genTempToken(boolean sign) throws Exception
+	public String genTempToken() throws Exception
 	{
-		return tokenStore.genTempToken(  sign).getToken();
+		return tokenStore.genTempToken(  ).getToken();
 	}
 	
 	/* (non-Javadoc)
@@ -535,11 +535,11 @@ public class TokenService implements TokenServiceInf,InitializingBean {
 	 * @see org.frameworkset.web.token.TokenServiceInf#genDualToken(java.lang.String, java.lang.String, java.lang.String, long)
 	 */
 	@Override
-	public String genDualToken(String appid,String secret,String ticket,long dualtime,boolean sign) throws Exception
+	public String genDualToken(String appid,String secret,String ticket,long dualtime) throws Exception
 	{
 		//long start = System.currentTimeMillis();
 //		long dualtime = 30l*24l*60l*60l*1000l;
-		MemToken token = this.tokenStore.genDualToken(appid,ticket,secret,dualtime,  sign);
+		MemToken token = this.tokenStore.genDualToken(appid,ticket,secret,dualtime);
 		return token.getToken();
 	}
 
@@ -547,11 +547,11 @@ public class TokenService implements TokenServiceInf,InitializingBean {
 	 * @see org.frameworkset.web.token.TokenServiceInf#genDualTokenWithDefaultLiveTime(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public String genDualTokenWithDefaultLiveTime(String appid,String secret,String ticket,boolean sign) throws Exception
+	public String genDualTokenWithDefaultLiveTime(String appid,String secret,String ticket) throws Exception
 	{
 		//long start = System.currentTimeMillis();
 //		long dualtime = 30l*24l*60l*60l*1000l;
-		MemToken token = this.tokenStore.genDualTokenWithDefaultLiveTime(appid,ticket,secret,  sign);
+		MemToken token = this.tokenStore.genDualTokenWithDefaultLiveTime(appid,ticket,secret);
 		return token.getToken();
 	}
 	
@@ -565,9 +565,9 @@ public class TokenService implements TokenServiceInf,InitializingBean {
 	 * @see org.frameworkset.web.token.TokenServiceInf#genAuthTempToken(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public String genAuthTempToken(String appid,String secret,String ticket,boolean sign) throws Exception
+	public String genAuthTempToken(String appid,String secret,String ticket) throws Exception
 	{
-		MemToken token = tokenStore.genAuthTempToken(appid,ticket,secret,  sign);
+		MemToken token = tokenStore.genAuthTempToken(appid,ticket,secret);
 		return token.getToken();
 //		Assert.assertTrue(TokenStore.temptoken_request_validateresult_ok == mongodbTokenStore.checkToken("sim","xxxxxxxxxxxxxxxxxxxxxx",token.getSigntoken()).getResult());
 	}
@@ -593,7 +593,7 @@ public class TokenService implements TokenServiceInf,InitializingBean {
 		SimpleKeyPair pairs = tokenStore.getKeyPair(appid,secret);
 		return pairs;
 	}
-	public TokenResult checkTicket(String appid,String secret,String ticket,boolean sign) throws TokenException
+	public TokenResult checkTicket(String appid,String secret,String ticket) throws TokenException
 	{
 		if(ticket == null)
 		{
@@ -602,13 +602,13 @@ public class TokenService implements TokenServiceInf,InitializingBean {
 			
 			return result;
 		}
-		return this.tokenStore.checkTicket(appid, secret, ticket,  sign);
+		return this.tokenStore.checkTicket(appid, secret, ticket);
 	}
 	/* (non-Javadoc)
 	 * @see org.frameworkset.web.token.TokenServiceInf#checkToken(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	
-	public TokenResult checkToken(String appid,String secret,String token,boolean sign) throws TokenException
+	public TokenResult checkToken(String appid,String secret,String token) throws TokenException
 	{
 		if(token == null)
 		{
@@ -617,21 +617,21 @@ public class TokenService implements TokenServiceInf,InitializingBean {
 			
 			return result;
 		}
-		return this.tokenStore.checkToken(appid, secret, token,  sign);
+		return this.tokenStore.checkToken(appid, secret, token);
 	}
 	
 	/* (non-Javadoc)
 	 * @see org.frameworkset.web.token.TokenServiceInf#checkTempToken(java.lang.String)
 	 */
 	
-	public int checkTempToken(String token,boolean sign) throws TokenException
+	public int checkTempToken(String token) throws TokenException
 	{
 		if(token == null)
 		{
 			
 			return TokenStore.token_request_validateresult_nodtoken;
 		}
-		return this.tokenStore.checkToken(null,null,token,  sign).getResult();
+		return this.tokenStore.checkToken(null,null,token).getResult();
 	}
 	/* (non-Javadoc)
 	 * @see org.frameworkset.web.token.TokenServiceInf#genTicket(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
@@ -641,15 +641,15 @@ public class TokenService implements TokenServiceInf,InitializingBean {
 	 * @see org.frameworkset.web.token.TokenServiceInf#genTicket(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public Ticket genTicket(String account,String worknumber,String appid,String secret,boolean sign) throws TokenException
+	public Ticket genTicket(String account,String worknumber,String appid,String secret) throws TokenException
 	{
-		return this.tokenStore.genTicket( account, worknumber, appid, secret,  sign);
+		return this.tokenStore.genTicket( account, worknumber, appid, secret);
 	}
 
 	@Override
-	public Ticket genTempTicket(String account,String worknumber,String appid,String secret,boolean sign) throws TokenException
+	public Ticket genTempTicket(String account,String worknumber,String appid,String secret) throws TokenException
 	{
-		return this.tokenStore.genTempTicket( account, worknumber, appid, secret,  sign);
+		return this.tokenStore.genTempTicket( account, worknumber, appid, secret);
 	}
 
 	/* (non-Javadoc)

@@ -10,19 +10,19 @@ public class DummyTokenService implements TokenServiceInf {
 	}
 
 	@Override
-	public String genToken(ServletRequest request, String fid, boolean cache,boolean sign) throws TokenException {
+	public String genToken(ServletRequest request, String fid, boolean cache) throws TokenException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String buildDToken(String elementType, HttpServletRequest request,boolean sign) throws TokenException {
+	public String buildDToken(String elementType, HttpServletRequest request) throws TokenException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String buildDToken(String elementType, String jsonsplit, HttpServletRequest request, String fid,boolean sign)
+	public String buildDToken(String elementType, String jsonsplit, HttpServletRequest request, String fid)
 			throws TokenException {
 		// TODO Auto-generated method stub
 		return null;
@@ -35,80 +35,80 @@ public class DummyTokenService implements TokenServiceInf {
 	}
 
 	@Override
-	public TokenResult checkTicket(String appid, String secret, String ticket,boolean sign) throws TokenException {
+	public TokenResult checkTicket(String appid, String secret, String ticket) throws TokenException {
 		TokenResult result = new TokenResult();
 		return result;
 	}
 
 	@Override
-	public TokenResult checkToken(String appid, String secret, String token,boolean sign) throws TokenException {
+	public TokenResult checkToken(String appid, String secret, String token) throws TokenException {
 		TokenResult result = new TokenResult();
 		return result;
 	}
 
 	@Override
-	public String buildHiddenDToken(HttpServletRequest request,boolean sign) throws TokenException {
+	public String buildHiddenDToken(HttpServletRequest request) throws TokenException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String appendDTokenToURL(HttpServletRequest request, String url,boolean sign) throws TokenException {
+	public String appendDTokenToURL(HttpServletRequest request, String url) throws TokenException {
 		// TODO Auto-generated method stub
 		return url;
 	}
 
 	@Override
-	public String buildJsonDToken(String jsonsplit, HttpServletRequest request,boolean sign) throws TokenException {
+	public String buildJsonDToken(String jsonsplit, HttpServletRequest request) throws TokenException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String buildParameterDToken(HttpServletRequest request,boolean sign) throws TokenException {
+	public String buildParameterDToken(HttpServletRequest request) throws TokenException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String buildDToken(HttpServletRequest request,boolean sign) throws TokenException {
+	public String buildDToken(HttpServletRequest request) throws TokenException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public String buildDToken(String elementType, String jsonsplit, HttpServletRequest request, String fid,
-			boolean cache,boolean sign) throws TokenException {
+			boolean cache) throws TokenException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String genTempToken(boolean sign) throws Exception {
+	public String genTempToken() throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String genDualToken(String appid, String secret, String ticket, long dualtime,boolean sign) throws Exception {
+	public String genDualToken(String appid, String secret, String ticket, long dualtime) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String genDualTokenWithDefaultLiveTime(String appid, String secret, String ticket,boolean sign) throws Exception {
+	public String genDualTokenWithDefaultLiveTime(String appid, String secret, String ticket) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String genAuthTempToken(String appid, String secret, String ticket,boolean sign) throws Exception {
+	public String genAuthTempToken(String appid, String secret, String ticket) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Ticket genTicket(String account, String worknumber, String appid, String secret,boolean sign) throws TokenException {
+	public Ticket genTicket(String account, String worknumber, String appid, String secret) throws TokenException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -144,13 +144,13 @@ public class DummyTokenService implements TokenServiceInf {
 	}
 
 	@Override
-	public int checkTempToken(String token,boolean sign) throws TokenException {
+	public int checkTempToken(String token) throws TokenException {
 		// TODO Auto-generated method stub
 		return TokenStore.token_request_validateresult_notenabletoken;
 	}
 
 	@Override
-	public Ticket genTempTicket(String account, String worknumber, String appid, String secret,boolean sign) throws TokenException {
+	public Ticket genTempTicket(String account, String worknumber, String appid, String secret) throws TokenException {
 		// TODO Auto-generated method stub
 		return null;
 	}

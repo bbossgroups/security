@@ -159,7 +159,7 @@ public class MemTokenStore extends BaseTokenStore{
 	
 
 	@Override
-	public MemToken _genTempToken(boolean sign) throws TokenException {
+	public MemToken _genTempToken() throws TokenException {
 		String token = this.randomToken();
 		MemToken token_m = new MemToken(token,System.currentTimeMillis());
 		synchronized(checkLock)
@@ -168,7 +168,7 @@ public class MemTokenStore extends BaseTokenStore{
 			temptokens.put(token, token_m);
 			
 		}
-		this.signToken(token_m, type_temptoken, null,null,  sign);
+		this.signToken(token_m, type_temptoken, null,null,  false);
 		return token_m;
 		
 	}

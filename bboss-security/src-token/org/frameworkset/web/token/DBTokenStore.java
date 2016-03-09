@@ -291,11 +291,11 @@ public class DBTokenStore extends BaseTokenStore {
 	}
 
 	@Override
-	public MemToken _genTempToken(boolean sign) throws TokenException {
+	public MemToken _genTempToken() throws TokenException {
 		String token = this.randomToken();
 		MemToken token_m = new MemToken(token,System.currentTimeMillis());
 		try {
-			this.signToken(token_m, type_temptoken, null,null,  sign);
+			this.signToken(token_m, type_temptoken, null,null,  false);
 			this.executor.insert("genTempToken", getID(),token_m.getToken(),token_m.getCreateTime(),this.tempTokendualtime,"1");
 		} catch (Exception e) {
 			throw new TokenException(TokenStore.ERROR_CODE_GENTEMPTOKENFAILED,e);
