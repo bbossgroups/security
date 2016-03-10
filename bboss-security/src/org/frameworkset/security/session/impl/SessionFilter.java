@@ -56,8 +56,16 @@ public class SessionFilter implements Filter{
 		if(dosessionfilter)
 		{
 			SessionHttpServletRequestWrapper mrequestw = new	SessionHttpServletRequestWrapper((HttpServletRequest)request,(HttpServletResponse)response,this.servletContext);
-			mrequestw.touch();
-		    fc.doFilter(mrequestw, response);
+			try
+			{
+				mrequestw.touch();
+				
+			    fc.doFilter(mrequestw, response);
+			}
+			finally
+			{
+				mrequestw.commit();
+			}
 		}
 		else
 		{

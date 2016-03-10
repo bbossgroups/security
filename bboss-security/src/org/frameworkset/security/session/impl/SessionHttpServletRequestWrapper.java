@@ -302,5 +302,10 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 		this.sessionid = null;
 		
 	}
+	
+	public void commit()
+	{
+		
+	}
 
 }
