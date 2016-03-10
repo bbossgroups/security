@@ -57,7 +57,7 @@ public class CheckTokenContoller implements CheckTokenService{
 			
 		} catch (TokenException e) {
 			tokenCheckResponse.setResultcode(e.getMessage());
-			tokenCheckResponse.setMessage(StringUtil.exceptionToString(e));
+			//tokenCheckResponse.setMessage(StringUtil.exceptionToString(e));
 			
 		}
 		 catch (Exception e) {
@@ -85,7 +85,7 @@ public class CheckTokenContoller implements CheckTokenService{
 			
 		} catch (TokenException e) {
 			tokenCheckResponse.setResultcode(e.getMessage());
-			tokenCheckResponse.setMessage(StringUtil.exceptionToString(e));
+			//tokenCheckResponse.setMessage(StringUtil.exceptionToString(e));
 		}
 		 catch (Exception e) {
 			 log.debug(TokenStore.ERROR_CODE_BACKENDERROR, e);
@@ -102,7 +102,7 @@ public class CheckTokenContoller implements CheckTokenService{
 				tokenCheckResponse.setResultcode(TokenStore.RESULT_OK);
 			} catch (TokenException e) {
 				tokenCheckResponse.setResultcode(e.getMessage());
-				tokenCheckResponse.setMessage(StringUtil.exceptionToString(e));
+				//tokenCheckResponse.setMessage(StringUtil.exceptionToString(e));
 			}
 			 catch (Exception e) {
 				 log.debug(TokenStore.ERROR_CODE_BACKENDERROR, e);

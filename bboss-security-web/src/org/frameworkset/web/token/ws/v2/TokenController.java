@@ -68,7 +68,7 @@ public class TokenController implements TokenService {
 			
 			}catch (TokenException e) {
 				tokenGetResponse.setResultcode(e.getMessage());
-				tokenGetResponse.setMessage(StringUtil.exceptionToString(e));
+				//tokenGetResponse.setMessage(StringUtil.exceptionToString(e));
 			
 			} catch (Exception e) {
 				log.debug(TokenStore.ERROR_CODE_BACKENDERROR, e);
@@ -98,7 +98,7 @@ public class TokenController implements TokenService {
 			
 			}catch (TokenException e) {
 				tokenGetResponse.setResultcode(e.getMessage());
-				tokenGetResponse.setMessage(StringUtil.exceptionToString(e));
+				//tokenGetResponse.setMessage(StringUtil.exceptionToString(e));
 			
 			} catch (Exception e) {
 				log.debug(TokenStore.ERROR_CODE_BACKENDERROR, e);
@@ -130,7 +130,7 @@ public class TokenController implements TokenService {
 			
 			}catch (TokenException e) {
 				tokenGetResponse.setResultcode(e.getMessage());
-				tokenGetResponse.setMessage(StringUtil.exceptionToString(e));
+				//tokenGetResponse.setMessage(StringUtil.exceptionToString(e));
 			
 			} catch (Exception e) {
 				log.debug(TokenStore.ERROR_CODE_BACKENDERROR, e);
@@ -168,7 +168,7 @@ public class TokenController implements TokenService {
 			
 			}catch (TokenException e) {
 				tokenGetResponse.setResultcode(e.getMessage());
-				tokenGetResponse.setMessage(StringUtil.exceptionToString(e));
+				//tokenGetResponse.setMessage(StringUtil.exceptionToString(e));
 			} catch (Exception e) {
 				log.debug(TokenStore.ERROR_CODE_BACKENDERROR, e);
 				tokenGetResponse.setResultcode(TokenStore.ERROR_CODE_BACKENDERROR);
@@ -226,7 +226,7 @@ public class TokenController implements TokenService {
 			
 		} catch (TokenException e) {
 			tokenGetResponse.setResultcode(TokenStore.ERROR_CODE_BACKENDERROR);
-			tokenGetResponse.setMessage(StringUtil.exceptionToString(e));
+			//tokenGetResponse.setMessage(StringUtil.exceptionToString(e));
 		
 		} catch (Exception e) {
 			log.debug(TokenStore.ERROR_CODE_BACKENDERROR, e);
@@ -249,7 +249,7 @@ public class TokenController implements TokenService {
 			
 		} catch (TokenException e) {
 			tokenGetResponse.setResultcode(TokenStore.ERROR_CODE_BACKENDERROR);
-			tokenGetResponse.setMessage(StringUtil.exceptionToString(e));
+//			tokenGetResponse.setMessage(StringUtil.exceptionToString(e));
 		
 		} catch (Exception e) {
 			log.debug(TokenStore.ERROR_CODE_BACKENDERROR, e);
@@ -303,7 +303,7 @@ public class TokenController implements TokenService {
 			
 		} catch (TokenException e) {
 			tokenGetResponse.setResultcode(e.getMessage());
-			tokenGetResponse.setMessage(StringUtil.exceptionToString(e));
+			//tokenGetResponse.setMessage(StringUtil.exceptionToString(e));
 		
 		} catch (Exception e) {
 			log.debug(TokenStore.ERROR_CODE_BACKENDERROR, e);
@@ -328,7 +328,7 @@ public class TokenController implements TokenService {
 			
 		} catch (TokenException e) {
 			tokenGetResponse.setResultcode(e.getMessage());
-			tokenGetResponse.setMessage(StringUtil.exceptionToString(e));
+			//tokenGetResponse.setMessage(StringUtil.exceptionToString(e));
 		
 		} catch (Exception e) {
 			log.debug(TokenStore.ERROR_CODE_BACKENDERROR, e);
