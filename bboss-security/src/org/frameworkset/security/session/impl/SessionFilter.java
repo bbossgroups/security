@@ -64,7 +64,7 @@ public class SessionFilter implements Filter{
 			}
 			finally
 			{
-				mrequestw.commit();
+				mrequestw.submit();
 			}
 		}
 		else

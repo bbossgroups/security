@@ -303,9 +303,15 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 		
 	}
 	
-	public void commit()
+	public void submit()
 	{
-		
+		if(session != null)
+		{
+			if(session.getInnerSession() != null && session.getInnerSession().isValidate())
+			{
+				session.submit();
+			}
+		}
 	}
 
 }

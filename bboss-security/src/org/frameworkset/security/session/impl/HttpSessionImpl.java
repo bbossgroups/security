@@ -166,5 +166,10 @@ public class HttpSessionImpl implements HttpSession {
 	{
 		return this.session;
 	}
+	
+	public void submit()
+	{
+		
+	}
 
 }
