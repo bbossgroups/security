@@ -321,9 +321,10 @@ public class MongDBSessionStore extends BaseSessionStore{
 	@Override
 	public void submit(Session session,String appkey) {
 		Map<String, ModifyValue> modifyattributes = session.getModifyattributes();
-		DBCollection sessions = getAppSessionDBCollection(appkey );
+		
 		if(modifyattributes != null && modifyattributes.size() > 0)
 		{
+			DBCollection sessions = getAppSessionDBCollection(appkey );
 			Iterator<Entry<String, ModifyValue>> it = modifyattributes.entrySet().iterator();
 			BasicDBObject record = null;//new BasicDBObject("lastAccessedTime", lastAccessedTime).append("lastAccessedUrl", lastAccessedUrl).append("lastAccessedHostIP", SimpleStringUtil.getHostIP())),WriteConcern.JOURNAL_SAFE);
 			String attribute = null;

@@ -121,7 +121,7 @@ public class SimpleSessionImpl implements Session{
 		assertSession(  session,contextpath) ;
 		lastAccessedTime = System.currentTimeMillis();
 		
-		if(this.modifyattributes == null)
+		if(!this.islazy)
 		{
 			sessionStore.updateLastAccessedTime(appKey,id,lastAccessedTime, lastAccessedUrl);
 		}
