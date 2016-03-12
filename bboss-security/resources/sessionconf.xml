@@ -10,6 +10,7 @@
 			<property name="cookiename" value="b_sessionid"/>			
 			<property name="httpOnly" value="true"/>
 			<property name="secure" value="false"/>
+			<property name="lazystore" value="true"/>
 			<property name="monitorAttributes" ><![CDATA[
 			[
 				{"name":"userAccount","cname":"账号","type":"String","like":true,"enableEmptyValue":false},				

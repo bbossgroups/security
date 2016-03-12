@@ -7,10 +7,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.frameworkset.nosql.mongodb.MongoDB;
@@ -18,6 +18,7 @@ import org.frameworkset.nosql.mongodb.MongoDBHelper;
 import org.frameworkset.security.session.InvalidateCallback;
 import org.frameworkset.security.session.Session;
 import org.frameworkset.security.session.SessionBasicInfo;
+import org.frameworkset.security.session.SimpleHttpSession;
 import org.frameworkset.security.session.statics.SessionConfig;
 
 import com.frameworkset.util.SimpleStringUtil;
@@ -130,6 +131,7 @@ public class MongDBSessionStore extends BaseSessionStore{
 		
 		
 	}
+	
 	@Override
 	public Session createSession(SessionBasicInfo sessionBasicInfo) {
 		String sessionid = this.randomToken();
@@ -152,7 +154,7 @@ public class MongDBSessionStore extends BaseSessionStore{
 		.append("httpOnly",isHttpOnly)
 		.append("secure", secure)
 		.append("lastAccessedHostIP", SimpleStringUtil.getHostIP()));
-		SimpleSessionImpl session = new SimpleSessionImpl();
+		SimpleSessionImpl session = createSimpleSessionImpl();
 		session.setMaxInactiveInterval(null,maxInactiveInterval,null);
 		session.setAppKey(sessionBasicInfo.getAppKey());
 		session.setCreationTime(creationTime);
@@ -270,7 +272,7 @@ public class MongDBSessionStore extends BaseSessionStore{
 	}
 
 	@Override
-	public void invalidate(HttpSession session,String appKey,String contextpath,String sessionID) {
+	public void invalidate(SimpleHttpSession session,String appKey,String contextpath,String sessionID) {
 		DBCollection sessions = getAppSessionDBCollection( appKey);		
 //		sessions.update(new BasicDBObject("sessionid",sessionID), new BasicDBObject("$set",new BasicDBObject("_validate", false)));
 		MongoDB.remove(sessions,new BasicDBObject("sessionid",sessionID));
@@ -294,7 +296,7 @@ public class MongDBSessionStore extends BaseSessionStore{
 	}
 
 	@Override
-	public void removeAttribute(HttpSession session,String appKey,String contextpath,String sessionID, String attribute) {
+	public void removeAttribute(SimpleHttpSession session,String appKey,String contextpath,String sessionID, String attribute) {
 		DBCollection sessions = getAppSessionDBCollection( appKey);
 //		if(SessionHelper.haveSessionListener())
 //		{
@@ -316,9 +318,69 @@ public class MongDBSessionStore extends BaseSessionStore{
 		}
 		
 	}
-
 	@Override
-	public void addAttribute(HttpSession session,String appKey,String contextpath,String sessionID, String attribute, Object value) {
+	public void submit(Session session,String appkey) {
+		Map<String, ModifyValue> modifyattributes = session.getModifyattributes();
+		DBCollection sessions = getAppSessionDBCollection(appkey );
+		if(modifyattributes != null && modifyattributes.size() > 0)
+		{
+			Iterator<Entry<String, ModifyValue>> it = modifyattributes.entrySet().iterator();
+			BasicDBObject record = null;//new BasicDBObject("lastAccessedTime", lastAccessedTime).append("lastAccessedUrl", lastAccessedUrl).append("lastAccessedHostIP", SimpleStringUtil.getHostIP())),WriteConcern.JOURNAL_SAFE);
+			String attribute = null;
+			ModifyValue  value = null;
+			while(it.hasNext())
+			{
+				Entry<String, ModifyValue> entry = it.next();
+				
+				value = entry.getValue();
+				if(value.getValuetype() == ModifyValue.type_base)//session 基本信息
+				{
+					if(record == null)
+					{
+						record = new BasicDBObject(entry.getKey(), value.getValue()); 
+					}
+					else
+					{
+						record.append(entry.getKey(), value.getValue());
+					}
+				}
+				else//session数据
+				{
+					attribute = MongoDBHelper.converterSpecialChar(entry.getKey());
+					if(value.getOptype() == ModifyValue.type_add)
+					{
+						if(record == null)
+						{
+							record = new BasicDBObject(attribute, value.getValue()); 
+						}
+						else
+						{
+							record.append(attribute, value.getValue());
+						}
+					}
+					else
+					{
+						if(record == null)
+						{
+							record = new BasicDBObject(attribute, null); 
+						}
+						else
+						{
+							record.append(attribute, null);
+						}
+					}
+				}
+				
+				
+			}
+			MongoDB.update(sessions, new BasicDBObject("sessionid",session.getId()), new BasicDBObject("$set",record));
+			
+		}
+		
+	}
+	
+	@Override
+	public void addAttribute(SimpleHttpSession session,String appKey,String contextpath,String sessionID, String attribute, Object value) {
 		attribute = MongoDBHelper.converterSpecialChar( attribute);
 		DBCollection sessions = getAppSessionDBCollection( appKey);	
 //		Session session = getSession(appKey,contextpath, sessionID);
@@ -328,7 +390,7 @@ public class MongDBSessionStore extends BaseSessionStore{
 		
 	}
 	
-	public void setMaxInactiveInterval(HttpSession session, String appKey, String sessionID, long maxInactiveInterval,String contextpath)
+	public void setMaxInactiveInterval(SimpleHttpSession session, String appKey, String sessionID, long maxInactiveInterval,String contextpath)
 	{
 		DBCollection sessions = getAppSessionDBCollection( appKey);	
 //		Session session = getSession(appKey,contextpath, sessionID);
@@ -364,7 +426,7 @@ public class MongDBSessionStore extends BaseSessionStore{
 		DBObject object = sessions.findOne(new BasicDBObject("sessionid",sessionid).append("_validate", true),keys);
 		if(object != null)
 		{
-			SimpleSessionImpl session = new SimpleSessionImpl();
+			SimpleSessionImpl session = createSimpleSessionImpl();
 			session.setMaxInactiveInterval(null,(Long)object.get("maxInactiveInterval"),contextpath);
 			session.setAppKey(appKey);
 			session.setCreationTime((Long)object.get("creationTime"));
@@ -492,7 +554,7 @@ public class MongDBSessionStore extends BaseSessionStore{
 		DBObject object = sessions.findOne(new BasicDBObject("sessionid",sessionid).append("_validate", true),keys);
 		if(object != null)
 		{
-			SimpleSessionImpl session = new SimpleSessionImpl();
+			SimpleSessionImpl session = createSimpleSessionImpl();
 			session.setMaxInactiveInterval(null,(Long)object.get("maxInactiveInterval"),contextpath);
 			session.setAppKey(appKey);
 			session.setCreationTime((Long)object.get("creationTime"));
@@ -527,7 +589,7 @@ public class MongDBSessionStore extends BaseSessionStore{
 		}
 	}
 	@Override
-	public HttpSession createHttpSession(ServletContext servletContext,
+	public SimpleHttpSession createHttpSession(ServletContext servletContext,
 			SessionBasicInfo sessionBasicInfo, String contextpath,InvalidateCallback invalidateCallback) {
 		// TODO Auto-generated method stub
 		return null;
@@ -537,7 +599,7 @@ public class MongDBSessionStore extends BaseSessionStore{
 		// TODO Auto-generated method stub
 		return this.getClass().getName();
 	}
-	
+
 	
 //	private Session getSessionAndRemove(String appKey,String contextpath, String sessionid) {
 //		DBCollection sessions =getAppSessionDBCollection( appKey);

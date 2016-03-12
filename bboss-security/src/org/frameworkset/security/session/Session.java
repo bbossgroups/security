@@ -1,16 +1,17 @@
 package org.frameworkset.security.session;
 
 import java.util.Enumeration;
+import java.util.Map;
 
-import javax.servlet.http.HttpSession;
+import org.frameworkset.security.session.impl.ModifyValue;
 
 public interface Session {
 
 	public void initInvalidateCallback(InvalidateCallback invalidateCallback);
-	public Object getAttribute(HttpSession session,String attribute,String contextpath) ;
+	public Object getAttribute(SimpleHttpSession session,String attribute,String contextpath) ;
 
 	public Object getCacheAttribute(String attribute);
-	public Enumeration getAttributeNames(HttpSession session,String contextpath) ;
+	public Enumeration getAttributeNames(SimpleHttpSession session,String contextpath) ;
 
 	
 	public long getCreationTime() ;
@@ -19,7 +20,7 @@ public interface Session {
 	/**
 	 * 更新最后访问时间
 	 */
-	public void touch(HttpSession session,String lastAccessedUrl,String contextpath);
+	public void touch(SimpleHttpSession session,String lastAccessedUrl,String contextpath);
 	public long getLastAccessedTime() ;
 	public void setLastAccessedTime(long lastAccessedTime) ;
 	public long getMaxInactiveInterval();
@@ -37,18 +38,18 @@ public interface Session {
 //	}
 
 	
-	public Object getValue(HttpSession session,String attribute,String contextpath) ;
-	public String[] getValueNames(HttpSession session,String contextpath) ;
-	public void invalidate(HttpSession session,String contextpath) ;
+	public Object getValue(SimpleHttpSession session,String attribute,String contextpath) ;
+	public String[] getValueNames(SimpleHttpSession session,String contextpath) ;
+	public void invalidate(SimpleHttpSession session,String contextpath) ;
 	public boolean isNew() ;
-	public void putValue(HttpSession session,String attribute, Object value,String contextpath) ;
+	public void putValue(SimpleHttpSession session,String attribute, Object value,String contextpath) ;
 
 	
-	public void removeAttribute(HttpSession session,String attribute,String contextpath) ;
-	public void removeValue(HttpSession session,String attribute,String contextpath) ;
-	public void setAttribute(HttpSession session,String attribute, Object value,String contextpath) ;
-	public void setMaxInactiveInterval(HttpSession session,long maxInactiveInterval,String contextpath) ;
-	public void setMaxInactiveInterval(HttpSession session,long maxInactiveInterval,boolean refreshstore,String contextpath) ;
+	public void removeAttribute(SimpleHttpSession session,String attribute,String contextpath) ;
+	public void removeValue(SimpleHttpSession session,String attribute,String contextpath) ;
+	public void setAttribute(SimpleHttpSession session,String attribute, Object value,String contextpath) ;
+	public void setMaxInactiveInterval(SimpleHttpSession session,long maxInactiveInterval,String contextpath) ;
+	public void setMaxInactiveInterval(SimpleHttpSession session,long maxInactiveInterval,boolean refreshstore,String contextpath) ;
 	public String getReferip();
 	public boolean isValidate();
 	public void _setSessionStore(SessionStore sessionStore);
@@ -61,4 +62,8 @@ public interface Session {
 	
 	public String getRequesturi() ;
 	public void setRequesturi(String requesturi);
+	public void submit();
+	public boolean islazy() ;
+	public void modifyAttribute(String name, Object value, int valuetype, int optype);
+	public Map<String, ModifyValue> getModifyattributes() ;
 }

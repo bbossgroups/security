@@ -18,13 +18,13 @@ package org.frameworkset.security.session.impl;
 import java.util.Enumeration;
 
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
 
 import org.frameworkset.security.session.InvalidateCallback;
 import org.frameworkset.security.session.Session;
 import org.frameworkset.security.session.SessionBasicInfo;
 import org.frameworkset.security.session.SessionEvent;
 import org.frameworkset.security.session.SessionStore;
+import org.frameworkset.security.session.SimpleHttpSession;
 import org.frameworkset.security.session.statics.SessionConfig;
 
 /**
@@ -53,10 +53,10 @@ public class DelegateSessionStore implements SessionStore {
 		sessionStore.livecheck();
 
 	}
-	public HttpSession createHttpSession(ServletContext servletContext,SessionBasicInfo sessionBasicInfo,String contextpath,InvalidateCallback invalidateCallback)
+	public SimpleHttpSession createHttpSession(ServletContext servletContext,SessionBasicInfo sessionBasicInfo,String contextpath,InvalidateCallback invalidateCallback)
 	{
 		Session session = createSession(sessionBasicInfo);
-		HttpSession httpsession = new HttpSessionImpl(session,servletContext,contextpath,invalidateCallback);
+		SimpleHttpSession httpsession = new HttpSessionImpl(session,servletContext,contextpath,invalidateCallback);
 		if(SessionHelper.haveSessionListener())
 		{
 			SessionHelper.dispatchEvent(new SessionEventImpl(httpsession,SessionEvent.EventType_create));
@@ -108,7 +108,7 @@ public class DelegateSessionStore implements SessionStore {
 	}
 
 	@Override
-	public void invalidate(HttpSession session,String appKey,String contextpath, String sessionID) {
+	public void invalidate(SimpleHttpSession session,String appKey,String contextpath, String sessionID) {
 		if(SessionHelper.haveSessionListener())
 		{
 			SessionHelper.dispatchEvent(new SessionEventImpl(session,SessionEvent.EventType_destroy));
@@ -127,7 +127,7 @@ public class DelegateSessionStore implements SessionStore {
 	}
 
 	@Override
-	public void removeAttribute(HttpSession session,String appKey,String contextpath, String sessionID,
+	public void removeAttribute(SimpleHttpSession session,String appKey,String contextpath, String sessionID,
 			String attribute) {
 		if(SessionHelper.haveSessionListener())
 		{
@@ -135,20 +135,31 @@ public class DelegateSessionStore implements SessionStore {
 										.setAttributeName(attribute));
 		}
 		String _attribute = SessionHelper.wraperAttributeName(appKey,contextpath,  attribute);
-		this.sessionStore.removeAttribute(  session,appKey, contextpath, sessionID, _attribute);		
+		if(!session.islazy())
+			this.sessionStore.removeAttribute(  session,appKey, contextpath, sessionID, _attribute);
+		else
+		{
+			session.modifyAttribute(_attribute, null,  ModifyValue.type_data,ModifyValue.type_remove);
+		}
 		
 		
 		
 	}
 
 	@Override
-	public void addAttribute(HttpSession session,String appKey,String contextpath, String sessionID, String attribute,
+	public void addAttribute(SimpleHttpSession session,String appKey,String contextpath, String sessionID, String attribute,
 			Object value) {
 		
 		value = SessionHelper.serial(value);
 		String _attribute = SessionHelper.wraperAttributeName(appKey,contextpath,  attribute);
-		 this.sessionStore.addAttribute(  session,appKey, contextpath, sessionID, _attribute, value);
-		 
+		if(!session.islazy())
+		{
+			this.sessionStore.addAttribute(  session,appKey, contextpath, sessionID, _attribute, value);
+		}
+		else
+		{
+			session.modifyAttribute(_attribute, value, ModifyValue.type_data, ModifyValue.type_add);
+		}
 		
 		if(SessionHelper.haveSessionListener())
 		{
@@ -174,7 +185,7 @@ public class DelegateSessionStore implements SessionStore {
 		return session;
 	}
 	@Override
-	public void setMaxInactiveInterval(HttpSession session, String appKey, String id, long maxInactiveInterval,
+	public void setMaxInactiveInterval(SimpleHttpSession session, String appKey, String id, long maxInactiveInterval,
 			String contextpath) {
 		sessionStore.setMaxInactiveInterval(session, appKey, id, maxInactiveInterval, contextpath);
 		
@@ -193,6 +204,14 @@ public class DelegateSessionStore implements SessionStore {
 	public String getName() {
 		// TODO Auto-generated method stub
 		return this.sessionStore.getName();
+	}
+	@Override
+	public void submit(Session session, String appkey) {
+		sessionStore.submit(session, appkey);
+	}
+	@Override
+	public boolean uselazystore() {
+		return sessionStore.uselazystore();
 	}
 	
 	

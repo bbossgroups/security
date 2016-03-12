@@ -33,6 +33,10 @@ import org.frameworkset.security.session.SessionStore;
 public abstract class BaseSessionStore implements SessionStore {
 	
 	protected SessionManager sessionManager;
+	protected SimpleSessionImpl createSimpleSessionImpl()
+	{
+		return !this.uselazystore()?new SimpleSessionImpl():new LazySimpleSessionImpl();
+	}
 	protected String randomToken()
 	{
 		String token = UUID.randomUUID().toString();
@@ -72,6 +76,10 @@ public abstract class BaseSessionStore implements SessionStore {
 	}
 	public long getCookieLiveTime() {
 		return sessionManager.getCookieLiveTime();
+	}
+	@Override
+	public boolean uselazystore() {
+		return sessionManager.isLazystore();
 	}
 	
 

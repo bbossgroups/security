@@ -18,11 +18,11 @@ package org.frameworkset.security.session.impl;
 import java.util.Enumeration;
 
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionContext;
 
 import org.frameworkset.security.session.InvalidateCallback;
 import org.frameworkset.security.session.Session;
+import org.frameworkset.security.session.SimpleHttpSession;
 
 /**
  * <p>Title: HttpSessionImpl.java</p> 
@@ -33,7 +33,7 @@ import org.frameworkset.security.session.Session;
  * @author biaoping.yin
  * @version 3.8.0
  */
-public class HttpSessionImpl implements HttpSession {
+public class HttpSessionImpl implements SimpleHttpSession {
 	private Session session = null;
 	private ServletContext servletContext;
 	private String contextpath;
@@ -169,7 +169,19 @@ public class HttpSessionImpl implements HttpSession {
 	
 	public void submit()
 	{
-		
+		if(session != null)
+			session.submit();
+	}
+	@Override
+	public boolean islazy() {
+		if(session != null)
+			return session.islazy();
+		return false;
+	}
+	@Override
+	public void modifyAttribute(String name, Object value, int valuetype, int optype) {
+		if(session != null)
+			 session.modifyAttribute(name,   value,   valuetype,  optype);
 	}
 
 }

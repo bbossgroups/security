@@ -4,11 +4,10 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpSession;
-
 import org.frameworkset.security.session.InvalidateCallback;
 import org.frameworkset.security.session.Session;
 import org.frameworkset.security.session.SessionStore;
+import org.frameworkset.security.session.SimpleHttpSession;
 
 public class SimpleSessionImpl implements Session{
 	private String appKey;
@@ -22,6 +21,8 @@ public class SimpleSessionImpl implements Session{
 	private Boolean assertValidate = null;
 	private transient SessionStore sessionStore;
 	private transient Map<String,Object> attributes;
+	protected transient Map<String,ModifyValue> modifyattributes;
+	protected transient boolean islazy = false;
 	private static final Object NULL = new Object();
 	private String host ;
 	private String requesturi;
@@ -29,12 +30,13 @@ public class SimpleSessionImpl implements Session{
 	private boolean httpOnly;
 	private boolean secure;
 	private String lastAccessedHostIP;
-	private InvalidateCallback invalidateCallback;
+	private transient InvalidateCallback invalidateCallback;
 	public SimpleSessionImpl()
 	{
 		attributes = new HashMap<String,Object>();
+		
 	}
-	private void assertSession(HttpSession session,String contextpath) 
+	private void assertSession(SimpleHttpSession session,String contextpath) 
 	{
 		
 		if(assertValidate != null)
@@ -69,7 +71,7 @@ public class SimpleSessionImpl implements Session{
 			return value;
 	}
 	@Override
-	public Object getAttribute(HttpSession session,String attribute,String contextpath) {
+	public Object getAttribute(SimpleHttpSession session,String attribute,String contextpath) {
 		assertSession(session,contextpath) ;
 		
 		Object value = this.attributes.get(attribute);
@@ -96,7 +98,7 @@ public class SimpleSessionImpl implements Session{
 	}
 
 	@Override
-	public Enumeration getAttributeNames(HttpSession session,String contextpath) {
+	public Enumeration getAttributeNames(SimpleHttpSession session,String contextpath) {
 		assertSession(  session,contextpath) ;
 		
 		return sessionStore.getAttributeNames(appKey, contextpath,id);
@@ -115,12 +117,26 @@ public class SimpleSessionImpl implements Session{
 	}
 
 	@Override
-	public void touch(HttpSession session,String lastAccessedUrl,String contextpath) {
+	public void touch(SimpleHttpSession session,String lastAccessedUrl,String contextpath) {
 		assertSession(  session,contextpath) ;
 		lastAccessedTime = System.currentTimeMillis();
-		sessionStore.updateLastAccessedTime(appKey,id,lastAccessedTime, lastAccessedUrl);
+		
+		if(this.modifyattributes == null)
+		{
+			sessionStore.updateLastAccessedTime(appKey,id,lastAccessedTime, lastAccessedUrl);
+		}
+		else
+		{
+			modifyAttribute("lastAccessedTime",lastAccessedTime,ModifyValue.type_base,ModifyValue.type_add);
+			modifyAttribute("lastAccessedUrl",lastAccessedUrl,ModifyValue.type_base,ModifyValue.type_add);
+		}
 //		assertSession() ;
 		
+	}
+	
+	public void modifyAttribute(String name, Object value, int valuetype,int optype)
+	{
+		modifyattributes.put(name, new ModifyValue(name,   value,   valuetype,optype));
 	}
 
 	@Override
@@ -136,13 +152,13 @@ public class SimpleSessionImpl implements Session{
 	}
 
 	@Override
-	public Object getValue(HttpSession session,String attribute,String contextpath) {
+	public Object getValue(SimpleHttpSession session,String attribute,String contextpath) {
 		// TODO Auto-generated method stub
 		return getAttribute( session, attribute, contextpath);
 	}
 
 	@Override
-	public String[] getValueNames(HttpSession session,String contextpath) {
+	public String[] getValueNames(SimpleHttpSession session,String contextpath) {
 		assertSession(  session,contextpath) ;
 		if(!this.isValidate())
 		{
@@ -152,7 +168,7 @@ public class SimpleSessionImpl implements Session{
 	}
 
 	@Override
-	public void invalidate(HttpSession session,String contextpath) {
+	public void invalidate(SimpleHttpSession session,String contextpath) {
 		
 		if(!dovalidate)
 		{
@@ -164,6 +180,8 @@ public class SimpleSessionImpl implements Session{
 					sessionStore.invalidate(session,appKey, contextpath,id);
 					this.validate =false;
 					this.attributes.clear();
+					if(this.modifyattributes != null)
+						modifyattributes.clear();
 				}
 				finally
 				{
@@ -187,19 +205,21 @@ public class SimpleSessionImpl implements Session{
 		this.isNew = true;
 	}
 	@Override
-	public void putValue(HttpSession session,String attribute, Object value,String contextpath) {
+	public void putValue(SimpleHttpSession session,String attribute, Object value,String contextpath) {
 		setAttribute(  session, attribute,  value, contextpath) ;
 		
 	}
 
 	@Override
-	public void removeAttribute(HttpSession session,String attribute,String contextpath) {
+	public void removeAttribute(SimpleHttpSession session,String attribute,String contextpath) {
 		assertSession(  session, contextpath) ;
 		if(!this.isValidate())
 		{
 			return ;
 		}
+		
 		sessionStore.removeAttribute(session,appKey, contextpath,id,attribute);
+		
 //		this.attributes.remove(attribute);
 		//将属性设置为空避免重复从mongodb获取数据
 		this.attributes.put(attribute, NULL);
@@ -207,13 +227,13 @@ public class SimpleSessionImpl implements Session{
 	}
 
 	@Override
-	public void removeValue(HttpSession session,String attribute,String contextpath) {
+	public void removeValue(SimpleHttpSession session,String attribute,String contextpath) {
 		removeAttribute(  session, attribute, contextpath);
 		
 	}
 
 	@Override
-	public void setAttribute(HttpSession session,String attribute, Object value,String contextpath) {
+	public void setAttribute(SimpleHttpSession session,String attribute, Object value,String contextpath) {
 		assertSession(  session, contextpath) ;
 		this.attributes.put(attribute, value);
 		sessionStore.addAttribute(session,appKey, contextpath,id,attribute,value);
@@ -221,13 +241,13 @@ public class SimpleSessionImpl implements Session{
 	}
 
 	@Override
-	public void setMaxInactiveInterval(HttpSession session,long maxInactiveInterval,String contextpath) {
+	public void setMaxInactiveInterval(SimpleHttpSession session,long maxInactiveInterval,String contextpath) {
 		this.maxInactiveInterval = maxInactiveInterval;
 		
 	}
 	
 	@Override
-	public void setMaxInactiveInterval(HttpSession session,long maxInactiveInterval,boolean refreshstore,String contextpath) {
+	public void setMaxInactiveInterval(SimpleHttpSession session,long maxInactiveInterval,boolean refreshstore,String contextpath) {
 		this.maxInactiveInterval = maxInactiveInterval;
 		if(refreshstore)
 		{
@@ -339,6 +359,21 @@ public class SimpleSessionImpl implements Session{
 	public void initInvalidateCallback(InvalidateCallback invalidateCallback) {
 		this.invalidateCallback = invalidateCallback;
 		
+	}
+	
+	@Override
+	public void submit() {
+		if(!this.isValidate())
+			return;
+		this.sessionStore.submit(this,this.appKey);
+	}
+	@Override
+	public boolean islazy() {
+		// TODO Auto-generated method stub
+		return this.islazy;
+	}
+	public Map<String, ModifyValue> getModifyattributes() {
+		return modifyattributes;
 	}
 	
 

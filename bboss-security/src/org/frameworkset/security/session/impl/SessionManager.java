@@ -51,6 +51,7 @@ public class SessionManager extends org.frameworkset.spi.BaseApplicationContextA
 	private Object sessionstore;
 	private CrossDomain crossDomain;
 	private boolean startLifeScan = false;
+	private boolean lazystore = false;
 	/**
 	 * session监听器,多个用,号分隔
 	 */
@@ -166,6 +167,10 @@ public class SessionManager extends org.frameworkset.spi.BaseApplicationContextA
 		if(this.sessionStore == null)
 		{
 			this.usewebsession = true;
+		}
+		else
+		{
+			
 		}
 		if(!StringUtil.isEmpty(this.sessionlisteners))
 		{
@@ -403,5 +408,11 @@ public class SessionManager extends org.frameworkset.spi.BaseApplicationContextA
 	}
 	public Date getScanStartTime() {
 		return scanStartTime;
+	}
+	public boolean isLazystore() {
+		return lazystore;
+	}
+	public void setLazystore(boolean lazystore) {
+		this.lazystore = lazystore;
 	}
 }

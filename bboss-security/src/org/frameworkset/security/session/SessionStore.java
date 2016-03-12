@@ -38,7 +38,7 @@ public interface SessionStore{
 	String getName();
 
 	void livecheck();
-	public HttpSession createHttpSession(ServletContext servletContext,SessionBasicInfo sessionBasicInfo,String contextpath,InvalidateCallback invalidateCallback);
+	public SimpleHttpSession createHttpSession(ServletContext servletContext,SessionBasicInfo sessionBasicInfo,String contextpath,InvalidateCallback invalidateCallback);
 //	Session createSession(String appKey,String referip,String reqesturi);
 	Session createSession(SessionBasicInfo sessionBasicInfo);
 
@@ -52,20 +52,22 @@ public interface SessionStore{
 
 	String[] getValueNames(String appKey,String contextpath,String sessionID);
 
-	void invalidate(HttpSession session,String appKey,String contextpath,String sessionID);
+	void invalidate(SimpleHttpSession session,String appKey,String contextpath,String sessionID);
 
 	boolean isNew(String appKey,String sessionID);
 
-	void removeAttribute(HttpSession session,String appKey,String contextpath,String sessionID, String attribute);
+	void removeAttribute(SimpleHttpSession session,String appKey,String contextpath,String sessionID, String attribute);
 
-	void addAttribute(HttpSession session,String appKey,String contextpath,String sessionID, String attribute, Object value);
+	void addAttribute(SimpleHttpSession session,String appKey,String contextpath,String sessionID, String attribute, Object value);
 
 	void setSessionManager(SessionManager sessionManager);
 	
 	Session getSession(String appKey,String contextpath,String sessionid);
 
-	void setMaxInactiveInterval(HttpSession session, String appKey, String id, long maxInactiveInterval,String contextpath);
+	void setMaxInactiveInterval(SimpleHttpSession session, String appKey, String id, long maxInactiveInterval,String contextpath);
 	public void saveSessionConfig(SessionConfig config);
 	public SessionConfig getSessionConfig(String appkey);
+	void submit(Session session,String appkey);
+	public boolean uselazystore();
 
 }
