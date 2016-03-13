@@ -36,6 +36,7 @@ public class SessionConfig implements Serializable {
 	 */
 	private long sessionscaninterval = 60*60000;
 	private boolean usewebsession = false; 
+	private boolean lazystore;
 	public SessionConfig() {
 		// TODO Auto-generated constructor stub
 	}
@@ -157,6 +158,12 @@ public class SessionConfig implements Serializable {
 	}
 	public void setMonitorScope(String monitorScope) {
 		this.monitorScope = monitorScope;
+	}
+	public boolean isLazystore() {
+		return lazystore;
+	}
+	public void setLazystore(boolean lazystore) {
+		this.lazystore = lazystore;
 	}
 
 }

@@ -143,6 +143,7 @@ public class SessionManager extends org.frameworkset.spi.BaseApplicationContextA
 		sessionConfig.setHttpOnly(this.httpOnly); 
 		sessionConfig.setStartLifeScan(this.startLifeScan); 
 		sessionConfig.setSecure(this.secure);
+		sessionConfig.setLazystore(lazystore);
 		this.sessionStore.saveSessionConfig(sessionConfig);
 	}
 	

@@ -104,6 +104,20 @@
 
 					</tr>
 					<tr>
+						<th width="150"><strong>lazystore:</strong></th>
+						<td width="400"><pg:true colName="lazystore" evalbody="true">
+								<pg:yes>
+									<strong><font color="green">开启</font></strong>
+								</pg:yes>
+								<pg:no>
+									<strong><font color="red">关闭</font></strong>
+								</pg:no>
+							</pg:true>
+							&nbsp;&nbsp;(延迟存储修改的session数据到mongodb的控制开关，<strong><font color="green">开启</font></strong>表示当请求结束前一次性将request过程中所有通过session.setAttribute(key,value)方法对session数据的修改存储到会话共享平台中，提升性能，否则每次都实时将修改存储到会话共享平台中，默认为<strong><font color="red">关闭</font></strong>)
+							</td>
+
+					</tr>
+					<tr>
 						<th width="150"><strong>应用监控管理session范围:</strong></th>
 						<td width="800"><strong><font color="green"><pg:cell colName="monitorScope" /></font></strong> &nbsp;&nbsp;(all:代表应用可以监控所有接入统一会话管理平台应用session数据， self:代表应用只能监控管理本应用session数据)</td>
 

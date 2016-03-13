@@ -110,7 +110,7 @@ public class MongDBSessionStore extends BaseSessionStore{
 		.append("secure", config.isSecure())
 		.append("monitorAttributes", config.getMonitorAttributes())
 		
-		.append("startLifeScan", config.isStartLifeScan()).append("monitorScope", config.getMonitorScope());
+		.append("startLifeScan", config.isStartLifeScan()).append("monitorScope", config.getMonitorScope()).append("lazystore", config.isLazystore());
 		 
 		if(object == null)
 		{
@@ -498,6 +498,7 @@ public class MongDBSessionStore extends BaseSessionStore{
 		keys.put("createTime", 1);
 		keys.put("updateTime", 1);
 		keys.put("monitorScope", 1);
+		keys.put("lazystore", 1);
 		
 		 
 		
@@ -526,7 +527,7 @@ public class MongDBSessionStore extends BaseSessionStore{
 			sessionConfig.setMonitorAttributes((String)object.get("monitorAttributes"));
 			sessionConfig.setCreateTime(new Date((Long)object.get("createTime")));
 			sessionConfig.setUpdateTime(new Date((Long)object.get("updateTime")));
-			
+			sessionConfig.setLazystore((Boolean)object.get("lazystore")); 
 			 
 			return sessionConfig;
 		}

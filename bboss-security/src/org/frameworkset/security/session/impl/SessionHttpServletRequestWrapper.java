@@ -305,7 +305,7 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 	
 	public void submit()
 	{
-		if(session != null)
+		if(session != null && session.islazy())
 		{			
 			session.submit();			
 		}
