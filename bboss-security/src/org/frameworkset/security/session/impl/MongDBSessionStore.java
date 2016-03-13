@@ -527,7 +527,9 @@ public class MongDBSessionStore extends BaseSessionStore{
 			sessionConfig.setMonitorAttributes((String)object.get("monitorAttributes"));
 			sessionConfig.setCreateTime(new Date((Long)object.get("createTime")));
 			sessionConfig.setUpdateTime(new Date((Long)object.get("updateTime")));
-			sessionConfig.setLazystore((Boolean)object.get("lazystore")); 
+			Boolean lazystore = (Boolean)object.get("lazystore");
+			if(lazystore != null)
+				sessionConfig.setLazystore(lazystore); 
 			 
 			return sessionConfig;
 		}
