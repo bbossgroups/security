@@ -15,6 +15,7 @@ import javax.servlet.ServletContext;
 import org.apache.log4j.Logger;
 import org.frameworkset.nosql.mongodb.MongoDB;
 import org.frameworkset.nosql.mongodb.MongoDBHelper;
+import org.frameworkset.security.session.AttributeNamesEnumeration;
 import org.frameworkset.security.session.InvalidateCallback;
 import org.frameworkset.security.session.Session;
 import org.frameworkset.security.session.SessionBasicInfo;
@@ -187,25 +188,25 @@ public class MongDBSessionStore extends BaseSessionStore{
 //		return null;
 	}
 
-	@Override
-	public Enumeration getAttributeNames(String appKey,String contextpath,String sessionID) {
-//		DBCollection sessions =getAppSessionDBCollection( appKey);
+//	@Override
+//	public Enumeration getAttributeNames(String appKey,String contextpath,String sessionID) {
+////		DBCollection sessions =getAppSessionDBCollection( appKey);
+////		
+////		DBObject obj = sessions.findOne(new BasicDBObject("sessionid",sessionID));
+////		
+////		if(obj == null)
+////			throw new SessionException("SessionID["+sessionID+"],appKey["+appKey+"] do not exist or is invalidated!" );
+////		String[] valueNames = null;
+////		if(obj.keySet() != null)
+////		{
+////			return obj.keySet().iterator();
+////		}
+////		throw new java.lang.UnsupportedOperationException();
+//		String[] names = getValueNames(appKey,contextpath,sessionID);
 //		
-//		DBObject obj = sessions.findOne(new BasicDBObject("sessionid",sessionID));
+//		return SimpleStringUtil.arryToenum(names);
 //		
-//		if(obj == null)
-//			throw new SessionException("SessionID["+sessionID+"],appKey["+appKey+"] do not exist or is invalidated!" );
-//		String[] valueNames = null;
-//		if(obj.keySet() != null)
-//		{
-//			return obj.keySet().iterator();
-//		}
-//		throw new java.lang.UnsupportedOperationException();
-		String[] names = getValueNames(appKey,contextpath,sessionID);
-		
-		return SimpleStringUtil.arryToenum(names);
-		
-	}
+//	}
 
 	
 	@Override
@@ -250,23 +251,59 @@ public class MongDBSessionStore extends BaseSessionStore{
 		if(obj.keySet() != null)
 		{
 //			valueNames = new String[obj.keySet().size()];
-			List<String> temp = new ArrayList<String>();
-			Iterator<String> keys = obj.keySet().iterator();
-			while(keys.hasNext())
-			{
-				String tempstr = keys.next();
-				if(!MongoDBHelper.filter(tempstr))
-				{
-					tempstr = SessionHelper.dewraperAttributeName(appKey, contextpath, tempstr);
-					if(tempstr != null)
-					{
-						temp.add(tempstr);
-					}
-				}
-			}
+			List<String> temp = _getAttributeNames(obj.keySet().iterator(),  appKey,  contextpath);
+//			List<String> temp = new ArrayList<String>();
+//			Iterator<String> keys = obj.keySet().iterator();
+//			while(keys.hasNext())
+//			{
+//				String tempstr = keys.next();
+//				if(!MongoDBHelper.filter(tempstr))
+//				{
+//					tempstr = SessionHelper.dewraperAttributeName(appKey, contextpath, tempstr);
+//					if(tempstr != null)
+//					{
+//						temp.add(tempstr);
+//					}
+//				}
+//			}
 			valueNames = new String[temp.size()];
 			valueNames = temp.toArray(valueNames);
 			
+		}
+		return valueNames ;
+	}
+	
+	
+	@Override
+	public Enumeration getAttributeNames(String appKey,String contextpath,String sessionID) {
+		
+		DBCollection sessions =getAppSessionDBCollection( appKey);
+		
+		DBObject obj = sessions.findOne(new BasicDBObject("sessionid",sessionID));
+		
+		if(obj == null)
+			throw new SessionException("SessionID["+sessionID+"],appKey["+appKey+"] do not exist or is invalidated!" );
+		Enumeration<String> valueNames = null;
+		if(obj.keySet() != null)
+		{
+//			valueNames = new String[obj.keySet().size()];
+			List<String> temp = _getAttributeNames(obj.keySet().iterator(),  appKey,  contextpath);
+//			Iterator<String> keys = obj.keySet().iterator();
+//			while(keys.hasNext())
+//			{
+//				String tempstr = keys.next();
+//				if(!MongoDBHelper.filter(tempstr))
+//				{
+//					tempstr = SessionHelper.dewraperAttributeName(appKey, contextpath, tempstr);
+//					if(tempstr != null)
+//					{
+//						temp.add(tempstr);
+//					}
+//				}
+//			}
+//			valueNames = new String[temp.size()];
+//			valueNames = temp.toArray(valueNames);
+			valueNames = new AttributeNamesEnumeration<String>(temp.iterator());
 		}
 		return valueNames ;
 	}

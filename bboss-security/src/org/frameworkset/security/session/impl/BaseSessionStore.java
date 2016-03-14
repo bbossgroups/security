@@ -15,8 +15,12 @@
  */
 package org.frameworkset.security.session.impl;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.UUID;
 
+import org.frameworkset.nosql.mongodb.MongoDBHelper;
 import org.frameworkset.security.session.Session;
 import org.frameworkset.security.session.SessionBasicInfo;
 import org.frameworkset.security.session.SessionStore;
@@ -36,6 +40,23 @@ public abstract class BaseSessionStore implements SessionStore {
 	protected SimpleSessionImpl createSimpleSessionImpl()
 	{
 		return !this.uselazystore()?new SimpleSessionImpl():new LazySimpleSessionImpl();
+	}
+	protected List<String> _getAttributeNames(Iterator<String> keys,String appKey,String contextpath)
+	{
+		List<String> temp = new ArrayList<String>();
+		while(keys.hasNext())
+		{
+			String tempstr = keys.next();
+			if(!MongoDBHelper.filter(tempstr))
+			{
+				tempstr = SessionHelper.dewraperAttributeName(appKey, contextpath, tempstr);
+				if(tempstr != null)
+				{
+					temp.add(tempstr);
+				}
+			}
+		}
+		return temp;
 	}
 	protected String randomToken()
 	{

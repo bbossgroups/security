@@ -9,6 +9,8 @@ import org.frameworkset.security.session.Session;
 import org.frameworkset.security.session.SessionStore;
 import org.frameworkset.security.session.SimpleHttpSession;
 
+import com.frameworkset.util.SimpleStringUtil;
+
 public class SimpleSessionImpl implements Session{
 	private String appKey;
 	private String id;
@@ -129,6 +131,9 @@ public class SimpleSessionImpl implements Session{
 		{
 			modifyAttribute("lastAccessedTime",lastAccessedTime,ModifyValue.type_base,ModifyValue.type_add);
 			modifyAttribute("lastAccessedUrl",lastAccessedUrl,ModifyValue.type_base,ModifyValue.type_add);
+			modifyAttribute("lastAccessedHostIP", SimpleStringUtil.getHostIP(),ModifyValue.type_base,ModifyValue.type_add);
+			
+			
 		}
 //		assertSession() ;
 		
