@@ -20,7 +20,7 @@ import redis.clients.jedis.JedisShardInfo;
 import redis.clients.jedis.ShardedJedis;
 import redis.clients.jedis.ShardedJedisPool;
 
-public class RedisDB extends BeanInfoAware implements InitializingBean{
+public class RedisDB extends BeanInfoAware implements InitializingBean,org.frameworkset.spi.DisposableBean{
 	private ShardedJedisPool shardedJedispool;
 	private JedisPool jedisPool;
 	private Map<String,String> properties;
@@ -129,12 +129,14 @@ public class RedisDB extends BeanInfoAware implements InitializingBean{
 		redis.close();
 	}
 	
-	public void destory()
+	public void close()
 	{
 		if(shardedJedispool != null)
 			this.shardedJedispool.destroy();
 		if(jc != null)
 			jc.close();
+		if(jedisPool != null)
+			jedisPool.destroy();
 	}
 
 	@Override
@@ -184,6 +186,12 @@ public class RedisDB extends BeanInfoAware implements InitializingBean{
 
 	public void setAuth(String auth) {
 		this.auth = auth;
+	}
+
+	@Override
+	public void destroy() throws Exception {
+		// TODO Auto-generated method stub
+		close();
 	}
 	
 	
