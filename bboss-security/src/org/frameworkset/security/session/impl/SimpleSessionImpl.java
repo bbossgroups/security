@@ -119,13 +119,13 @@ public class SimpleSessionImpl implements Session{
 	}
 
 	@Override
-	public void touch(SimpleHttpSession session,String lastAccessedUrl,String contextpath) {
+	public void touch(SimpleHttpSession session,String lastAccessedUrl,String contextpath,int MaxInactiveInterval) {
 		assertSession(  session,contextpath) ;
 		lastAccessedTime = System.currentTimeMillis();
 		
 		if(!this.islazy)
 		{
-			sessionStore.updateLastAccessedTime(appKey,id,lastAccessedTime, lastAccessedUrl);
+			sessionStore.updateLastAccessedTime(appKey,id,lastAccessedTime, lastAccessedUrl,MaxInactiveInterval);
 		}
 		else
 		{

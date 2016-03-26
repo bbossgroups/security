@@ -72,7 +72,7 @@ public class HttpSessionImpl implements SimpleHttpSession {
 
 	
 	public void touch(String lastAccessedUrl) {
-		session.touch(this, lastAccessedUrl,contextpath);
+		session.touch(this, lastAccessedUrl,contextpath,this.getMaxInactiveInterval());
 
 	}
 	

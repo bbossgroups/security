@@ -20,7 +20,7 @@ public interface Session {
 	/**
 	 * 更新最后访问时间
 	 */
-	public void touch(SimpleHttpSession session,String lastAccessedUrl,String contextpath);
+	public void touch(SimpleHttpSession session,String lastAccessedUrl,String contextpath,int MaxInactiveInterval);
 	public long getLastAccessedTime() ;
 	public void setLastAccessedTime(long lastAccessedTime) ;
 	public long getMaxInactiveInterval();

@@ -20,11 +20,9 @@ import org.frameworkset.spi.InitializingBean;
 import com.frameworkset.util.StringUtil;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
-import com.mongodb.Mongo;
 
 public class MongoSessionStaticManagerImpl implements SessionStaticManager,InitializingBean {
 	

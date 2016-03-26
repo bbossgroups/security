@@ -210,7 +210,7 @@ public class MongDBSessionStore extends BaseSessionStore{
 
 	
 	@Override
-	public void updateLastAccessedTime(String appKey,String sessionID, long lastAccessedTime,String lastAccessedUrl) {
+	public void updateLastAccessedTime(String appKey,String sessionID, long lastAccessedTime,String lastAccessedUrl,int MaxInactiveInterval) {
 		DBCollection sessions =getAppSessionDBCollection( appKey);
 		MongoDB.update(sessions, new BasicDBObject("sessionid",sessionID).append("_validate", true), new BasicDBObject("$set",new BasicDBObject("lastAccessedTime", lastAccessedTime).append("lastAccessedUrl", lastAccessedUrl).append("lastAccessedHostIP", SimpleStringUtil.getHostIP())),WriteConcern.JOURNAL_SAFE);
 //		try
@@ -230,7 +230,7 @@ public class MongDBSessionStore extends BaseSessionStore{
 	public long getLastAccessedTime(String appKey,String sessionID) {
 		DBCollection sessions =getAppSessionDBCollection( appKey);
 		BasicDBObject keys = new BasicDBObject();
-		keys.put("lastVistTime", 1);
+		keys.put("lastAccessedTime", 1);
 		
 		DBObject obj = sessions.findOne(new BasicDBObject("sessionid",sessionID),keys);
 		if(obj == null)
@@ -365,6 +365,7 @@ public class MongDBSessionStore extends BaseSessionStore{
 			Iterator<Entry<String, ModifyValue>> it = modifyattributes.entrySet().iterator();
 			BasicDBObject record = null;//new BasicDBObject("lastAccessedTime", lastAccessedTime).append("lastAccessedUrl", lastAccessedUrl).append("lastAccessedHostIP", SimpleStringUtil.getHostIP())),WriteConcern.JOURNAL_SAFE);
 			String attribute = null;
+			BasicDBObject removerecord = null;
 			ModifyValue  value = null;
 			while(it.hasNext())
 			{
@@ -398,20 +399,27 @@ public class MongDBSessionStore extends BaseSessionStore{
 					}
 					else
 					{
-						if(record == null)
+						if(removerecord == null)
 						{
-							record = new BasicDBObject(attribute, null); 
+							removerecord = new BasicDBObject(attribute, 1); 
 						}
 						else
 						{
-							record.append(attribute, null);
+							removerecord.append(attribute, 1);
 						}
 					}
 				}
 				
 				
 			}
-			MongoDB.update(sessions, new BasicDBObject("sessionid",session.getId()), new BasicDBObject("$set",record));
+			BasicDBObject obj = new BasicDBObject();
+			if(record != null)
+				obj.append("$set",record);
+			if(removerecord != null)
+			{
+				obj.append("$unset", removerecord);
+			}
+			MongoDB.update(sessions, new BasicDBObject("sessionid",session.getId()), obj);
 			
 		}
 		

@@ -46,7 +46,7 @@ public interface SessionStore{
 
 	Enumeration getAttributeNames(String appKey,String contextpath,String sessionID);
 
-	void updateLastAccessedTime(String appKey,String sessionID, long lastAccessedTime,String lastAccessedUrl);
+	void updateLastAccessedTime(String appKey,String sessionID, long lastAccessedTime,String lastAccessedUrl,int MaxInactiveInterval);
 
 	long getLastAccessedTime(String appKey,String sessionID);
 

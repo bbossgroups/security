@@ -251,9 +251,30 @@ public class RedisSessionStore extends BaseSessionStore{
 
 	
 	@Override
-	public void updateLastAccessedTime(String appKey,String sessionID, long lastAccessedTime,String lastAccessedUrl) {
-		DBCollection sessions =getAppSessionDBCollection( appKey);
-		MongoDB.update(sessions, new BasicDBObject("sessionid",sessionID).append("_validate", true), new BasicDBObject("$set",new BasicDBObject("lastAccessedTime", lastAccessedTime).append("lastAccessedUrl", lastAccessedUrl).append("lastAccessedHostIP", SimpleStringUtil.getHostIP())),WriteConcern.JOURNAL_SAFE);
+	public void updateLastAccessedTime(String appKey,String sessionID, long lastAccessedTime,String lastAccessedUrl,int MaxInactiveInterval) {
+		String sessionKey = this.getAPPSessionKey(appKey, sessionID);
+		RedisHelper redisHelper = RedisFactory.getRedisHelper();
+		try
+		{
+			Map<String,String> values = new HashMap<String,String>();
+			values.put("lastAccessedTime", lastAccessedTime+"");
+			values.put("lastAccessedUrl", lastAccessedUrl);
+			values.put("lastAccessedHostIP", SimpleStringUtil.getHostIP());			
+			redisHelper.hmset(sessionKey, values);
+			redisHelper.expire(sessionKey, MaxInactiveInterval);
+			 
+		}
+		 catch (Exception e) {
+				log.error("",e);
+		}
+		finally
+		{
+			redisHelper.release();
+		}
+		 
+//		DBCollection sessions =getAppSessionDBCollection( appKey);
+//		
+//		MongoDB.update(sessions, new BasicDBObject("sessionid",sessionID).append("_validate", true), new BasicDBObject("$set",new BasicDBObject("lastAccessedTime", lastAccessedTime).append("lastAccessedUrl", lastAccessedUrl).append("lastAccessedHostIP", SimpleStringUtil.getHostIP())),WriteConcern.JOURNAL_SAFE);
 //		try
 //		{
 //			WriteResult wr = sessions.update(new BasicDBObject("sessionid",sessionID).append("_validate", true), new BasicDBObject("$set",new BasicDBObject("lastAccessedTime", lastAccessedTime).append("lastAccessedUrl", lastAccessedUrl).append("lastAccessedHostIP", SimpleStringUtil.getHostIP())));
@@ -269,131 +290,172 @@ public class RedisSessionStore extends BaseSessionStore{
 
 	@Override
 	public long getLastAccessedTime(String appKey,String sessionID) {
-		DBCollection sessions =getAppSessionDBCollection( appKey);
-		BasicDBObject keys = new BasicDBObject();
-		keys.put("lastVistTime", 1);
-		
-		DBObject obj = sessions.findOne(new BasicDBObject("sessionid",sessionID),keys);
-		if(obj == null)
-			throw new SessionException("SessionID["+sessionID+"],appKey["+appKey+"] do not exist or is invalidated!" );
-		return (Long)obj.get("lastAccessedTime");
+		String sessionKey = this.getAPPSessionKey(appKey, sessionID);
+		RedisHelper redisHelper = RedisFactory.getRedisHelper();
+		try
+		{
+			
+			String lastAccessedTime = redisHelper.hget(sessionKey, "lastAccessedTime");
+			if(lastAccessedTime != null)
+				return Long.parseLong(lastAccessedTime);
+			 
+		}
+		 catch (Exception e) {
+				log.error("",e);
+		}
+		finally
+		{
+			redisHelper.release();
+		} 
+		return 0;
+		 
 	}
 
 	@Override
 	public String[] getValueNames(String appKey,String contextpath,String sessionID) {
-		
-		DBCollection sessions =getAppSessionDBCollection( appKey);
-		
-		DBObject obj = sessions.findOne(new BasicDBObject("sessionid",sessionID));
-		
-		if(obj == null)
-			throw new SessionException("SessionID["+sessionID+"],appKey["+appKey+"] do not exist or is invalidated!" );
+		String sessionKey = this.getAPPSessionKey(appKey, sessionID);
+		RedisHelper redisHelper = RedisFactory.getRedisHelper();
 		String[] valueNames = null;
-		if(obj.keySet() != null)
+		try
 		{
-//			valueNames = new String[obj.keySet().size()];
-			List<String> temp = _getAttributeNames(obj.keySet().iterator(),  appKey,  contextpath);
-//			List<String> temp = new ArrayList<String>();
-//			Iterator<String> keys = obj.keySet().iterator();
-//			while(keys.hasNext())
-//			{
-//				String tempstr = keys.next();
-//				if(!MongoDBHelper.filter(tempstr))
-//				{
-//					tempstr = SessionHelper.dewraperAttributeName(appKey, contextpath, tempstr);
-//					if(tempstr != null)
-//					{
-//						temp.add(tempstr);
-//					}
-//				}
-//			}
-			valueNames = new String[temp.size()];
-			valueNames = temp.toArray(valueNames);
-			
+			Set<String> keys = redisHelper.hkeys(sessionKey);
+			 if(keys != null && keys.size() > 0)
+			 {
+				 List<String> temp = _getAttributeNames(keys.iterator(),  appKey,  contextpath);
+				 valueNames = new String[temp.size()];
+					valueNames = temp.toArray(valueNames);
+			 }
 		}
+		 catch (Exception e) {
+				log.error("",e);
+		}
+		finally
+		{
+			redisHelper.release();
+		} 
+		 
+		
 		return valueNames ;
 	}
 	
 	
 	@Override
 	public Enumeration getAttributeNames(String appKey,String contextpath,String sessionID) {
-		
-		DBCollection sessions =getAppSessionDBCollection( appKey);
-		
-		DBObject obj = sessions.findOne(new BasicDBObject("sessionid",sessionID));
-		
-		if(obj == null)
-			throw new SessionException("SessionID["+sessionID+"],appKey["+appKey+"] do not exist or is invalidated!" );
+		String sessionKey = this.getAPPSessionKey(appKey, sessionID);
+		RedisHelper redisHelper = RedisFactory.getRedisHelper();
 		Enumeration<String> valueNames = null;
-		if(obj.keySet() != null)
+		try
 		{
-//			valueNames = new String[obj.keySet().size()];
-			List<String> temp = _getAttributeNames(obj.keySet().iterator(),  appKey,  contextpath);
-//			Iterator<String> keys = obj.keySet().iterator();
-//			while(keys.hasNext())
-//			{
-//				String tempstr = keys.next();
-//				if(!MongoDBHelper.filter(tempstr))
-//				{
-//					tempstr = SessionHelper.dewraperAttributeName(appKey, contextpath, tempstr);
-//					if(tempstr != null)
-//					{
-//						temp.add(tempstr);
-//					}
-//				}
-//			}
-//			valueNames = new String[temp.size()];
-//			valueNames = temp.toArray(valueNames);
-			valueNames = new AttributeNamesEnumeration<String>(temp.iterator());
+			Set<String> keys = redisHelper.hkeys(sessionKey);
+			 if(keys != null && keys.size() > 0)
+			 {
+				 List<String> temp = _getAttributeNames(keys.iterator(),  appKey,  contextpath);
+				 valueNames = new AttributeNamesEnumeration<String>(temp.iterator());
+			 }
 		}
+		 catch (Exception e) {
+				log.error("",e);
+		}
+		finally
+		{
+			redisHelper.release();
+		} 
+		 
+		
 		return valueNames ;
+		
 	}
 
 	@Override
 	public void invalidate(SimpleHttpSession session,String appKey,String contextpath,String sessionID) {
-		DBCollection sessions = getAppSessionDBCollection( appKey);		
-//		sessions.update(new BasicDBObject("sessionid",sessionID), new BasicDBObject("$set",new BasicDBObject("_validate", false)));
-		MongoDB.remove(sessions,new BasicDBObject("sessionid",sessionID));
+		String sessionKey = this.getAPPSessionKey(appKey, sessionID);
+		RedisHelper redisHelper = RedisFactory.getRedisHelper();
+		try
+		{
+			redisHelper.del(sessionKey);
+			 
+		}
+		 catch (Exception e) {
+				log.error("",e);
+		}
+		finally
+		{
+			redisHelper.release();
+		} 
+//		DBCollection sessions = getAppSessionDBCollection( appKey);		
+////		sessions.update(new BasicDBObject("sessionid",sessionID), new BasicDBObject("$set",new BasicDBObject("_validate", false)));
+//		MongoDB.remove(sessions,new BasicDBObject("sessionid",sessionID));
 //		return session;
 		
 	}
 
 	@Override
 	public boolean isNew(String appKey,String sessionID) {
-		DBCollection sessions =getAppSessionDBCollection( appKey);
-		BasicDBObject keys = new BasicDBObject();
-		keys.put("lastAccessedTime", 1);
-		keys.put("creationTime", 1);
-		DBObject obj = sessions.findOne(new BasicDBObject("sessionid",sessionID),keys);
-		
-		if(obj == null)
-			throw new SessionException("SessionID["+sessionID+"],appKey["+appKey+"] do not exist or is invalidated!" );
-		 long lastAccessedTime =(Long)obj.get("lastAccessedTime");
-		 long creationTime =(Long)obj.get("creationTime");
-		 return creationTime == lastAccessedTime;
+		String sessionKey = this.getAPPSessionKey(appKey, sessionID);
+		RedisHelper redisHelper = RedisFactory.getRedisHelper();
+		try
+		{
+			List<String> values = redisHelper.hmget(sessionKey, "lastAccessedTime","creationTime");
+			if(values == null)
+				throw new SessionException("SessionID["+sessionID+"],appKey["+appKey+"] do not exist or is invalidated!" );
+			return values.get(0).equals(values.get(1));
+			
+		}
+		 catch (Exception e) {
+				log.error("",e);
+		}
+		finally
+		{
+			redisHelper.release();
+		} 
+		return false;
+//		DBCollection sessions =getAppSessionDBCollection( appKey);
+//		BasicDBObject keys = new BasicDBObject();
+//		keys.put("lastAccessedTime", 1);
+//		keys.put("creationTime", 1);
+//		DBObject obj = sessions.findOne(new BasicDBObject("sessionid",sessionID),keys);
+//		
+//		if(obj == null)
+//			throw new SessionException("SessionID["+sessionID+"],appKey["+appKey+"] do not exist or is invalidated!" );
+//		 long lastAccessedTime =(Long)obj.get("lastAccessedTime");
+//		 long creationTime =(Long)obj.get("creationTime");
+//		 return creationTime == lastAccessedTime;
 	}
 
 	@Override
 	public void removeAttribute(SimpleHttpSession session,String appKey,String contextpath,String sessionID, String attribute) {
-		DBCollection sessions = getAppSessionDBCollection( appKey);
-//		if(SessionHelper.haveSessionListener())
+		String sessionKey = this.getAPPSessionKey(appKey, sessionID);
+		RedisHelper redisHelper = RedisFactory.getRedisHelper();
+		try
+		{
+			redisHelper.hdel(sessionKey, attribute);
+		}
+		 catch (Exception e) {
+				log.error("",e);
+		}
+		finally
+		{
+			redisHelper.release();
+		} 
+//		DBCollection sessions = getAppSessionDBCollection( appKey);
+////		if(SessionHelper.haveSessionListener())
+////		{
+////			List<String> list = new ArrayList<String>();
+////	//		attribute = converterSpecialChar( attribute);
+////			list.add(attribute);
+//////			Session value = getSession(appKey, contextpath, sessionID,list);
+////			MongoDB.update(sessions, new BasicDBObject("sessionid",sessionID), new BasicDBObject("$unset",new BasicDBObject(list.get(0), 1)));
+//////			sessions.update(new BasicDBObject("sessionid",sessionID), new BasicDBObject("$unset",new BasicDBObject(list.get(0), 1)));
+////			
+////		}
+////		else
 //		{
-//			List<String> list = new ArrayList<String>();
-//	//		attribute = converterSpecialChar( attribute);
-//			list.add(attribute);
-////			Session value = getSession(appKey, contextpath, sessionID,list);
-//			MongoDB.update(sessions, new BasicDBObject("sessionid",sessionID), new BasicDBObject("$unset",new BasicDBObject(list.get(0), 1)));
-////			sessions.update(new BasicDBObject("sessionid",sessionID), new BasicDBObject("$unset",new BasicDBObject(list.get(0), 1)));
+//			attribute = MongoDBHelper.converterSpecialChar(attribute);
+////			sessions.update(new BasicDBObject("sessionid",sessionID), new BasicDBObject("$unset",new BasicDBObject(attribute, 1)));
+//			MongoDB.update(sessions, new BasicDBObject("sessionid",sessionID), new BasicDBObject("$unset",new BasicDBObject(attribute, 1)));
+//			//sessions.update(new BasicDBObject("sessionid",sessionID), new BasicDBObject("$set",new BasicDBObject(attribute, null)));
 //			
 //		}
-//		else
-		{
-			attribute = MongoDBHelper.converterSpecialChar(attribute);
-//			sessions.update(new BasicDBObject("sessionid",sessionID), new BasicDBObject("$unset",new BasicDBObject(attribute, 1)));
-			MongoDB.update(sessions, new BasicDBObject("sessionid",sessionID), new BasicDBObject("$unset",new BasicDBObject(attribute, 1)));
-			//sessions.update(new BasicDBObject("sessionid",sessionID), new BasicDBObject("$set",new BasicDBObject(attribute, null)));
-			
-		}
 		
 	}
 	@Override
@@ -402,11 +464,13 @@ public class RedisSessionStore extends BaseSessionStore{
 		
 		if(modifyattributes != null && modifyattributes.size() > 0)
 		{
-			DBCollection sessions = getAppSessionDBCollection(appkey );
+			
+			 
 			Iterator<Entry<String, ModifyValue>> it = modifyattributes.entrySet().iterator();
-			BasicDBObject record = null;//new BasicDBObject("lastAccessedTime", lastAccessedTime).append("lastAccessedUrl", lastAccessedUrl).append("lastAccessedHostIP", SimpleStringUtil.getHostIP())),WriteConcern.JOURNAL_SAFE);
-			String attribute = null;
+			Map<String,String> record = null;//new BasicDBObject("lastAccessedTime", lastAccessedTime).append("lastAccessedUrl", lastAccessedUrl).append("lastAccessedHostIP", SimpleStringUtil.getHostIP())),WriteConcern.JOURNAL_SAFE);
+//			String attribute = null;
 			ModifyValue  value = null;
+			List<String> removes = null;
 			while(it.hasNext())
 			{
 				Entry<String, ModifyValue> entry = it.next();
@@ -416,43 +480,70 @@ public class RedisSessionStore extends BaseSessionStore{
 				{
 					if(record == null)
 					{
-						record = new BasicDBObject(entry.getKey(), value.getValue()); 
+						record = new HashMap<String,String>();//new BasicDBObject(entry.getKey(), value.getValue()); 
 					}
-					else
-					{
-						record.append(entry.getKey(), value.getValue());
-					}
+					record.put(entry.getKey(), String.valueOf(value.getValue()));
+					
+					 
 				}
 				else//session数据
 				{
-					attribute = MongoDBHelper.converterSpecialChar(entry.getKey());
+//					attribute = MongoDBHelper.converterSpecialChar(entry.getKey());
 					if(value.getOptype() == ModifyValue.type_add)
 					{
 						if(record == null)
 						{
-							record = new BasicDBObject(attribute, value.getValue()); 
+							record = new HashMap<String,String>();//new BasicDBObject(entry.getKey(), value.getValue()); 
 						}
+						if(value.getValue() != null)
+							record.put(entry.getKey(), String.valueOf(value.getValue()));
 						else
-						{
-							record.append(attribute, value.getValue());
-						}
+							record.put(entry.getKey(), null);
+//						if(record == null)
+//						{
+//							record = new BasicDBObject(attribute, value.getValue()); 
+//						}
+//						else
+//						{
+//							record.append(attribute, value.getValue());
+//						}
 					}
 					else
 					{
-						if(record == null)
+						if(removes == null)
 						{
-							record = new BasicDBObject(attribute, null); 
+							removes = new ArrayList<String>(); 
 						}
-						else
-						{
-							record.append(attribute, null);
-						}
+						 
+						removes.add(entry.getKey());
+						 
 					}
 				}
 				
 				
 			}
-			MongoDB.update(sessions, new BasicDBObject("sessionid",session.getId()), new BasicDBObject("$set",record));
+			RedisHelper redisHelper = RedisFactory.getRedisHelper();
+			try
+			{
+				String sessionKey = this.getAPPSessionKey(appkey, session.getId());
+				if(record != null && record.size() > 0)
+				{
+					redisHelper.hmset(sessionKey, record);
+				}
+				if(removes != null && removes.size() > 0)
+				{
+					String[] as = new String[removes.size()];
+					redisHelper.hdel(sessionKey, removes.toArray(as));
+				}
+			}
+			 catch (Exception e) {
+					log.error("",e);
+			}
+			finally
+			{
+				redisHelper.release();
+			} 
+//			MongoDB.update(sessions, new BasicDBObject("sessionid",session.getId()), new BasicDBObject("$set",record));
 			
 		}
 		
@@ -460,99 +551,216 @@ public class RedisSessionStore extends BaseSessionStore{
 	
 	@Override
 	public void addAttribute(SimpleHttpSession session,String appKey,String contextpath,String sessionID, String attribute, Object value) {
-		attribute = MongoDBHelper.converterSpecialChar( attribute);
-		DBCollection sessions = getAppSessionDBCollection( appKey);	
-//		Session session = getSession(appKey,contextpath, sessionID);
-//		sessions.update(new BasicDBObject("sessionid",sessionID), new BasicDBObject("$set",new BasicDBObject(attribute, value)));
-		MongoDB.update(sessions,new BasicDBObject("sessionid",sessionID), new BasicDBObject("$set",new BasicDBObject(attribute, value)));
+		RedisHelper redisHelper = RedisFactory.getRedisHelper();
+		try
+		{
+			String sessionKey = this.getAPPSessionKey(appKey, session.getId());
+			if(value != null)
+				redisHelper.hset(sessionKey, attribute, String.valueOf(value));
+			else
+				redisHelper.hset(sessionKey, attribute, null);
+		}
+		 catch (Exception e) {
+				log.error("",e);
+		}
+		finally
+		{
+			redisHelper.release();
+		} 
+//		attribute = MongoDBHelper.converterSpecialChar( attribute);
+//		DBCollection sessions = getAppSessionDBCollection( appKey);	
+////		Session session = getSession(appKey,contextpath, sessionID);
+////		sessions.update(new BasicDBObject("sessionid",sessionID), new BasicDBObject("$set",new BasicDBObject(attribute, value)));
+//		MongoDB.update(sessions,new BasicDBObject("sessionid",sessionID), new BasicDBObject("$set",new BasicDBObject(attribute, value)));
 //		return session;
 		
 	}
 	
 	public void setMaxInactiveInterval(SimpleHttpSession session, String appKey, String sessionID, long maxInactiveInterval,String contextpath)
 	{
-		DBCollection sessions = getAppSessionDBCollection( appKey);	
-//		Session session = getSession(appKey,contextpath, sessionID);
-//		sessions.update(new BasicDBObject("sessionid",sessionID), new BasicDBObject("$set",new BasicDBObject(attribute, value)));
-		MongoDB.update(sessions,new BasicDBObject("sessionid",sessionID), new BasicDBObject("$set",new BasicDBObject("maxInactiveInterval", maxInactiveInterval)));
+		
+		RedisHelper redisHelper = RedisFactory.getRedisHelper();
+		try
+		{
+			String sessionKey = this.getAPPSessionKey(appKey, session.getId());
+			
+				redisHelper.hset(sessionKey, "maxInactiveInterval", String.valueOf(maxInactiveInterval));			
+				redisHelper.expire(sessionKey, (int)maxInactiveInterval);
+		}
+		 catch (Exception e) {
+				log.error("",e);
+		}
+		finally
+		{
+			redisHelper.release();
+		} 
+//		DBCollection sessions = getAppSessionDBCollection( appKey);	
+////		Session session = getSession(appKey,contextpath, sessionID);
+////		sessions.update(new BasicDBObject("sessionid",sessionID), new BasicDBObject("$set",new BasicDBObject(attribute, value)));
+//		MongoDB.update(sessions,new BasicDBObject("sessionid",sessionID), new BasicDBObject("$set",new BasicDBObject("maxInactiveInterval", maxInactiveInterval)));
 	}
 	private Session getSession(String appKey,String contextpath, String sessionid,List<String> attributeNames) {
-		DBCollection sessions =getAppSessionDBCollection( appKey);
-		BasicDBObject keys = new BasicDBObject();
-		keys.put("creationTime", 1);
-		keys.put("maxInactiveInterval", 1);
-		keys.put("lastAccessedTime", 1);
-		keys.put("_validate", 1);
-		keys.put("appKey", 1);
-		keys.put("referip", 1);
-		keys.put("host", 1);
-		keys.put("requesturi",1);
-		keys.put("lastAccessedUrl", 1);
-		keys.put("secure",1);
-		keys.put("httpOnly", 1);
-		keys.put("lastAccessedHostIP", 1);
-//		.append("lastAccessedHostIP", SimpleStringUtil.getHostIP())
-		List<String> copy = new ArrayList<String>(attributeNames);
-		for(int i = 0; attributeNames != null && i < attributeNames.size(); i ++)
+		RedisHelper redisHelper = RedisFactory.getRedisHelper();
+		try
 		{
-			String r = MongoDBHelper.converterSpecialChar(attributeNames.get(i));
-			attributeNames.set(i, r);
-			keys.put(r, 1);
-		}
-		
-		
-		
-		DBObject object = sessions.findOne(new BasicDBObject("sessionid",sessionid).append("_validate", true),keys);
-		if(object != null)
-		{
-			SimpleSessionImpl session = createSimpleSessionImpl();
-			session.setMaxInactiveInterval(null,(Long)object.get("maxInactiveInterval"),contextpath);
-			session.setAppKey(appKey);
-			session.setCreationTime((Long)object.get("creationTime"));
-			session.setLastAccessedTime((Long)object.get("lastAccessedTime"));
-			session.setId(sessionid);
-			session.setReferip((String)object.get("referip"));
-			session.setValidate((Boolean)object.get("_validate"));
-			session.setHost((String)object.get("host"));
-//			session._setSessionStore(this);
-			session.setRequesturi((String)object.get("requesturi"));
-			session.setLastAccessedUrl((String)object.get("lastAccessedUrl"));
-			session.setLastAccessedHostIP((String)object.get("lastAccessedHostIP"));
-			Object secure_ = object.get("secure");
-			if(secure_ != null)
+			String sessionKey = this.getAPPSessionKey(appKey, sessionid);
+			List<String> fields = new ArrayList<String>();
+			fields.add("creationTime");
+			fields.add("maxInactiveInterval");
+			fields.add("lastAccessedTime");
+			fields.add("_validate");
+//			fields.add("appKey");
+			fields.add("referip");
+			fields.add("host");
+			fields.add("requesturi" );
+			fields.add("lastAccessedUrl");
+			fields.add("secure" );
+			fields.add("httpOnly");
+			fields.add("lastAccessedHostIP");
+			fields.addAll(attributeNames);
+			String[] keys = new String[fields.size()];
+			List<String> values = redisHelper.hmget(sessionKey, fields.toArray(keys));
+			if(values != null)
 			{
-				session.setSecure((Boolean)secure_);
-			}
-			Object httpOnly_ = object.get("httpOnly");
-			if(httpOnly_ != null)
-			{
-				session.setHttpOnly((Boolean)httpOnly_);
+				SimpleSessionImpl session = createSimpleSessionImpl();
+				session.setId(sessionid);
+				session.setAppKey(appKey);
+//				session.setCreationTime((Long)object.get("creationTime"));
+				session.setCreationTime(Long.parseLong(values.get(0)));
+//				session.setMaxInactiveInterval(null,(Long)object.get("maxInactiveInterval"),contextpath);
+				session.setMaxInactiveInterval(null,Long.parseLong(values.get(1)),contextpath);
+//				session.setLastAccessedTime((Long)object.get("lastAccessedTime"));
+				session.setLastAccessedTime(Long.parseLong(values.get(2)));
+				session.setValidate(Boolean.parseBoolean(values.get(3)));
+				session.setReferip(values.get(4));
+				
+				session.setHost(values.get(5));
+//				session._setSessionStore(this);
+				session.setRequesturi(values.get(6));
+				session.setLastAccessedUrl(values.get(7));
+				
+				String secure_ =values.get(8);
+				if(secure_ != null)
+				{
+					session.setSecure(Boolean.parseBoolean(secure_));
+				}
+//				Object httpOnly_ = object.get("httpOnly");
+				String httpOnly_ =values.get(9);
+				if(httpOnly_ != null)
+				{
+					session.setHttpOnly(Boolean.parseBoolean(httpOnly_));
+				}
+				else
+				{
+					session.setHttpOnly(StringUtil.hasHttpOnlyMethod()?SessionHelper.getSessionManager().isHttpOnly():false);
+				}
+				session.setLastAccessedHostIP(values.get(10));
+				Map<String,Object> attributes = new HashMap<String,Object>();
+				for(int i = 0; attributeNames != null && i < attributeNames.size(); i ++)
+				{
+					String name = attributeNames.get(i);
+					String value = values.get(i+11);
+					try {
+						String temp = SessionHelper.dewraperAttributeName(appKey, contextpath, name);		
+						if(temp != null)
+							attributes.put(temp, SessionHelper.unserial((String)value));
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				session.setAttributes(attributes);
+				return session;
 			}
 			else
 			{
-				session.setHttpOnly(StringUtil.hasHttpOnlyMethod()?SessionHelper.getSessionManager().isHttpOnly():false);
+				return null;
 			}
-			Map<String,Object> attributes = new HashMap<String,Object>();
-			for(int i = 0; attributeNames != null && i < attributeNames.size(); i ++)
-			{
-				String name = attributeNames.get(i);
-				Object value = object.get(name);
-				try {
-					String temp = SessionHelper.dewraperAttributeName(appKey, contextpath, copy.get(i));		
-					if(temp != null)
-						attributes.put(temp, SessionHelper.unserial((String)value));
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			session.setAttributes(attributes);
-			return session;
 		}
-		else
+		 catch (Exception e) {
+				log.error("",e);
+		}
+		finally
 		{
-			return null;
-		}
+			redisHelper.release();
+		} 
+		return null;
+//		DBCollection sessions =getAppSessionDBCollection( appKey);
+//		BasicDBObject keys = new BasicDBObject();
+//		keys.put("creationTime", 1);
+//		keys.put("maxInactiveInterval", 1);
+//		keys.put("lastAccessedTime", 1);
+//		keys.put("_validate", 1);
+//		keys.put("appKey", 1);
+//		keys.put("referip", 1);
+//		keys.put("host", 1);
+//		keys.put("requesturi",1);
+//		keys.put("lastAccessedUrl", 1);
+//		keys.put("secure",1);
+//		keys.put("httpOnly", 1);
+//		keys.put("lastAccessedHostIP", 1);
+////		.append("lastAccessedHostIP", SimpleStringUtil.getHostIP())
+//		List<String> copy = new ArrayList<String>(attributeNames);
+//		for(int i = 0; attributeNames != null && i < attributeNames.size(); i ++)
+//		{
+//			String r = MongoDBHelper.converterSpecialChar(attributeNames.get(i));
+//			attributeNames.set(i, r);
+//			keys.put(r, 1);
+//		}
+//		
+//		
+//		
+//		DBObject object = sessions.findOne(new BasicDBObject("sessionid",sessionid).append("_validate", true),keys);
+//		if(object != null)
+//		{
+//			SimpleSessionImpl session = createSimpleSessionImpl();
+//			session.setMaxInactiveInterval(null,(Long)object.get("maxInactiveInterval"),contextpath);
+//			session.setAppKey(appKey);
+//			session.setCreationTime((Long)object.get("creationTime"));
+//			session.setLastAccessedTime((Long)object.get("lastAccessedTime"));
+//			session.setId(sessionid);
+//			session.setReferip((String)object.get("referip"));
+//			session.setValidate((Boolean)object.get("_validate"));
+//			session.setHost((String)object.get("host"));
+////			session._setSessionStore(this);
+//			session.setRequesturi((String)object.get("requesturi"));
+//			session.setLastAccessedUrl((String)object.get("lastAccessedUrl"));
+//			session.setLastAccessedHostIP((String)object.get("lastAccessedHostIP"));
+//			Object secure_ = object.get("secure");
+//			if(secure_ != null)
+//			{
+//				session.setSecure((Boolean)secure_);
+//			}
+//			Object httpOnly_ = object.get("httpOnly");
+//			if(httpOnly_ != null)
+//			{
+//				session.setHttpOnly((Boolean)httpOnly_);
+//			}
+//			else
+//			{
+//				session.setHttpOnly(StringUtil.hasHttpOnlyMethod()?SessionHelper.getSessionManager().isHttpOnly():false);
+//			}
+//			Map<String,Object> attributes = new HashMap<String,Object>();
+//			for(int i = 0; attributeNames != null && i < attributeNames.size(); i ++)
+//			{
+//				String name = attributeNames.get(i);
+//				Object value = object.get(name);
+//				try {
+//					String temp = SessionHelper.dewraperAttributeName(appKey, contextpath, copy.get(i));		
+//					if(temp != null)
+//						attributes.put(temp, SessionHelper.unserial((String)value));
+//				} catch (Exception e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//			}
+//			session.setAttributes(attributes);
+//			return session;
+//		}
+//		else
+//		{
+//			return null;
+//		}
 	}
 	@Override
 	public SessionConfig getSessionConfig(String appkey) {
@@ -581,56 +789,127 @@ public class RedisSessionStore extends BaseSessionStore{
 	}
 	@Override
 	public Session getSession(String appKey,String contextpath, String sessionid) {
-		DBCollection sessions =getAppSessionDBCollection( appKey);
-		BasicDBObject keys = new BasicDBObject();
-		keys.put("creationTime", 1);
-		keys.put("maxInactiveInterval", 1);
-		keys.put("lastAccessedTime", 1);
-		keys.put("_validate", 1);
-		keys.put("appKey", 1);
-		keys.put("referip", 1);
-		keys.put("host", 1);
-		keys.put("requesturi", 1);
-		keys.put("lastAccessedUrl", 1);
-		keys.put("secure",1);
-		keys.put("httpOnly", 1);
-		keys.put("lastAccessedHostIP", 1);
-		DBObject object = sessions.findOne(new BasicDBObject("sessionid",sessionid).append("_validate", true),keys);
-		if(object != null)
+		RedisHelper redisHelper = RedisFactory.getRedisHelper();
+		try
 		{
-			SimpleSessionImpl session = createSimpleSessionImpl();
-			session.setMaxInactiveInterval(null,(Long)object.get("maxInactiveInterval"),contextpath);
-			session.setAppKey(appKey);
-			session.setCreationTime((Long)object.get("creationTime"));
-			session.setLastAccessedTime((Long)object.get("lastAccessedTime"));
-			session.setId(sessionid);
-			session.setReferip((String)object.get("referip"));
-			session.setValidate((Boolean)object.get("_validate"));
-			session.setHost((String)object.get("host"));
-//			session._setSessionStore(this);
-			session.setRequesturi((String)object.get("requesturi"));
-			session.setLastAccessedUrl((String)object.get("lastAccessedUrl"));
-			Object secure_ = object.get("secure");
-			if(secure_ != null)
+			String sessionKey = this.getAPPSessionKey(appKey, sessionid);
+			List<String> fields = new ArrayList<String>();
+			fields.add("creationTime");
+			fields.add("maxInactiveInterval");
+			fields.add("lastAccessedTime");
+			fields.add("_validate");
+//			fields.add("appKey");
+			fields.add("referip");
+			fields.add("host");
+			fields.add("requesturi" );
+			fields.add("lastAccessedUrl");
+			fields.add("secure" );
+			fields.add("httpOnly");
+			fields.add("lastAccessedHostIP");
+			 
+			String[] keys = new String[fields.size()];
+			List<String> values = redisHelper.hmget(sessionKey, fields.toArray(keys));
+			if(values != null)
 			{
-				session.setSecure((Boolean)secure_);
-			}
-			Object httpOnly_ = object.get("httpOnly");
-			if(httpOnly_ != null)
-			{
-				session.setHttpOnly((Boolean)httpOnly_);
+				SimpleSessionImpl session = createSimpleSessionImpl();
+				session.setId(sessionid);
+				session.setAppKey(appKey);
+//				session.setCreationTime((Long)object.get("creationTime"));
+				session.setCreationTime(Long.parseLong(values.get(0)));
+//				session.setMaxInactiveInterval(null,(Long)object.get("maxInactiveInterval"),contextpath);
+				session.setMaxInactiveInterval(null,Long.parseLong(values.get(1)),contextpath);
+//				session.setLastAccessedTime((Long)object.get("lastAccessedTime"));
+				session.setLastAccessedTime(Long.parseLong(values.get(2)));
+				session.setValidate(Boolean.parseBoolean(values.get(3)));
+				session.setReferip(values.get(4));
+				
+				session.setHost(values.get(5));
+//				session._setSessionStore(this);
+				session.setRequesturi(values.get(6));
+				session.setLastAccessedUrl(values.get(7));
+				
+				String secure_ =values.get(8);
+				if(secure_ != null)
+				{
+					session.setSecure(Boolean.parseBoolean(secure_));
+				}
+//				Object httpOnly_ = object.get("httpOnly");
+				String httpOnly_ =values.get(9);
+				if(httpOnly_ != null)
+				{
+					session.setHttpOnly(Boolean.parseBoolean(httpOnly_));
+				}
+				else
+				{
+					session.setHttpOnly(StringUtil.hasHttpOnlyMethod()?SessionHelper.getSessionManager().isHttpOnly():false);
+				}
+				session.setLastAccessedHostIP(values.get(10));
+				 
+				return session;
 			}
 			else
 			{
-				session.setHttpOnly(StringUtil.hasHttpOnlyMethod()?SessionHelper.getSessionManager().isHttpOnly():false);
+				return null;
 			}
-			session.setLastAccessedHostIP((String)object.get("lastAccessedHostIP"));
-			return session;
 		}
-		else
+		 catch (Exception e) {
+				log.error("",e);
+		}
+		finally
 		{
-			return null;
-		}
+			redisHelper.release();
+		} 
+		return null;
+//		DBCollection sessions =getAppSessionDBCollection( appKey);
+//		BasicDBObject keys = new BasicDBObject();
+//		keys.put("creationTime", 1);
+//		keys.put("maxInactiveInterval", 1);
+//		keys.put("lastAccessedTime", 1);
+//		keys.put("_validate", 1);
+//		keys.put("appKey", 1);
+//		keys.put("referip", 1);
+//		keys.put("host", 1);
+//		keys.put("requesturi", 1);
+//		keys.put("lastAccessedUrl", 1);
+//		keys.put("secure",1);
+//		keys.put("httpOnly", 1);
+//		keys.put("lastAccessedHostIP", 1);
+//		DBObject object = sessions.findOne(new BasicDBObject("sessionid",sessionid).append("_validate", true),keys);
+//		if(object != null)
+//		{
+//			SimpleSessionImpl session = createSimpleSessionImpl();
+//			session.setMaxInactiveInterval(null,(Long)object.get("maxInactiveInterval"),contextpath);
+//			session.setAppKey(appKey);
+//			session.setCreationTime((Long)object.get("creationTime"));
+//			session.setLastAccessedTime((Long)object.get("lastAccessedTime"));
+//			session.setId(sessionid);
+//			session.setReferip((String)object.get("referip"));
+//			session.setValidate((Boolean)object.get("_validate"));
+//			session.setHost((String)object.get("host"));
+////			session._setSessionStore(this);
+//			session.setRequesturi((String)object.get("requesturi"));
+//			session.setLastAccessedUrl((String)object.get("lastAccessedUrl"));
+//			Object secure_ = object.get("secure");
+//			if(secure_ != null)
+//			{
+//				session.setSecure((Boolean)secure_);
+//			}
+//			Object httpOnly_ = object.get("httpOnly");
+//			if(httpOnly_ != null)
+//			{
+//				session.setHttpOnly((Boolean)httpOnly_);
+//			}
+//			else
+//			{
+//				session.setHttpOnly(StringUtil.hasHttpOnlyMethod()?SessionHelper.getSessionManager().isHttpOnly():false);
+//			}
+//			session.setLastAccessedHostIP((String)object.get("lastAccessedHostIP"));
+//			return session;
+//		}
+//		else
+//		{
+//			return null;
+//		}
 	}
 	@Override
 	public SimpleHttpSession createHttpSession(ServletContext servletContext,
