@@ -13,8 +13,6 @@ import java.util.Set;
 import javax.servlet.ServletContext;
 
 import org.apache.log4j.Logger;
-import org.frameworkset.nosql.mongodb.MongoDB;
-import org.frameworkset.nosql.mongodb.MongoDBHelper;
 import org.frameworkset.nosql.redis.RedisFactory;
 import org.frameworkset.nosql.redis.RedisHelper;
 import org.frameworkset.security.session.AttributeNamesEnumeration;
@@ -27,10 +25,6 @@ import org.frameworkset.soa.ObjectSerializable;
 
 import com.frameworkset.util.SimpleStringUtil;
 import com.frameworkset.util.StringUtil;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBCollection;
-import com.mongodb.DBObject;
-import com.mongodb.WriteConcern;
 
 public class RedisSessionStore extends BaseSessionStore{
 	
@@ -41,8 +35,7 @@ public class RedisSessionStore extends BaseSessionStore{
 	}
 	public void destory()
 	{
-		
-		MongoDBHelper.destory();
+		 
 		
 	}
 	@Override
@@ -78,8 +71,9 @@ public class RedisSessionStore extends BaseSessionStore{
 //		}
 		
 	}
-	private static String config_prefix = "bboss:session:config:";
-	private static String table_prefix = "bboss:session:table:";
+	public static final String config_prefix = "bboss:session:config:";
+	public static final String table_prefix = "bboss:session:table:";
+	public static final String sessionapps = "bboss:session:apps";
 	private String getAPPConfigKey(String appcode)
 	{
 		return config_prefix+appcode;  
@@ -90,7 +84,7 @@ public class RedisSessionStore extends BaseSessionStore{
 		return table_prefix+appcode;  
 	}
 	
-	private String getAPPSessionKey(String appcode,String sessionid)
+	public static String getAPPSessionKey(String appcode,String sessionid)
 	{
 		return new StringBuilder().append(table_prefix).append(appcode).append(":").append(sessionid).toString();  
 	}
@@ -101,6 +95,7 @@ public class RedisSessionStore extends BaseSessionStore{
 		RedisHelper redisHelper = RedisFactory.getRedisHelper();
 		try
 		{
+			redisHelper.sadd(sessionapps, config.getAppcode());
 			String appkey = getAPPConfigKey(config.getAppcode());
 			String createTime = redisHelper.hget(appkey,"createTime");
  		 
@@ -126,6 +121,7 @@ public class RedisSessionStore extends BaseSessionStore{
 			data.put("config", configxml);
 			data.put("createTime", createTime);
 			redisHelper.hmset(appkey, data);
+			
 		} catch (Exception e) {
 			log.error("",e);
 		}

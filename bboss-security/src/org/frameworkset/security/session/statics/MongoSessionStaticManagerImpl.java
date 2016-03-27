@@ -24,45 +24,17 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 
-public class MongoSessionStaticManagerImpl implements SessionStaticManager,InitializingBean {
+public class MongoSessionStaticManagerImpl extends BaseSessionStaticManagerImpl implements InitializingBean {
 	
 	 
-	
-	/**
-	 * monitorScope="self|all" 指定监控管理的session数据的应用系统范围:
-	self:表示只能监控管理本应用的会话数据
-	all:表示监控管理所有应用的会话数据
-	 */
-	private String monitorScope;
+	 
 	
 
 	public MongoSessionStaticManagerImpl() {
 		MongoDBHelper.initSessionDB();
 	}
 
-	@Override
-	public List<SessionAPP> getSessionAPP() {
-//		List<SessionAPP> appList = new ArrayList<SessionAPP>();
-//
-//		List<String> list = getAPPName();
-//
-//		for (String appkey : list) {
-//			SessionAPP sessionApp = new SessionAPP();
-//
-//			DBCollection coll = db.getCollection(appkey);
-//
-//			sessionApp.setAppkey(appkey.substring(0,
-//					appkey.indexOf("_sessions")));
-//			sessionApp.setSessions(coll.getCount());
-//
-//			appList.add(sessionApp);
-//
-//		}
-//
-//		return appList;
-		return getSessionAPP((HttpServletRequest )null);
-	}
-	
+
 	@Override
 	public List<SessionAPP> getSessionAPP(HttpServletRequest request) {
 		List<SessionAPP> appList = new ArrayList<SessionAPP>();
@@ -104,44 +76,9 @@ public class MongoSessionStaticManagerImpl implements SessionStaticManager,Initi
 		sessionApp.setSessions(coll.getCount());		
 		return sessionApp;
 	}
-	/**
-	 * 判断应用是否有查询会话权限，除了总控应用可以看所有会话外，其他的应用只能看当前应用的会话数据
-	 * @param app 
-	 * @param currentapp
-	 * @return
-	 */
-	public boolean hasMonitorPermission(String app,String currentapp)
-	{
-		if(this.monitorScope == null || this.monitorScope.equals(MONITOR_SCOPE_SELF))
-		{
-			return app.equals(currentapp);
-		}
-		else if(this.monitorScope.equals(MONITOR_SCOPE_ALL))
-		{
-			return true;
-		}
-		return false;
-	}
+	 
 	
-	/**
-	 * 判断用户是有使用app的session管理权限
-	 * @param app 
-	 * @param currentapp
-	 * @return
-	 */
-	public boolean hasMonitorPermission(String app,HttpServletRequest request)
-	{
-		String currentAPP = SessionHelper.getAppKey(request);
-		if(this.monitorScope == null || this.monitorScope.equals(MONITOR_SCOPE_SELF))
-		{
-			return app.equals(currentAPP);
-		}
-		else if(this.monitorScope.equals(MONITOR_SCOPE_ALL))
-		{
-			return true;
-		}
-		return false;
-	}
+	 
 	/**
 	 * 获取当前db中以_sessions结尾的表名
 	 * 如果request不为空就是需要获取带权限的会话表数据
@@ -202,36 +139,7 @@ public class MongoSessionStaticManagerImpl implements SessionStaticManager,Initi
 		}
 	}
 	
-	/**
-	 * 获取当前db中以_sessions结尾的表名
-	 * 
-	 * @return 2014年6月5日
-	 */
-	public List<String> getAPPName() {
-
-//		List<String> appList = new ArrayList<String>();
-//
-//		// 获取所有当前db所有信息集合
-//		Set<String> apps = db.getCollectionNames();
-//
-//		if (apps == null || apps.size() == 0) {
-//			return null;
-//		}
-//
-//		Iterator<String> itr = apps.iterator();
-//
-//		while (itr.hasNext()) {
-//
-//			String app = itr.next();
-//
-//			if (app.endsWith("_sessions")) {
-//				appList.add(app);
-//			}
-//
-//		}
-//		return appList;
-		return getAPPName((HttpServletRequest)null);
-	}
+	
 	
 	@Override
 	public List<SessionInfo> getAllSessionInfos(SessionConfig sessionConfig,Map queryParams, int row,
@@ -618,34 +526,15 @@ public class MongoSessionStaticManagerImpl implements SessionStaticManager,Initi
 
 	}
 
-	public String getMonitorScope() {
-		return monitorScope;
-	}
-
-	public void setMonitorScope(String monitorScope) {
-		this.monitorScope = monitorScope;
-	}
-
-	@Override
-	public boolean hasDeleteAppPermission(String app, HttpServletRequest request) {
-		
-		return this.monitorScope != null && this.monitorScope.equals(MONITOR_SCOPE_ALL);
-	}
-
+	 
+ 
 	@Override
 	public boolean deleteApp(String appKey) throws Exception {
 		DBCollection table = MongoDBHelper.getAppSessionDBCollection(appKey);
 		table.drop();
 		return true;
 	}
-
-	@Override
-	public boolean isMonitorAll() {
-		
-		return this.monitorScope != null && this.monitorScope.equals(MONITOR_SCOPE_ALL);
-	}
-
-	 
+ 
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
@@ -653,16 +542,7 @@ public class MongoSessionStaticManagerImpl implements SessionStaticManager,Initi
 		
 	}
 
-	@Override
-	public AttributeInfo[] getExtendAttributeArray(String appkey) {
-		SessionConfig sessionConfig = SessionHelper.getSessionConfig(appkey);
-		return sessionConfig == null?null:sessionConfig.getExtendAttributeInfos();
-	}
-	
-	public SessionConfig getSessionConfig(String appkey)
-	{
-		return SessionHelper.getSessionConfig(appkey);
-	}
+	 
 
 	 
 

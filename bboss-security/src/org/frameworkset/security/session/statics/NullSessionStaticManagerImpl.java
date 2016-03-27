@@ -109,5 +109,11 @@ public class NullSessionStaticManagerImpl implements SessionStaticManager {
 		return null;
 	}
 
+	@Override
+	public List<String> getAPPName(HttpServletRequest request) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
  
 }

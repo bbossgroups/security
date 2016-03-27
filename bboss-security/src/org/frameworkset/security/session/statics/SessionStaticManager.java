@@ -18,6 +18,7 @@ public interface SessionStaticManager {
 	List<SessionAPP> getSessionAPP(HttpServletRequest request);
 	SessionAPP getSingleSessionAPP(String appName);
 	SessionAPP getSingleSessionAPP(HttpServletRequest request);
+	public List<String> getAPPName(HttpServletRequest request);
 	public SessionConfig getSessionConfig(String appkey);
 	/**
 	 * 判断用户是有使用app的session管理权限

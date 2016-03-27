@@ -128,16 +128,7 @@ public class MongoDBHelper {
 		return attribute;
 	}
 	public static boolean filter(String key) {
-		return key.equals("maxInactiveInterval") || key.equals("creationTime")
-				|| key.equals("lastAccessedTime") || key.equals("referip")
-				|| key.equals("_validate") || key.equals("sessionid")
-				|| key.equals("_id") || key.equals("appKey")
-				|| key.equals("host")
-				|| key.equals("secure")
-				|| key.equals("httpOnly")
-				|| key.equals("requesturi")
-				|| key.equals("lastAccessedUrl")
-				|| key.equals("lastAccessedHostIP");
+		return SessionHelper.filter(key);
 			
 	}
 	

@@ -65,6 +65,20 @@ public class SessionHelper {
 	{
 		return sessionManager.getSessionConfig(appcode, serialattributes);
 	}
+	
+	public static boolean filter(String key) {
+		return key.equals("maxInactiveInterval") || key.equals("creationTime")
+				|| key.equals("lastAccessedTime") || key.equals("referip")
+				|| key.equals("_validate") || key.equals("sessionid")
+				|| key.equals("_id") || key.equals("appKey")
+				|| key.equals("host")
+				|| key.equals("secure")
+				|| key.equals("httpOnly")
+				|| key.equals("requesturi")
+				|| key.equals("lastAccessedUrl")
+				|| key.equals("lastAccessedHostIP");
+			
+	}
 	public static void init(String contextpath){
 		if(inited)
 			return ;
