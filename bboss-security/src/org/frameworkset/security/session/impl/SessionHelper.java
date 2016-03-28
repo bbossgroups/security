@@ -477,4 +477,28 @@ public class SessionHelper {
 //		}
 		return monitorAttributeArray;
 	}
+	public static List<AttributeInfo> evalqueryfiledsValue(AttributeInfo[] attributeInfos, List<String> data, int offset) {
+		List<AttributeInfo> extendAttrs = null;
+		 
+		if(attributeInfos != null && attributeInfos.length > 0)				
+		{
+			extendAttrs = new ArrayList<AttributeInfo>();
+			AttributeInfo attrvalue = null;
+			for(int j = 0; j < attributeInfos.length; j ++ )
+			{
+				AttributeInfo attributeInfo = attributeInfos[j];
+				try {
+					attrvalue = attributeInfo.clone();
+					String value = data.get(j +offset);
+					attrvalue.setValue(unserial(  value));
+					extendAttrs.add(attrvalue);
+				} catch (CloneNotSupportedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+			}
+		}
+		return extendAttrs;
+	}
 }

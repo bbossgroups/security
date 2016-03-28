@@ -122,12 +122,8 @@ public class SessionManager extends org.frameworkset.spi.BaseApplicationContextA
 		sessionConfig.setAppcode(this.appcode);
 		sessionConfig.setCookiename(this.cookiename);
 		sessionConfig.setMonitorScope(monitorScope);
-		if(this.crossDomain != null)
-			try {
-				sessionConfig.setCrossDomain(ObjectSerializable.toXML(this.crossDomain));
-			} catch (Exception e) {
-				log.error("refreshSessionConfig failed:", e);
-			}
+		if(this.crossDomain != null)			 
+				sessionConfig.setCrossDomain(this.crossDomain);
 		
 		
 		if(!SimpleStringUtil.isEmpty(this.monitorAttributes))

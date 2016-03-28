@@ -129,6 +129,7 @@ public class SimpleSessionImpl implements Session{
 		}
 		else
 		{
+			sessionStore.expired(appKey,id,MaxInactiveInterval);
 			modifyAttribute("lastAccessedTime",lastAccessedTime,ModifyValue.type_base,ModifyValue.type_add);
 			modifyAttribute("lastAccessedUrl",lastAccessedUrl,ModifyValue.type_base,ModifyValue.type_add);
 			modifyAttribute("lastAccessedHostIP", SimpleStringUtil.getHostIP(),ModifyValue.type_base,ModifyValue.type_add);

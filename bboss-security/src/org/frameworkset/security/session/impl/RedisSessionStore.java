@@ -392,7 +392,7 @@ public class RedisSessionStore extends BaseSessionStore{
 		try
 		{
 			List<String> values = redisHelper.hmget(sessionKey, "lastAccessedTime","creationTime");
-			if(values == null)
+			if(values == null || values.get(1) == null )
 				throw new SessionException("SessionID["+sessionID+"],appKey["+appKey+"] do not exist or is invalidated!" );
 			return values.get(0).equals(values.get(1));
 			
@@ -521,7 +521,7 @@ public class RedisSessionStore extends BaseSessionStore{
 			RedisHelper redisHelper = RedisFactory.getRedisHelper();
 			try
 			{
-				String sessionKey = this.getAPPSessionKey(appkey, session.getId());
+				String sessionKey = getAPPSessionKey(appkey, session.getId());
 				if(record != null && record.size() > 0)
 				{
 					redisHelper.hmset(sessionKey, record);
@@ -616,7 +616,7 @@ public class RedisSessionStore extends BaseSessionStore{
 			fields.addAll(attributeNames);
 			String[] keys = new String[fields.size()];
 			List<String> values = redisHelper.hmget(sessionKey, fields.toArray(keys));
-			if(values != null)
+			if(values != null && values.get(0) != null)
 			{
 				SimpleSessionImpl session = createSimpleSessionImpl();
 				session.setId(sessionid);
@@ -805,7 +805,7 @@ public class RedisSessionStore extends BaseSessionStore{
 			 
 			String[] keys = new String[fields.size()];
 			List<String> values = redisHelper.hmget(sessionKey, fields.toArray(keys));
-			if(values != null)
+			if(values != null && values.get(0) != null)
 			{
 				SimpleSessionImpl session = createSimpleSessionImpl();
 				session.setId(sessionid);
@@ -917,6 +917,28 @@ public class RedisSessionStore extends BaseSessionStore{
 	public String getName() {
 		// TODO Auto-generated method stub
 		return this.getClass().getName();
+	}
+	@Override
+	public Long expired(String appkey,String sessionid,int timeout) {
+		if(appkey == null || appkey.equals(""))
+			return null;
+		
+		RedisHelper redisHelper = RedisFactory.getRedisHelper();
+		try
+		{
+			String sessionkey = this.getAPPSessionKey(appkey,sessionid);
+		
+			return redisHelper.expire(sessionkey, timeout);
+			 
+			
+		} catch (Exception e) {
+			log.error("",e);
+		}
+		finally
+		{
+			redisHelper.release();
+		}
+		 return null;
 	}
 
 	

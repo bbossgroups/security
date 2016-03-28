@@ -313,10 +313,10 @@ public class SessionManagerAction {
 				{
 					
 					model.addAttribute("sessionConfig", sessionConfig);
-					if(sessionConfig.getCrossDomain() != null && !sessionConfig.getCrossDomain().equals(""))
+					if(sessionConfig.getCrossDomain() != null )
 					{
-						CrossDomain crossDomain = ObjectSerializable.toBean(sessionConfig.getCrossDomain(), CrossDomain.class);
-						model.addAttribute("crossDomain", crossDomain);
+//						CrossDomain crossDomain = ObjectSerializable.toBean(sessionConfig.getCrossDomain(), CrossDomain.class);
+						model.addAttribute("crossDomain", sessionConfig.getCrossDomain());
 					}
 					 
 				}

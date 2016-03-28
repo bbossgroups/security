@@ -17,6 +17,7 @@ public class ModifyValue {
 	private int optype;
 	
 	public static final int type_add = 1;
+	public static final int type_expired = 3;
 	public static final int type_remove = 2;
 	public ModifyValue() {
 		// TODO Auto-generated constructor stub

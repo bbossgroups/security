@@ -213,6 +213,11 @@ public class DelegateSessionStore implements SessionStore {
 	public boolean uselazystore() {
 		return sessionStore.uselazystore();
 	}
+	@Override
+	public Long expired(String appkey, String sessionid, int timeout) {
+		// TODO Auto-generated method stub
+		return sessionStore.expired(appkey, sessionid, timeout);
+	}
 	
 	
 

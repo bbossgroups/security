@@ -145,6 +145,8 @@ public class RedisSessionStaticManagerImpl extends BaseSessionStaticManagerImpl 
 		try
 		{
 			String sessionid = (String) queryParams.get("sessionid");
+			if(sessionid == null || sessionid.equals(""))
+				return null;
 			List<String> fields = new ArrayList<String>();
 			fields.add("appKey");
 			fields.add("sessionid");
@@ -159,11 +161,24 @@ public class RedisSessionStaticManagerImpl extends BaseSessionStaticManagerImpl 
 			fields.add("secure");
 			fields.add("httpOnly");
 			fields.add("lastAccessedHostIP");
+			AttributeInfo[] attributeInfos = sessionConfig == null?null:sessionConfig.getExtendAttributeInfos();
+			if(attributeInfos != null && attributeInfos.length > 0)
+			{
+				for(AttributeInfo attr:attributeInfos)
+				{
+					fields.add(attr.getName());				 
+					
+				}
+				
+				
+			}
 			String sessionKey = RedisSessionStore.getAPPSessionKey(appKey, sessionid);
 			String[] fs = new String[fields.size()];
 			List<String> data = redisHelper.hmget(sessionKey, fields.toArray(fs));
 			if(data != null)
 			{
+				if(data.get(1) == null)
+					return null;
 				sessions = new ArrayList<SessionInfo>();
 				SessionInfo info = new SessionInfo();
 
@@ -213,9 +228,9 @@ public class RedisSessionStaticManagerImpl extends BaseSessionStaticManagerImpl 
 				info.setLastAccessedHostIP(data.get(12));
 					
 				 
-//					List<AttributeInfo> extendAttrs = SessionHelper.evalqueryfiledsValue(attributeInfos,dbobject);
-//					
-//					info.setExtendAttributes(extendAttrs);
+					List<AttributeInfo> extendAttrs = SessionHelper.evalqueryfiledsValue(attributeInfos,data,13);
+					
+					info.setExtendAttributes(extendAttrs);
 				 
 				 
 					sessions.add(info);

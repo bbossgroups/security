@@ -20,7 +20,9 @@ import org.frameworkset.security.session.InvalidateCallback;
 import org.frameworkset.security.session.Session;
 import org.frameworkset.security.session.SessionBasicInfo;
 import org.frameworkset.security.session.SimpleHttpSession;
+import org.frameworkset.security.session.domain.CrossDomain;
 import org.frameworkset.security.session.statics.SessionConfig;
+import org.frameworkset.soa.ObjectSerializable;
 
 import com.frameworkset.util.SimpleStringUtil;
 import com.frameworkset.util.StringUtil;
@@ -91,45 +93,56 @@ public class MongDBSessionStore extends BaseSessionStore{
 	public void saveSessionConfig(SessionConfig config)
 	{
 		DBCollection sessionconf = getConfigSessionDBCollection();
+		try {	
 		
-		BasicDBObject keys = new BasicDBObject();
-		keys.put("appcode", 1);
-	 
-		DBObject object = sessionconf.findOne(new BasicDBObject("appcode",config.getAppcode()) ,keys);
-		BasicDBObject record = new BasicDBObject("appcode",config.getAppcode())
-		 
-		.append("cookiename",config.getCookiename())
-		.append("crossDomain", config.getCrossDomain())
-		.append("domain", config.getDomain());
-		if(config.getScanStartTime() != null)
-			record.append("scanStartTime", config.getScanStartTime().getTime());
-		 record.append("sessionListeners", config.getSessionListeners())
-		.append("sessionscaninterval", config.getSessionscaninterval())
-		.append("sessionStore", config.getSessionStore())
-		.append("sessionTimeout",config.getSessionTimeout())
-		.append("httpOnly", config.isHttpOnly())
-		.append("secure", config.isSecure())
-		.append("monitorAttributes", config.getMonitorAttributes())
-		
-		.append("startLifeScan", config.isStartLifeScan()).append("monitorScope", config.getMonitorScope()).append("lazystore", config.isLazystore());
-		 
-		if(object == null)
-		{
-			Date date = new Date();
-			record.append("createTime", date.getTime());
-			record.append("updateTime", date.getTime());
+			BasicDBObject keys = new BasicDBObject();
+			keys.put("appcode", 1);
+			String cd = "";
+			if(config.getCrossDomain() != null)
+			{
+				cd = ObjectSerializable.toXML(config.getCrossDomain());
+					// TODO Auto-generated catch block
+				
+			}
+			
+			DBObject object = sessionconf.findOne(new BasicDBObject("appcode",config.getAppcode()) ,keys);
+			BasicDBObject record = new BasicDBObject("appcode",config.getAppcode())
 			 
-			MongoDB.insert(WriteConcern.UNACKNOWLEDGED,sessionconf,record);
-		}
-		else
-		{
-			Date date = new Date();
+			.append("cookiename",config.getCookiename())
+			
+			.append("crossDomain", cd)
+			.append("domain", config.getDomain());
+			if(config.getScanStartTime() != null)
+				record.append("scanStartTime", config.getScanStartTime().getTime());
+			 record.append("sessionListeners", config.getSessionListeners())
+			.append("sessionscaninterval", config.getSessionscaninterval())
+			.append("sessionStore", config.getSessionStore())
+			.append("sessionTimeout",config.getSessionTimeout())
+			.append("httpOnly", config.isHttpOnly())
+			.append("secure", config.isSecure())
+			.append("monitorAttributes", config.getMonitorAttributes())
+			
+			.append("startLifeScan", config.isStartLifeScan()).append("monitorScope", config.getMonitorScope()).append("lazystore", config.isLazystore());
 			 
-			record.append("updateTime", date.getTime());
-			MongoDB.update(sessionconf, new BasicDBObject("appcode",config.getAppcode()) , 
-					new BasicDBObject("$set",record),WriteConcern.UNACKNOWLEDGED);	
+			if(object == null)
+			{
+				Date date = new Date();
+				record.append("createTime", date.getTime());
+				record.append("updateTime", date.getTime());
+				 
+				MongoDB.insert(WriteConcern.UNACKNOWLEDGED,sessionconf,record);
+			}
+			else
+			{
+				Date date = new Date();
+				 
+				record.append("updateTime", date.getTime());
+				MongoDB.update(sessionconf, new BasicDBObject("appcode",config.getAppcode()) , 
+						new BasicDBObject("$set",record),WriteConcern.UNACKNOWLEDGED);	
+			}
+		} catch (Exception e) {
+			log.error("",e);
 		}
-		
 		
 	}
 	
@@ -556,7 +569,12 @@ public class MongDBSessionStore extends BaseSessionStore{
 			SessionConfig sessionConfig = new SessionConfig();
 			sessionConfig.setAppcode(appkey);
 			sessionConfig.setCookiename((String)object.get("cookiename"));
-			sessionConfig.setCrossDomain((String)object.get("crossDomain"));
+			String cd_ = (String)object.get("crossDomain");
+			if(cd_ != null && !cd_.equals(""))
+			{
+				CrossDomain cd = ObjectSerializable.toBean((String)object.get("crossDomain"), CrossDomain.class);
+				sessionConfig.setCrossDomain(cd);
+			}
 			sessionConfig.setDomain((String)object.get("domain"));
 			Long st = (Long)object.get("scanStartTime");
 			if(st!= null)
@@ -647,6 +665,11 @@ public class MongDBSessionStore extends BaseSessionStore{
 	public String getName() {
 		// TODO Auto-generated method stub
 		return this.getClass().getName();
+	}
+	@Override
+	public Long expired(String appkey,String sessionid,int timeout) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	

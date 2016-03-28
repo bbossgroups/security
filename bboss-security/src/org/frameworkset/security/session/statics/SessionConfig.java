@@ -3,10 +3,12 @@ package org.frameworkset.security.session.statics;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.frameworkset.security.session.domain.CrossDomain;
+
 public class SessionConfig implements Serializable {
 	private long sessionTimeout;
 	private String cookiename;
-	private String crossDomain;
+	private CrossDomain crossDomain;
 	private boolean startLifeScan = false;
 	private Date scanStartTime;
 	private Date createTime;
@@ -116,10 +118,10 @@ public class SessionConfig implements Serializable {
 		this.usewebsession = usewebsession;
 	}
 	 
-	public String getCrossDomain() {
+	public CrossDomain getCrossDomain() {
 		return crossDomain;
 	}
-	public void setCrossDomain(String crossDomain) {
+	public void setCrossDomain(CrossDomain crossDomain) {
 		this.crossDomain = crossDomain;
 	}
 	public Date getScanStartTime() {

@@ -36,6 +36,7 @@ public interface SessionStore{
 
 	void destory();
 	String getName();
+	Long expired(String appkey,String sessionid,int timeout);
 
 	void livecheck();
 	public SimpleHttpSession createHttpSession(ServletContext servletContext,SessionBasicInfo sessionBasicInfo,String contextpath,InvalidateCallback invalidateCallback);
