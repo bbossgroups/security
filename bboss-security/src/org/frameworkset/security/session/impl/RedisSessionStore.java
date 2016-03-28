@@ -92,9 +92,10 @@ public class RedisSessionStore extends BaseSessionStore{
 	public void saveSessionConfig(SessionConfig config)
 	{
 		
-		RedisHelper redisHelper = RedisFactory.getRedisHelper();
+		RedisHelper redisHelper = null;
 		try
 		{
+			redisHelper = RedisFactory.getRedisHelper();
 			redisHelper.sadd(sessionapps, config.getAppcode());
 			String appkey = getAPPConfigKey(config.getAppcode());
 			String createTime = redisHelper.hget(appkey,"createTime");
@@ -127,7 +128,8 @@ public class RedisSessionStore extends BaseSessionStore{
 		}
 		finally
 		{
-			redisHelper.release();
+			if(redisHelper != null)
+				redisHelper.release();
 		}
 		 
 		
@@ -146,9 +148,10 @@ public class RedisSessionStore extends BaseSessionStore{
 	
 		boolean isHttpOnly = StringUtil.hasHttpOnlyMethod()?SessionHelper.getSessionManager().isHttpOnly():false;
 		boolean secure = SessionHelper.getSessionManager().isSecure();
-		RedisHelper redisHelper = RedisFactory.getRedisHelper();
+		RedisHelper redisHelper = redisHelper = null;
 		try
 		{
+			redisHelper = RedisFactory.getRedisHelper();
 			String sessionkey = getAPPSessionKey(sessionBasicInfo.getAppKey(),sessionid);
 			Map<String,String> record = new HashMap<String,String>(); 
 			record.put("sessionid",sessionid);
@@ -191,7 +194,8 @@ public class RedisSessionStore extends BaseSessionStore{
 		}
 		finally
 		{
-			redisHelper.release();
+			if(redisHelper != null)
+				redisHelper.release();
 		}
 		 
 		return null;
@@ -204,9 +208,10 @@ public class RedisSessionStore extends BaseSessionStore{
 	@Override
 	public Object getAttribute(String appKey,String contextpath,String sessionID, String attribute) {
 		String sessionkey = getAPPSessionKey(appKey,sessionID);
-		RedisHelper redisHelper = RedisFactory.getRedisHelper();
+		RedisHelper redisHelper = null;
 		try
 		{
+			redisHelper = RedisFactory.getRedisHelper();
 			String value = redisHelper.hget(sessionkey, attribute);
 			if(value == null || value.equals(""))
 				return null;
@@ -217,7 +222,8 @@ public class RedisSessionStore extends BaseSessionStore{
 		}
 		finally
 		{
-			redisHelper.release();
+			if(redisHelper != null)
+				redisHelper.release();
 		}
 		 
 			return null;
@@ -249,9 +255,10 @@ public class RedisSessionStore extends BaseSessionStore{
 	@Override
 	public void updateLastAccessedTime(String appKey,String sessionID, long lastAccessedTime,String lastAccessedUrl,int MaxInactiveInterval) {
 		String sessionKey = this.getAPPSessionKey(appKey, sessionID);
-		RedisHelper redisHelper = RedisFactory.getRedisHelper();
+		RedisHelper redisHelper = null;
 		try
 		{
+			redisHelper = RedisFactory.getRedisHelper();
 			Map<String,String> values = new HashMap<String,String>();
 			values.put("lastAccessedTime", lastAccessedTime+"");
 			values.put("lastAccessedUrl", lastAccessedUrl);
@@ -265,7 +272,8 @@ public class RedisSessionStore extends BaseSessionStore{
 		}
 		finally
 		{
-			redisHelper.release();
+			if(redisHelper != null)
+				redisHelper.release();
 		}
 		 
 //		DBCollection sessions =getAppSessionDBCollection( appKey);
@@ -287,9 +295,10 @@ public class RedisSessionStore extends BaseSessionStore{
 	@Override
 	public long getLastAccessedTime(String appKey,String sessionID) {
 		String sessionKey = this.getAPPSessionKey(appKey, sessionID);
-		RedisHelper redisHelper = RedisFactory.getRedisHelper();
+		RedisHelper  redisHelper = null;
 		try
 		{
+			redisHelper = RedisFactory.getRedisHelper();
 			
 			String lastAccessedTime = redisHelper.hget(sessionKey, "lastAccessedTime");
 			if(lastAccessedTime != null)
@@ -301,7 +310,8 @@ public class RedisSessionStore extends BaseSessionStore{
 		}
 		finally
 		{
-			redisHelper.release();
+			if(redisHelper != null)
+				redisHelper.release();
 		} 
 		return 0;
 		 
@@ -310,10 +320,11 @@ public class RedisSessionStore extends BaseSessionStore{
 	@Override
 	public String[] getValueNames(String appKey,String contextpath,String sessionID) {
 		String sessionKey = this.getAPPSessionKey(appKey, sessionID);
-		RedisHelper redisHelper = RedisFactory.getRedisHelper();
 		String[] valueNames = null;
-		try
-		{
+		RedisHelper redisHelper = null;
+			try
+			{
+				redisHelper = RedisFactory.getRedisHelper();
 			Set<String> keys = redisHelper.hkeys(sessionKey);
 			 if(keys != null && keys.size() > 0)
 			 {
@@ -327,7 +338,8 @@ public class RedisSessionStore extends BaseSessionStore{
 		}
 		finally
 		{
-			redisHelper.release();
+			if(redisHelper != null)
+				redisHelper.release();
 		} 
 		 
 		
@@ -338,10 +350,12 @@ public class RedisSessionStore extends BaseSessionStore{
 	@Override
 	public Enumeration getAttributeNames(String appKey,String contextpath,String sessionID) {
 		String sessionKey = this.getAPPSessionKey(appKey, sessionID);
-		RedisHelper redisHelper = RedisFactory.getRedisHelper();
+		
 		Enumeration<String> valueNames = null;
+		RedisHelper redisHelper = null;
 		try
 		{
+			redisHelper = RedisFactory.getRedisHelper();
 			Set<String> keys = redisHelper.hkeys(sessionKey);
 			 if(keys != null && keys.size() > 0)
 			 {
@@ -354,7 +368,8 @@ public class RedisSessionStore extends BaseSessionStore{
 		}
 		finally
 		{
-			redisHelper.release();
+			if(redisHelper != null)
+				redisHelper.release();
 		} 
 		 
 		
@@ -365,9 +380,10 @@ public class RedisSessionStore extends BaseSessionStore{
 	@Override
 	public void invalidate(SimpleHttpSession session,String appKey,String contextpath,String sessionID) {
 		String sessionKey = this.getAPPSessionKey(appKey, sessionID);
-		RedisHelper redisHelper = RedisFactory.getRedisHelper();
+		RedisHelper redisHelper = null;
 		try
 		{
+			redisHelper = RedisFactory.getRedisHelper();
 			redisHelper.del(sessionKey);
 			 
 		}
@@ -376,7 +392,8 @@ public class RedisSessionStore extends BaseSessionStore{
 		}
 		finally
 		{
-			redisHelper.release();
+			if(redisHelper != null)
+				redisHelper.release();
 		} 
 //		DBCollection sessions = getAppSessionDBCollection( appKey);		
 ////		sessions.update(new BasicDBObject("sessionid",sessionID), new BasicDBObject("$set",new BasicDBObject("_validate", false)));
@@ -388,9 +405,10 @@ public class RedisSessionStore extends BaseSessionStore{
 	@Override
 	public boolean isNew(String appKey,String sessionID) {
 		String sessionKey = this.getAPPSessionKey(appKey, sessionID);
-		RedisHelper redisHelper = RedisFactory.getRedisHelper();
+		RedisHelper redisHelper = null;
 		try
 		{
+			redisHelper = RedisFactory.getRedisHelper();
 			List<String> values = redisHelper.hmget(sessionKey, "lastAccessedTime","creationTime");
 			if(values == null || values.get(1) == null )
 				throw new SessionException("SessionID["+sessionID+"],appKey["+appKey+"] do not exist or is invalidated!" );
@@ -402,7 +420,8 @@ public class RedisSessionStore extends BaseSessionStore{
 		}
 		finally
 		{
-			redisHelper.release();
+			if(redisHelper != null)
+				redisHelper.release();
 		} 
 		return false;
 //		DBCollection sessions =getAppSessionDBCollection( appKey);
@@ -421,9 +440,10 @@ public class RedisSessionStore extends BaseSessionStore{
 	@Override
 	public void removeAttribute(SimpleHttpSession session,String appKey,String contextpath,String sessionID, String attribute) {
 		String sessionKey = this.getAPPSessionKey(appKey, sessionID);
-		RedisHelper redisHelper = RedisFactory.getRedisHelper();
+		RedisHelper redisHelper = null;
 		try
 		{
+			redisHelper = RedisFactory.getRedisHelper();
 			redisHelper.hdel(sessionKey, attribute);
 		}
 		 catch (Exception e) {
@@ -431,7 +451,8 @@ public class RedisSessionStore extends BaseSessionStore{
 		}
 		finally
 		{
-			redisHelper.release();
+			if(redisHelper != null)
+				redisHelper.release();
 		} 
 //		DBCollection sessions = getAppSessionDBCollection( appKey);
 ////		if(SessionHelper.haveSessionListener())
@@ -518,9 +539,10 @@ public class RedisSessionStore extends BaseSessionStore{
 				
 				
 			}
-			RedisHelper redisHelper = RedisFactory.getRedisHelper();
+			RedisHelper redisHelper = null;
 			try
 			{
+				redisHelper = RedisFactory.getRedisHelper();
 				String sessionKey = getAPPSessionKey(appkey, session.getId());
 				if(record != null && record.size() > 0)
 				{
@@ -537,7 +559,8 @@ public class RedisSessionStore extends BaseSessionStore{
 			}
 			finally
 			{
-				redisHelper.release();
+				if(redisHelper != null)
+					redisHelper.release();
 			} 
 //			MongoDB.update(sessions, new BasicDBObject("sessionid",session.getId()), new BasicDBObject("$set",record));
 			
@@ -547,9 +570,10 @@ public class RedisSessionStore extends BaseSessionStore{
 	
 	@Override
 	public void addAttribute(SimpleHttpSession session,String appKey,String contextpath,String sessionID, String attribute, Object value) {
-		RedisHelper redisHelper = RedisFactory.getRedisHelper();
+		RedisHelper redisHelper = null;
 		try
 		{
+			redisHelper = RedisFactory.getRedisHelper();
 			String sessionKey = this.getAPPSessionKey(appKey, session.getId());
 			if(value != null)
 				redisHelper.hset(sessionKey, attribute, String.valueOf(value));
@@ -561,7 +585,8 @@ public class RedisSessionStore extends BaseSessionStore{
 		}
 		finally
 		{
-			redisHelper.release();
+			if(redisHelper != null)
+				redisHelper.release();
 		} 
 //		attribute = MongoDBHelper.converterSpecialChar( attribute);
 //		DBCollection sessions = getAppSessionDBCollection( appKey);	
@@ -575,9 +600,10 @@ public class RedisSessionStore extends BaseSessionStore{
 	public void setMaxInactiveInterval(SimpleHttpSession session, String appKey, String sessionID, long maxInactiveInterval,String contextpath)
 	{
 		
-		RedisHelper redisHelper = RedisFactory.getRedisHelper();
+		RedisHelper redisHelper = null;
 		try
 		{
+			redisHelper = RedisFactory.getRedisHelper();
 			String sessionKey = this.getAPPSessionKey(appKey, session.getId());
 			
 				redisHelper.hset(sessionKey, "maxInactiveInterval", String.valueOf(maxInactiveInterval));			
@@ -588,7 +614,8 @@ public class RedisSessionStore extends BaseSessionStore{
 		}
 		finally
 		{
-			redisHelper.release();
+			if(redisHelper != null)
+				redisHelper.release();
 		} 
 //		DBCollection sessions = getAppSessionDBCollection( appKey);	
 ////		Session session = getSession(appKey,contextpath, sessionID);
@@ -596,9 +623,10 @@ public class RedisSessionStore extends BaseSessionStore{
 //		MongoDB.update(sessions,new BasicDBObject("sessionid",sessionID), new BasicDBObject("$set",new BasicDBObject("maxInactiveInterval", maxInactiveInterval)));
 	}
 	private Session getSession(String appKey,String contextpath, String sessionid,List<String> attributeNames) {
-		RedisHelper redisHelper = RedisFactory.getRedisHelper();
+		RedisHelper  redisHelper = null;
 		try
 		{
+			redisHelper = RedisFactory.getRedisHelper();
 			String sessionKey = this.getAPPSessionKey(appKey, sessionid);
 			List<String> fields = new ArrayList<String>();
 			fields.add("creationTime");
@@ -678,7 +706,8 @@ public class RedisSessionStore extends BaseSessionStore{
 		}
 		finally
 		{
-			redisHelper.release();
+			if(redisHelper != null)
+				redisHelper.release();
 		} 
 		return null;
 //		DBCollection sessions =getAppSessionDBCollection( appKey);
@@ -763,9 +792,10 @@ public class RedisSessionStore extends BaseSessionStore{
 		if(appkey == null || appkey.equals(""))
 			return null;
 		
-		RedisHelper redisHelper = RedisFactory.getRedisHelper();
+		RedisHelper  redisHelper = null;
 		try
 		{
+			redisHelper = RedisFactory.getRedisHelper();
 			appkey = this.getAPPConfigKey(appkey);
 		
 			String configxml =redisHelper.hget(appkey, "config");
@@ -778,16 +808,18 @@ public class RedisSessionStore extends BaseSessionStore{
 		}
 		finally
 		{
-			redisHelper.release();
+			if(redisHelper != null)
+				redisHelper.release();
 		}
 		 return null;
 		 
 	}
 	@Override
 	public Session getSession(String appKey,String contextpath, String sessionid) {
-		RedisHelper redisHelper = RedisFactory.getRedisHelper();
+		RedisHelper  redisHelper = null;
 		try
 		{
+			redisHelper = RedisFactory.getRedisHelper();
 			String sessionKey = this.getAPPSessionKey(appKey, sessionid);
 			List<String> fields = new ArrayList<String>();
 			fields.add("creationTime");
@@ -853,7 +885,8 @@ public class RedisSessionStore extends BaseSessionStore{
 		}
 		finally
 		{
-			redisHelper.release();
+			if(redisHelper != null)
+				redisHelper.release();
 		} 
 		return null;
 //		DBCollection sessions =getAppSessionDBCollection( appKey);
@@ -923,9 +956,10 @@ public class RedisSessionStore extends BaseSessionStore{
 		if(appkey == null || appkey.equals(""))
 			return null;
 		
-		RedisHelper redisHelper = RedisFactory.getRedisHelper();
+		RedisHelper redisHelper = null;
 		try
 		{
+			redisHelper = RedisFactory.getRedisHelper();
 			String sessionkey = this.getAPPSessionKey(appkey,sessionid);
 		
 			return redisHelper.expire(sessionkey, timeout);
@@ -936,7 +970,8 @@ public class RedisSessionStore extends BaseSessionStore{
 		}
 		finally
 		{
-			redisHelper.release();
+			if(redisHelper != null)
+				redisHelper.release();
 		}
 		 return null;
 	}

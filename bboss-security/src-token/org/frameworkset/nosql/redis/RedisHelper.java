@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.frameworkset.nosql.redis.RedisFactory.RedisHelperHolder;
+
 import redis.clients.jedis.BinaryClient.LIST_POSITION;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisCluster;
@@ -22,9 +24,10 @@ public class RedisHelper {
 	private JedisCluster jc; 
 	private RedisDB db;
 	private boolean inited;
-	public RedisHelper(RedisDB db) {
+	
+	public RedisHelper(RedisDB db ) {
 		 this.db = db;
-		 
+		
 	}
 	public void init()
 	{
@@ -45,6 +48,7 @@ public class RedisHelper {
 		inited = true;	
 	}
 	
+	 
 	public void release()
 	{
 		if(shardedJedis != null)

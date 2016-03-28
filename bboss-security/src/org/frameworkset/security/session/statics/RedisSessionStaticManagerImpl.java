@@ -83,9 +83,10 @@ public class RedisSessionStaticManagerImpl extends BaseSessionStaticManagerImpl 
 	public List<String> getAPPName(HttpServletRequest request) {
 
 		List<String> appList = new ArrayList<String>();
-		RedisHelper redisHelper = RedisFactory.getRedisHelper();
+		RedisHelper redisHelper = null;
 		try
 		{
+			redisHelper = RedisFactory.getRedisHelper();
 			if(request == null)
 			{
 				
@@ -125,7 +126,8 @@ public class RedisSessionStaticManagerImpl extends BaseSessionStaticManagerImpl 
 		}
 		finally
 		{
-			redisHelper.release();
+			if(redisHelper != null)
+				redisHelper.release();
 		}
 	}
 	 
@@ -140,10 +142,11 @@ public class RedisSessionStaticManagerImpl extends BaseSessionStaticManagerImpl 
 		if (StringUtil.isEmpty(appKey)) {
 			return null;
 		}
-		RedisHelper redisHelper = RedisFactory.getRedisHelper();
 		List<SessionInfo> sessions = null;
+		RedisHelper redisHelper = null;
 		try
 		{
+			redisHelper = RedisFactory.getRedisHelper();
 			String sessionid = (String) queryParams.get("sessionid");
 			if(sessionid == null || sessionid.equals(""))
 				return null;
@@ -239,7 +242,8 @@ public class RedisSessionStaticManagerImpl extends BaseSessionStaticManagerImpl 
 		}
 		finally
 		{
-			redisHelper.release();
+			if(redisHelper != null)
+				redisHelper.release();
 		}
 		return sessions;
 	}
@@ -250,10 +254,10 @@ public class RedisSessionStaticManagerImpl extends BaseSessionStaticManagerImpl 
 		if (!StringUtil.isEmpty(appKey) && !StringUtil.isEmpty(sessionid)) {
 			
 			
-			RedisHelper redisHelper = RedisFactory.getRedisHelper();
-			
+			RedisHelper redisHelper = null;
 			try
 			{
+				redisHelper = RedisFactory.getRedisHelper();
 				 
 				 
 				String sessionKey = RedisSessionStore.getAPPSessionKey(appKey, sessionid);
@@ -318,7 +322,8 @@ public class RedisSessionStaticManagerImpl extends BaseSessionStaticManagerImpl 
 			}
 			finally
 			{
-				redisHelper.release();
+				if(redisHelper != null)
+					redisHelper.release();
 			}
 			return info;
 			
@@ -363,10 +368,10 @@ public class RedisSessionStaticManagerImpl extends BaseSessionStaticManagerImpl 
 		if (!StringUtil.isEmpty(appKey) && !StringUtil.isEmpty(sessionid)) {
 			
 			
-			RedisHelper redisHelper = RedisFactory.getRedisHelper();
-			
+			RedisHelper redisHelper = null;
 			try
-			{				 
+			{
+				redisHelper = RedisFactory.getRedisHelper();			 
 				 
 				String sessionKey = RedisSessionStore.getAPPSessionKey(appKey, sessionid);
 				redisHelper.del(sessionKey);

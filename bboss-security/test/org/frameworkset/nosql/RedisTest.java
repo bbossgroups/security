@@ -14,9 +14,10 @@ public class RedisTest {
 	@Test
 	public void get()
 	{
-		RedisHelper redisHelper = RedisFactory.getRedisHelper();
+		RedisHelper redisHelper = null;
 		try
 		{
+			redisHelper = RedisFactory.getRedisHelper();
 			redisHelper.set("test", "value1");
 			String value = redisHelper.get("test");
 			redisHelper.set("foo", "fasdfasf");
@@ -26,7 +27,8 @@ public class RedisTest {
 		}
 		finally
 		{
-			redisHelper.release();
+			if(redisHelper != null)
+				redisHelper.release();
 		}
 	}
 	@Test
