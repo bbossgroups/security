@@ -184,68 +184,68 @@ public class DBTokenStore extends BaseTokenStore {
 	}
 
 
-	private MemToken queryDualToken(String appid, String secret) throws TokenException
-	{
-		return queryDualToken(appid, secret,-1);
-	}
-	private MemToken queryDualToken(String appid, String secret,long lastVistTime) throws TokenException
-	{
-		
-		MemToken tt = null;
-		
-		if(lastVistTime > 0)
-		{
-			TransactionManager tm = new TransactionManager();
-			try {
-				tm.begin();
-				this.executor.update("updateDualTokenLastVistime", lastVistTime,appid);
-				tt = executor.queryObject(MemToken.class, "queryDualToken",appid);
-				tm.commit();
-			} catch (Exception e) {
-				throw new TokenException(TokenStore.ERROR_CODE_QUERYDUALTOKENFAILED,e);
-			}
-			finally
-			{
-				tm.release();
-			}
-//			dt = dualtokens.findAndModify(dbobject, new BasicDBObject("$set",new BasicDBObject("lastVistTime", lastVistTime)));
-//			tt = todualToken(dt); 
-		}
-		else
-		{
-//			try
-//			{
-//				cursor = dualtokens.find(dbobject);
-//				if(cursor.hasNext())
-//				{
-//					dt = cursor.next();
-//					tt = todualToken(dt); 
-//				}
+//	private MemToken queryDualToken(String appid, String secret) throws TokenException
+//	{
+//		return queryDualToken(appid, secret,-1);
+//	}
+//	private MemToken queryDualToken(String appid, String secret,long lastVistTime) throws TokenException
+//	{
+//		
+//		MemToken tt = null;
+//		
+//		if(lastVistTime > 0)
+//		{
+//			TransactionManager tm = new TransactionManager();
+//			try {
+//				tm.begin();
+//				this.executor.update("updateDualTokenLastVistime", lastVistTime,appid);
+//				tt = executor.queryObject(MemToken.class, "queryDualToken",appid);
+//				tm.commit();
+//			} catch (Exception e) {
+//				throw new TokenException(TokenStore.ERROR_CODE_QUERYDUALTOKENFAILED,e);
 //			}
 //			finally
 //			{
-//				if(cursor != null)
-//				{
-//					cursor.close();
-//				}
+//				tm.release();
 //			}
-			try {
-				tt = executor.queryObject(MemToken.class, "queryDualToken",appid);
-			} catch (SQLException e) {
-				throw new TokenException(TokenStore.ERROR_CODE_QUERYDUALTOKENFAILED,e);
-			}
-		}
-		
-		
-		return tt;
-	}
+////			dt = dualtokens.findAndModify(dbobject, new BasicDBObject("$set",new BasicDBObject("lastVistTime", lastVistTime)));
+////			tt = todualToken(dt); 
+//		}
+//		else
+//		{
+////			try
+////			{
+////				cursor = dualtokens.find(dbobject);
+////				if(cursor.hasNext())
+////				{
+////					dt = cursor.next();
+////					tt = todualToken(dt); 
+////				}
+////			}
+////			finally
+////			{
+////				if(cursor != null)
+////				{
+////					cursor.close();
+////				}
+////			}
+//			try {
+//				tt = executor.queryObject(MemToken.class, "queryDualToken",appid);
+//			} catch (SQLException e) {
+//				throw new TokenException(TokenStore.ERROR_CODE_QUERYDUALTOKENFAILED,e);
+//			}
+//		}
+//		
+//		
+//		return tt;
+//	}
 	
-	protected MemToken getDualMemToken(String token,String appid,long lastVistTime )
-	{
-		
-		MemToken tt = queryDualToken( appid, null,lastVistTime);
-		return tt;
-	}
+//	protected MemToken getDualMemToken(String token,String appid,long lastVistTime )
+//	{
+//		
+//		MemToken tt = queryDualToken( appid, null,lastVistTime);
+//		return tt;
+//	}
 	
 	
 
@@ -265,25 +265,25 @@ public class DBTokenStore extends BaseTokenStore {
 			throw new TokenException(TokenStore.ERROR_CODE_STOREDUALTOKENFAILED,e);
 		}
 	}
-	
-	private void updateDualToken(MemToken dualToken) throws TokenException
-	{
-		try {
-			this.executor.updateBean("updateDualToken", dualToken);
-		} catch (SQLException e) {
-			throw new TokenException(TokenStore.ERROR_CODE_UPDATEDUALTOKENFAILED,e);
-		}
-//		this.dualtokens.update(new BasicDBObject(
-//		"appid", dualToken.getAppid())
-//		.append("secret", dualToken.getSecret()),
-//		new BasicDBObject("token",dualToken.getToken())
-//		.append("createTime", dualToken.getCreateTime())
-//		.append("lastVistTime", dualToken.getLastVistTime())
-//		.append("livetime", dualToken.getLivetime())
-//		.append("appid", dualToken.getAppid())
-//		.append("secret", dualToken.getSecret())
-//		.append("validate", dualToken.isValidate()));
-	}
+//	
+//	private void updateDualToken(MemToken dualToken) throws TokenException
+//	{
+//		try {
+//			this.executor.updateBean("updateDualToken", dualToken);
+//		} catch (SQLException e) {
+//			throw new TokenException(TokenStore.ERROR_CODE_UPDATEDUALTOKENFAILED,e);
+//		}
+////		this.dualtokens.update(new BasicDBObject(
+////		"appid", dualToken.getAppid())
+////		.append("secret", dualToken.getSecret()),
+////		new BasicDBObject("token",dualToken.getToken())
+////		.append("createTime", dualToken.getCreateTime())
+////		.append("lastVistTime", dualToken.getLastVistTime())
+////		.append("livetime", dualToken.getLivetime())
+////		.append("appid", dualToken.getAppid())
+////		.append("secret", dualToken.getSecret())
+////		.append("validate", dualToken.isValidate()));
+//	}
 	
 	private String getID()
 	{
@@ -306,61 +306,61 @@ public class DBTokenStore extends BaseTokenStore {
 		
 	}
 
-	@Override
-	protected MemToken _genDualToken(String appid,String ticket, String secret, long livetime,boolean sign) throws TokenException {
-		
-		String[] accountinfo = decodeTicket( ticket,
-				 appid,  secret,  sign);
-		MemToken token_m = null;
-		TransactionManager tm = new TransactionManager();
-		try
-		{
-			tm.begin();
-			token_m = queryDualToken( appid, secret);
-			if(token_m != null)
-			{
-				long lastVistTime = System.currentTimeMillis();
-				if(isold(token_m, livetime,lastVistTime))//如果令牌已经过期，重新申请新的令牌
-				{
-					//刷新过期的有效期令牌
-					String token = this.randomToken();
-					token_m.setLastVistTime(lastVistTime);
-//					this.dualtokens.remove(key);
-					long createTime = System.currentTimeMillis();
-					token_m = new MemToken(token, createTime, true,
-							createTime, livetime);
-					token_m.setAppid(appid);
-					token_m.setSecret(secret);
-					this.signToken(token_m,TokenStore.type_dualtoken,accountinfo,ticket,  sign);
-					updateDualToken(token_m);
-					
-				}
-			}
-			else
-			{
-				String token = this.randomToken();
-				long createTime = System.currentTimeMillis();
-				token_m = new MemToken(token, createTime, true,
-						createTime, livetime);
-				token_m.setAppid(appid);
-				token_m.setSecret(secret);
-				this.signToken(token_m,TokenStore.type_dualtoken,accountinfo,ticket,  sign);
-				this.insertDualToken("insertDualToken",token_m);
-			}
-			tm.commit();
-		}catch (TokenException e) {
-			throw (e);
-		} catch (Exception e) {
-			throw new TokenException(TokenStore.ERROR_CODE_GENDUALTOKENFAILED,e);
-		} 
-		finally
-		{
-			tm.release();
-		}
-		
-		return token_m ;
-		
-	}
+//	@Override
+//	protected MemToken _genDualToken(String appid,String ticket, String secret, long livetime,boolean sign) throws TokenException {
+//		
+//		String[] accountinfo = decodeTicket( ticket,
+//				 appid,  secret,  sign);
+//		MemToken token_m = null;
+//		TransactionManager tm = new TransactionManager();
+//		try
+//		{
+//			tm.begin();
+//			token_m = queryDualToken( appid, secret);
+//			if(token_m != null)
+//			{
+//				long lastVistTime = System.currentTimeMillis();
+//				if(isold(token_m, livetime,lastVistTime))//如果令牌已经过期，重新申请新的令牌
+//				{
+//					//刷新过期的有效期令牌
+//					String token = this.randomToken();
+//					token_m.setLastVistTime(lastVistTime);
+////					this.dualtokens.remove(key);
+//					long createTime = System.currentTimeMillis();
+//					token_m = new MemToken(token, createTime, true,
+//							createTime, livetime);
+//					token_m.setAppid(appid);
+//					token_m.setSecret(secret);
+//					this.signToken(token_m,TokenStore.type_dualtoken,accountinfo,ticket,  sign);
+//					updateDualToken(token_m);
+//					
+//				}
+//			}
+//			else
+//			{
+//				String token = this.randomToken();
+//				long createTime = System.currentTimeMillis();
+//				token_m = new MemToken(token, createTime, true,
+//						createTime, livetime);
+//				token_m.setAppid(appid);
+//				token_m.setSecret(secret);
+//				this.signToken(token_m,TokenStore.type_dualtoken,accountinfo,ticket,  sign);
+//				this.insertDualToken("insertDualToken",token_m);
+//			}
+//			tm.commit();
+//		}catch (TokenException e) {
+//			throw (e);
+//		} catch (Exception e) {
+//			throw new TokenException(TokenStore.ERROR_CODE_GENDUALTOKENFAILED,e);
+//		} 
+//		finally
+//		{
+//			tm.release();
+//		}
+//		
+//		return token_m ;
+//		
+//	}
 	/**
 	 * 创建带认证的临时令牌
 	 * @param string

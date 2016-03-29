@@ -25,6 +25,8 @@ import org.frameworkset.web.token.TokenResult;
 import org.frameworkset.web.token.TokenService;
 import org.frameworkset.web.token.TokenStore;
 
+import com.frameworkset.util.StringUtil;
+
 /**
  * <p>Title: CheckTokenContoller.java</p> 
  * <p>Description: </p>
@@ -41,6 +43,11 @@ public class CheckTokenContoller implements CheckTokenService{
 	{
 		TokenCheckResponse tokenCheckResponse = new TokenCheckResponse();
 		try {
+			if(StringUtil.isEmpty(token))
+			{
+				tokenCheckResponse.setResultcode(TokenStore.ERROR_CODE_EMPTYTOEKN );
+				return tokenCheckResponse;
+			}
 			TokenResult result = TokenHelper.getTokenService().checkToken(appid,secret,token);
 			if(result.getResult() == null)
 				tokenCheckResponse.setResultcode(TokenStore.RESULT_NOTENABLETOKEN );
@@ -65,6 +72,11 @@ public class CheckTokenContoller implements CheckTokenService{
 	{
 		TokenCheckResponse tokenCheckResponse = new TokenCheckResponse();
 		try {
+			if(StringUtil.isEmpty(ticket))
+			{
+				tokenCheckResponse.setResultcode(TokenStore.ERROR_CODE_EMPTYTICKET );
+				return tokenCheckResponse;
+			}
 			TokenResult result = TokenHelper.getTokenService().checkTicket(appid,secret,ticket);
 			if(result.getResult() == null)
 				tokenCheckResponse.setResultcode(TokenStore.RESULT_NOTENABLETOKEN );
@@ -89,6 +101,11 @@ public class CheckTokenContoller implements CheckTokenService{
 	{
 		TokenCheckResponse tokenCheckResponse = new TokenCheckResponse();
 			try {
+				if(StringUtil.isEmpty(token))
+				{
+					tokenCheckResponse.setResultcode(TokenStore.ERROR_CODE_EMPTYTOEKN );
+					return tokenCheckResponse;
+				}
 				tokenCheckResponse.setValidateResult(TokenService.assertDToken(TokenHelper.getTokenService().checkTempToken(token)));
 				tokenCheckResponse.setResultcode(TokenStore.RESULT_OK);
 			} catch (TokenException e) {

@@ -69,11 +69,11 @@ public interface TokenServiceInf {
 
 	public abstract String genTempToken( ) throws Exception;
 
-	public abstract String genDualToken(String appid, String secret,
-			String ticket, long dualtime) throws Exception;
-
-	public abstract String genDualTokenWithDefaultLiveTime(String appid,
-			String secret, String ticket) throws Exception;
+//	public abstract String genDualToken(String appid, String secret,
+//			String ticket, long dualtime) throws Exception;
+//
+//	public abstract String genDualTokenWithDefaultLiveTime(String appid,
+//			String secret, String ticket) throws Exception;
 
 	public abstract String genAuthTempToken(String appid, String secret,
 			String ticket) throws Exception;

@@ -534,26 +534,26 @@ public class TokenService implements TokenServiceInf,InitializingBean {
 	/* (non-Javadoc)
 	 * @see org.frameworkset.web.token.TokenServiceInf#genDualToken(java.lang.String, java.lang.String, java.lang.String, long)
 	 */
-	@Override
-	public String genDualToken(String appid,String secret,String ticket,long dualtime) throws Exception
-	{
-		//long start = System.currentTimeMillis();
-//		long dualtime = 30l*24l*60l*60l*1000l;
-		MemToken token = this.tokenStore.genDualToken(appid,ticket,secret,dualtime);
-		return token.getToken();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.frameworkset.web.token.TokenServiceInf#genDualTokenWithDefaultLiveTime(java.lang.String, java.lang.String, java.lang.String)
-	 */
-	@Override
-	public String genDualTokenWithDefaultLiveTime(String appid,String secret,String ticket) throws Exception
-	{
-		//long start = System.currentTimeMillis();
-//		long dualtime = 30l*24l*60l*60l*1000l;
-		MemToken token = this.tokenStore.genDualTokenWithDefaultLiveTime(appid,ticket,secret);
-		return token.getToken();
-	}
+//	@Override
+//	public String genDualToken(String appid,String secret,String ticket,long dualtime) throws Exception
+//	{
+//		//long start = System.currentTimeMillis();
+////		long dualtime = 30l*24l*60l*60l*1000l;
+//		MemToken token = this.tokenStore.genDualToken(appid,ticket,secret,dualtime);
+//		return token.getToken();
+//	}
+//
+//	/* (non-Javadoc)
+//	 * @see org.frameworkset.web.token.TokenServiceInf#genDualTokenWithDefaultLiveTime(java.lang.String, java.lang.String, java.lang.String)
+//	 */
+//	@Override
+//	public String genDualTokenWithDefaultLiveTime(String appid,String secret,String ticket) throws Exception
+//	{
+//		//long start = System.currentTimeMillis();
+////		long dualtime = 30l*24l*60l*60l*1000l;
+//		MemToken token = this.tokenStore.genDualTokenWithDefaultLiveTime(appid,ticket,secret);
+//		return token.getToken();
+//	}
 	
 	
 	

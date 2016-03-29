@@ -101,73 +101,73 @@ public class TokenController implements TokenService {
 			}
 			return  tokenGetResponse;
 	}
-	/**
-	 * 获取令牌请求
-	 * @param request
-	 * @return
-	 * @throws Exception 
-	 */
-	public @ResponseBody String genDualToken(String appid,String secret,String ticket) throws Exception
-	{
-			long dualtime = 30l*24l*60l*60l*1000l;
-			return  TokenHelper.getTokenService().genDualToken(appid, secret, ticket,dualtime);
-	}
+//	/**
+//	 * 获取令牌请求
+//	 * @param request
+//	 * @return
+//	 * @throws Exception 
+//	 */
+//	public @ResponseBody String genDualToken(String appid,String secret,String ticket) throws Exception
+//	{
+//			long dualtime = 30l*24l*60l*60l*1000l;
+//			return  TokenHelper.getTokenService().genDualToken(appid, secret, ticket,dualtime);
+//	}
+//	
+//	@Override
+//	public @ResponseBody(datatype="json") TokenGetResponse getDualToken(String appid, String secret,
+//			String ticket) throws Exception {
+//		TokenGetResponse tokenGetResponse = new TokenGetResponse();
+//			try {
+//				long dualtime = 30l*24l*60l*60l*1000l;
+//				tokenGetResponse.setToken( TokenHelper.getTokenService().genDualToken(appid, secret, ticket,dualtime));
+//				tokenGetResponse.setResultcode(TokenStore.RESULT_OK);
+//			
+//			}catch (TokenException e) {
+//				tokenGetResponse.setResultcode(e.getMessage());
+//			
+//			} catch (Exception e) {
+//				log.debug(TokenStore.ERROR_CODE_BACKENDERROR, e);
+//				tokenGetResponse.setResultcode(TokenStore.ERROR_CODE_BACKENDERROR+":" +e.getMessage());
+//			}
+//			return  tokenGetResponse;
+//	}
+//	/**
+//	 * 获取令牌请求
+//	 * @param request
+//	 * @return
+//	 * @throws Exception 
+//	 */
+//	public @ResponseBody String genDualTokenWithDefaultLiveTime(String appid,String secret,String ticket) throws Exception
+//	{
+//
+//			return  TokenHelper.getTokenService().genDualTokenWithDefaultLiveTime(appid, secret, ticket);
+//	}
 	
-	@Override
-	public @ResponseBody(datatype="json") TokenGetResponse getDualToken(String appid, String secret,
-			String ticket) throws Exception {
-		TokenGetResponse tokenGetResponse = new TokenGetResponse();
-			try {
-				long dualtime = 30l*24l*60l*60l*1000l;
-				tokenGetResponse.setToken( TokenHelper.getTokenService().genDualToken(appid, secret, ticket,dualtime));
-				tokenGetResponse.setResultcode(TokenStore.RESULT_OK);
-			
-			}catch (TokenException e) {
-				tokenGetResponse.setResultcode(e.getMessage());
-			
-			} catch (Exception e) {
-				log.debug(TokenStore.ERROR_CODE_BACKENDERROR, e);
-				tokenGetResponse.setResultcode(TokenStore.ERROR_CODE_BACKENDERROR+":" +e.getMessage());
-			}
-			return  tokenGetResponse;
-	}
-	/**
-	 * 获取令牌请求
-	 * @param request
-	 * @return
-	 * @throws Exception 
-	 */
-	public @ResponseBody String genDualTokenWithDefaultLiveTime(String appid,String secret,String ticket) throws Exception
-	{
-
-			return  TokenHelper.getTokenService().genDualTokenWithDefaultLiveTime(appid, secret, ticket);
-	}
-	
-	/**
-	 * 获取令牌请求
-	 * @param request
-	 * @return
-	 * @throws Exception 
-	 */
-	public @ResponseBody(datatype="json") TokenGetResponse getDualTokenWithDefaultLiveTime(String appid,String secret,String ticket) throws Exception
-	{
-		TokenGetResponse tokenGetResponse = new TokenGetResponse();
-//		if(TokenHelper.isEnableToken())//如果开启令牌机制就会存在memTokenManager对象，否则不存在
-		{
-			try {
-				tokenGetResponse.setToken( TokenHelper.getTokenService().genDualTokenWithDefaultLiveTime(appid, secret, ticket));
-				tokenGetResponse.setResultcode(TokenStore.RESULT_OK);
-			
-			}catch (TokenException e) {
-				tokenGetResponse.setResultcode(e.getMessage());
-			
-			} catch (Exception e) {
-				log.debug(TokenStore.ERROR_CODE_BACKENDERROR, e);
-				tokenGetResponse.setResultcode(TokenStore.ERROR_CODE_BACKENDERROR+":" +e.getMessage());
-			}
-			return  tokenGetResponse;
-		}
-	}
+//	/**
+//	 * 获取令牌请求
+//	 * @param request
+//	 * @return
+//	 * @throws Exception 
+//	 */
+//	public @ResponseBody(datatype="json") TokenGetResponse getDualTokenWithDefaultLiveTime(String appid,String secret,String ticket) throws Exception
+//	{
+//		TokenGetResponse tokenGetResponse = new TokenGetResponse();
+////		if(TokenHelper.isEnableToken())//如果开启令牌机制就会存在memTokenManager对象，否则不存在
+//		{
+//			try {
+//				tokenGetResponse.setToken( TokenHelper.getTokenService().genDualTokenWithDefaultLiveTime(appid, secret, ticket));
+//				tokenGetResponse.setResultcode(TokenStore.RESULT_OK);
+//			
+//			}catch (TokenException e) {
+//				tokenGetResponse.setResultcode(e.getMessage());
+//			
+//			} catch (Exception e) {
+//				log.debug(TokenStore.ERROR_CODE_BACKENDERROR, e);
+//				tokenGetResponse.setResultcode(TokenStore.ERROR_CODE_BACKENDERROR+":" +e.getMessage());
+//			}
+//			return  tokenGetResponse;
+//		}
+//	}
 //	/**
 //	 * 获取应用公钥
 //	 * @param appid

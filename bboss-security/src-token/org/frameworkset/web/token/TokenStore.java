@@ -44,6 +44,8 @@ public interface TokenStore {
 	public static final String RESULT_OK = "ok";
 	public static final String RESULT_FAIL = "fail";
 	public static final String RESULT_NOTENABLETOKEN = "NOTENABLETOKEN";
+	public static final String ERROR_CODE_EMPTYTICKET = "EMPTYTICKET";
+	public static final String ERROR_CODE_EMPTYTOEKN = "EMPTYTOEKN";
 	public static final String ERROR_CODE_NOENABLETICKET = "NOENABLETICKET";
 	public static final String ERROR_CODE_NOENABLETOKEN = "NOENABLETOKEN";
 	public static final String ERROR_CODE_GETKEYPAIRFAILED = "GETKEYPAIRFAILED";
@@ -93,7 +95,7 @@ public interface TokenStore {
 
 //	public abstract Integer checkTempToken(TokenInfo tokeninfo)throws TokenException;
 //	public abstract Integer checkAuthTempToken(TokenInfo tokeninfo)throws TokenException;
-	public abstract Integer checkDualToken(TokenInfo tokeninfo)throws TokenException;
+//	public abstract Integer checkDualToken(TokenInfo tokeninfo)throws TokenException;
 
 	public abstract long getTempTokendualtime()throws TokenException;
 
@@ -104,8 +106,8 @@ public interface TokenStore {
 //	public abstract void setSession(Session session);
 	
 	public MemToken genTempToken( )  throws TokenException ;
-	public MemToken genDualToken(String appid,String ticket,String secret,long livetime)throws TokenException;
-	public MemToken genDualTokenWithDefaultLiveTime(String appid,String ticket,String secret)throws TokenException;
+//	public MemToken genDualToken(String appid,String ticket,String secret,long livetime)throws TokenException;
+//	public MemToken genDualTokenWithDefaultLiveTime(String appid,String ticket,String secret)throws TokenException;
 	public MemToken genAuthTempToken(String appid, String ticket,String secret)throws TokenException;
 
 	public SimpleKeyPair getKeyPair(String appid,String secret) throws TokenException;

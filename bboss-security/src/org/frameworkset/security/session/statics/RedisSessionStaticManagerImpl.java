@@ -264,7 +264,7 @@ public class RedisSessionStaticManagerImpl extends BaseSessionStaticManagerImpl 
 				 
 				Map<String,String> data = redisHelper.hgetAll(sessionKey);
 				 
-				if(data != null)
+				if(data != null&& data.size() > 0)
 				{
 					 
 					  info = new SessionInfo();

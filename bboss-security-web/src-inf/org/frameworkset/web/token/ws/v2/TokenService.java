@@ -13,12 +13,12 @@ public interface TokenService {
 			@WebParam(name = "ticket", partName = "partTicket") String ticket)
 			throws Exception;
 
-	public @WebResult(name = "dualToken", partName = "partDualToken")
-	String genDualToken(
-			@WebParam(name = "appid", partName = "partAppid") String appid,
-			@WebParam(name = "secret", partName = "partSecret") String secret,
-			@WebParam(name = "ticket", partName = "partTicket") String ticket)
-			throws Exception;
+//	public @WebResult(name = "dualToken", partName = "partDualToken")
+//	String genDualToken(
+//			@WebParam(name = "appid", partName = "partAppid") String appid,
+//			@WebParam(name = "secret", partName = "partSecret") String secret,
+//			@WebParam(name = "ticket", partName = "partTicket") String ticket)
+//			throws Exception;
 
 	
 	public @WebResult(name = "tempToken", partName = "partTempToken") String genTempToken() throws Exception;
@@ -45,16 +45,16 @@ public interface TokenService {
 			@WebParam(name = "ticket", partName = "partTicket") String ticket)
 			throws Exception;
 
-	public @WebResult(name = "dualToken", partName = "partDualToken")
-	TokenGetResponse getDualToken(
-			@WebParam(name = "appid", partName = "partAppid") String appid,
-			@WebParam(name = "secret", partName = "partSecret") String secret,
-			@WebParam(name = "ticket", partName = "partTicket") String ticket)
-			throws Exception;
-	
-	public @WebResult(name = "dualToken", partName = "partDualToken") TokenGetResponse getDualTokenWithDefaultLiveTime(@WebParam(name = "appid", partName = "partAppid") String appid,
-			@WebParam(name = "secret", partName = "partSecret") String secret,
-			@WebParam(name = "ticket", partName = "partTicket") String ticket) throws Exception;
+//	public @WebResult(name = "dualToken", partName = "partDualToken")
+//	TokenGetResponse getDualToken(
+//			@WebParam(name = "appid", partName = "partAppid") String appid,
+//			@WebParam(name = "secret", partName = "partSecret") String secret,
+//			@WebParam(name = "ticket", partName = "partTicket") String ticket)
+//			throws Exception;
+//	
+//	public @WebResult(name = "dualToken", partName = "partDualToken") TokenGetResponse getDualTokenWithDefaultLiveTime(@WebParam(name = "appid", partName = "partAppid") String appid,
+//			@WebParam(name = "secret", partName = "partSecret") String secret,
+//			@WebParam(name = "ticket", partName = "partTicket") String ticket) throws Exception;
 
 	
 	public @WebResult(name = "tempToken", partName = "partTempToken") TokenGetResponse getTempToken() throws Exception;

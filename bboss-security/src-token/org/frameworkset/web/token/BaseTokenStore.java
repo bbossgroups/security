@@ -95,10 +95,10 @@ public abstract class BaseTokenStore implements TokenStore {
 //		return token.getSigntoken();
 //			
 //	}
-	public MemToken genDualTokenWithDefaultLiveTime(String appid,String ticket,String secret)throws TokenException
-	{
-		return genDualToken(appid,ticket, secret, TokenStore.DEFAULT_DUALTOKENLIVETIME) ;
-	}
+//	public MemToken genDualTokenWithDefaultLiveTime(String appid,String ticket,String secret)throws TokenException
+//	{
+//		return genDualToken(appid,ticket, secret, TokenStore.DEFAULT_DUALTOKENLIVETIME) ;
+//	}
 	
 	protected Application assertApplication(String appid,String secret) throws TokenException
 	{
@@ -206,7 +206,7 @@ public abstract class BaseTokenStore implements TokenStore {
 	protected abstract void persisteTicket(Ticket ticket);
 	protected abstract Ticket getTicket(String token,String appid);
 	
-	protected abstract MemToken getDualMemToken(String token,String appid,long lastVistTime);
+//	protected abstract MemToken getDualMemToken(String token,String appid,long lastVistTime);
 	protected abstract MemToken getAuthTempMemToken(String token,String appid );
 	protected abstract MemToken getTempMemToken(String token,String appid);
 	protected Integer checkTempToken(TokenInfo tokeninfo) throws TokenException
@@ -293,55 +293,55 @@ public abstract class BaseTokenStore implements TokenStore {
 		}
 	}
 	
-	@Override
-	public Integer checkDualToken(TokenInfo tokeninfo) throws TokenException {
-		
-		
-		if(tokeninfo != null)
-		{	
-			MemToken tt = tokeninfo.getTokenInfo();
-//			String appid=tokeninfo.getAppid();String secret=tokeninfo.getSecret();
-			String dynamictoken=tokeninfo.getDynamictoken();
-			
-			if(tt != null )//is first request,and clear temp token to against Cross Site Request Forgery
-			{
-				if(tt.getToken().equals(dynamictoken))
-				{
-					long vtime = System.currentTimeMillis();
-					if(!this.isold(tt,tt.getLivetime(),vtime))
-					{
-						tt.setLastVistTime(vtime);
-						if(tt.isValidate())
-							return TokenStore.token_request_validateresult_ok;
-						else
-							return TokenStore.token_request_validateresult_invalidated;
-					}
-					else
-					{
-						return TokenStore.token_request_validateresult_expired;
-					}
-					
-				}
-				else
-				{
-					if(tokeninfo.getDecoderesult().getResult() != null)
-						return tokeninfo.getDecoderesult().getResult();
-					return TokenStore.token_request_validateresult_fail;
-				}
-				
-			}
-			else
-			{
-				return TokenStore.token_request_validateresult_fail;
-			}
-		}
-		else 
-		{
-			return TokenStore.token_request_validateresult_nodtoken;
-		}
-		
-		
-	}
+//	@Override
+//	public Integer checkDualToken(TokenInfo tokeninfo) throws TokenException {
+//		
+//		
+//		if(tokeninfo != null)
+//		{	
+//			MemToken tt = tokeninfo.getTokenInfo();
+////			String appid=tokeninfo.getAppid();String secret=tokeninfo.getSecret();
+//			String dynamictoken=tokeninfo.getDynamictoken();
+//			
+//			if(tt != null )//is first request,and clear temp token to against Cross Site Request Forgery
+//			{
+//				if(tt.getToken().equals(dynamictoken))
+//				{
+//					long vtime = System.currentTimeMillis();
+//					if(!this.isold(tt,tt.getLivetime(),vtime))
+//					{
+//						tt.setLastVistTime(vtime);
+//						if(tt.isValidate())
+//							return TokenStore.token_request_validateresult_ok;
+//						else
+//							return TokenStore.token_request_validateresult_invalidated;
+//					}
+//					else
+//					{
+//						return TokenStore.token_request_validateresult_expired;
+//					}
+//					
+//				}
+//				else
+//				{
+//					if(tokeninfo.getDecoderesult().getResult() != null)
+//						return tokeninfo.getDecoderesult().getResult();
+//					return TokenStore.token_request_validateresult_fail;
+//				}
+//				
+//			}
+//			else
+//			{
+//				return TokenStore.token_request_validateresult_fail;
+//			}
+//		}
+//		else 
+//		{
+//			return TokenStore.token_request_validateresult_nodtoken;
+//		}
+//		
+//		
+//	}
 	/**
 	 * 0 account 1 worknumber
 	 */
@@ -569,43 +569,43 @@ public abstract class BaseTokenStore implements TokenStore {
 					throw new TokenException(TokenStore.ERROR_CODE_DECODETOKENFAILED,e);
 				}
 			}
-			else if(tokentype.equals(TokenStore.type_dualtoken))//有效期令牌校验
-			{
-				try {
-					Application appliction = assertApplication( appid, secret);
-					tokenInfo.setDynamictoken(token.substring(3));
-					long lastVistTime = System.currentTimeMillis(); 
-					MemToken memtoken = this.getDualMemToken(tokenInfo.getDynamictoken(), appid, lastVistTime);
-					if(memtoken == null)
-					{
-						decodetokenResult.setResult(token_request_validateresult_notexist);
-						decodetokenResult.setTokentype(tokentype);
-						decodetokenResult.setAppid(appid);
-						return tokenInfo;
-					}
-					tokenInfo.setTokenInfo(memtoken);
-					decodetokenResult.setTokentype(tokentype);
-					signtoken = memtoken.getSigntoken();
-					String mw = signtoken;
-					if(appliction.isSign())
-					{
-						SimpleKeyPair keyPairs = _getKeyPair(appid,secret,false);
-						
-						decodetokenResult.setAppid(appid);
-						mw = new String(ECCCoder.decrypt(Hex.decode(signtoken), keyPairs.getPrivateKey()));
-					}
-					String[] t = mw.split("\\|");
-					decodetokenResult.setToken(t[2]);
-					decodetokenResult.setWorknumber(t[1]);
-					decodetokenResult.setAccount(t[0]);
-					decodetokenResult.setSecret(secret);
-				}catch (TokenException e) {
-					throw  (e);
-				} 
-				catch (Exception e) {
-					throw new TokenException(TokenStore.ERROR_CODE_DECODETOKENFAILED,e);
-				}
-			}
+//			else if(tokentype.equals(TokenStore.type_dualtoken))//有效期令牌校验
+//			{
+//				try {
+//					Application appliction = assertApplication( appid, secret);
+//					tokenInfo.setDynamictoken(token.substring(3));
+//					long lastVistTime = System.currentTimeMillis(); 
+//					MemToken memtoken = this.getDualMemToken(tokenInfo.getDynamictoken(), appid, lastVistTime);
+//					if(memtoken == null)
+//					{
+//						decodetokenResult.setResult(token_request_validateresult_notexist);
+//						decodetokenResult.setTokentype(tokentype);
+//						decodetokenResult.setAppid(appid);
+//						return tokenInfo;
+//					}
+//					tokenInfo.setTokenInfo(memtoken);
+//					decodetokenResult.setTokentype(tokentype);
+//					signtoken = memtoken.getSigntoken();
+//					String mw = signtoken;
+//					if(appliction.isSign())
+//					{
+//						SimpleKeyPair keyPairs = _getKeyPair(appid,secret,false);
+//						
+//						decodetokenResult.setAppid(appid);
+//						mw = new String(ECCCoder.decrypt(Hex.decode(signtoken), keyPairs.getPrivateKey()));
+//					}
+//					String[] t = mw.split("\\|");
+//					decodetokenResult.setToken(t[2]);
+//					decodetokenResult.setWorknumber(t[1]);
+//					decodetokenResult.setAccount(t[0]);
+//					decodetokenResult.setSecret(secret);
+//				}catch (TokenException e) {
+//					throw  (e);
+//				} 
+//				catch (Exception e) {
+//					throw new TokenException(TokenStore.ERROR_CODE_DECODETOKENFAILED,e);
+//				}
+//			}
 			else
 			{
 				throw new TokenException(TokenStore.ERROR_CODE_UNKNOWNTOKENTYPE,new Exception("不正确的令牌类型："+token));
@@ -688,10 +688,10 @@ public abstract class BaseTokenStore implements TokenStore {
 		{
 			result = this.checkAuthTempToken(tokeninfo);
 		}
-		else if(tokeninfo.getDecoderesult().getTokentype().equals(TokenStore.type_dualtoken))//有效期令牌校验
-		{
-			result = this.checkDualToken(tokeninfo);
-		}
+//		else if(tokeninfo.getDecoderesult().getTokentype().equals(TokenStore.type_dualtoken))//有效期令牌校验
+//		{
+//			result = this.checkDualToken(tokeninfo);
+//		}
 		if(result != null)
 		{
 			tokeninfo.getDecoderesult().setResult(result);
@@ -768,19 +768,19 @@ public abstract class BaseTokenStore implements TokenStore {
 	}
 	
 	
-	@Override
-	public MemToken genDualToken(String appid, String ticket, String secret,
-			long livetime) throws TokenException {
-		Application application = assertApplication( appid, secret);
-		MemToken tt = _genDualToken( appid,  ticket,  secret,
-				 livetime,  application.isSign());
-		tt.setToken(TokenStore.type_dualtoken + "_"+tt.getToken());
-		return tt;
-		
-	}
+//	@Override
+//	public MemToken genDualToken(String appid, String ticket, String secret,
+//			long livetime) throws TokenException {
+//		Application application = assertApplication( appid, secret);
+//		MemToken tt = _genDualToken( appid,  ticket,  secret,
+//				 livetime,  application.isSign());
+//		tt.setToken(TokenStore.type_dualtoken + "_"+tt.getToken());
+//		return tt;
+//		
+//	}
 	
-	protected abstract MemToken _genDualToken(String appid, String ticket, String secret,
-			long livetime,boolean sign) throws TokenException ;
+//	protected abstract MemToken _genDualToken(String appid, String ticket, String secret,
+//			long livetime,boolean sign) throws TokenException ;
 	public ValidateApplication getValidateApplication() {
 		return validateApplication;
 	}

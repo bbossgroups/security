@@ -132,14 +132,14 @@ public class MemTokenStore extends BaseTokenStore{
 	
 	
 	
-	
-	@Override
-	protected MemToken getDualMemToken(String token, String appid,
-			long lastVistTime) {
-		String key = appid;
-		MemToken tt = dualtokens.get(key);
-		return tt;
-	}
+//	
+//	@Override
+//	protected MemToken getDualMemToken(String token, String appid,
+//			long lastVistTime) {
+//		String key = appid;
+//		MemToken tt = dualtokens.get(key);
+//		return tt;
+//	}
 
 	@Override
 	protected MemToken getAuthTempMemToken(String token, String appid) {
@@ -173,47 +173,47 @@ public class MemTokenStore extends BaseTokenStore{
 		
 	}
 
-	@Override
-	protected MemToken _genDualToken(String appid,String ticket, String secret, long livetime,boolean sign) throws TokenException {
-		String[] accountinfo = decodeTicket( ticket,
-				 appid,  secret,  sign);
-		String token = this.randomToken();
-		String key = appid ;
-		MemToken token_m = null;
-		synchronized(this.dualcheckLock)
-		{
-			token_m = this.dualtokens.get(key);
-			if(token_m != null)
-			{
-				long lastVistTime = System.currentTimeMillis();
-				if(isold(token_m, livetime,lastVistTime))//如果令牌已经过期，重新申请新的令牌
-				{
-					token_m.setLastVistTime(lastVistTime);
-//					this.dualtokens.remove(key);
-					long createTime = System.currentTimeMillis();
-					token_m = new MemToken(token, createTime, true,
-							createTime, livetime);
-					token_m.setAppid(appid);
-					token_m.setSecret(secret);
-					this.signToken(token_m, TokenStore.type_authtemptoken, accountinfo,ticket,  sign);
-					dualtokens.put(key, token_m);
-				}
-			}
-			else
-			{
-				long createTime = System.currentTimeMillis();
-				token_m = new MemToken(token, createTime, true,
-						createTime, livetime);
-				token_m.setAppid(appid);
-				token_m.setSecret(secret);
-				this.signToken(token_m, TokenStore.type_authtemptoken, accountinfo,ticket,  sign);
-				dualtokens.put(key, token_m);
-			}
-		}
-		
-		return token_m ;
-		
-	}
+//	@Override
+//	protected MemToken _genDualToken(String appid,String ticket, String secret, long livetime,boolean sign) throws TokenException {
+//		String[] accountinfo = decodeTicket( ticket,
+//				 appid,  secret,  sign);
+//		String token = this.randomToken();
+//		String key = appid ;
+//		MemToken token_m = null;
+//		synchronized(this.dualcheckLock)
+//		{
+//			token_m = this.dualtokens.get(key);
+//			if(token_m != null)
+//			{
+//				long lastVistTime = System.currentTimeMillis();
+//				if(isold(token_m, livetime,lastVistTime))//如果令牌已经过期，重新申请新的令牌
+//				{
+//					token_m.setLastVistTime(lastVistTime);
+////					this.dualtokens.remove(key);
+//					long createTime = System.currentTimeMillis();
+//					token_m = new MemToken(token, createTime, true,
+//							createTime, livetime);
+//					token_m.setAppid(appid);
+//					token_m.setSecret(secret);
+//					this.signToken(token_m, TokenStore.type_authtemptoken, accountinfo,ticket,  sign);
+//					dualtokens.put(key, token_m);
+//				}
+//			}
+//			else
+//			{
+//				long createTime = System.currentTimeMillis();
+//				token_m = new MemToken(token, createTime, true,
+//						createTime, livetime);
+//				token_m.setAppid(appid);
+//				token_m.setSecret(secret);
+//				this.signToken(token_m, TokenStore.type_authtemptoken, accountinfo,ticket,  sign);
+//				dualtokens.put(key, token_m);
+//			}
+//		}
+//		
+//		return token_m ;
+//		
+//	}
 	
 	@Override
 	protected MemToken _genAuthTempToken(String appid,String ticket, String secret,boolean sign) throws TokenException {

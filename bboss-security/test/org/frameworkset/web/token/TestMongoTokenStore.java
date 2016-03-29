@@ -22,8 +22,8 @@ public class TestMongoTokenStore {
 		mongodbTokenStore.setECCCoder(ECCHelper.getECCCoder());
 		mongodbTokenStore.setValidateApplication(new NullValidateApplication());
 		Ticket ticket = mongodbTokenStore.genTicket(account, worknumber, appid, secret);
-		MemToken token = mongodbTokenStore.genDualToken(appid,ticket.getToken(),secret,TokenStore.DEFAULT_DUALTOKENLIVETIME);
-		Assert.assertTrue(TokenStore.token_request_validateresult_ok == mongodbTokenStore.checkToken(appid,secret,token.getToken()).getResult());
+//		MemToken token = mongodbTokenStore.genDualToken(appid,ticket.getToken(),secret,TokenStore.DEFAULT_DUALTOKENLIVETIME);
+//		Assert.assertTrue(TokenStore.token_request_validateresult_ok == mongodbTokenStore.checkToken(appid,secret,token.getToken()).getResult());
 	}
 	@Test
 	public void genTemptokenAndValidate() throws Exception
@@ -33,19 +33,19 @@ public class TestMongoTokenStore {
 		Assert.assertTrue(TokenStore.token_request_validateresult_ok == mongodbTokenStore.checkToken(null,null,token.getToken()).getResult());
 	}
 	
-	@Test
-	public void gendualtokenAndValidate() throws Exception
-	{
-		Ticket ticket = mongodbTokenStore.genTicket(account, worknumber, appid, secret);
-		//long start = System.currentTimeMillis();
-		MemToken token = mongodbTokenStore.genDualToken(appid,ticket.getToken(),secret,TokenStore.DEFAULT_DUALTOKENLIVETIME);
-		//long end = System.currentTimeMillis();
-		//System.out.println(end - start);
-		//start = System.currentTimeMillis();
-		Assert.assertTrue(TokenStore.token_request_validateresult_ok == mongodbTokenStore.checkToken(appid,secret,token.getToken()).getResult());
-		//end = System.currentTimeMillis();
-		//System.out.println(end - start);
-	}
+//	@Test
+//	public void gendualtokenAndValidate() throws Exception
+//	{
+//		Ticket ticket = mongodbTokenStore.genTicket(account, worknumber, appid, secret);
+//		//long start = System.currentTimeMillis();
+//		MemToken token = mongodbTokenStore.genDualToken(appid,ticket.getToken(),secret,TokenStore.DEFAULT_DUALTOKENLIVETIME);
+//		//long end = System.currentTimeMillis();
+//		//System.out.println(end - start);
+//		//start = System.currentTimeMillis();
+//		Assert.assertTrue(TokenStore.token_request_validateresult_ok == mongodbTokenStore.checkToken(appid,secret,token.getToken()).getResult());
+//		//end = System.currentTimeMillis();
+//		//System.out.println(end - start);
+//	}
 	
 	
 	@Test
@@ -85,7 +85,7 @@ public class TestMongoTokenStore {
 						try {
 							long start = System.currentTimeMillis();
 //							mongodbTokenStore.requestStart();
-							s.gendualtokenAndValidate();
+//							s.gendualtokenAndValidate();
 							 s.gentempauthortokenAndValidate();
 							s.genTemptokenAndValidate();
 							

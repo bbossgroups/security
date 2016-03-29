@@ -40,17 +40,17 @@ public class RedisTokenStore extends BaseTokenStore{
 	}
  
 	
-	private MemToken todualToken(Map<String,String> object)
-	{
-		if(object == null)
-			return null;
-		MemToken token = new MemToken(object.get("token"),Long.parseLong(object.get("createTime")), Boolean.valueOf(object.get("validate")),
-				Long.parseLong(object.get("lastVistTime")), Long.parseLong(object.get("livetime")));
-		token.setAppid( object.get("appid"));
-		token.setSecret( object.get("secret"));
-		token.setSigntoken( object.get("signtoken"));
-		return token;
-	}
+//	private MemToken todualToken(Map<String,String> object)
+//	{
+//		if(object == null)
+//			return null;
+//		MemToken token = new MemToken(object.get("token"),Long.parseLong(object.get("createTime")), Boolean.valueOf(object.get("validate")),
+//				Long.parseLong(object.get("lastVistTime")), Long.parseLong(object.get("livetime")));
+//		token.setAppid( object.get("appid"));
+//		token.setSecret( object.get("secret"));
+//		token.setSigntoken( object.get("signtoken"));
+//		return token;
+//	}
 	
 	private MemToken totempToken(Map<String,String>  object)
 	{
@@ -67,14 +67,14 @@ public class RedisTokenStore extends BaseTokenStore{
 		return token;
 	}
 	
-	@Override
-	protected MemToken getDualMemToken(String token, String appid,
-			long lastVistTime) {
-		
-		
-		MemToken tt = queryDualToken( appid, null,lastVistTime);
-		return tt;
-	}
+//	@Override
+//	protected MemToken getDualMemToken(String token, String appid,
+//			long lastVistTime) {
+//		
+//		
+//		MemToken tt = queryDualToken( appid, null,lastVistTime);
+//		return tt;
+//	}
 	private String buildAuthTempMemTokenKey(String token, String appid)
 	{
 		return new StringBuilder().append(token_authtemptokens_prefix).append(appid).append(":").append(token).toString();
@@ -88,7 +88,7 @@ public class RedisTokenStore extends BaseTokenStore{
 			redisHelper = RedisFactory.getTXRedisHelper();
 			String key = buildAuthTempMemTokenKey(token, appid);
 			Map<String,String> authTempToken = redisHelper.hgetAll(key);
-			if(authTempToken == null)
+			if(authTempToken == null|| authTempToken.size() == 0)
 				return null;
 			redisHelper.del(key);
 			  token_m = toauthtempToken(authTempToken);		
@@ -120,7 +120,7 @@ public class RedisTokenStore extends BaseTokenStore{
 			redisHelper = RedisFactory.getTXRedisHelper();
 			String tk = buildTempMemTokenKey(token, appid);
 			Map<String,String> temptoken = redisHelper.hgetAll(tk);
-			if(temptoken != null)
+			if(temptoken != null&& temptoken.size() > 0)
 			{
 				redisHelper.del(tk);
 				token_m = totempToken(temptoken);	
@@ -137,59 +137,59 @@ public class RedisTokenStore extends BaseTokenStore{
 	
 	
 	
-
-	private MemToken queryDualToken(String appid, String secret)
-	{
-		return queryDualToken(appid, secret,-1);
-	}
-	private String buildAppDualTokenKey(String appid)
-	{
-		return token_dualtokens_prefix+appid;
-	}
-	private MemToken queryDualToken(String appid, String secret,long lastVistTime)
-	{
-		String dualtokenKey = this.buildAppDualTokenKey(appid);
-		MemToken tt = null;
-		RedisHelper redisHelper = null;
-		try
-		{
-			redisHelper = RedisFactory.getTXRedisHelper();
-			Map<String,String> tokens = redisHelper.hgetAll(dualtokenKey);
-			if(tokens != null)
-			{
-				if(lastVistTime > 0)
-				{
-					
-					
-				 	redisHelper.hset(dualtokenKey, "lastVistTime", String.valueOf(lastVistTime));
-					tt = todualToken(tokens); 
-					if(tt.getLivetime() > 0)
-						redisHelper.expire(dualtokenKey, (int)tt.getLivetime());
-					 
-				}
-				else
-				{
-					tt = todualToken(tokens); 
-				}
-			}
-		}
-		finally
-		{
-			RedisFactory.releaseTX();
-		}
-		 
-		
-		return tt;
-	}
-	
-
+//
+//	private MemToken queryDualToken(String appid, String secret)
+//	{
+//		return queryDualToken(appid, secret,-1);
+//	}
+//	private String buildAppDualTokenKey(String appid)
+//	{
+//		return token_dualtokens_prefix+appid;
+//	}
+//	private MemToken queryDualToken(String appid, String secret,long lastVistTime)
+//	{
+//		String dualtokenKey = this.buildAppDualTokenKey(appid);
+//		MemToken tt = null;
+//		RedisHelper redisHelper = null;
+//		try
+//		{
+//			redisHelper = RedisFactory.getTXRedisHelper();
+//			Map<String,String> tokens = redisHelper.hgetAll(dualtokenKey);
+//			if(tokens != null&& tokens.size() > 0)
+//			{
+//				if(lastVistTime > 0)
+//				{
+//					
+//					
+//				 	redisHelper.hset(dualtokenKey, "lastVistTime", String.valueOf(lastVistTime));
+//					tt = todualToken(tokens); 
+//					if(tt.getLivetime() > 0)
+//						redisHelper.expire(dualtokenKey, (int)tt.getLivetime());
+//					 
+//				}
+//				else
+//				{
+//					tt = todualToken(tokens); 
+//				}
+//			}
+//		}
+//		finally
+//		{
+//			RedisFactory.releaseTX();
+//		}
+//		 
+//		
+//		return tt;
+//	}
+//	
+//
 	private void insertDualToken(MemToken dualToken)
 	{
 		RedisHelper redisHelper = null;
 		try
 		{
 			redisHelper = RedisFactory.getTXRedisHelper();
-			String dualKey = this.buildAppDualTokenKey(dualToken.getAppid());
+			String dualKey = this.buildAuthTempMemTokenKey(dualToken.getToken(), dualToken.getAppid());
 			Map<String,String> tokens = new HashMap<String,String>();
 			tokens.put("token",dualToken.getToken());
 			tokens.put("createTime", String.valueOf(dualToken.getCreateTime()));
@@ -209,33 +209,33 @@ public class RedisTokenStore extends BaseTokenStore{
 		}
 		
 	}
-	
-	private void updateDualToken(MemToken dualToken)
-	{
-		RedisHelper redisHelper = null;
-		try
-		{
-			redisHelper = RedisFactory.getTXRedisHelper();
-			String dualKey = this.buildAppDualTokenKey(dualToken.getAppid());
-			Map<String,String> tokens = new HashMap<String,String>();
-			tokens.put("token",dualToken.getToken());
-			tokens.put("createTime", String.valueOf(dualToken.getCreateTime()));
-			tokens.put("lastVistTime", String.valueOf(dualToken.getLastVistTime()));
-			tokens.put("livetime", String.valueOf(dualToken.getLivetime()));
-			tokens.put("appid", dualToken.getAppid());
-			tokens.put("secret", dualToken.getSecret());
-			tokens.put("signtoken", dualToken.getSigntoken());
-			tokens.put("validate", String.valueOf(dualToken.isValidate()));
-			redisHelper.hmset(dualKey, tokens);
-			if(dualToken.getLivetime() > 0)
-				redisHelper.expire(dualKey, (int)dualToken.getLivetime());
-		}
-		finally
-		{
-			RedisFactory.releaseTX();
-		}
- 
-	}
+//	
+//	private void updateDualToken(MemToken dualToken)
+//	{
+//		RedisHelper redisHelper = null;
+//		try
+//		{
+//			redisHelper = RedisFactory.getTXRedisHelper();
+//			String dualKey = this.buildAppDualTokenKey(dualToken.getAppid());
+//			Map<String,String> tokens = new HashMap<String,String>();
+//			tokens.put("token",dualToken.getToken());
+//			tokens.put("createTime", String.valueOf(dualToken.getCreateTime()));
+//			tokens.put("lastVistTime", String.valueOf(dualToken.getLastVistTime()));
+//			tokens.put("livetime", String.valueOf(dualToken.getLivetime()));
+//			tokens.put("appid", dualToken.getAppid());
+//			tokens.put("secret", dualToken.getSecret());
+//			tokens.put("signtoken", dualToken.getSigntoken());
+//			tokens.put("validate", String.valueOf(dualToken.isValidate()));
+//			redisHelper.hmset(dualKey, tokens);
+//			if(dualToken.getLivetime() > 0)
+//				redisHelper.expire(dualKey, (int)dualToken.getLivetime());
+//		}
+//		finally
+//		{
+//			RedisFactory.releaseTX();
+//		}
+// 
+//	}
 
 	@Override
 	public MemToken _genTempToken( ) throws TokenException {
@@ -265,49 +265,49 @@ public class RedisTokenStore extends BaseTokenStore{
 		
 	}
 	
-	@Override
-	protected MemToken _genDualToken(String appid,String ticket, String secret, long livetime,boolean sign) throws TokenException {
-		
-		String accountinfo[] = this.decodeTicket(ticket, appid, secret,  sign);
-		MemToken token_m = null;
-//		synchronized(this.dualcheckLock)
-		
-		token_m = queryDualToken( appid, secret);
-		if(token_m != null)
-		{
-			long lastVistTime = System.currentTimeMillis();
-			if(isold(token_m, livetime,lastVistTime))//如果令牌已经过期，重新申请新的令牌
-			{
-				//刷新过期的有效期令牌
-				String token = this.randomToken();
-				token_m.setLastVistTime(lastVistTime);
-//					this.dualtokens.remove(key);
-				long createTime = System.currentTimeMillis();
-				token_m = new MemToken(token, createTime, true,
-						createTime, livetime);
-				token_m.setAppid(appid);
-				token_m.setSecret(secret);
-				this.signToken(token_m,TokenStore.type_dualtoken,accountinfo,ticket,  sign);
-				updateDualToken(token_m);
-				
-			}
-		}
-		else
-		{
-			String token = this.randomToken();
-			long createTime = System.currentTimeMillis();
-			token_m = new MemToken(token, createTime, true,
-					createTime, livetime);
-			token_m.setAppid(appid);
-			token_m.setSecret(secret);
-			this.signToken(token_m,TokenStore.type_dualtoken,accountinfo,ticket,  sign);
-			this.insertDualToken(token_m);
-		}
-		
-		
-		return token_m ;
-		
-	}
+//	@Override
+//	protected MemToken _genDualToken(String appid,String ticket, String secret, long livetime,boolean sign) throws TokenException {
+//		
+//		String accountinfo[] = this.decodeTicket(ticket, appid, secret,  sign);
+//		MemToken token_m = null;
+////		synchronized(this.dualcheckLock)
+//		
+//		token_m = queryDualToken( appid, secret);
+//		if(token_m != null)
+//		{
+//			long lastVistTime = System.currentTimeMillis();
+//			if(isold(token_m, livetime,lastVistTime))//如果令牌已经过期，重新申请新的令牌
+//			{
+//				//刷新过期的有效期令牌
+//				String token = this.randomToken();
+//				token_m.setLastVistTime(lastVistTime);
+////					this.dualtokens.remove(key);
+//				long createTime = System.currentTimeMillis();
+//				token_m = new MemToken(token, createTime, true,
+//						createTime, livetime);
+//				token_m.setAppid(appid);
+//				token_m.setSecret(secret);
+//				this.signToken(token_m,TokenStore.type_dualtoken,accountinfo,ticket,  sign);
+//				updateDualToken(token_m);
+//				
+//			}
+//		}
+//		else
+//		{
+//			String token = this.randomToken();
+//			long createTime = System.currentTimeMillis();
+//			token_m = new MemToken(token, createTime, true,
+//					createTime, livetime);
+//			token_m.setAppid(appid);
+//			token_m.setSecret(secret);
+//			this.signToken(token_m,TokenStore.type_dualtoken,accountinfo,ticket,  sign);
+//			this.insertDualToken(token_m);
+//		}
+//		
+//		
+//		return token_m ;
+//		
+//	}
 	/**
 	 * 创建带认证的临时令牌
 	 * @param string
@@ -345,7 +345,7 @@ public class RedisTokenStore extends BaseTokenStore{
 			redisHelper = RedisFactory.getTXRedisHelper();
 			String KeyPaireKey = buildKeyPaireKey(  appid);
 			Map<String,String> keypairInfo = redisHelper.hgetAll(KeyPaireKey);
-			if(keypairInfo != null)
+			if(keypairInfo != null && keypairInfo.size() > 0)
 			{
 				return toECKeyPair(keypairInfo);
 			}
@@ -477,7 +477,7 @@ public class RedisTokenStore extends BaseTokenStore{
 			redisHelper = RedisFactory.getTXRedisHelper();
 			String ticketKey = buildTicketkey(appid,token);
 			Map<String,String> ticketInfo = redisHelper.hgetAll(ticketKey);
-			if(ticketInfo != null)
+			if(ticketInfo != null&& ticketInfo.size() > 0)
 			{
 				long lastVistTime =  System.currentTimeMillis();
 				Ticket ticket = new Ticket();

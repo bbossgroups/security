@@ -89,17 +89,17 @@ public class DummyTokenService implements TokenServiceInf {
 		return null;
 	}
 
-	@Override
-	public String genDualToken(String appid, String secret, String ticket, long dualtime) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String genDualTokenWithDefaultLiveTime(String appid, String secret, String ticket) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
+//	@Override
+//	public String genDualToken(String appid, String secret, String ticket, long dualtime) throws Exception {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
+//
+//	@Override
+//	public String genDualTokenWithDefaultLiveTime(String appid, String secret, String ticket) throws Exception {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
 
 	@Override
 	public String genAuthTempToken(String appid, String secret, String ticket) throws Exception {

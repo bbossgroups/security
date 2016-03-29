@@ -23,7 +23,7 @@ public class MongodbTokenStore extends BaseTokenStore{
 	private DB db = null;
 	private DBCollection temptokens = null;
 	private DBCollection authtemptokens = null;
-	private DBCollection dualtokens = null;
+//	private DBCollection dualtokens = null;
 	private DBCollection eckeypairs = null;
 	private DBCollection tickets = null;
 //	public void requestStart()
@@ -57,8 +57,8 @@ public class MongodbTokenStore extends BaseTokenStore{
 		authtemptokens.createIndex(new BasicDBObject("appid", 1).append("token", 1));
 		temptokens = db.getCollection("temptokens");
 		temptokens.createIndex(new BasicDBObject("token", 1));
-		dualtokens = db.getCollection("dualtokens");
-		dualtokens.createIndex(new BasicDBObject("appid", 1));
+//		dualtokens = db.getCollection("dualtokens");
+//		dualtokens.createIndex(new BasicDBObject("appid", 1));
 		eckeypairs = db.getCollection("eckeypair");
 		eckeypairs.createIndex(new BasicDBObject("appid", 1));
 		tickets = db.getCollection("tickets");
@@ -102,16 +102,16 @@ public class MongodbTokenStore extends BaseTokenStore{
 		}		
 //		
 
-		try
-		{
-//			dualtokens.remove(new BasicDBObject("$where",temp));
-			MongoDB.remove(dualtokens,new BasicDBObject("$where",temp),WriteConcern.UNACKNOWLEDGED);
-			
-		}
-		finally
-		{
-			
-		}		
+//		try
+//		{
+////			dualtokens.remove(new BasicDBObject("$where",temp));
+//			MongoDB.remove(dualtokens,new BasicDBObject("$where",temp),WriteConcern.UNACKNOWLEDGED);
+//			
+//		}
+//		finally
+//		{
+//			
+//		}		
 
 		try
 		{
@@ -248,17 +248,17 @@ public class MongodbTokenStore extends BaseTokenStore{
 //		
 //	}
 	
-	private MemToken todualToken(DBObject object)
-	{
-		if(object == null)
-			return null;
-		MemToken token = new MemToken((String)object.get("token"),(Long)object.get("createTime"), (Boolean)object.get("validate"),
-					(Long)object.get("lastVistTime"), (Long)object.get("livetime"));
-		token.setAppid((String)object.get("appid"));
-		token.setSecret((String)object.get("secret"));
-		token.setSigntoken((String)object.get("signtoken"));
-		return token;
-	}
+//	private MemToken todualToken(DBObject object)
+//	{
+//		if(object == null)
+//			return null;
+//		MemToken token = new MemToken((String)object.get("token"),(Long)object.get("createTime"), (Boolean)object.get("validate"),
+//					(Long)object.get("lastVistTime"), (Long)object.get("livetime"));
+//		token.setAppid((String)object.get("appid"));
+//		token.setSecret((String)object.get("secret"));
+//		token.setSigntoken((String)object.get("signtoken"));
+//		return token;
+//	}
 	
 	private MemToken totempToken(DBObject object)
 	{
@@ -275,14 +275,14 @@ public class MongodbTokenStore extends BaseTokenStore{
 		return token;
 	}
 	
-	@Override
-	protected MemToken getDualMemToken(String token, String appid,
-			long lastVistTime) {
-		
-		
-		MemToken tt = queryDualToken( appid, null,lastVistTime);
-		return tt;
-	}
+//	@Override
+//	protected MemToken getDualMemToken(String token, String appid,
+//			long lastVistTime) {
+//		
+//		
+//		MemToken tt = queryDualToken( appid, null,lastVistTime);
+//		return tt;
+//	}
 	@Override
 	protected MemToken getAuthTempMemToken(String token, String appid) {
 		BasicDBObject dbobject = new BasicDBObject("token", token).append("appid", appid);
@@ -315,46 +315,46 @@ public class MongodbTokenStore extends BaseTokenStore{
 	
 	
 
-	private MemToken queryDualToken(String appid, String secret)
-	{
-		return queryDualToken(appid, secret,-1);
-	}
-	private MemToken queryDualToken(String appid, String secret,long lastVistTime)
-	{
-		BasicDBObject dbobject = new BasicDBObject("appid", appid);
-		MemToken tt = null;
-		DBCursor cursor = null;
-		DBObject dt = null;
-		if(lastVistTime > 0)
-		{
-			dt = dualtokens.findOne(dbobject);
-			MongoDB.update(dualtokens,dbobject, new BasicDBObject("$set",new BasicDBObject("lastVistTime", lastVistTime)));
-//			dt = dualtokens.findAndModify(dbobject, new BasicDBObject("$set",new BasicDBObject("lastVistTime", lastVistTime)));
-			tt = todualToken(dt); 
-		}
-		else
-		{
-			try
-			{
-				cursor = dualtokens.find(dbobject);
-				if(cursor.hasNext())
-				{
-					dt = cursor.next();
-					tt = todualToken(dt); 
-				}
-			}
-			finally
-			{
-				if(cursor != null)
-				{
-					cursor.close();
-				}
-			}
-		}
-		
-		
-		return tt;
-	}
+//	private MemToken queryDualToken(String appid, String secret)
+//	{
+//		return queryDualToken(appid, secret,-1);
+//	}
+//	private MemToken queryDualToken(String appid, String secret,long lastVistTime)
+//	{
+//		BasicDBObject dbobject = new BasicDBObject("appid", appid);
+//		MemToken tt = null;
+//		DBCursor cursor = null;
+//		DBObject dt = null;
+//		if(lastVistTime > 0)
+//		{
+//			dt = dualtokens.findOne(dbobject);
+//			MongoDB.update(dualtokens,dbobject, new BasicDBObject("$set",new BasicDBObject("lastVistTime", lastVistTime)));
+////			dt = dualtokens.findAndModify(dbobject, new BasicDBObject("$set",new BasicDBObject("lastVistTime", lastVistTime)));
+//			tt = todualToken(dt); 
+//		}
+//		else
+//		{
+//			try
+//			{
+//				cursor = dualtokens.find(dbobject);
+//				if(cursor.hasNext())
+//				{
+//					dt = cursor.next();
+//					tt = todualToken(dt); 
+//				}
+//			}
+//			finally
+//			{
+//				if(cursor != null)
+//				{
+//					cursor.close();
+//				}
+//			}
+//		}
+//		
+//		
+//		return tt;
+//	}
 	
 
 	private void insertDualToken(DBCollection dualtokens,MemToken dualToken)
@@ -369,19 +369,19 @@ public class MongodbTokenStore extends BaseTokenStore{
 		.append("validate", dualToken.isValidate()));
 	}
 	
-	private void updateDualToken(MemToken dualToken)
-	{
-		MongoDB.update(this.dualtokens,new BasicDBObject(
-		"appid", dualToken.getAppid()),
-		new BasicDBObject("token",dualToken.getToken())
-		.append("createTime", dualToken.getCreateTime())
-		.append("lastVistTime", dualToken.getLastVistTime())
-		.append("livetime", dualToken.getLivetime())
-		.append("appid", dualToken.getAppid())
-		.append("secret", dualToken.getSecret())
-		.append("signtoken", dualToken.getSigntoken())
-		.append("validate", dualToken.isValidate()));
-	}
+//	private void updateDualToken(MemToken dualToken)
+//	{
+//		MongoDB.update(this.dualtokens,new BasicDBObject(
+//		"appid", dualToken.getAppid()),
+//		new BasicDBObject("token",dualToken.getToken())
+//		.append("createTime", dualToken.getCreateTime())
+//		.append("lastVistTime", dualToken.getLastVistTime())
+//		.append("livetime", dualToken.getLivetime())
+//		.append("appid", dualToken.getAppid())
+//		.append("secret", dualToken.getSecret())
+//		.append("signtoken", dualToken.getSigntoken())
+//		.append("validate", dualToken.isValidate()));
+//	}
 
 	@Override
 	public MemToken _genTempToken( ) throws TokenException {
@@ -393,49 +393,49 @@ public class MongodbTokenStore extends BaseTokenStore{
 		
 	}
 	
-	@Override
-	protected MemToken _genDualToken(String appid,String ticket, String secret, long livetime,boolean sign) throws TokenException {
-		
-		String accountinfo[] = this.decodeTicket(ticket, appid, secret,  sign);
-		MemToken token_m = null;
-//		synchronized(this.dualcheckLock)
-		
-		token_m = queryDualToken( appid, secret);
-		if(token_m != null)
-		{
-			long lastVistTime = System.currentTimeMillis();
-			if(isold(token_m, livetime,lastVistTime))//如果令牌已经过期，重新申请新的令牌
-			{
-				//刷新过期的有效期令牌
-				String token = this.randomToken();
-				token_m.setLastVistTime(lastVistTime);
-//					this.dualtokens.remove(key);
-				long createTime = System.currentTimeMillis();
-				token_m = new MemToken(token, createTime, true,
-						createTime, livetime);
-				token_m.setAppid(appid);
-				token_m.setSecret(secret);
-				this.signToken(token_m,TokenStore.type_dualtoken,accountinfo,ticket,  sign);
-				updateDualToken(token_m);
-				
-			}
-		}
-		else
-		{
-			String token = this.randomToken();
-			long createTime = System.currentTimeMillis();
-			token_m = new MemToken(token, createTime, true,
-					createTime, livetime);
-			token_m.setAppid(appid);
-			token_m.setSecret(secret);
-			this.signToken(token_m,TokenStore.type_dualtoken,accountinfo,ticket,  sign);
-			this.insertDualToken(this.dualtokens,token_m);
-		}
-		
-		
-		return token_m ;
-		
-	}
+//	@Override
+//	protected MemToken _genDualToken(String appid,String ticket, String secret, long livetime,boolean sign) throws TokenException {
+//		
+//		String accountinfo[] = this.decodeTicket(ticket, appid, secret,  sign);
+//		MemToken token_m = null;
+////		synchronized(this.dualcheckLock)
+//		
+//		token_m = queryDualToken( appid, secret);
+//		if(token_m != null)
+//		{
+//			long lastVistTime = System.currentTimeMillis();
+//			if(isold(token_m, livetime,lastVistTime))//如果令牌已经过期，重新申请新的令牌
+//			{
+//				//刷新过期的有效期令牌
+//				String token = this.randomToken();
+//				token_m.setLastVistTime(lastVistTime);
+////					this.dualtokens.remove(key);
+//				long createTime = System.currentTimeMillis();
+//				token_m = new MemToken(token, createTime, true,
+//						createTime, livetime);
+//				token_m.setAppid(appid);
+//				token_m.setSecret(secret);
+//				this.signToken(token_m,TokenStore.type_dualtoken,accountinfo,ticket,  sign);
+//				updateDualToken(token_m);
+//				
+//			}
+//		}
+//		else
+//		{
+//			String token = this.randomToken();
+//			long createTime = System.currentTimeMillis();
+//			token_m = new MemToken(token, createTime, true,
+//					createTime, livetime);
+//			token_m.setAppid(appid);
+//			token_m.setSecret(secret);
+//			this.signToken(token_m,TokenStore.type_dualtoken,accountinfo,ticket,  sign);
+//			this.insertDualToken(this.dualtokens,token_m);
+//		}
+//		
+//		
+//		return token_m ;
+//		
+//	}
 	/**
 	 * 创建带认证的临时令牌
 	 * @param string
