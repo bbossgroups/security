@@ -134,7 +134,12 @@ public class RedisDB extends BeanInfoAware implements InitializingBean,org.frame
 		if(shardedJedispool != null)
 			this.shardedJedispool.destroy();
 		if(jc != null)
-			jc.close();
+			try {
+				jc.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		if(jedisPool != null)
 			jedisPool.destroy();
 	}

@@ -7,3 +7,7 @@
 /common-mvc.log
 /build.bat.bak
 /build.log
+/build/
+/.classpath
+/.project
+/.settings/

@@ -2,3 +2,7 @@
 /classes
 /distrib
 /build-jdk5.log
+/build/
+/.classpath
+/.project
+/.settings/

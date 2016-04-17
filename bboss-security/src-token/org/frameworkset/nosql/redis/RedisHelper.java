@@ -13,7 +13,7 @@ import redis.clients.jedis.JedisPubSub;
 import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.ShardedJedis;
 import redis.clients.jedis.SortingParams;
-import redis.clients.jedis.params.set.SetParams;
+//import redis.clients.jedis.params.set.SetParams;
 import redis.clients.jedis.params.sortedset.ZAddParams;
 import redis.clients.jedis.params.sortedset.ZIncrByParams;
 
@@ -86,24 +86,24 @@ public class RedisHelper {
 			return jc.set(key, value);
 	  }
 
-	  /**
-	   * Set the string value as value of the key. The string can't be longer than 1073741824 bytes (1
-	   * GB).
-	   * @param key
-	   * @param value
-	   * @param params NX|XX, NX -- Only set the key if it does not already exist. XX -- Only set the
-	   *          key if it already exist. EX|PX, expire time units: EX = seconds; PX = milliseconds
-	   * @return Status code reply
-	   */
-	  public String set(final String key, final String value, final SetParams params) {
-		  init();
-		  if(shardedJedis != null)
-				return shardedJedis.set(key, value,params);
-		  else if(this.jedis != null)
-				return jedis.set(key, value,params);
-		  else
-			  	return jc.set(key, value,params);
-	  }
+//	  /**
+//	   * Set the string value as value of the key. The string can't be longer than 1073741824 bytes (1
+//	   * GB).
+//	   * @param key
+//	   * @param value
+//	   * @param params NX|XX, NX -- Only set the key if it does not already exist. XX -- Only set the
+//	   *          key if it already exist. EX|PX, expire time units: EX = seconds; PX = milliseconds
+//	   * @return Status code reply
+//	   */
+//	  public String set(final String key, final String value, final SetParams params) {
+//		  init();
+//		  if(shardedJedis != null)
+//				return shardedJedis.set(key, value,params);
+//		  else if(this.jedis != null)
+//				return jedis.set(key, value,params);
+//		  else
+//			  	return jc.set(key, value,params);
+//	  }
 
 	  /**
 	   * Get the value of the specified key. If the key does not exist null is returned. If the value
