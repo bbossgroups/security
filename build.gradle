@@ -94,7 +94,7 @@ configure([project(":bboss-security")]) { subproject ->
 
 configure([project(":session"),project(":sessionmonitor")]) { subproject ->
 	apply plugin: 'war'    
-    apply plugin: 'org.akhikhl.gretty'
+    /**apply plugin: 'org.akhikhl.gretty'
     
      gretty {
 	    httpPort = 80
@@ -103,7 +103,7 @@ configure([project(":session"),project(":sessionmonitor")]) { subproject ->
 	    jvmArgs = ['-Xmx1024M', '-XX:PermSize=128M', '-XX:MaxPermSize=256M']
 	  //  servletContainer = 'jetty7'
 	  
-	  } 
+	  } */
 	war {
 	    from 'WebRoot'
 	    // adds a file-set to the root of the archive

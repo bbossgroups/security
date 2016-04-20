@@ -24,7 +24,7 @@ project.tasks.compileJava.dependsOn(project(':bboss-security').tasks.publish)
 
 dependencies {
     compile(
-            [group: 'org.bbossgroups.security', name: 'bboss-security', version: "${version}", transitive: true],
+            [group: 'org.bbossgroups', name: 'bboss-security', version: "${version}", transitive: true],
             [group: 'org.bbossgroups', name: 'bboss-soa', version: "${bboss_version}", transitive: false]
     )
 
