@@ -16,12 +16,12 @@ dependencies {
     
     compile (
             [group: 'org.ow2.asm', name: 'asm', version: '5.0.3', transitive: false],
-            [group: 'org.bbossgroups', name: 'bboss-core', version: "${bboss_version}", transitive: false],
-            [group: 'org.bbossgroups', name: 'bboss-security', version: "${version}", transitive: false],
-            [group: 'org.bbossgroups', name: 'bboss-soa', version: "${bboss_version}", transitive: false],
+            [group: 'com.bbossgroups', name: 'bboss-core', version: "${bboss_version}", transitive: false],
+            [group: 'com.bbossgroups', name: 'bboss-security', version: "${version}", transitive: false],
+            [group: 'com.bbossgroups', name: 'bboss-soa', version: "${bboss_version}", transitive: false],
               [group: 'cglib', name: 'cglib-nodep', version: '3.1', transitive: false],
              [group: 'org.apache.commons', name: 'commons-pool2', version: '2.4.2', transitive: false],
-             [group: 'org.bbossgroups', name: 'bboss-util', version: "${bboss_version}", transitive: false],
+             [group: 'com.bbossgroups', name: 'bboss-util', version: "${bboss_version}", transitive: false],
                [group: 'org.codehaus.jackson', name: 'jackson-mapper-asl', version: '1.9.10',transitive: true],
              [group: 'oro', name: 'oro', version: '2.0.8', transitive: false],
              [group: 'com.tonicsystems', name: 'jarjar', version: '0.6', transitive: false],
