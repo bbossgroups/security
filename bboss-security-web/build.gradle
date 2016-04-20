@@ -106,18 +106,10 @@ publishing {
         }
         
     }
-    /**repositories {
+    repositories {
         mavenLocal()
        
         
-    }*/
-    repositories {
-        maven {
-            url "https://oss.sonatype.org/content/groups/public"
-            credentials {
-                username "bboss"
-                password "bboss123456"
-            }
-        }
     }
+    
 }
