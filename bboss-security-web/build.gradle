@@ -70,6 +70,7 @@ sourceSets.bboss_security_web_inf { set ->
     def docTask = task("${set.name}Doc", type: Javadoc) {
         classpath = set.compileClasspath
         source set.allJava
+        destinationDir=file("build/docs/${set.name}")
     }
 
     def jarDocTask = task("${set.name}DocJar", type: Jar, dependsOn: docTask) {
