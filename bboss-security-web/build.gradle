@@ -27,7 +27,7 @@ dependencies {
     		[group: 'org.ow2.asm', name: 'asm', version: '5.0.3', transitive: false],
             [group: 'com.bbossgroups', name: 'bboss-core', version: "${bboss_version}", transitive: false],
              [group: 'com.bbossgroups', name: 'bboss-mvc', version: "${bboss_version}", transitive: false],
-            [group: 'com.bbossgroups', name: 'bboss-security', version: "${version}", transitive: false],
+            [group: 'com.bbossgroups.security', name: 'bboss-security', version: "${version}", transitive: false],
              [group: 'com.bbossgroups', name: 'bboss-util', version: "${bboss_version}", transitive: false],
               [group: 'log4j', name: 'log4j', version: '1.2.16', transitive: false],
                [group: 'com.bbossgroups', name: 'bboss-velocity', version: "${bboss_version}", transitive: false],
@@ -108,9 +108,14 @@ publishing {
         
     }
     repositories {
-        mavenLocal()
-       
-        
-    }
+    	mavenLocal()
+	        maven {
+	            url "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+	            credentials {
+	                username "bboss"
+	                password "bboss123456"
+	            }
+	        }
+	    }
     
 }

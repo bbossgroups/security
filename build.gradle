@@ -88,7 +88,14 @@ configure([project(":bboss-security")]) { subproject ->
 		}
 		repositories {
 			mavenLocal()
-		}
+	        maven {
+	            url "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+	            credentials {
+	                username "bboss"
+	                password "bboss123456"
+	            }
+	        }
+	    }
 	}
 }
 

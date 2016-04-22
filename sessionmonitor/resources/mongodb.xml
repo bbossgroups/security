@@ -5,7 +5,7 @@
 		
 		
 		<property name="serverAddresses" >
-			 mongo.bbossgroups.com:27017
+			 localhost:27017
 		</property>
 		<property name="option" ></property>
 			

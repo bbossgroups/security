@@ -43,7 +43,7 @@
 			如果需要共享跟多的会话数据，可以将对应的属性追加到shareSessionAttrs中（以逗号分割），没有出现在shareSessionAttrs中的属性都是私有会话数据（对其他应用不可见）。
 			如果没有指定shareSessionAttrs，则会话数据全部在三个应用间共享。
 			-->
-			<property name="crossDomain" class="org.frameworkset.security.session.domain.CrossDomain" 
+			<!-- <property name="crossDomain" class="org.frameworkset.security.session.domain.CrossDomain" 
 			    f:domain="127.0.0.1"  
 			    f:shareSessionAttrs="userAccount" 
 			    init-method="init">
@@ -65,12 +65,13 @@
 				       
 				    </list>
 			    </property>
-			</property>    
+			</property>   
+			 --> 
 			<property name="startLifeScan" value="false"/>  
   <property name="sessionlisteners" value="org.frameworkset.security.session.impl.NullSessionListener"/>  
 	</property>
 	
-	<property name="sessionStaticManager" f:monitorScope="all" class="org.frameworkset.security.session.statics.RedisSessionStaticManagerImpl"/>	
+	<property name="sessionStaticManager" f:monitorScope="all" class="org.frameworkset.security.session.statics.MongoSessionStaticManagerImpl"/>	
 	
-	<property name="sessionstore" class="org.frameworkset.security.session.impl.RedisSessionStore"/>
+	<property name="sessionstore" class="org.frameworkset.security.session.impl.MongDBSessionStore"/>
 </properties>
