@@ -18,6 +18,8 @@ configure(allprojects) { project ->
 	apply plugin: "maven-publish"
 	apply plugin: "eclipse"
 	apply plugin: "idea"
+	apply plugin: "signing"
+	apply plugin: "maven"
 	if(project.getProperty('skipTest'))
 	{
 		compileTestJava.enabled=false
@@ -78,25 +80,57 @@ configure([project(":bboss-security")]) { subproject ->
 		from javadoc.destinationDir
 	}
 
-	publishing {
-		publications {
-			mavenJava(MavenPublication) {
-				from components.java
-				artifact sourcesJar
-				artifact javaDocJar
-			}
-		}
-		repositories {
-			mavenLocal()
-	        maven {
-	            url "https://oss.sonatype.org/service/local/staging/deploy/maven2"
-	            credentials {
-	                username "bboss"
-	                password "bboss123456"
-	            }
-	        }
-	    }
+	artifacts {
+	    archives sourcesJar, javaDocJar
 	}
+	
+	signing {
+        
+        sign configurations.archives
+  }
+	 
+uploadArchives {
+	  repositories {
+	  	 
+		    mavenDeployer {
+		      beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+				 
+			      repository(url: sonatype_url) {
+			         authentication(userName: sonatype_username, password: sonatype_password)
+			      }
+			      
+		      pom.project {
+		        name project.name
+		        packaging 'jar'
+		        // optionally artifactId can be defined here 
+		        description PROJ_DESCRIPTION
+		        url PROJ_WEBSITEURL
+	
+		        scm {
+		          connection scm_connection
+		          developerConnection scm_developerConnection
+		          url scm_url
+		        }
+	
+		        licenses {
+		          license {
+		            name PROJ_LICENCE_NAME
+		            url PROJ_LICENCE_URL
+		          }
+		        }
+	
+		        developers {
+		          developer {
+		            id DEVELOPER_ID
+		            name DEVELOPER_NAME
+		            email DEVELOPER_EMAIL
+		          }
+		        }
+		      }
+		    }
+	     
+	}
+}
 }
 
 configure([project(":session"),project(":sessionmonitor")]) { subproject ->

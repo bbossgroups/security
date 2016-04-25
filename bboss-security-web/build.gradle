@@ -1,5 +1,5 @@
 //jar.enabled=false
-jar { classifier = "all" }
+//jar { classifier = "all" }
 
 sourceSets {
 	 bboss_security_web_inf {
@@ -20,7 +20,7 @@ sourceSets {
 }
 
 
-project.tasks.compileJava.dependsOn(project(':bboss-security').tasks.publish)
+//project.tasks.compileJava.dependsOn(project(':bboss-security').tasks.uploadArchives)
 
 dependencies {
     compile(
@@ -88,6 +88,64 @@ sourceSets.bboss_security_web_inf { set ->
 }
 
 
+artifacts {
+	    archives sourcesJar, javaDocJar
+	}
+	
+	signing {
+        
+        sign configurations.archives
+  }
+	 
+uploadArchives {
+	  repositories {
+	   
+		    mavenDeployer {
+		      beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+				 
+		      
+			      repository(url: sonatype_url) {
+			         authentication(userName: sonatype_username, password: sonatype_password)
+			      }
+			     addFilter('bboss_security_web_inf') {artifact, file ->
+            	artifact.name == 'bboss-security-web-inf'
+	        }
+	        addFilter('bboss_security_web') {artifact, file ->
+	            artifact.name == 'bboss-security-web'
+	        }
+		      pom.project {
+		        name project.name
+		        packaging 'jar'
+		        // optionally artifactId can be defined here 
+		        description PROJ_DESCRIPTION
+		        url PROJ_WEBSITEURL
+	
+		        scm {
+		          connection scm_connection
+		          developerConnection scm_developerConnection
+		          url scm_url
+		        }
+	
+		        licenses {
+		          license {
+		            name PROJ_LICENCE_NAME
+		            url PROJ_LICENCE_URL
+		          }
+		        }
+	
+		        developers {
+		          developer {
+		            id DEVELOPER_ID
+		            name DEVELOPER_NAME
+		            email DEVELOPER_EMAIL
+		          }
+		        }
+		      }
+		    }
+	   
+  }
+}
+
 
 publishing {
     publications {
@@ -112,8 +170,8 @@ publishing {
 	        maven {
 	            url "https://oss.sonatype.org/service/local/staging/deploy/maven2"
 	            credentials {
-	                username "bboss"
-	                password "bboss123456"
+	                username ""
+	                password ""
 	            }
 	        }
 	    }
