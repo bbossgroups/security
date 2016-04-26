@@ -114,41 +114,13 @@ uploadArchives {
 				      }
 				 
 			      
-		addFilter('bboss_security_web_inf') {artifact, file ->
+			     addFilter('bboss_security_web_inf') {artifact, file ->
             	artifact.name == 'bboss-security-web-inf'
-            	 pom.project {
-		        name project.name
-		        packaging 'jar'
-		        // optionally artifactId can be defined here 
-		        description PROJ_DESCRIPTION
-		        url PROJ_WEBSITEURL
-	
-		        scm {
-		          connection scm_connection
-		          developerConnection scm_developerConnection
-		          url scm_url
-		        }
-	
-		        licenses {
-		          license {
-		            name PROJ_LICENCE_NAME
-		            url PROJ_LICENCE_URL
-		          }
-		        }
-	
-		        developers {
-		          developer {
-		            id DEVELOPER_ID
-		            name DEVELOPER_NAME
-		            email DEVELOPER_EMAIL
-		          }
-		        }
-		      }
 	        }
 	        addFilter('bboss_security_web') {artifact, file ->
 	            artifact.name == 'bboss-security-web'
-	            
-	             pom.project {
+	        }
+		      pom.project {
 		        name project.name
 		        packaging 'jar'
 		        // optionally artifactId can be defined here 
@@ -176,12 +148,7 @@ uploadArchives {
 		          }
 		        }
 		      }
-		      
-		      
-	            
-	        }
-		     
-	}
+		    }
 	   
   }
 }
