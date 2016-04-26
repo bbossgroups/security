@@ -60,7 +60,7 @@ configure(allprojects) { project ->
 	}
 
 	dependencies {
-		testCompile 'junit:junit:4+'
+		testCompile 'junit:junit:4.12'
 	}
 
 	repositories {
@@ -94,10 +94,11 @@ uploadArchives {
 	  	 
 		    mavenDeployer {
 		      beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-				 
-			      repository(url: sonatype_url) {
-			         authentication(userName: sonatype_username, password: sonatype_password)
-			      }
+				  
+		      repository(url: sonatype_url) {
+		         authentication(userName: sonatype_username, password: sonatype_password)
+		      }
+				   
 			      
 		      pom.project {
 		        name project.name
@@ -135,7 +136,8 @@ uploadArchives {
 
 configure([project(":session"),project(":sessionmonitor")]) { subproject ->
 	apply plugin: 'war'    
-    /**apply plugin: 'org.akhikhl.gretty'
+	/**
+    apply plugin: 'org.akhikhl.gretty'
     
      gretty {
 	    httpPort = 80
