@@ -42,11 +42,12 @@ dependencies {
                [group: 'org.apache.commons', name: 'commons-pool2', version: '2.4.2', transitive: false],
                [group: 'redis.clients', name: 'jedis', version: '2.8.1', transitive: false],
                 [group: 'org.mongodb', name: 'mongo-java-driver', version: '3.0.3', transitive: false],
-                [group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.54', transitive: false]
+                [group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.54', transitive: false],
+                [group: 'javaee', name: 'javaee-api', version: '5', transitive: false],
     )
     
-     compileOnly (            
-            [group: 'javaee', name: 'javaee-api', version: '5', transitive: false],
+     testCompile (            
+            
             fileTree(dir: 'lib-compile', include: '**/*.jar')
     )
 }

@@ -20,7 +20,7 @@ sourceSets {
 }
 
 
-//project.tasks.compileJava.dependsOn(project(':bboss-security').tasks.uploadArchives)
+project.tasks.compileJava.dependsOn(project(':bboss-security').tasks.install)
 
 dependencies {
     compile(
@@ -34,14 +34,15 @@ dependencies {
              [group: 'cglib', name: 'cglib-nodep', version: '3.1', transitive: false],
               [group: 'org.apache.commons', name: 'commons-pool2', version: '2.4.2', transitive: false],
                [group: 'org.codehaus.jackson', name: 'jackson-mapper-asl', version: '1.9.10',transitive: true],
-            [group: 'com.bbossgroups', name: 'bboss-soa', version: "${bboss_version}", transitive: false]
+            [group: 'com.bbossgroups', name: 'bboss-soa', version: "${bboss_version}", transitive: false],
+            [group: 'javaee', name: 'javaee-api', version: '5', transitive: false],
     )
-
+/**
     compileOnly (            
             [group: 'javaee', name: 'javaee-api', version: '5', transitive: false],
             
     )
-   
+   */
    // aaaCompile sourceSets.bboss_security_web_inf.output
 }
  
@@ -120,7 +121,35 @@ uploadArchives {
 	        addFilter('bboss_security_web') {artifact, file ->
 	            artifact.name == 'bboss-security-web'
 	        }
-		      pom.project {
+		      pom('bboss_security_web_inf').project {
+		        name project.name
+		        packaging 'jar'
+		        // optionally artifactId can be defined here 
+		        description PROJ_DESCRIPTION
+		        url PROJ_WEBSITEURL
+	
+		        scm {
+		          connection scm_connection
+		          developerConnection scm_developerConnection
+		          url scm_url
+		        }
+	
+		        licenses {
+		          license {
+		            name PROJ_LICENCE_NAME
+		            url PROJ_LICENCE_URL
+		          }
+		        }
+	
+		        developers {
+		          developer {
+		            id DEVELOPER_ID
+		            name DEVELOPER_NAME
+		            email DEVELOPER_EMAIL
+		          }
+		        }
+		      }
+		      pom('bboss_security_web').project {
 		        name project.name
 		        packaging 'jar'
 		        // optionally artifactId can be defined here 
