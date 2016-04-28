@@ -83,22 +83,26 @@ configure([project(":bboss-security")]) { subproject ->
 	artifacts {
 	    archives sourcesJar, javaDocJar
 	}
-	
-	signing {
-        
-        sign configurations.archives
-  }
-	 
-ext.uploadtocenter=uploadArchivesToMavenCenter.equals("true")
-		 
 
+	 
+
+		 
+ext.uploadtocenter=uploadArchivesToMavenCenter.equals("true")	
+if(uploadtocenter)
+{
+	signing {
+	        //required { uploadtocenter }
+	        sign configurations.archives
+	 }
+}
 uploadArchives {
 	  repositories {
 	   
 		    mavenDeployer {
-		      beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+		     
 			if(uploadtocenter)
-			{	 
+			{	  
+				beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 		     	repository(url: sonatype_url) {
 				         authentication(userName: sonatype_username, password: sonatype_password)
 				}
@@ -149,7 +153,7 @@ configure([project(":session"),project(":sessionmonitor")]) { subproject ->
      gretty {
 	    httpPort = 80
 	   
-	    contextPath = '/bboss-websocket'
+	    contextPath = subproject.name
 	    jvmArgs = ['-Xmx1024M', '-XX:PermSize=128M', '-XX:MaxPermSize=256M']
 	  //  servletContainer = 'jetty7'
 	  
