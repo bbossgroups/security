@@ -102,13 +102,17 @@ uploadArchives {
 		     
 			if(uploadtocenter)
 			{	  
+				
 				beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 		     	repository(url: sonatype_url) {
+		     		
 				         authentication(userName: sonatype_username, password: sonatype_password)
 				}
 			}
-			
-			 	repository(url: "file://"+mvn_repo)
+			else
+			{
+				repository(url: "file://"+mvn_repo)
+			}
 				   
 			      
 		      pom.project {

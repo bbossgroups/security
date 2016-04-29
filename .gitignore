@@ -48,3 +48,4 @@ Temporary Items
 /bin/
 /build/
 /build.gradle.bak
+/gradle.properties.bak
