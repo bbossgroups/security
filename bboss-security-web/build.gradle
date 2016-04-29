@@ -1,18 +1,18 @@
 //jar.enabled=false
-//jar { classifier = "all" }
+jar { classifier = "all" }
 
 sourceSets {
 	 bboss_security_web_inf {
         java {
             srcDirs 'src-inf'
         }        
-        compileClasspath = configurations.compile +configurations.compileOnly 
+        compileClasspath = configurations.compile  
     }
-    main {
+    bboss_security_web {
         java {
             srcDirs 'src'
         }
-        compileClasspath = configurations.compile + sourceSets.bboss_security_web_inf.output+configurations.compileOnly 
+        compileClasspath = configurations.compile + sourceSets.bboss_security_web_inf.output 
     }
    
    
@@ -45,22 +45,22 @@ dependencies {
    */
    // aaaCompile sourceSets.bboss_security_web_inf.output
 }
- 
+/** 
 task sourcesJar(type: Jar) {
 	classifier = "sources"
-	from sourceSets.main.allJava
+	from sourceSets.bboss_security_web.allJava
 }
 
 javadoc
 {
-	classpath = sourceSets.main.compileClasspath
+	classpath = sourceSets.bboss_security_web.compileClasspath
 	
 }
 task javaDocJar(type: Jar, dependsOn: javadoc) {
 	classifier = "javadoc"
 	
 	from javadoc.destinationDir
-}
+}*/
 
 sourceSets.bboss_security_web_inf { set ->
     def jarTask = task("${set.name}Jar", type: Jar) {
@@ -94,10 +94,42 @@ sourceSets.bboss_security_web_inf { set ->
     }
 }
 
+sourceSets.bboss_security_web { set ->
+    def jarTask = task("${set.name}Jar", type: Jar) {
+        baseName = "bboss-security-web"
+        from set.output
+    }
 
+    def jarSourcesTask = task("${set.name}SourceJar", type: Jar) {
+        baseName = "bboss-security-web"
+        classifier = "sources"
+        from set.allJava
+    }
+
+    def docTask = task("${set.name}Doc", type: Javadoc) {
+        classpath = set.compileClasspath
+        source set.allJava
+        destinationDir=file("build/docs/${set.name}")
+    }
+
+    def jarDocTask = task("${set.name}DocJar", type: Jar, dependsOn: docTask) {
+        baseName = "bboss-security-web"
+        classifier = "javadoc"
+
+        from docTask
+    }
+
+    artifacts {
+        archives jarTask
+        archives jarSourcesTask
+        archives jarDocTask
+    }
+}
+
+/**
 artifacts {
 	    archives sourcesJar, javaDocJar
-	}
+	}*/
 	
  
 ext.uploadtocenter=uploadArchivesToMavenCenter.equals("true")	
@@ -205,8 +237,9 @@ publishing {
         bboss_security_web(MavenPublication) {
              artifactId 'bboss-security-web'
             from components.java
-            artifact sourcesJar
-            artifact javaDocJar
+           artifact bboss_security_webJar
+            artifact bboss_security_webSourceJar
+            artifact bboss_security_webDocJar
             
         }
         

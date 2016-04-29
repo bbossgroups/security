@@ -15,6 +15,7 @@ dependencies {
      
     
     compile (
+    				
             [group: 'org.ow2.asm', name: 'asm', version: '5.0.3', transitive: false],
             [group: 'com.bbossgroups', name: 'bboss-core', version: "${bboss_version}", transitive: false],
              [group: 'com.bbossgroups', name: 'bboss-mvc', version: "${bboss_version}", transitive: false],
