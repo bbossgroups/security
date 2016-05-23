@@ -20,7 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
-import org.frameworkset.nosql.mongodb.MongoDBHelper;
+import org.frameworkset.security.session.MongoDBUtil;
 import org.frameworkset.security.session.Session;
 import org.frameworkset.security.session.SessionBasicInfo;
 import org.frameworkset.security.session.SessionStore;
@@ -47,7 +47,7 @@ public abstract class BaseSessionStore implements SessionStore {
 		while(keys.hasNext())
 		{
 			String tempstr = keys.next();
-			if(!MongoDBHelper.filter(tempstr))
+			if(!MongoDBUtil.filter(tempstr))
 			{
 				tempstr = SessionHelper.dewraperAttributeName(appKey, contextpath, tempstr);
 				if(tempstr != null)

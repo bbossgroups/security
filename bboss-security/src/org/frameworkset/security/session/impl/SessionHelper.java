@@ -17,16 +17,20 @@ package org.frameworkset.security.session.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.frameworkset.nosql.mongodb.MongoDBHelper;
 import org.frameworkset.security.session.InvalidateCallback;
+import org.frameworkset.security.session.MongoDBUtil;
 import org.frameworkset.security.session.Session;
 import org.frameworkset.security.session.SessionBasicInfo;
 import org.frameworkset.security.session.domain.CrossDomain;
@@ -500,5 +504,56 @@ public class SessionHelper {
 			}
 		}
 		return extendAttrs;
+	}
+	
+	public static Map<String,Object> toMap(DBObject object,boolean deserial) {
+
+		Set set = object.keySet();
+		if (set != null && set.size() > 0) {
+			Map<String,Object> attrs = new HashMap<String,Object>();
+			Iterator it = set.iterator();
+			while (it.hasNext()) {
+				String key = (String) it.next();
+				if (!MongoDBUtil.filter(key)) {
+					Object value = object.get(key);
+					try {
+						attrs.put(MongoDBHelper.recoverSpecialChar(key),
+								deserial?SessionHelper.unserial((String) value):value);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+			return attrs;
+		}
+		return null;
+	}
+	
+	public static Map<String,Object> toMap(String appkey,String contextpath,DBObject object,boolean deserial) {
+
+		Set set = object.keySet();
+		if (set != null && set.size() > 0) {
+			Map<String,Object> attrs = new HashMap<String,Object>();
+			Iterator it = set.iterator();
+			while (it.hasNext()) {
+				String key = (String) it.next();
+				if (!MongoDBUtil.filter(key)) {
+					Object value = object.get(key);
+					try {
+						String temp = MongoDBHelper.recoverSpecialChar(key);
+						temp = SessionHelper.dewraperAttributeName(appkey, contextpath, temp);
+						if(temp != null)
+							attrs.put(temp,
+									deserial?SessionHelper.unserial((String) value):value);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+			return attrs;
+		}
+		return null;
 	}
 }

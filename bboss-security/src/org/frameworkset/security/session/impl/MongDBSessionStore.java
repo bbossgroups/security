@@ -17,6 +17,7 @@ import org.frameworkset.nosql.mongodb.MongoDB;
 import org.frameworkset.nosql.mongodb.MongoDBHelper;
 import org.frameworkset.security.session.AttributeNamesEnumeration;
 import org.frameworkset.security.session.InvalidateCallback;
+import org.frameworkset.security.session.MongoDBUtil;
 import org.frameworkset.security.session.Session;
 import org.frameworkset.security.session.SessionBasicInfo;
 import org.frameworkset.security.session.SimpleHttpSession;
@@ -29,6 +30,7 @@ import com.frameworkset.util.StringUtil;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
+import com.mongodb.Mongo;
 import com.mongodb.WriteConcern;
 
 public class MongDBSessionStore extends BaseSessionStore{
@@ -36,17 +38,17 @@ public class MongDBSessionStore extends BaseSessionStore{
 	private static Logger log = Logger.getLogger(MongDBSessionStore.class);
 	public MongDBSessionStore()
 	{
-		MongoDBHelper.initSessionDB();
+		MongoDBUtil.initSessionDB();
 	}
 	public void destory()
 	{
 		
-		MongoDBHelper.destory();
+//		MongoDBUtil.destory();
 		
 	}
 	@Override
 	public void livecheck() {
-		Set<String> apps = MongoDBHelper.getSessionDBCollectionNames();
+		Set<String> apps = MongoDBUtil.getSessionDBCollectionNames();
 		if(apps == null || apps.size() == 0)
 			return;
 		long curtime = System.currentTimeMillis();
@@ -71,7 +73,7 @@ public class MongDBSessionStore extends BaseSessionStore{
 			String app = itr.next();
 			if(app.endsWith("_sessions"))
 			{
-				DBCollection appsessions = MongoDBHelper.getSessionCollection(app);
+				DBCollection appsessions = MongoDBUtil.getSessionCollection(app);
 				MongoDB.remove(appsessions,new BasicDBObject("$where",temp),WriteConcern.UNACKNOWLEDGED);
 			}
 		}
@@ -83,12 +85,12 @@ public class MongDBSessionStore extends BaseSessionStore{
 	{
 		
 		 
-		 return MongoDBHelper.getAppSessionDBCollection(appKey);
+		 return MongoDBUtil.getAppSessionDBCollection(appKey);
 	}
 	private DBCollection getConfigSessionDBCollection()
 	{
 		
-		return MongoDBHelper.getConfigSessionDBCollection();
+		return MongoDBUtil.getConfigSessionDBCollection();
 	}
 	public void saveSessionConfig(SessionConfig config)
 	{

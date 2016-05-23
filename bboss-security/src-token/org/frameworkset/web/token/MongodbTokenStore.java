@@ -67,7 +67,7 @@ public class MongodbTokenStore extends BaseTokenStore{
 	public void destory()
 	{
 		
-		MongoDBHelper.destory();
+//		MongoDBHelper.destory();
 		
 	}
 	public void livecheck()

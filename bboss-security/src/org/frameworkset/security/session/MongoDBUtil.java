@@ -1,4 +1,4 @@
-package org.frameworkset.nosql.mongodb;
+package org.frameworkset.security.session;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.frameworkset.nosql.mongodb.MongoDB;
+import org.frameworkset.nosql.mongodb.MongoDBHelper;
 import org.frameworkset.security.session.impl.SessionHelper;
 import org.frameworkset.spi.BaseApplicationContext;
 import org.frameworkset.spi.DefaultApplicationContext;
@@ -17,10 +19,10 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.mongodb.Mongo;
 
-public class MongoDBHelper {
+public class MongoDBUtil {
 	public static final String defaultMongoDB = "default";
-	private static Mongo mongoClient;
-	 
+
+//	 private static MongoDB mongoClient;
 	 private static final Object ovalue = new Object();
 	 private static final Object sessionlock = new Object();
 	 private static boolean configdbindexed;
@@ -29,7 +31,7 @@ public class MongoDBHelper {
 	 private static  Map<String, Object> dbcollectionCache = null;
 	 private static DB sessiondb = null;
 	 private static  boolean closeDB;
-	private static Logger log = Logger.getLogger(MongoDBHelper.class);
+	private static Logger log = Logger.getLogger(MongoDBUtil.class);
 	private static BaseApplicationContext context = DefaultApplicationContext.getApplicationContext("mongodb.xml");
 	public static  void initSessionDB()
 	{
@@ -41,7 +43,7 @@ public class MongoDBHelper {
 				return ;
 			try
 			{
-				mongoClient = MongoDBHelper.getMongoClient(MongoDBHelper.defaultMongoDB);
+				MongoDB mongoClient = MongoDBHelper.getMongoClient(MongoDBHelper.defaultMongoDB);
 				dbcollectionCache = new HashMap<String,Object>();
 				sessiondb = mongoClient.getDB( "sessiondb" );
 				configdb = mongoClient.getDB( "sessionconfdb" );
@@ -78,27 +80,27 @@ public class MongoDBHelper {
 		return getMongoClient(null);
 	}
 	
-	public static void destory()
-	{
-		if(closeDB)
-			return;
-		try
-		{
-			if(mongoClient != null)
-			{
-				try {
-					mongoClient.close();
-				} catch (Exception e) {
-					log.error("", e);
-				}
-			}
-		}
-		finally
-		{
-			closeDB = true;
-		}
-		
-	}
+//	public static void destory()
+//	{
+//		if(closeDB)
+//			return;
+//		try
+//		{
+//			if(mongoClient != null)
+//			{
+//				try {
+//					mongoClient.close();
+//				} catch (Exception e) {
+//					log.error("", e);
+//				}
+//			}
+//		}
+//		finally
+//		{
+//			closeDB = true;
+//		}
+//		
+//	}
 	private static final String dianhaochar = "____";
 	private static final String moneychar = "_____";
 	private static final int msize = moneychar.length();
@@ -140,7 +142,7 @@ public class MongoDBHelper {
 	public static DBCollection getAppSessionDBCollection(String appKey)
 	{
 		initSessionDB();
-		String tablename = MongoDBHelper.getAppSessionTableName( appKey);
+		String tablename = getAppSessionTableName( appKey);
 		 DBCollection sessions = sessiondb.getCollection(tablename);
 //		 sessions.ensureIndex("sessionid");
 		 String idxname = tablename+":sessionid";
@@ -180,7 +182,7 @@ public class MongoDBHelper {
 			Iterator it = set.iterator();
 			while (it.hasNext()) {
 				String key = (String) it.next();
-				if (!MongoDBHelper.filter(key)) {
+				if (!filter(key)) {
 					Object value = object.get(key);
 					try {
 						attrs.put(MongoDBHelper.recoverSpecialChar(key),
@@ -204,7 +206,7 @@ public class MongoDBHelper {
 			Iterator it = set.iterator();
 			while (it.hasNext()) {
 				String key = (String) it.next();
-				if (!MongoDBHelper.filter(key)) {
+				if (!filter(key)) {
 					Object value = object.get(key);
 					try {
 						String temp = MongoDBHelper.recoverSpecialChar(key);
@@ -222,5 +224,7 @@ public class MongoDBHelper {
 		}
 		return null;
 	}
+	
+	
 	
 }

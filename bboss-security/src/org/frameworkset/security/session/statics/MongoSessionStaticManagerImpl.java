@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.frameworkset.nosql.mongodb.MongoDB;
 import org.frameworkset.nosql.mongodb.MongoDBHelper;
+import org.frameworkset.security.session.MongoDBUtil;
 import org.frameworkset.security.session.impl.SessionHelper;
 import org.frameworkset.spi.InitializingBean;
 
@@ -31,7 +32,7 @@ public class MongoSessionStaticManagerImpl extends BaseSessionStaticManagerImpl 
 	
 
 	public MongoSessionStaticManagerImpl() {
-		MongoDBHelper.initSessionDB();
+		MongoDBUtil.initSessionDB();
 	}
 
 
@@ -44,7 +45,7 @@ public class MongoSessionStaticManagerImpl extends BaseSessionStaticManagerImpl 
 		for (String appkey : list) {
 			SessionAPP sessionApp = new SessionAPP();
 
-			DBCollection coll = MongoDBHelper.getSessionCollection(appkey);
+			DBCollection coll = MongoDBUtil.getSessionCollection(appkey);
 
 			sessionApp.setAppkey(appkey.substring(0,
 					appkey.indexOf("_sessions")));
@@ -70,7 +71,7 @@ public class MongoSessionStaticManagerImpl extends BaseSessionStaticManagerImpl 
 
 		 
 		SessionAPP sessionApp = new SessionAPP();
-		DBCollection coll = MongoDBHelper.getSessionCollection(appName +"_sessions");
+		DBCollection coll = MongoDBUtil.getSessionCollection(appName +"_sessions");
 		sessionApp.setAppkey(appName);
 		sessionApp.setHasDeletePermission(false);
 		sessionApp.setSessions(coll.getCount());		
@@ -93,7 +94,7 @@ public class MongoSessionStaticManagerImpl extends BaseSessionStaticManagerImpl 
 		{
 			
 			// 获取所有当前db所有信息集合
-			Set<String> apps = MongoDBHelper.getSessionDBCollectionNames();
+			Set<String> apps = MongoDBUtil.getSessionDBCollectionNames();
 	
 			if (apps == null || apps.size() == 0) {
 				return null;
@@ -117,7 +118,7 @@ public class MongoSessionStaticManagerImpl extends BaseSessionStaticManagerImpl 
 			String currentAPP = SessionHelper.getAppKey(request);
 			String currentAPPTableName = currentAPP + "_sessions";
 			// 获取所有当前db所有信息集合
-			Set<String> apps = MongoDBHelper.getSessionDBCollectionNames();
+			Set<String> apps = MongoDBUtil.getSessionDBCollectionNames();
 	
 			if (apps == null || apps.size() == 0) {
 				return null;
@@ -153,7 +154,7 @@ public class MongoSessionStaticManagerImpl extends BaseSessionStaticManagerImpl 
 		}
 
 		// 获取当前表
-		DBCollection sessions = MongoDBHelper.getAppSessionDBCollection(appKey);
+		DBCollection sessions = MongoDBUtil.getAppSessionDBCollection(appKey);
 //		sessions.createIndex(new BasicDBObject("sessionid",1));
 
 		// 查询条件
@@ -328,7 +329,7 @@ public class MongoSessionStaticManagerImpl extends BaseSessionStaticManagerImpl 
 
 		if (!StringUtil.isEmpty(appKey) && !StringUtil.isEmpty(sessionid)) {
 			// 获取当前表
-			DBCollection sessions = MongoDBHelper.getAppSessionDBCollection(appKey);
+			DBCollection sessions = MongoDBUtil.getAppSessionDBCollection(appKey);
 //			sessions.createIndex(new BasicDBObject("sessionid", 1));
 
 			// 查询条件
@@ -386,7 +387,7 @@ public class MongoSessionStaticManagerImpl extends BaseSessionStaticManagerImpl 
 				{
 					info.setHttpOnly(StringUtil.hasHttpOnlyMethod()?SessionHelper.getSessionManager().isHttpOnly():false);
 				}
-				Map<String, Object> attributes = MongoDBHelper
+				Map<String, Object> attributes = MongoDBUtil
 						.toMap(obj, false);
 				info.setAttributes(attributes);
 
@@ -403,7 +404,7 @@ public class MongoSessionStaticManagerImpl extends BaseSessionStaticManagerImpl 
 	public void removeSessionInfo(String appKey, String sessionid) {
 		if (!StringUtil.isEmpty(appKey) && !StringUtil.isEmpty(sessionid)) {
 
-			DBCollection sessions = MongoDBHelper.getAppSessionDBCollection(appKey);
+			DBCollection sessions = MongoDBUtil.getAppSessionDBCollection(appKey);
 //			sessions.createIndex(new BasicDBObject("sessionid",1));
 
 			// 条件
@@ -433,7 +434,7 @@ public class MongoSessionStaticManagerImpl extends BaseSessionStaticManagerImpl 
 	public void removeAllSession(String appKey,String currentappkey,String currentsessionid) {
 		if (!StringUtil.isEmpty(appKey)) {
 
-			DBCollection sessions = MongoDBHelper.getAppSessionDBCollection(appKey);
+			DBCollection sessions = MongoDBUtil.getAppSessionDBCollection(appKey);
 
 			// 条件
 			BasicDBObject wheresql = null;
@@ -530,7 +531,7 @@ public class MongoSessionStaticManagerImpl extends BaseSessionStaticManagerImpl 
  
 	@Override
 	public boolean deleteApp(String appKey) throws Exception {
-		DBCollection table = MongoDBHelper.getAppSessionDBCollection(appKey);
+		DBCollection table = MongoDBUtil.getAppSessionDBCollection(appKey);
 		table.drop();
 		return true;
 	}
