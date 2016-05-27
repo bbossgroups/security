@@ -38,11 +38,15 @@ configure(allprojects) { project ->
 		}
 	}
 
-	tasks.withType(JavaCompile) {
+	tasks.withType(JavaCompile) {	
+		sourceCompatibility = SOURCE_COMPILER_LEVEL
+		targetCompatibility = TARGET_COMPILER_LEVEL
 		options.encoding = 'UTF-8'
 	}
 
-	tasks.withType(Javadoc) {
+	tasks.withType(Javadoc) {	
+		sourceCompatibility = JAVADOC_SOURCE_LEVEL
+		targetCompatibility = JAVADOC_COMPILER_LEVEL
 		options.encoding = 'UTF-8'
 	}
 
