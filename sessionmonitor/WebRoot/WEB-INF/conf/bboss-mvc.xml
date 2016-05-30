@@ -50,7 +50,7 @@
       <property name="httpMessageConverters">
      	<list>
 
-     		<property class="org.frameworkset.http.converter.json.MappingJacksonHttpMessageConverter"/>
+     		<property class="org.frameworkset.http.converter.json.MappingJacksonDelegateHttpMessageConverter"/>
      		<property class="org.frameworkset.http.converter.StringHttpMessageConverter"/>
      		
      	</list>        
