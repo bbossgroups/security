@@ -21,12 +21,12 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.frameworkset.security.session.SessionEvent;
+import org.frameworkset.security.session.SessionIDGenerator;
 import org.frameworkset.security.session.SessionListener;
 import org.frameworkset.security.session.SessionStore;
 import org.frameworkset.security.session.domain.CrossDomain;
 import org.frameworkset.security.session.statics.AttributeInfo;
 import org.frameworkset.security.session.statics.SessionConfig;
-import org.frameworkset.soa.ObjectSerializable;
 
 import com.frameworkset.util.SimpleStringUtil;
 import com.frameworkset.util.StringUtil;
@@ -52,6 +52,13 @@ public class SessionManager extends org.frameworkset.spi.BaseApplicationContextA
 	private CrossDomain crossDomain;
 	private boolean startLifeScan = false;
 	private boolean lazystore = false;
+	private SessionIDGenerator sessionIDGenerator;
+	public SessionIDGenerator getSessionIDGenerator() {
+		return sessionIDGenerator;
+	}
+	public void setSessionIDGenerator(SessionIDGenerator sessionIDGenerator) {
+		this.sessionIDGenerator = sessionIDGenerator;
+	}
 	/**
 	 * session监听器,多个用,号分隔
 	 */
@@ -184,6 +191,8 @@ public class SessionManager extends org.frameworkset.spi.BaseApplicationContextA
 		if(this.monitorAttributes != null)
 			this.monitorAttributes = this.monitorAttributes.trim(); 
 		initExtendFields();
+		if(this.sessionIDGenerator == null)
+			sessionIDGenerator = new  UUIDSessionIDGenerator();
 		 
 		
 	}

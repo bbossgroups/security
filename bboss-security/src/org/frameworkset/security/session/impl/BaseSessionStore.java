@@ -60,8 +60,9 @@ public abstract class BaseSessionStore implements SessionStore {
 	}
 	protected String randomToken()
 	{
-		String token = UUID.randomUUID().toString();
-		return token;
+//		String token = UUID.randomUUID().toString();
+//		return token;
+		return sessionManager.getSessionIDGenerator().generateID();
 	}
 	@Override
 	public void setSessionManager(SessionManager sessionManager) {

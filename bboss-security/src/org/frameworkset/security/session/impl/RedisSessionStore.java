@@ -148,7 +148,7 @@ public class RedisSessionStore extends BaseSessionStore{
 	
 		boolean isHttpOnly = StringUtil.hasHttpOnlyMethod()?SessionHelper.getSessionManager().isHttpOnly():false;
 		boolean secure = SessionHelper.getSessionManager().isSecure();
-		RedisHelper redisHelper = redisHelper = null;
+		RedisHelper redisHelper = null;
 		try
 		{
 			redisHelper = RedisFactory.getRedisHelper();
