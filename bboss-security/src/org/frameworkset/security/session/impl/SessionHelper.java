@@ -38,7 +38,6 @@ import org.frameworkset.security.session.statics.AttributeInfo;
 import org.frameworkset.security.session.statics.NullSessionStaticManagerImpl;
 import org.frameworkset.security.session.statics.SessionConfig;
 import org.frameworkset.security.session.statics.SessionStaticManager;
-import org.frameworkset.soa.ObjectSerializable;
 import org.frameworkset.spi.BaseApplicationContext;
 import org.frameworkset.spi.DefaultApplicationContext;
 
@@ -203,7 +202,7 @@ public class SessionHelper {
 		
 	}
 	
-	public static void buildExtendFieldQueryCondition(Map<String, AttributeInfo> monitorAttributeArray,  BasicDBObject query)
+	public static void buildExtendFieldQueryCondition(Map<String, AttributeInfo> monitorAttributeArray,  BasicDBObject query,String serialType)
 	{
 		 
 		if(monitorAttributeArray != null && monitorAttributeArray.size() > 0)
@@ -218,13 +217,13 @@ public class SessionHelper {
 					if(!attr.isLike())
 					{
 						if (!StringUtil.isEmpty((String)attr.getValue())) {
-							Object value = serial(attr.getValue());
+							Object value = serial(attr.getValue(),serialType);
 							query.append(attr.getName(), value);
 						}
 						else if(attr.isEnableEmptyValue())
 						{
 							BasicDBList values = new BasicDBList();
-							values.add(new BasicDBObject(attr.getName(), serial("")));
+							values.add(new BasicDBObject(attr.getName(), serial("",serialType)));
 							values.add(new BasicDBObject(attr.getName(), null));
 							query.append("$or", values);
 						}
@@ -236,7 +235,10 @@ public class SessionHelper {
 					{
 						if (!StringUtil.isEmpty((String)attr.getValue())) {
 							Object value = attr.getValue();
-							Pattern hosts = Pattern.compile("^<ps><p n=\"_dflt_\" s:t=\"String\"><\\!\\[CDATA\\[" + value + ".*$",
+							//getLikeCondition(String condition,String serialType)
+//							Pattern hosts = Pattern.compile("^<ps><p n=\"_dflt_\" s:t=\"String\"><\\!\\[CDATA\\[" + value + ".*$",
+//									Pattern.CASE_INSENSITIVE);
+							Pattern hosts = Pattern.compile(getLikeCondition(value,  serialType),
 									Pattern.CASE_INSENSITIVE);
 							query.append(attr.getName(), new BasicDBObject("$regex",hosts));
 						}
@@ -246,7 +248,7 @@ public class SessionHelper {
 							//values.add(null);
 						
 							BasicDBList values = new BasicDBList();
-							values.add(new BasicDBObject(attr.getName(), serial("")));
+							values.add(new BasicDBObject(attr.getName(), serial("",serialType)));
 							values.add(new BasicDBObject(attr.getName(), null));
 							query.append("$or", values);
 							
@@ -256,7 +258,7 @@ public class SessionHelper {
 				}
 				else 
 				{
-					Object value = serial(attr.getValue());
+					Object value = serial(attr.getValue(),serialType);
 					query.append(attr.getName(), value);
 				}
 				
@@ -268,7 +270,7 @@ public class SessionHelper {
 		
 		
 	}
-	public static List<AttributeInfo> evalqueryfiledsValue(AttributeInfo[] monitorAttributeArray, DBObject dbobject)  
+	public static List<AttributeInfo> evalqueryfiledsValue(AttributeInfo[] monitorAttributeArray, DBObject dbobject,String serialType)  
 	{
 		List<AttributeInfo> extendAttrs = null;
 		 
@@ -281,7 +283,7 @@ public class SessionHelper {
 				try {
 					attrvalue = attributeInfo.clone();
 					String value = (String)dbobject.get(attrvalue.getName());
-					attrvalue.setValue(unserial(  value));
+					attrvalue.setValue(unserial(  value,serialType));
 					extendAttrs.add(attrvalue);
 				} catch (CloneNotSupportedException e) {
 					// TODO Auto-generated catch block
@@ -332,25 +334,47 @@ public class SessionHelper {
 
 	public static Object serial(Object value)
 	{
-		if(value != null)
-		{
-			try {
-				value = ObjectSerializable.toXML(value);
-//				value = new String(((String)value).getBytes(Charset.defaultCharset()),"UTF-8");
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
-		}
-		return value;
+//		if(value != null)
+//		{
+//			try {
+//				value = ObjectSerializable.toXML(value);
+////				value = new String(((String)value).getBytes(Charset.defaultCharset()),"UTF-8");
+//			} catch (Exception e) {
+//				throw new RuntimeException(e);
+//			}
+//		}
+//		return value;
+		return sessionManager.getSessionSerial().serialize(value);
+	}
+	
+	public static Object serial(Object value,String serialType)
+	{
+//		if(value != null)
+//		{
+//			try {
+//				value = ObjectSerializable.toXML(value);
+////				value = new String(((String)value).getBytes(Charset.defaultCharset()),"UTF-8");
+//			} catch (Exception e) {
+//				throw new RuntimeException(e);
+//			}
+//		}
+//		return value;
+		return sessionManager.getSessionSerial(serialType).serialize(value);
+	}
+	
+	public static String getLikeCondition(Object condition,String serialType)
+	{
+		return sessionManager.getSessionSerial(serialType).handleLikeCondition(condition);
 	}
 	
 	public static Object unserial(String value)
 	{
-		if(value == null)
-			return null;
-		return ObjectSerializable.toBean(value, Object.class);
+		return sessionManager.getSessionSerial().deserialize(value);
 	}
-	
+	public static Object unserial(String value,String serialType)
+	{
+		return sessionManager.getSessionSerial( serialType).deserialize(value);
+	}
 	public static String wraperAttributeName(String appkey,String contextpath, String attribute)
 	{
 		CrossDomain crossDomain = sessionManager.getCrossDomain();
@@ -481,7 +505,7 @@ public class SessionHelper {
 //		}
 		return monitorAttributeArray;
 	}
-	public static List<AttributeInfo> evalqueryfiledsValue(AttributeInfo[] attributeInfos, List<String> data, int offset) {
+	public static List<AttributeInfo> evalqueryfiledsValue(AttributeInfo[] attributeInfos, List<String> data, int offset,String serialType) {
 		List<AttributeInfo> extendAttrs = null;
 		 
 		if(attributeInfos != null && attributeInfos.length > 0)				
@@ -494,7 +518,7 @@ public class SessionHelper {
 				try {
 					attrvalue = attributeInfo.clone();
 					String value = data.get(j +offset);
-					attrvalue.setValue(unserial(  value));
+					attrvalue.setValue(unserial(  value,serialType));
 					extendAttrs.add(attrvalue);
 				} catch (CloneNotSupportedException e) {
 					// TODO Auto-generated catch block

@@ -122,6 +122,8 @@ public class MongDBSessionStore extends BaseSessionStore{
 			.append("sessionTimeout",config.getSessionTimeout())
 			.append("httpOnly", config.isHttpOnly())
 			.append("secure", config.isSecure())
+			.append("serialType", config.getSerialType())
+			.append("sessionidGeneratorPlugin", config.getSessionidGeneratorPlugin())
 			.append("monitorAttributes", config.getMonitorAttributes())
 			
 			.append("startLifeScan", config.isStartLifeScan()).append("monitorScope", config.getMonitorScope()).append("lazystore", config.isLazystore());
@@ -559,7 +561,8 @@ public class MongDBSessionStore extends BaseSessionStore{
 		keys.put("updateTime", 1);
 		keys.put("monitorScope", 1);
 		keys.put("lazystore", 1);
-		
+		keys.put("serialType", 1);
+		keys.put("sessionidGeneratorPlugin", 1);
 		 
 		
 		DBObject object = sessionconf.findOne(new BasicDBObject("appcode",appkey) ,keys);
@@ -592,6 +595,8 @@ public class MongDBSessionStore extends BaseSessionStore{
 			sessionConfig.setMonitorAttributes((String)object.get("monitorAttributes"));
 			sessionConfig.setCreateTime(new Date((Long)object.get("createTime")));
 			sessionConfig.setUpdateTime(new Date((Long)object.get("updateTime")));
+			sessionConfig.setSessionidGeneratorPlugin((String)object.get("sessionidGeneratorPlugin"));
+			sessionConfig.setSerialType((String)object.get("serialType"));
 			Boolean lazystore = (Boolean)object.get("lazystore");
 			if(lazystore != null)
 				sessionConfig.setLazystore(lazystore); 

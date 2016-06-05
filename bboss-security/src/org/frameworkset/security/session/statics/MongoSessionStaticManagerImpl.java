@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.frameworkset.nosql.mongodb.MongoDB;
 import org.frameworkset.nosql.mongodb.MongoDBHelper;
 import org.frameworkset.security.session.MongoDBUtil;
+import org.frameworkset.security.session.SessionSerial;
 import org.frameworkset.security.session.impl.SessionHelper;
 import org.frameworkset.spi.InitializingBean;
 
@@ -231,6 +232,7 @@ public class MongoSessionStaticManagerImpl extends BaseSessionStaticManagerImpl 
 		}
 
 		AttributeInfo[] attributeInfos = sessionConfig == null?null:sessionConfig.getExtendAttributeInfos();
+		String serialType = sessionConfig == null?SessionSerial.SERIAL_TYPE_BBOSS:sessionConfig.getSerialType();
 		// 显示字段
 		BasicDBObject keys = new BasicDBObject();
 		keys.put("appKey", 1);
@@ -250,7 +252,7 @@ public class MongoSessionStaticManagerImpl extends BaseSessionStaticManagerImpl 
 		
 		@SuppressWarnings("unchecked")
 		Map<String, AttributeInfo> extendAttributes = (Map<String, AttributeInfo>)queryParams.get("extendAttributes");
-		SessionHelper.buildExtendFieldQueryCondition(extendAttributes,    query);
+		SessionHelper.buildExtendFieldQueryCondition(extendAttributes,    query,serialType);
 		
 		DBCursor cursor = sessions.find(query, keys).skip(page).limit(row)
 				.sort(new BasicDBObject("creationTime", -1));// 1升序，-1降序
@@ -308,7 +310,7 @@ public class MongoSessionStaticManagerImpl extends BaseSessionStaticManagerImpl 
 				info.setLastAccessedHostIP((String)dbobject.get("lastAccessedHostIP"));
 					
 				 
-					List<AttributeInfo> extendAttrs = SessionHelper.evalqueryfiledsValue(attributeInfos,dbobject);
+					List<AttributeInfo> extendAttrs = SessionHelper.evalqueryfiledsValue(attributeInfos,dbobject,serialType);
 					
 					info.setExtendAttributes(extendAttrs);
 				 

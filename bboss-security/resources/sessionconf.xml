@@ -3,7 +3,10 @@
 	会话共享配置:跨越配置实例
 	-->
 	<property name="sessionManager" class="org.frameworkset.security.session.impl.SessionManager"
-		init-method="init" destroy-method="destroy">		
+		init-method="init" destroy-method="destroy">					
+			<!-- <property name="sessionIDGenerator" class="org.frameworkset.security.session.impl.UUIDSessionIDGenerator"/> -->
+			<!-- <property name="serialType" value="bboss|json"/> -->
+			
 			<property name="sessionTimeout" value="3600000"/>
 			<property name="sessionstore" refid="attr:sessionstore"/> 
 			<!-- <property name="sessionstore" value="session"/>-->
@@ -59,6 +62,7 @@
 				    </list>
 			    </property>
 			</property>  -->  
+			
 <!--             <property name="sessionlisteners" value="org.frameworkset.security.session.impl.NullSessionListener"/> -->
 	</property>
 	<!-- 

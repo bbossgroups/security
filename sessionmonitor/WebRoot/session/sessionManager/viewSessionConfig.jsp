@@ -136,6 +136,18 @@
 
 					</tr>
 					
+					<tr>
+						<th width="150"><strong>sessionid生成器:</strong></th>
+						<td width="400"><strong><font color="green"><pg:cell colName="sessionidGeneratorPlugin" /></font></strong></td>
+
+					</tr>
+					
+					<tr>
+						<th width="150"><strong>session序列化机制:</strong></th>
+						<td width="400"><strong><font color="green"><pg:cell colName="serialType" /></font></strong></td>
+
+					</tr>
+					
 
 				</table>
 			</fieldset>

@@ -17,6 +17,7 @@ import org.frameworkset.nosql.mongodb.MongoDB;
 import org.frameworkset.nosql.mongodb.MongoDBHelper;
 import org.frameworkset.nosql.redis.RedisFactory;
 import org.frameworkset.nosql.redis.RedisHelper;
+import org.frameworkset.security.session.SessionSerial;
 import org.frameworkset.security.session.impl.RedisSessionStore;
 import org.frameworkset.security.session.impl.SessionHelper;
 import org.frameworkset.spi.InitializingBean;
@@ -165,6 +166,7 @@ public class RedisSessionStaticManagerImpl extends BaseSessionStaticManagerImpl 
 			fields.add("httpOnly");
 			fields.add("lastAccessedHostIP");
 			AttributeInfo[] attributeInfos = sessionConfig == null?null:sessionConfig.getExtendAttributeInfos();
+			String serialType = sessionConfig == null?SessionSerial.SERIAL_TYPE_BBOSS:sessionConfig.getSerialType();
 			if(attributeInfos != null && attributeInfos.length > 0)
 			{
 				for(AttributeInfo attr:attributeInfos)
@@ -231,7 +233,7 @@ public class RedisSessionStaticManagerImpl extends BaseSessionStaticManagerImpl 
 				info.setLastAccessedHostIP(data.get(12));
 					
 				 
-					List<AttributeInfo> extendAttrs = SessionHelper.evalqueryfiledsValue(attributeInfos,data,13);
+					List<AttributeInfo> extendAttrs = SessionHelper.evalqueryfiledsValue(attributeInfos,data,13,serialType);
 					
 					info.setExtendAttributes(extendAttrs);
 				 

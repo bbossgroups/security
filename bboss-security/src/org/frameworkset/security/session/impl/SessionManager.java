@@ -23,6 +23,7 @@ import org.apache.log4j.Logger;
 import org.frameworkset.security.session.SessionEvent;
 import org.frameworkset.security.session.SessionIDGenerator;
 import org.frameworkset.security.session.SessionListener;
+import org.frameworkset.security.session.SessionSerial;
 import org.frameworkset.security.session.SessionStore;
 import org.frameworkset.security.session.domain.CrossDomain;
 import org.frameworkset.security.session.statics.AttributeInfo;
@@ -53,6 +54,8 @@ public class SessionManager extends org.frameworkset.spi.BaseApplicationContextA
 	private boolean startLifeScan = false;
 	private boolean lazystore = false;
 	private SessionIDGenerator sessionIDGenerator;
+	private String serialType = SessionSerial.SERIAL_TYPE_BBOSS;
+	private SessionSerial sessionSerial;
 	public SessionIDGenerator getSessionIDGenerator() {
 		return sessionIDGenerator;
 	}
@@ -92,9 +95,15 @@ public class SessionManager extends org.frameworkset.spi.BaseApplicationContextA
 	 */
 	private long sessionscaninterval = 60*60000;
 	private boolean usewebsession = false;
+	private SessionSerial bbossSessionSerial;
+	private SessionSerial jsonSessionSerial;
 	public SessionManager()
 	{
-		
+		 
+		bbossSessionSerial = new BBossSessionSerial();
+		 
+		jsonSessionSerial = new JacksonSessionSerial();
+		 
 	}
 	public SessionManager(long sessionTimeout, Object sessionStore,
 			String cookiename, boolean httponly,
@@ -111,6 +120,9 @@ public class SessionManager extends org.frameworkset.spi.BaseApplicationContextA
 			String[] temp = listeners.trim().split("\\,");
 			initSessionListeners(temp);
 		}
+		bbossSessionSerial = new BBossSessionSerial();
+		 
+		jsonSessionSerial = new JacksonSessionSerial();
 		if(!usewebsession && startLifeScan)
 		{
 			 log.debug("Session life scan monitor start.");
@@ -147,6 +159,8 @@ public class SessionManager extends org.frameworkset.spi.BaseApplicationContextA
 		sessionConfig.setStartLifeScan(this.startLifeScan); 
 		sessionConfig.setSecure(this.secure);
 		sessionConfig.setLazystore(lazystore);
+		sessionConfig.setSerialType(serialType);
+		sessionConfig.setSessionidGeneratorPlugin(this.sessionIDGenerator.getClass().getCanonicalName());
 		this.sessionStore.saveSessionConfig(sessionConfig);
 	}
 	
@@ -193,6 +207,24 @@ public class SessionManager extends org.frameworkset.spi.BaseApplicationContextA
 		initExtendFields();
 		if(this.sessionIDGenerator == null)
 			sessionIDGenerator = new  UUIDSessionIDGenerator();
+		if(serialType == null)
+		{
+			sessionSerial = new BBossSessionSerial();
+			this.serialType = SessionSerial.SERIAL_TYPE_BBOSS;
+		}
+		else if(this.serialType == SessionSerial.SERIAL_TYPE_BBOSS)
+		{
+			sessionSerial = this.bbossSessionSerial;
+		}
+		else if(this.serialType == SessionSerial.SERIAL_TYPE_JSON)
+		{
+			sessionSerial = this.jsonSessionSerial;
+		}
+		else
+		{
+			throw new RuntimeException("ERROR serialType:"+serialType+",serialType only be bboss or json.check sessionconf.xml and set serialType attribute to bboss or json.");
+		}
+		
 		 
 		
 	}
@@ -420,5 +452,31 @@ public class SessionManager extends org.frameworkset.spi.BaseApplicationContextA
 	}
 	public void setLazystore(boolean lazystore) {
 		this.lazystore = lazystore;
+	}
+	public SessionSerial getSessionSerial(String serialType) {
+		if(StringUtil.isEmpty(serialType))
+			serialType = SessionSerial.SERIAL_TYPE_BBOSS;
+		if(serialType == SessionSerial.SERIAL_TYPE_BBOSS)
+		{
+			return this.bbossSessionSerial;
+		}
+		else if(serialType == SessionSerial.SERIAL_TYPE_JSON)
+			return this.jsonSessionSerial;
+		else
+		{
+			throw new RuntimeException("ERROR serialType:"+serialType+",serialType only be bboss or json.check sessionconf.xml and set serialType attribute to bboss or json.");
+		}
+	}
+	public SessionSerial getSessionSerial() {
+		return sessionSerial;
+	}
+	public void setSessionSerial(SessionSerial sessionSerial) {
+		this.sessionSerial = sessionSerial;
+	}
+	public String getSerialType() {
+		return serialType;
+	}
+	public void setSerialType(String serialType) {
+		this.serialType = serialType;
 	}
 }

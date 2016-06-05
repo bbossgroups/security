@@ -8,6 +8,8 @@ import org.frameworkset.security.session.domain.CrossDomain;
 public class SessionConfig implements Serializable {
 	private long sessionTimeout;
 	private String cookiename;
+	private String serialType;
+	private String sessionidGeneratorPlugin;
 	private CrossDomain crossDomain;
 	private boolean startLifeScan = false;
 	private Date scanStartTime;
@@ -166,6 +168,18 @@ public class SessionConfig implements Serializable {
 	}
 	public void setLazystore(boolean lazystore) {
 		this.lazystore = lazystore;
+	}
+	public String getSerialType() {
+		return serialType;
+	}
+	public void setSerialType(String serialType) {
+		this.serialType = serialType;
+	}
+	public String getSessionidGeneratorPlugin() {
+		return sessionidGeneratorPlugin;
+	}
+	public void setSessionidGeneratorPlugin(String sessionidGeneratorPlugin) {
+		this.sessionidGeneratorPlugin = sessionidGeneratorPlugin;
 	}
 
 }
