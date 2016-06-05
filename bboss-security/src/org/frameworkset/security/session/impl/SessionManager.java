@@ -207,16 +207,16 @@ public class SessionManager extends org.frameworkset.spi.BaseApplicationContextA
 		initExtendFields();
 		if(this.sessionIDGenerator == null)
 			sessionIDGenerator = new  UUIDSessionIDGenerator();
-		if(serialType == null)
+		if(serialType == null || serialType.equals(""))
 		{
 			sessionSerial = new BBossSessionSerial();
 			this.serialType = SessionSerial.SERIAL_TYPE_BBOSS;
 		}
-		else if(this.serialType == SessionSerial.SERIAL_TYPE_BBOSS)
+		else if(serialType.equals(SessionSerial.SERIAL_TYPE_BBOSS))
 		{
 			sessionSerial = this.bbossSessionSerial;
 		}
-		else if(this.serialType == SessionSerial.SERIAL_TYPE_JSON)
+		else if(serialType.equals(SessionSerial.SERIAL_TYPE_JSON))
 		{
 			sessionSerial = this.jsonSessionSerial;
 		}
@@ -456,11 +456,11 @@ public class SessionManager extends org.frameworkset.spi.BaseApplicationContextA
 	public SessionSerial getSessionSerial(String serialType) {
 		if(StringUtil.isEmpty(serialType))
 			serialType = SessionSerial.SERIAL_TYPE_BBOSS;
-		if(serialType == SessionSerial.SERIAL_TYPE_BBOSS)
+		if(serialType.equals(SessionSerial.SERIAL_TYPE_BBOSS))
 		{
 			return this.bbossSessionSerial;
 		}
-		else if(serialType == SessionSerial.SERIAL_TYPE_JSON)
+		else if(serialType.equals(SessionSerial.SERIAL_TYPE_JSON))
 			return this.jsonSessionSerial;
 		else
 		{

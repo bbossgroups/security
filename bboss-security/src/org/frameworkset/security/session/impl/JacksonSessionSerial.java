@@ -1,6 +1,7 @@
 package org.frameworkset.security.session.impl;
 
 import com.frameworkset.util.SimpleStringUtil;
+import com.frameworkset.util.ValueObjectUtil;
 
 public class JacksonSessionSerial extends AbstractSessionSerial{
 
@@ -9,15 +10,47 @@ public class JacksonSessionSerial extends AbstractSessionSerial{
 	}
 
 	@Override
-	public Object serialize(Object object) {
-		// TODO Auto-generated method stub
-		return SimpleStringUtil.object2json(object);
+	public String serialize(Object object) {
+		 
+		
+		String result =  SimpleStringUtil.object2json(object);
+		if(result != null)
+		{
+			
+			result = new StringBuilder().append(ValueObjectUtil.getSimpleTypeName(object.getClass())).append(":").append(result).toString();
+		}
+		return result;
 	}
 
 	@Override
 	public Object deserialize(String object) {
-		// TODO Auto-generated method stub
-		return SimpleStringUtil.json2Object(object, Object.class);
+		
+		if(object == null )
+		{
+			return null;
+		}
+		int idx = object.indexOf(':');
+		String classInfo = object.substring(0, idx);
+		String data = object.substring(idx+1);
+		try
+		{
+			Class clazz = ValueObjectUtil.getClass(classInfo);
+			return SimpleStringUtil.json2Object(data, clazz);
+		}
+		catch(ClassNotFoundException e)
+		{
+			throw new java.lang.RuntimeException(e);
+		}
+		
+	}
+
+	@Override
+	public String handleLikeCondition(Object condition) {
+		if(condition instanceof String)
+			return new StringBuilder().append("^String:\"").append( condition ).append( ".*$").toString();
+		else
+			return new StringBuilder().append("^" ).append(ValueObjectUtil.getSimpleTypeName(condition.getClass())).append(":").append( condition ).append( ".*$").toString();
+			
 	}
 
 }

@@ -13,7 +13,7 @@ public class BBossSessionSerial extends AbstractSessionSerial {
 		if(value != null)
 		{
 			try {
-				value = ObjectSerializable.toXML(value);
+				return ObjectSerializable.toXML(value);
  			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}

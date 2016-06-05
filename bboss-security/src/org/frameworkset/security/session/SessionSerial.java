@@ -7,7 +7,7 @@ public interface SessionSerial {
 	 */
 	public static final String SERIAL_TYPE_BBOSS="bboss";
 	public static final String SERIAL_TYPE_JSON="json";
-	public Object serialize(Object object); 
+	public String serialize(Object object); 
 	public Object deserialize(String object);
 	public String handleLikeCondition(Object condition);	
 	
