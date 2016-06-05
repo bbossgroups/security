@@ -332,7 +332,7 @@ public class SessionHelper {
 	}
 	
 
-	public static Object serial(Object value)
+	public static String serial(Object value)
 	{
 //		if(value != null)
 //		{

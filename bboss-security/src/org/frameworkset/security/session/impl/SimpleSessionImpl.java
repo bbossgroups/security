@@ -25,6 +25,7 @@ public class SimpleSessionImpl implements Session{
 	private transient Map<String,Object> attributes;
 	protected transient Map<String,ModifyValue> modifyattributes;
 	protected transient boolean islazy = false;
+	protected transient boolean storeReadAttributes = false;
 	private static final Object NULL = new Object();
 	private String host ;
 	private String requesturi;
@@ -79,10 +80,11 @@ public class SimpleSessionImpl implements Session{
 		Object value = this.attributes.get(attribute);
 		if(value == null)
 		{
-			value = sessionStore.getAttribute(appKey, contextpath,id,attribute);
+			value = sessionStore.getAttribute(appKey, contextpath,id,attribute,this);
 			if(value != null)
-			{
+			{				
 				this.attributes.put(attribute, value);
+				
 			}
 			else
 			{
@@ -380,6 +382,9 @@ public class SimpleSessionImpl implements Session{
 	}
 	public Map<String, ModifyValue> getModifyattributes() {
 		return modifyattributes;
+	}
+	public boolean isStoreReadAttributes() {
+		return storeReadAttributes;
 	}
 	
 

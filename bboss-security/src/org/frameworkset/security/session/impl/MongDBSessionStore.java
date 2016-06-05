@@ -192,7 +192,7 @@ public class MongDBSessionStore extends BaseSessionStore{
 	
 
 	@Override
-	public Object getAttribute(String appKey,String contextpath,String sessionID, String attribute) {
+	public Object getAttribute(String appKey,String contextpath,String sessionID, String attribute,Session session) {
 		DBCollection sessions =getAppSessionDBCollection( appKey);
 		BasicDBObject keys = new BasicDBObject();
 		attribute = MongoDBHelper.converterSpecialChar( attribute);
@@ -200,7 +200,7 @@ public class MongDBSessionStore extends BaseSessionStore{
 		
 		DBObject obj = sessions.findOne(new BasicDBObject("sessionid",sessionID).append("_validate", true),keys);
 		if(obj == null)
-			return null;
+			return null;		
 		return SessionHelper.unserial((String)obj.get(attribute));
 //		return null;
 	}
@@ -403,7 +403,7 @@ public class MongDBSessionStore extends BaseSessionStore{
 				else//session数据
 				{
 					attribute = MongoDBHelper.converterSpecialChar(entry.getKey());
-					if(value.getOptype() == ModifyValue.type_add)
+					if(value.getOptype() == ModifyValue.type_add  )
 					{
 						if(record == null)
 						{
@@ -412,6 +412,17 @@ public class MongDBSessionStore extends BaseSessionStore{
 						else
 						{
 							record.append(attribute, value.getValue());
+						}
+					}
+					else if(value.getOptype() == ModifyValue.type_read)
+					{
+						if(record == null)
+						{
+							record = new BasicDBObject(attribute, SessionHelper.serial(value.getValue())); 
+						}
+						else
+						{
+							record.append(attribute, SessionHelper.serial(value.getValue()));
 						}
 					}
 					else

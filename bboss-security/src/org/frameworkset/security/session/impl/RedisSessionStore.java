@@ -206,7 +206,7 @@ public class RedisSessionStore extends BaseSessionStore{
 	
 
 	@Override
-	public Object getAttribute(String appKey,String contextpath,String sessionID, String attribute) {
+	public Object getAttribute(String appKey,String contextpath,String sessionID, String attribute,Session session) {
 		String sessionkey = getAPPSessionKey(appKey,sessionID);
 		RedisHelper redisHelper = null;
 		try
@@ -439,7 +439,7 @@ public class RedisSessionStore extends BaseSessionStore{
 
 	@Override
 	public void removeAttribute(SimpleHttpSession session,String appKey,String contextpath,String sessionID, String attribute) {
-		String sessionKey = this.getAPPSessionKey(appKey, sessionID);
+		String sessionKey = getAPPSessionKey(appKey, sessionID);
 		RedisHelper redisHelper = null;
 		try
 		{
@@ -516,22 +516,22 @@ public class RedisSessionStore extends BaseSessionStore{
 							record.put(entry.getKey(), String.valueOf(value.getValue()));
 						else
 							record.put(entry.getKey(), null);
-//						if(record == null)
-//						{
-//							record = new BasicDBObject(attribute, value.getValue()); 
-//						}
-//						else
-//						{
-//							record.append(attribute, value.getValue());
-//						}
+
+					}
+					else if(value.getOptype() == ModifyValue.type_read)
+					{
+						if(record == null)
+						{
+							record = new HashMap<String,String>();
+						}
+						record.put(entry.getKey(), SessionHelper.serial(value.getValue()));
 					}
 					else
 					{
 						if(removes == null)
 						{
 							removes = new ArrayList<String>(); 
-						}
-						 
+						}						 
 						removes.add(entry.getKey());
 						 
 					}

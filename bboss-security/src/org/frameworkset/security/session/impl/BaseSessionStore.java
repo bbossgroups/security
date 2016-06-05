@@ -18,7 +18,6 @@ package org.frameworkset.security.session.impl;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.UUID;
 
 import org.frameworkset.security.session.MongoDBUtil;
 import org.frameworkset.security.session.Session;
@@ -39,7 +38,7 @@ public abstract class BaseSessionStore implements SessionStore {
 	protected SessionManager sessionManager;
 	protected SimpleSessionImpl createSimpleSessionImpl()
 	{
-		return !this.uselazystore()?new SimpleSessionImpl():new LazySimpleSessionImpl();
+		return !this.uselazystore()?new SimpleSessionImpl():new LazySimpleSessionImpl(sessionManager.isStoreReadAttributes());
 	}
 	protected List<String> _getAttributeNames(Iterator<String> keys,String appKey,String contextpath)
 	{

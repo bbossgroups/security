@@ -14,6 +14,7 @@
 			<property name="httpOnly" value="true"/>
 			<property name="secure" value="false"/>
 			<property name="lazystore" value="true"/>
+			<property name="storeReadAttributes" value="false"/>			
 			<property name="monitorAttributes" ><![CDATA[
 			[
 				{"name":"userAccount","cname":"账号","type":"String","like":true,"enableEmptyValue":false},				

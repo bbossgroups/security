@@ -18,7 +18,6 @@ package org.frameworkset.security.session;
 import java.util.Enumeration;
 
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
 
 import org.frameworkset.security.session.impl.SessionManager;
 import org.frameworkset.security.session.statics.SessionConfig;
@@ -43,7 +42,7 @@ public interface SessionStore{
 //	Session createSession(String appKey,String referip,String reqesturi);
 	Session createSession(SessionBasicInfo sessionBasicInfo);
 
-	Object getAttribute(String appKey,String contextpath,String sessionID, String attribute);
+	Object getAttribute(String appKey,String contextpath,String sessionID, String attribute,Session session);
 
 	Enumeration getAttributeNames(String appKey,String contextpath,String sessionID);
 

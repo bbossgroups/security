@@ -76,10 +76,13 @@ public class DelegateSessionStore implements SessionStore {
 	}
 
 	@Override
-	public Object getAttribute(String appKey,String contextpath, String sessionID, String attribute) {
+	public Object getAttribute(String appKey,String contextpath, String sessionID, String attribute,Session session) {
 		// TODO Auto-generated method stub
 		String _attribute = SessionHelper.wraperAttributeName(appKey,contextpath,  attribute);
-		return sessionStore.getAttribute(appKey, contextpath, sessionID, _attribute);
+		Object value = sessionStore.getAttribute(appKey, contextpath, sessionID, _attribute,session);
+		if(session.isStoreReadAttributes() && value != null)
+			session.modifyAttribute(_attribute, value, ModifyValue.type_data, ModifyValue.type_read);	
+		return value;
 	}
 
 	@Override

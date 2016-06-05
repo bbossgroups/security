@@ -53,6 +53,8 @@ public class SessionManager extends org.frameworkset.spi.BaseApplicationContextA
 	private CrossDomain crossDomain;
 	private boolean startLifeScan = false;
 	private boolean lazystore = false;
+	/**if(lazystore == true && storeReadAttributes) then store allReaded attributes when submit session modify operations.*/
+	private boolean storeReadAttributes = false;
 	private SessionIDGenerator sessionIDGenerator;
 	private String serialType = SessionSerial.SERIAL_TYPE_BBOSS;
 	private SessionSerial sessionSerial;
@@ -478,5 +480,11 @@ public class SessionManager extends org.frameworkset.spi.BaseApplicationContextA
 	}
 	public void setSerialType(String serialType) {
 		this.serialType = serialType;
+	}
+	public boolean isStoreReadAttributes() {
+		return storeReadAttributes;
+	}
+	public void setStoreReadAttributes(boolean storeReadAttributes) {
+		this.storeReadAttributes = storeReadAttributes;
 	}
 }

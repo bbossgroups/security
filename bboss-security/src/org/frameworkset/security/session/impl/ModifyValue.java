@@ -19,6 +19,8 @@ public class ModifyValue {
 	public static final int type_add = 1;
 	public static final int type_expired = 3;
 	public static final int type_remove = 2;
+	/**used to mark  attribute when read.,if storeread == true then store all readed attribute.*/
+	public static final int type_read = 4;
 	public ModifyValue() {
 		// TODO Auto-generated constructor stub
 	}

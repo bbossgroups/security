@@ -66,4 +66,5 @@ public interface Session {
 	public boolean islazy() ;
 	public void modifyAttribute(String name, Object value, int valuetype, int optype);
 	public Map<String, ModifyValue> getModifyattributes() ;
+	public boolean isStoreReadAttributes();
 }
