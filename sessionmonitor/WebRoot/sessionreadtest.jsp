@@ -23,7 +23,10 @@ out.println("sessionmonitor's private attribute:"+privateAttr+"<br>");
 String userAccount = (String)session.getAttribute("userAccount");
 out.println("shared attribute userAccount:"+userAccount+"<br>");
 TestVO testVO = (TestVO)session.getAttribute("testVO");
-out.println("attribute testVO.id:"+testVO.getId()+"<br>");
-testVO.setId("test modify");
+if(testVO != null)
+{
+	out.println("attribute testVO.id:"+testVO.getId()+"<br>");
+	testVO.setId("test modify");
+}
  %>
  

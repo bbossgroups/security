@@ -27,6 +27,8 @@ import org.frameworkset.security.session.SessionStore;
 import org.frameworkset.security.session.SimpleHttpSession;
 import org.frameworkset.security.session.statics.SessionConfig;
 
+import com.frameworkset.util.ValueObjectUtil;
+
 /**
  * <p>Title: DelegateSessionStrore.java</p> 
  * <p>Description: </p>
@@ -74,13 +76,17 @@ public class DelegateSessionStore implements SessionStore {
 		
 		return session;
 	}
+	private boolean readcanstore(Object value)
+	{
+		return !ValueObjectUtil.isSimplePrimaryType(value.getClass());
+	}
 
 	@Override
 	public Object getAttribute(String appKey,String contextpath, String sessionID, String attribute,Session session) {
 		// TODO Auto-generated method stub
 		String _attribute = SessionHelper.wraperAttributeName(appKey,contextpath,  attribute);
 		Object value = sessionStore.getAttribute(appKey, contextpath, sessionID, _attribute,session);
-		if(session.isStoreReadAttributes() && value != null)
+		if(session.isStoreReadAttributes() && value != null && readcanstore( value))
 			session.modifyAttribute(_attribute, value, ModifyValue.type_data, ModifyValue.type_read);	
 		return value;
 	}
