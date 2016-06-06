@@ -16,6 +16,7 @@
 package org.frameworkset.security.session;
 
 import java.util.Enumeration;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
 
@@ -44,13 +45,14 @@ public interface SessionStore{
 
 	Object getAttribute(String appKey,String contextpath,String sessionID, String attribute,Session session);
 
-	Enumeration getAttributeNames(String appKey,String contextpath,String sessionID);
+	Enumeration getAttributeNames(String appKey,String contextpath,String sessionID,Map<String,Object> localAttributes);
+	
 
 	void updateLastAccessedTime(String appKey,String sessionID, long lastAccessedTime,String lastAccessedUrl,int MaxInactiveInterval);
 
 	long getLastAccessedTime(String appKey,String sessionID);
 
-	String[] getValueNames(String appKey,String contextpath,String sessionID);
+	String[] getValueNames(String appKey,String contextpath,String sessionID,Map<String,Object> localAttributes);
 
 	void invalidate(SimpleHttpSession session,String appKey,String contextpath,String sessionID);
 

@@ -163,6 +163,7 @@ public class SessionManager extends org.frameworkset.spi.BaseApplicationContextA
 		sessionConfig.setLazystore(lazystore);
 		sessionConfig.setSerialType(serialType);
 		sessionConfig.setSessionidGeneratorPlugin(this.sessionIDGenerator.getClass().getCanonicalName());
+		sessionConfig.setStoreReadAttributes(this.storeReadAttributes);
 		this.sessionStore.saveSessionConfig(sessionConfig);
 	}
 	

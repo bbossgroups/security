@@ -147,7 +147,11 @@
 						<td width="400"><strong><font color="green"><pg:cell colName="serialType" /></font></strong></td>
 
 					</tr>
-					
+					<tr>
+						<th width="150"><strong>storeReadAttributes:</strong></th>
+						<td width="400"><strong><font color="green"><pg:cell colName="storeReadAttributes" /></font></strong></td>
+
+					</tr>
 
 				</table>
 			</fieldset>

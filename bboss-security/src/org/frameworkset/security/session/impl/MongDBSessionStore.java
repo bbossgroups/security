@@ -125,7 +125,7 @@ public class MongDBSessionStore extends BaseSessionStore{
 			.append("serialType", config.getSerialType())
 			.append("sessionidGeneratorPlugin", config.getSessionidGeneratorPlugin())
 			.append("monitorAttributes", config.getMonitorAttributes())
-			
+			.append("storeReadAttributes", config.isStoreReadAttributes())			
 			.append("startLifeScan", config.isStartLifeScan()).append("monitorScope", config.getMonitorScope()).append("lazystore", config.isLazystore());
 			 
 			if(object == null)
@@ -256,7 +256,7 @@ public class MongDBSessionStore extends BaseSessionStore{
 	}
 
 	@Override
-	public String[] getValueNames(String appKey,String contextpath,String sessionID) {
+	public String[] getValueNames(String appKey,String contextpath,String sessionID,Map<String,Object> localAttributes) {
 		
 		DBCollection sessions =getAppSessionDBCollection( appKey);
 		
@@ -268,7 +268,9 @@ public class MongDBSessionStore extends BaseSessionStore{
 		if(obj.keySet() != null)
 		{
 //			valueNames = new String[obj.keySet().size()];
-			List<String> temp = _getAttributeNames(obj.keySet().iterator(),  appKey,  contextpath);
+			List<String> temp = localAttributes != null?
+					_getAttributeNamesRecoverSpecialChars(obj.keySet().iterator(),  appKey,  contextpath ,localAttributes):
+						_getAttributeNamesRecoverSpecialChars(obj.keySet().iterator(),  appKey,  contextpath );
 //			List<String> temp = new ArrayList<String>();
 //			Iterator<String> keys = obj.keySet().iterator();
 //			while(keys.hasNext())
@@ -292,7 +294,7 @@ public class MongDBSessionStore extends BaseSessionStore{
 	
 	
 	@Override
-	public Enumeration getAttributeNames(String appKey,String contextpath,String sessionID) {
+	public Enumeration getAttributeNames(String appKey,String contextpath,String sessionID,Map<String,Object> localAttributes) {
 		
 		DBCollection sessions =getAppSessionDBCollection( appKey);
 		
@@ -304,7 +306,9 @@ public class MongDBSessionStore extends BaseSessionStore{
 		if(obj.keySet() != null)
 		{
 //			valueNames = new String[obj.keySet().size()];
-			List<String> temp = _getAttributeNames(obj.keySet().iterator(),  appKey,  contextpath);
+			List<String> temp = localAttributes != null?
+					_getAttributeNamesRecoverSpecialChars(obj.keySet().iterator(),  appKey,  contextpath ,localAttributes):
+						_getAttributeNamesRecoverSpecialChars(obj.keySet().iterator(),  appKey,  contextpath );
 //			Iterator<String> keys = obj.keySet().iterator();
 //			while(keys.hasNext())
 //			{
@@ -574,6 +578,8 @@ public class MongDBSessionStore extends BaseSessionStore{
 		keys.put("lazystore", 1);
 		keys.put("serialType", 1);
 		keys.put("sessionidGeneratorPlugin", 1);
+		keys.put("storeReadAttributes", 1);
+		
 		 
 		
 		DBObject object = sessionconf.findOne(new BasicDBObject("appcode",appkey) ,keys);
@@ -607,6 +613,9 @@ public class MongDBSessionStore extends BaseSessionStore{
 			sessionConfig.setCreateTime(new Date((Long)object.get("createTime")));
 			sessionConfig.setUpdateTime(new Date((Long)object.get("updateTime")));
 			sessionConfig.setSessionidGeneratorPlugin((String)object.get("sessionidGeneratorPlugin"));
+			Object storeReadAttributes = object.get("storeReadAttributes");
+			if(storeReadAttributes != null)
+				sessionConfig.setStoreReadAttributes((Boolean)storeReadAttributes);
 			sessionConfig.setSerialType((String)object.get("serialType"));
 			Boolean lazystore = (Boolean)object.get("lazystore");
 			if(lazystore != null)

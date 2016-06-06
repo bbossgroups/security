@@ -104,8 +104,13 @@ public class SimpleSessionImpl implements Session{
 	@Override
 	public Enumeration getAttributeNames(SimpleHttpSession session,String contextpath) {
 		assertSession(  session,contextpath) ;
-		
-		return sessionStore.getAttributeNames(appKey, contextpath,id);
+		if(!session.islazy())
+			return sessionStore.getAttributeNames(appKey, contextpath,id,null);
+		else
+		{
+			
+			return sessionStore.getAttributeNames(appKey, contextpath,id,this.attributes);
+		}
 	}
 
 	@Override
@@ -172,7 +177,10 @@ public class SimpleSessionImpl implements Session{
 		{
 			return null;
 		}
-		return sessionStore.getValueNames(appKey, contextpath,id);
+		if(!session.islazy())
+			return sessionStore.getValueNames(appKey, contextpath,id,null);
+		else
+			return sessionStore.getValueNames(appKey, contextpath,id,this.attributes);
 	}
 
 	@Override
@@ -317,10 +325,10 @@ public class SimpleSessionImpl implements Session{
 	{
 		this.validate = validate;
 	}
-	public Map<String, Object> getAttributes() {
-//		assertSession() ;
-		return attributes;
-	}
+//	public Map<String, Object> getAttributes() {
+////		assertSession() ;
+//		return attributes;
+//	}
 	public void setAttributes(Map<String, Object> attributes) {
 //		assertSession() ;
 		this.attributes = attributes;

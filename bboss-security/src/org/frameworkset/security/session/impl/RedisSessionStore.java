@@ -318,7 +318,7 @@ public class RedisSessionStore extends BaseSessionStore{
 	}
 
 	@Override
-	public String[] getValueNames(String appKey,String contextpath,String sessionID) {
+	public String[] getValueNames(String appKey,String contextpath,String sessionID,Map<String,Object> localAttributes) {
 		String sessionKey = this.getAPPSessionKey(appKey, sessionID);
 		String[] valueNames = null;
 		RedisHelper redisHelper = null;
@@ -328,7 +328,9 @@ public class RedisSessionStore extends BaseSessionStore{
 			Set<String> keys = redisHelper.hkeys(sessionKey);
 			 if(keys != null && keys.size() > 0)
 			 {
-				 List<String> temp = _getAttributeNames(keys.iterator(),  appKey,  contextpath);
+				 List<String> temp = localAttributes != null?
+						 _getAttributeNames(keys.iterator(),  appKey,  contextpath, localAttributes):
+							 _getAttributeNames(keys.iterator(),  appKey,  contextpath);
 				 valueNames = new String[temp.size()];
 					valueNames = temp.toArray(valueNames);
 			 }
@@ -348,7 +350,7 @@ public class RedisSessionStore extends BaseSessionStore{
 	
 	
 	@Override
-	public Enumeration getAttributeNames(String appKey,String contextpath,String sessionID) {
+	public Enumeration getAttributeNames(String appKey,String contextpath,String sessionID,Map<String,Object> localAttributes) {
 		String sessionKey = this.getAPPSessionKey(appKey, sessionID);
 		
 		Enumeration<String> valueNames = null;
@@ -359,7 +361,9 @@ public class RedisSessionStore extends BaseSessionStore{
 			Set<String> keys = redisHelper.hkeys(sessionKey);
 			 if(keys != null && keys.size() > 0)
 			 {
-				 List<String> temp = _getAttributeNames(keys.iterator(),  appKey,  contextpath);
+				 List<String> temp = localAttributes != null?
+						 _getAttributeNames(keys.iterator(),  appKey,  contextpath, localAttributes):
+							 _getAttributeNames(keys.iterator(),  appKey,  contextpath);
 				 valueNames = new AttributeNamesEnumeration<String>(temp.iterator());
 			 }
 		}

@@ -18,6 +18,7 @@ package org.frameworkset.security.session.impl;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.frameworkset.security.session.MongoDBUtil;
 import org.frameworkset.security.session.Session;
@@ -40,6 +41,25 @@ public abstract class BaseSessionStore implements SessionStore {
 	{
 		return !this.uselazystore()?new SimpleSessionImpl():new LazySimpleSessionImpl(sessionManager.isStoreReadAttributes());
 	}
+	protected List<String> _getAttributeNames(Iterator<String> keys,String appKey,String contextpath,Map<String,Object> localAttributes)
+	{
+		List<String> temp = new ArrayList<String>();
+		temp.addAll(localAttributes.keySet());
+		while(keys.hasNext())
+		{
+			String tempstr = keys.next();
+			if(!MongoDBUtil.filter(tempstr))
+			{
+				tempstr = SessionHelper.dewraperAttributeName(appKey, contextpath, tempstr);
+				if(tempstr != null)
+				{
+					if(!localAttributes.containsKey(tempstr))
+						temp.add(tempstr);
+				}
+			}
+		}
+		return temp;
+	}
 	protected List<String> _getAttributeNames(Iterator<String> keys,String appKey,String contextpath)
 	{
 		List<String> temp = new ArrayList<String>();
@@ -52,6 +72,49 @@ public abstract class BaseSessionStore implements SessionStore {
 				if(tempstr != null)
 				{
 					temp.add(tempstr);
+				}
+			}
+		}
+		return temp;
+	}
+	
+	protected List<String> _getAttributeNamesRecoverSpecialChars(Iterator<String> keys,String appKey,String contextpath,Map<String,Object> localAttributes)
+	{
+		List<String> temp = new ArrayList<String>();
+		temp.addAll(localAttributes.keySet());
+		while(keys.hasNext())
+		{
+			String tempstr = keys.next();
+			if(!MongoDBUtil.filter(tempstr))
+			{
+				tempstr = MongoDBUtil.recoverSpecialChar(tempstr);
+				tempstr = SessionHelper.dewraperAttributeName(appKey, contextpath, tempstr);
+				
+				if(tempstr != null)
+				{
+					if(!localAttributes.containsKey(tempstr))
+						temp.add(tempstr);
+				}
+			}
+		}
+		return temp;
+	}
+	
+	protected List<String> _getAttributeNamesRecoverSpecialChars(Iterator<String> keys,String appKey,String contextpath )
+	{
+		List<String> temp = new ArrayList<String>();
+		 
+		while(keys.hasNext())
+		{
+			String tempstr = keys.next();
+			if(!MongoDBUtil.filter(tempstr))
+			{
+				tempstr = MongoDBUtil.recoverSpecialChar(tempstr);
+				tempstr = SessionHelper.dewraperAttributeName(appKey, contextpath, tempstr);
+				
+				if(tempstr != null)
+				{
+					 temp.add(tempstr);
 				}
 			}
 		}

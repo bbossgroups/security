@@ -41,6 +41,13 @@ public class SessionConfig implements Serializable {
 	private long sessionscaninterval = 60*60000;
 	private boolean usewebsession = false; 
 	private boolean lazystore;
+	private boolean storeReadAttributes;
+	public boolean isStoreReadAttributes() {
+		return storeReadAttributes;
+	}
+	public void setStoreReadAttributes(boolean storeReadAttributes) {
+		this.storeReadAttributes = storeReadAttributes;
+	}
 	public SessionConfig() {
 		// TODO Auto-generated constructor stub
 	}

@@ -16,6 +16,7 @@
 package org.frameworkset.security.session.impl;
 
 import java.util.Enumeration;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
 
@@ -92,9 +93,9 @@ public class DelegateSessionStore implements SessionStore {
 	}
 
 	@Override
-	public Enumeration getAttributeNames(String appKey,String contextpath, String sessionID) {
+	public Enumeration getAttributeNames(String appKey,String contextpath, String sessionID,Map<String,Object> localAttributes) {
 		// TODO Auto-generated method stub
-		return this.sessionStore.getAttributeNames(appKey, contextpath, sessionID);
+		return this.sessionStore.getAttributeNames(appKey, contextpath, sessionID,localAttributes);
 	}
 
 	@Override
@@ -111,9 +112,9 @@ public class DelegateSessionStore implements SessionStore {
 	}
 
 	@Override
-	public String[] getValueNames(String appKey,String contextpath, String sessionID) {
+	public String[] getValueNames(String appKey,String contextpath, String sessionID,Map<String,Object> localAttributes) {
 		// TODO Auto-generated method stub
-		return this.sessionStore.getValueNames(appKey, contextpath, sessionID);
+		return this.sessionStore.getValueNames(appKey, contextpath, sessionID, localAttributes);
 	}
 
 	@Override
