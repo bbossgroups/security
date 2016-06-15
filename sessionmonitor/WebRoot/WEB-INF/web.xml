@@ -26,7 +26,7 @@
 				}});]]>
 		
 	</description>
-		<listener-class>org.frameworkset.web.listener.ApplicationLifeListener</listener-class>
+	<listener-class>org.frameworkset.web.listener.ApplicationLifeListener</listener-class>
 	</listener>
 	
     <filter>
@@ -40,8 +40,12 @@
 	   <url-pattern>*.jsp</url-pattern>
 	 </filter-mapping>
 	 <filter-mapping>
-	   <filter-name>sessionFilter</filter-name>
+	 <filter-name>sessionFilter</filter-name>
 	   <url-pattern>*.page</url-pattern>
+	 </filter-mapping>
+	 <filter-mapping>
+	 <filter-name>sessionFilter</filter-name>
+	   <url-pattern>/</url-pattern>
 	 </filter-mapping>
   <servlet>
 		<servlet-name>mvcdispather</servlet-name>
