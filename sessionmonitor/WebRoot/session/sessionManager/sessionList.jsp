@@ -20,6 +20,9 @@
 		<pg:param name="validate"/>
 		<pg:list requestKey="monitorAttributes" var="attribute">
 			<pg:param name="${attribute.name}"/>
+			<pg:true colName="enableEmptyValue">
+				<pg:param name="${attribute.name}_enableEmptyValue"/>	
+			</pg:true>
 		</pg:list>
 		<!-- 加入 class="tableOutline" 可控制表格宽度，滚动条展示 -->
 		<div id="changeColor">
