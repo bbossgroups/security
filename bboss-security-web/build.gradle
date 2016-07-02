@@ -1,18 +1,12 @@
-//jar.enabled=false
-jar { classifier = "all" }
+
 
 sourceSets {
-	 bboss_security_web_inf {
-        java {
-            srcDirs 'src-inf'
-        }        
-        compileClasspath = configurations.compile  
-    }
-    bboss_security_web {
+	 
+    main {
         java {
             srcDirs 'src'
         }
-        compileClasspath = configurations.compile + sourceSets.bboss_security_web_inf.output 
+        compileClasspath = configurations.compile 
     }
    
    
@@ -24,11 +18,11 @@ project.tasks.compileJava.dependsOn(project(':bboss-security').tasks.install)
 
 dependencies {
     compile(
-    		project(':bboss-security'),
     		[group: 'org.ow2.asm', name: 'asm', version: '5.0.3', transitive: false],
             [group: 'com.bbossgroups', name: 'bboss-core', version: "${bboss_version}", transitive: false],
              [group: 'com.bbossgroups', name: 'bboss-mvc', version: "${bboss_version}", transitive: false],
             [group: 'com.bbossgroups.security', name: 'bboss-security', version: "${version}", transitive: false],
+            [group: 'com.bbossgroups.security', name: 'bboss-security-web-inf', version: "${version}", transitive: false],
              [group: 'com.bbossgroups', name: 'bboss-util', version: "${bboss_version}", transitive: false],
               [group: 'log4j', name: 'log4j', version: '1.2.16', transitive: false],
                [group: 'com.bbossgroups', name: 'bboss-velocity', version: "${bboss_version}", transitive: false],
@@ -38,225 +32,8 @@ dependencies {
             [group: 'com.bbossgroups', name: 'bboss-soa', version: "${bboss_version}", transitive: false],
             [group: 'javaee', name: 'javaee-api', version: '5', transitive: false],
     )
-/**
-    compileOnly (            
-            [group: 'javaee', name: 'javaee-api', version: '5', transitive: false],
-            
-    )
-   */
-   // aaaCompile sourceSets.bboss_security_web_inf.output
+ 
 }
-/** 
-task sourcesJar(type: Jar) {
-	classifier = "sources"
-	from sourceSets.bboss_security_web.allJava
-}
-
-javadoc
-{
-	classpath = sourceSets.bboss_security_web.compileClasspath
-	
-}
-task javaDocJar(type: Jar, dependsOn: javadoc) {
-	classifier = "javadoc"
-	
-	from javadoc.destinationDir
-}*/
-
-sourceSets.bboss_security_web_inf { set ->
-    def jarTask = task("${set.name}Jar", type: Jar) {
-        baseName = "bboss-security-web-inf"
-        from set.output
-    }
-
-    def jarSourcesTask = task("${set.name}SourceJar", type: Jar) {
-        baseName = "bboss-security-web-inf"
-        classifier = "sources"
-        from set.allJava
-    }
-
-    def docTask = task("${set.name}Doc", type: Javadoc) {
-        classpath = set.compileClasspath
-        source set.allJava
-        destinationDir=file("build/docs/${set.name}")
-    }
-
-    def jarDocTask = task("${set.name}DocJar", type: Jar, dependsOn: docTask) {
-        baseName = "bboss-security-web-inf"
-        classifier = "javadoc"
-
-        from docTask
-    }
-
-    artifacts {
-        archives jarTask
-        archives jarSourcesTask
-        archives jarDocTask
-    }
-}
-
-sourceSets.bboss_security_web { set ->
-    def jarTask = task("${set.name}Jar", type: Jar) {
-        baseName = "bboss-security-web"
-        from set.output
-    }
-
-    def jarSourcesTask = task("${set.name}SourceJar", type: Jar) {
-        baseName = "bboss-security-web"
-        classifier = "sources"
-        from set.allJava
-    }
-
-    def docTask = task("${set.name}Doc", type: Javadoc) {
-        classpath = set.compileClasspath
-        source set.allJava
-        destinationDir=file("build/docs/${set.name}")
-    }
-
-    def jarDocTask = task("${set.name}DocJar", type: Jar, dependsOn: docTask) {
-        baseName = "bboss-security-web"
-        classifier = "javadoc"
-
-        from docTask
-    }
-
-    artifacts {
-        archives jarTask
-        archives jarSourcesTask
-        archives jarDocTask
-    }
-}
-
-/**
-artifacts {
-	    archives sourcesJar, javaDocJar
-	}*/
+  
 	
  
-ext.uploadtocenter=uploadArchivesToMavenCenter.equals("true")	
-if(uploadtocenter)
-{
-	signing {
-	        //required { uploadtocenter }
-	        sign configurations.archives
-	 }
-}
-uploadArchives {
-	  repositories {
-	   
-		    mavenDeployer {
-		     
-					if(uploadtocenter)
-					{	  
-						
-						beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-				     	repository(url: sonatype_url) {
-				     		
-						         authentication(userName: sonatype_username, password: sonatype_password)
-						}
-					}
-					else
-					{
-						repository(url: "file://"+mvn_repo)
-					}
-			 
-			      
-			     addFilter('bboss_security_web_inf') {artifact, file ->
-            	artifact.name == 'bboss-security-web-inf'
-	        }
-	        addFilter('bboss_security_web') {artifact, file ->
-	            artifact.name == 'bboss-security-web'
-	        }
-		      pom('bboss_security_web_inf').project {
-		        name project.name
-		        packaging 'jar'
-		        // optionally artifactId can be defined here 
-		        description PROJ_DESCRIPTION
-		        url PROJ_WEBSITEURL
-	
-		        scm {
-		          connection scm_connection
-		          developerConnection scm_developerConnection
-		          url scm_url
-		        }
-	
-		        licenses {
-		          license {
-		            name PROJ_LICENCE_NAME
-		            url PROJ_LICENCE_URL
-		          }
-		        }
-	
-		        developers {
-		          developer {
-		            id DEVELOPER_ID
-		            name DEVELOPER_NAME
-		            email DEVELOPER_EMAIL
-		          }
-		        }
-		      }
-		      pom('bboss_security_web').project {
-		        name project.name
-		        packaging 'jar'
-		        // optionally artifactId can be defined here 
-		        description PROJ_DESCRIPTION
-		        url PROJ_WEBSITEURL
-	
-		        scm {
-		          connection scm_connection
-		          developerConnection scm_developerConnection
-		          url scm_url
-		        }
-	
-		        licenses {
-		          license {
-		            name PROJ_LICENCE_NAME
-		            url PROJ_LICENCE_URL
-		          }
-		        }
-	
-		        developers {
-		          developer {
-		            id DEVELOPER_ID
-		            name DEVELOPER_NAME
-		            email DEVELOPER_EMAIL
-		          }
-		        }
-		      }
-		    }
-	   
-  }
-}
-
-
-publishing {
-    publications {
-        bboss_security_web_inf(MavenPublication) {
-            artifactId 'bboss-security-web-inf'
-            from components.java
-            artifact bboss_security_web_infJar
-            artifact bboss_security_web_infSourceJar
-            artifact bboss_security_web_infDocJar
-        }
-        bboss_security_web(MavenPublication) {
-             artifactId 'bboss-security-web'
-            from components.java
-           artifact bboss_security_webJar
-            artifact bboss_security_webSourceJar
-            artifact bboss_security_webDocJar
-            
-        }
-        
-    }
-    repositories {
-    	mavenLocal()
-	       /** maven {
-	            url "https://oss.sonatype.org/service/local/staging/deploy/maven2"
-	            credentials {
-	                username ""
-	                password ""
-	            }
-	        }*/
-	    }
-    
-}
