@@ -36,7 +36,6 @@ dependencies {
              [group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.7.4',transitive: false],
              [group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.7.4',transitive: false],
              [group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: '2.7.4',transitive: false],
-            [group: 'org.codehaus.jackson', name: 'jackson-mapper-asl', version: '1.9.10',transitive: true],
              [group: 'oro', name: 'oro', version: '2.0.8', transitive: false],
              [group: 'com.tonicsystems', name: 'jarjar', version: '0.6', transitive: false],
              [group: 'redis.clients', name: 'jedis', version: '2.8.1', transitive: false],
