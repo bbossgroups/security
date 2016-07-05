@@ -16,7 +16,7 @@ dependencies {
     
     compile (
             [group: 'org.ow2.asm', name: 'asm', version: '5.0.3', transitive: false],
-            [group: 'com.bbossgroups', name: 'bboss-data', version: "5.0.0", transitive: false],
+            [group: 'com.bbossgroups', name: 'bboss-data', version: "${bboss_version}", transitive: false],
             [group: 'com.bbossgroups', name: 'bboss-core', version: "${bboss_version}", transitive: false],
             [group: 'com.bbossgroups.security', name: 'bboss-security', version: "${version}", transitive: false],
             [group: 'com.bbossgroups', name: 'bboss-soa', version: "${bboss_version}", transitive: false],
