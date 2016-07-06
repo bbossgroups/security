@@ -14,7 +14,7 @@ sourceSets {
 }
 
 
-project.tasks.compileJava.dependsOn(project(':bboss-security').tasks.install)
+project.tasks.compileJava.dependsOn([project(':bboss-security-web-inf').tasks.install,project(':bboss-security').tasks.install])
 
 dependencies {
     compile(
@@ -28,8 +28,11 @@ dependencies {
                [group: 'com.bbossgroups', name: 'bboss-velocity', version: "${bboss_version}", transitive: false],
              [group: 'cglib', name: 'cglib-nodep', version: '3.1', transitive: false],
               [group: 'org.apache.commons', name: 'commons-pool2', version: '2.4.2', transitive: false],
-               [group: 'org.codehaus.jackson', name: 'jackson-mapper-asl', version: '1.9.10',transitive: true],
-            [group: 'com.bbossgroups', name: 'bboss-soa', version: "${bboss_version}", transitive: false],
+                [group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: "${jacksonversion}",transitive: false],
+            [group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: "${jacksonversion}",transitive: false],
+            [group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: "${jacksonversion}",transitive: false],
+            [group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: "${jacksonversion}",transitive: false],
+             [group: 'com.bbossgroups', name: 'bboss-soa', version: "${bboss_version}", transitive: false],
             [group: 'javaee', name: 'javaee-api', version: '5', transitive: false],
     )
  
