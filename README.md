@@ -56,10 +56,7 @@ http://yin-bp.iteye.com/category/327553
 
 ## |--bboss-security-web和bboss-security-web-inf
 
-bboss会话共享监控服务和令牌服务工程,独立ant构建指令：bboss-security-web/build.bat,发布的jar和依赖资源文件存放在bboss-security-web/distrib目录下,构建完毕后不会同步更新其他工程下的依赖包
-
-ant构建补充说明：bboss提供了统一的ant构建指令集，执行这些构建指令时会将产生的jar包同步更新到其他相关的工程中；同时在每个工程目录下都提供了单独的ant构建指令，如果只需构建对应的工程模块同时不需要将构建的jar包分发到其他相关工程中，
-则可以执行工程下的ant构建指令。
+bboss会话共享监控服务和令牌服务工程
 
 为了方便应用系统集成bboss会话共享功能，准备了两个会话共享demo工程： 
 
@@ -75,6 +72,33 @@ ant构建补充说明：bboss提供了统一的ant构建指令集，执行这些
 
 http://yin-bp.iteye.com/blog/2087308
 
+## 构建和发布工程：
+
+编译构建所有插件模块：
+
+cd security
+
+gradle install
+
+构建成功后，先启用gretty插件（注意：第一次构建工程，需要关闭gretty插件，默认关闭）
+
+修改/security/gradle.properties中属性为true，即可启用插件：
+
+enable_gretty=true
+
+然后运行以下指令,启动tomcat和demo应用
+
+cd security
+
+gradle :session:tomcatStart
+
+gradle :sessionmonitor:tomcatStart
+
+运行前请修改session和sessionmonitor两个工程中的mongodb.xml或者redis.xml（根据实际情况二者选其一）
+
+resources/mongodb.xml
+
+resources/redis.xml
 
 
 ## bboss项目特色特点介绍文档：
