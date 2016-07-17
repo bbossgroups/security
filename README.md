@@ -15,6 +15,7 @@ https://github.com/bbossgroups/security/trunk
 
 # session操作使用样列(遵循servlet标准规范)：
 
+```
 HttpSession session = request.getSession();//request.getSession(true)
 
 session.setMaxInactiveInterval(180000);//修改session有效期
@@ -43,6 +44,8 @@ session.setAttribute("testVO", testVO);
 
 testVO = (TestVO)session.getAttribute("testVO");
 
+```
+
 更多使用方法参考文档：
 
 http://yin-bp.iteye.com/category/327553
@@ -51,7 +54,7 @@ http://yin-bp.iteye.com/category/327553
 
   bboss会话共享和令牌管理核心工程,独立ant构建指令：bboss-security/run.bat,发布的jar和依赖资源文件存放在bboss-security/distrib目录下,构建完毕后不会同步更新其他工程下的依赖包
 
-## |--bboss-security-web 
+## |--bboss-security-web和bboss-security-web-inf
 
 bboss会话共享监控服务和令牌服务工程,独立ant构建指令：bboss-security-web/build.bat,发布的jar和依赖资源文件存放在bboss-security-web/distrib目录下,构建完毕后不会同步更新其他工程下的依赖包
 
