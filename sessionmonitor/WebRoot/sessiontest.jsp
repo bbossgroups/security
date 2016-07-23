@@ -43,7 +43,6 @@ userAccount = (String)session.getAttribute("userAccount");
 out.println("after modify shared attribute userAccount:"+userAccount+"<br>");
 out.println("attribute testVO:"+testVO.getId()+"<br>");
  %>
- 
- <a href="http://session.bbossgroups.com" target="demo">session跨域测试</a>
+<a href="http://sessionmonitor.bbossgroups.com" target="demo">session跨域测试</a>
  <br>
- <a href="http://localhost/sessionmonitor/session/sessionManager/sessionManager.page" target="demomonitor">session监控</a>
+ <a href="session/sessionManager/sessionManager.page" target="demomonitor">session监控</a>
