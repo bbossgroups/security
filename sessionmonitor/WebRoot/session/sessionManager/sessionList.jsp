@@ -68,10 +68,10 @@
 				                <input id="CK" type="checkbox" name="CK" <pg:equal colName="sessionid" value="${currentsessionid}">disabled</pg:equal> onClick="checkOne('CKA','CK')" value="<pg:cell colName="sessionid" />"/>
 				            </td>
 				            
-				    		<td><pg:equal colName="sessionid" value="${currentsessionid}" evalbody="true">
+				    		<td><a href="javascript:void(0)" id="viewTaskDetailInfo" onclick="sessionInfo('<pg:cell colName="sessionid" />')"><pg:equal colName="sessionid" value="${currentsessionid}" evalbody="true">
 					    		<pg:yes><span style=" color: blue;"><b><pg:cell colName="sessionid" /></b></span></pg:yes>
 					    		<pg:no><pg:cell colName="sessionid" /></pg:no>
-				    		    </pg:equal></td> 
+				    		    </pg:equal></a></td> 
 				    		<pg:list colName="extendAttributes">
 				            	<td><pg:cell colName="value" /></td>
 				            </pg:list>    
