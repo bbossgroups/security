@@ -47,10 +47,12 @@ dependencies {
                [group: 'redis.clients', name: 'jedis', version: '2.8.1', transitive: false],
                 [group: 'org.mongodb', name: 'mongo-java-driver', version: "${mongodbversion}", transitive: false],
                 [group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.54', transitive: false],
-                 [group: 'javax.servlet', name: 'javax.servlet-api', version: "3.0.1", transitive: false],
+                
     //[group: 'javaee', name: 'javaee-api', version: '5', transitive: false],
     )
-    
+    compileOnly(
+    	 [group: 'javax.servlet', name: 'javax.servlet-api', version: "3.0.1", transitive: false],
+    )
      testCompile (            
             
             fileTree(dir: 'lib-compile', include: '**/*.jar')
