@@ -519,7 +519,14 @@ public class RedisSessionStore extends BaseSessionStore{
 						if(value.getValue() != null)
 							record.put(entry.getKey(), String.valueOf(value.getValue()));
 						else
-							record.put(entry.getKey(), null);
+						{
+							if(removes == null)
+							{
+								removes = new ArrayList<String>(); 
+							}
+							removes.add(entry.getKey());
+//							record.put(entry.getKey(), null);
+						}
 
 					}
 					else if(value.getOptype() == ModifyValue.type_read)
@@ -528,7 +535,16 @@ public class RedisSessionStore extends BaseSessionStore{
 						{
 							record = new HashMap<String,String>();
 						}
-						record.put(entry.getKey(), SessionHelper.serial(value.getValue()));
+						if(value.getValue() != null)
+							record.put(entry.getKey(), SessionHelper.serial(value.getValue()));
+						else
+						{
+							if(removes == null)
+							{
+								removes = new ArrayList<String>(); 
+							}
+							removes.add(entry.getKey());
+						}
 					}
 					else
 					{
