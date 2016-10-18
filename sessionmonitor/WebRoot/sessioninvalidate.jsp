@@ -2,7 +2,7 @@
 <%@ page contentType="text/html; charset=UTF-8" session="false"%>
 
 <%
-SessionHelper.removeSession(null, request);
+SessionHelper.removeSession("9bd2142c-d5c5-4abf-978c-99c1c8483ea7", request);
 out.println("<div>ID request.getSession(true).getId():"+request.getSession(true).getId()+"</div>");
 request.getSession().invalidate();
 out.println("<div>after invalidate session request.getSession(false):"+request.getSession(false)+"</div>");

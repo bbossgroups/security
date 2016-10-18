@@ -47,17 +47,43 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 	private HttpSessionImpl session;
 	private HttpServletResponse response;
 	private ServletContext servletContext;	
+	private String appkey ;
 	public SessionHttpServletRequestWrapper(HttpServletRequest request,HttpServletResponse response,ServletContext servletContext) {
 		super(request);
 		SessionHelper.init(SessionHelper.getAppKeyFromRequest(this));
+		
 		sessionid = StringUtil.getCookieValue((HttpServletRequest)request, SessionHelper.getSessionManager().getCookiename());
 		this.servletContext = servletContext;
 		this.response = response;
+		if( !SessionHelper.getSessionManager().usewebsession())
+			appkey = SessionHelper.getAppKey(this);
 	}
 
 	@Override
 	public HttpSession getSession() {
 		 return getSession(true);
+	}
+	/**
+	 * 清除session数据
+	 * @param sessionid
+	 */
+	public void removeSession(String sessionid)
+	{
+		if( SessionHelper.getSessionManager().usewebsession())
+			return;
+		if(this.sessionid != null && this.sessionid.equals(sessionid))
+		{
+			 
+			HttpSession session  = getSession(false);
+			if(session != null)
+				session.invalidate();
+		}
+		else
+		{
+			HttpSession session = _getSession( sessionid);
+			if(session != null)
+				session.invalidate();
+		}
 	}
 
 	
@@ -85,7 +111,7 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 			if(create)
 			{
 
-				String appkey = SessionHelper.getAppKey(this);
+//				String appkey = SessionHelper.getAppKey(this);
 				SessionBasicInfo sessionBasicInfo = new SessionBasicInfo();
 				sessionBasicInfo.setAppKey(appkey);
 				sessionBasicInfo.setReferip(StringUtil.getClientIP(this));
@@ -109,7 +135,7 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 		}
 		else
 		{
-			String appkey =  SessionHelper.getAppKey(this);
+//			String appkey =  SessionHelper.getAppKey(this);
 
 			Session session = SessionHelper.getSession(appkey,this.getContextPath(),sessionid);
 			if(session == null)//session不存在，创建新的session
@@ -140,6 +166,38 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 		
 		
 	}
+	
+	
+	private HttpSession _getSession(String sessionid) {
+		if( SessionHelper.getSessionManager().usewebsession())
+		{
+			return null;
+		}
+		HttpSessionImpl session = null;
+		if(sessionid == null)
+		{
+			
+			return session;
+		}
+		
+		else
+		{
+//			String appkey =  SessionHelper.getAppKey(this);
+
+			Session session_ = SessionHelper.getSession(appkey,this.getContextPath(),sessionid);
+			if(session_ == null)//session不存在，创建新的session
+			{				
+				return null;
+			}
+			else
+			{
+				session =  new HttpSessionImpl(session_,servletContext,this.getContextPath(),null);
+			}
+			return session;
+		}
+		
+		
+	}
 
 	public void touch() {
 		if( SessionHelper.getSessionManager().usewebsession())
@@ -148,7 +206,7 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 		{
 			if(session == null)
 			{
-				String appkey =  SessionHelper.getAppKey(this);
+//				String appkey =  SessionHelper.getAppKey(this);
 				Session session_ = SessionHelper.getSession(appkey,this.getContextPath(), sessionid);
 				if(session_ == null || !session_.isValidate())
 				{

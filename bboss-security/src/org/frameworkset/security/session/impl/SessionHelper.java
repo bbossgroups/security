@@ -82,6 +82,14 @@ public class SessionHelper {
 				|| key.equals("lastAccessedHostIP");
 			
 	}
+	
+	public static void removeSession(String sessionId,HttpServletRequest request)
+	{
+		if(request instanceof SessionHttpServletRequestWrapper)
+		{
+			((SessionHttpServletRequestWrapper)request).removeSession(sessionId);
+		}
+	}
 	public static void init(String contextpath){
 		if(inited)
 			return ;

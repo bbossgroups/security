@@ -1,5 +1,5 @@
 <properties>
- 	<property name="port" value="80"/>  
+ 	<property name="port" value="81"/>  
 	<property name="context" value="sessionmonitor"/>  
 	<property name="webxml" value="./WebRoot/WEB-INF/web.xml"/>  
 	<property name="resourceBase" value="./WebRoot"/>  

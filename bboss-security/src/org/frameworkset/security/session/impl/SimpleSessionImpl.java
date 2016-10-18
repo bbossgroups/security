@@ -201,7 +201,8 @@ public class SimpleSessionImpl implements Session{
 				}
 				finally
 				{
-					invalidateCallback.invalidateCallback();
+					if(invalidateCallback != null)
+						invalidateCallback.invalidateCallback();
 				}
 			}
 		}
