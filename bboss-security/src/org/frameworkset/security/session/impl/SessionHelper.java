@@ -90,6 +90,47 @@ public class SessionHelper {
 			((SessionHttpServletRequestWrapper)request).removeSession(sessionId);
 		}
 	}
+	
+	public static void removeSession(String sessionId,String appcode)
+	{
+		if( SessionHelper.getSessionManager().usewebsession())
+			return;
+		
+		HttpSession session = _getSession(appcode, sessionId);
+		if(session != null)
+			session.invalidate();
+	
+	}
+	private static HttpSession _getSession(String appkey,String sessionid) {
+		if( SessionHelper.getSessionManager().usewebsession())
+		{
+			return null;
+		}
+		HttpSessionImpl session = null;
+		if(sessionid == null)
+		{
+			
+			return session;
+		}
+		
+		else
+		{
+//			String appkey =  SessionHelper.getAppKey(this);
+
+			Session session_ = SessionHelper.getSession(appkey,null,sessionid);
+			if(session_ == null)//session不存在，创建新的session
+			{				
+				return null;
+			}
+			else
+			{
+				session =  new HttpSessionImpl(session_,null,null,null);
+			}
+			return session;
+		}
+		
+		
+	}
 	public static void init(String contextpath){
 		if(inited)
 			return ;
