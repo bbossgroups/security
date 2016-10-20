@@ -1,5 +1,5 @@
 <%@ page language="java" pageEncoding="utf-8"%>
-<%@page import=" org.frameworkset.security.session.impl.SessionHelper"%>
+<%@page import=" org.frameworkset.security.session.SessionUtil"%>
 <%@ taglib uri="/WEB-INF/pager-taglib.tld" prefix="pg"%>
 <%--
 	描述：session管理
@@ -59,7 +59,7 @@ $(document).ready(function() {
 	$('#delAllButton').click(function() {
 		delAllSessions();
     });
-    <%if(SessionHelper.isMonitorAll()){%>
+    <%if(SessionUtil.isMonitorAll()){%>
     $('#delAppButton').click(function() {
 		delApp();
     });
@@ -444,7 +444,7 @@ function delAllSessions () {
 										
 				<a href="javascript:void(0)" class="bt_small" id="delAllButton"><span>清空应用下Session</span></a>
 				<a href="javascript:void(0)" class="bt_small" id="delBatchButton"><span>批量删除</span></a>
-				 <%if(SessionHelper.isMonitorAll()){%><a href="javascript:void(0)" class="bt_small" id="delAppButton"><span>删除应用（慎用）</span></a><%} %>
+				 <%if(SessionUtil.isMonitorAll()){%><a href="javascript:void(0)" class="bt_small" id="delAppButton"><span>删除应用（慎用）</span></a><%} %>
 			</div>
 					
 			<strong><span id="titileSpan">Session列表</span></strong>

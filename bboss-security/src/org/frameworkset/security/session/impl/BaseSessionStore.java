@@ -20,10 +20,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.frameworkset.security.session.MongoDBUtil;
 import org.frameworkset.security.session.Session;
 import org.frameworkset.security.session.SessionBasicInfo;
 import org.frameworkset.security.session.SessionStore;
+import org.frameworkset.security.session.SessionUtil;
 
 /**
  * <p>Title: BaseSessionStore.java</p> 
@@ -48,9 +48,9 @@ public abstract class BaseSessionStore implements SessionStore {
 		while(keys.hasNext())
 		{
 			String tempstr = keys.next();
-			if(!MongoDBUtil.filter(tempstr))
+			if(!SessionUtil.filter(tempstr))
 			{
-				tempstr = SessionHelper.dewraperAttributeName(appKey, contextpath, tempstr);
+				tempstr = SessionUtil.dewraperAttributeName(appKey, contextpath, tempstr);
 				if(tempstr != null)
 				{
 					if(!localAttributes.containsKey(tempstr))
@@ -60,15 +60,17 @@ public abstract class BaseSessionStore implements SessionStore {
 		}
 		return temp;
 	}
+	
+	
 	protected List<String> _getAttributeNames(Iterator<String> keys,String appKey,String contextpath)
 	{
 		List<String> temp = new ArrayList<String>();
 		while(keys.hasNext())
 		{
 			String tempstr = keys.next();
-			if(!MongoDBUtil.filter(tempstr))
+			if(!SessionUtil.filter(tempstr))
 			{
-				tempstr = SessionHelper.dewraperAttributeName(appKey, contextpath, tempstr);
+				tempstr = SessionUtil.dewraperAttributeName(appKey, contextpath, tempstr);
 				if(tempstr != null)
 				{
 					temp.add(tempstr);
@@ -85,10 +87,10 @@ public abstract class BaseSessionStore implements SessionStore {
 		while(keys.hasNext())
 		{
 			String tempstr = keys.next();
-			if(!MongoDBUtil.filter(tempstr))
+			if(!SessionUtil.filter(tempstr))
 			{
-				tempstr = MongoDBUtil.recoverSpecialChar(tempstr);
-				tempstr = SessionHelper.dewraperAttributeName(appKey, contextpath, tempstr);
+				tempstr = SessionUtil.recoverSpecialChar(tempstr);
+				tempstr = SessionUtil.dewraperAttributeName(appKey, contextpath, tempstr);
 				
 				if(tempstr != null)
 				{
@@ -107,10 +109,10 @@ public abstract class BaseSessionStore implements SessionStore {
 		while(keys.hasNext())
 		{
 			String tempstr = keys.next();
-			if(!MongoDBUtil.filter(tempstr))
+			if(!SessionUtil.filter(tempstr))
 			{
-				tempstr = MongoDBUtil.recoverSpecialChar(tempstr);
-				tempstr = SessionHelper.dewraperAttributeName(appKey, contextpath, tempstr);
+				tempstr = SessionUtil.recoverSpecialChar(tempstr);
+				tempstr = SessionUtil.dewraperAttributeName(appKey, contextpath, tempstr);
 				
 				if(tempstr != null)
 				{

@@ -13,9 +13,9 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 
 import org.frameworkset.nosql.mongodb.MongoDB;
-import org.frameworkset.nosql.mongodb.MongoDBHelper;
 import org.frameworkset.security.session.MongoDBUtil;
 import org.frameworkset.security.session.SessionSerial;
+import org.frameworkset.security.session.SessionUtil;
 import org.frameworkset.security.session.impl.SessionHelper;
 import org.frameworkset.spi.InitializingBean;
 
@@ -63,7 +63,7 @@ public class MongoSessionStaticManagerImpl extends BaseSessionStaticManagerImpl 
 	@Override
 	public SessionAPP getSingleSessionAPP(HttpServletRequest request)
 	{
-		String currentAPP = SessionHelper.getAppKey(request);
+		String currentAPP = SessionUtil.getAppKey(request);
 		return getSingleSessionAPP(currentAPP);
 	}
 	@Override
@@ -116,7 +116,7 @@ public class MongoSessionStaticManagerImpl extends BaseSessionStaticManagerImpl 
 		}
 		else
 		{
-			String currentAPP = SessionHelper.getAppKey(request);
+			String currentAPP = SessionUtil.getAppKey(request);
 			String currentAPPTableName = currentAPP + "_sessions";
 			// 获取所有当前db所有信息集合
 			Set<String> apps = MongoDBUtil.getSessionDBCollectionNames();
@@ -248,7 +248,7 @@ public class MongoSessionStaticManagerImpl extends BaseSessionStaticManagerImpl 
 		keys.put("secure",1);
 		keys.put("httpOnly", 1);
 		keys.put("lastAccessedHostIP", 1);
-		SessionHelper.evalqueryfields(attributeInfos,keys );
+		SessionUtil.evalqueryfields(attributeInfos,keys );
 		
 		@SuppressWarnings("unchecked")
 		Map<String, AttributeInfo> extendAttributes = (Map<String, AttributeInfo>)queryParams.get("extendAttributes");
@@ -305,7 +305,7 @@ public class MongoSessionStaticManagerImpl extends BaseSessionStaticManagerImpl 
 				}
 				else
 				{
-					info.setHttpOnly(StringUtil.hasHttpOnlyMethod()?SessionHelper.getSessionManager().isHttpOnly():false);
+					info.setHttpOnly(StringUtil.hasHttpOnlyMethod()?SessionUtil.getSessionManager().isHttpOnly():false);
 				}
 				info.setLastAccessedHostIP((String)dbobject.get("lastAccessedHostIP"));
 					
@@ -387,7 +387,7 @@ public class MongoSessionStaticManagerImpl extends BaseSessionStaticManagerImpl 
 				}
 				else
 				{
-					info.setHttpOnly(StringUtil.hasHttpOnlyMethod()?SessionHelper.getSessionManager().isHttpOnly():false);
+					info.setHttpOnly(StringUtil.hasHttpOnlyMethod()?SessionUtil.getSessionManager().isHttpOnly():false);
 				}
 				Map<String, Object> attributes = MongoDBUtil
 						.toMap(obj, false);

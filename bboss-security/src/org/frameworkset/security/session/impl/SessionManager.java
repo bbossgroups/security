@@ -25,6 +25,7 @@ import org.frameworkset.security.session.SessionIDGenerator;
 import org.frameworkset.security.session.SessionListener;
 import org.frameworkset.security.session.SessionSerial;
 import org.frameworkset.security.session.SessionStore;
+import org.frameworkset.security.session.SessionUtil;
 import org.frameworkset.security.session.domain.CrossDomain;
 import org.frameworkset.security.session.statics.AttributeInfo;
 import org.frameworkset.security.session.statics.SessionConfig;
@@ -173,14 +174,14 @@ public class SessionManager extends org.frameworkset.spi.BaseApplicationContextA
 		if(sessionConfig == null)
 			return null;
 		if(serialattributes)
-			sessionConfig.setExtendAttributeInfos(SessionHelper.getExtendAttributeInfos(sessionConfig.getMonitorAttributes()));
+			sessionConfig.setExtendAttributeInfos(SessionUtil.getExtendAttributeInfos(sessionConfig.getMonitorAttributes()));
 		return sessionConfig;
 	}
 	
 	public AttributeInfo[] getAttributeInfos(String attributeInfos)
 	{
 		
-		return SessionHelper.getExtendAttributeInfos(attributeInfos);
+		return SessionUtil.getExtendAttributeInfos(attributeInfos);
 	}
 	public void init()
 	{

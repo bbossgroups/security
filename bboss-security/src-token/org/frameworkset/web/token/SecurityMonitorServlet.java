@@ -5,7 +5,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 
 import org.apache.log4j.Logger;
-import org.frameworkset.security.session.impl.SessionHelper;
+import org.frameworkset.security.session.SessionUtil;
 
 /**
  * 独立的token生命周期管理服务，在启用统一的mongodb存储token和ticket情况下有用
@@ -28,7 +28,7 @@ public class SecurityMonitorServlet extends HttpServlet {
 		
 		try {
 			
-			SessionHelper.getSessionManager();
+			SessionUtil.getSessionManager();
 			
 		} catch (Throwable e) {
 			log.warn("",e);

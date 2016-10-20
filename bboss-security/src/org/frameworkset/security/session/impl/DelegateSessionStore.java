@@ -25,6 +25,7 @@ import org.frameworkset.security.session.Session;
 import org.frameworkset.security.session.SessionBasicInfo;
 import org.frameworkset.security.session.SessionEvent;
 import org.frameworkset.security.session.SessionStore;
+import org.frameworkset.security.session.SessionUtil;
 import org.frameworkset.security.session.SimpleHttpSession;
 import org.frameworkset.security.session.statics.SessionConfig;
 
@@ -60,9 +61,9 @@ public class DelegateSessionStore implements SessionStore {
 	{
 		Session session = createSession(sessionBasicInfo);
 		SimpleHttpSession httpsession = new HttpSessionImpl(session,servletContext,contextpath,invalidateCallback);
-		if(SessionHelper.haveSessionListener())
+		if(SessionUtil.haveSessionListener())
 		{
-			SessionHelper.dispatchEvent(new SessionEventImpl(httpsession,SessionEvent.EventType_create));
+			SessionUtil.dispatchEvent(new SessionEventImpl(httpsession,SessionEvent.EventType_create));
 		}
 		return httpsession;
 	}
@@ -85,7 +86,7 @@ public class DelegateSessionStore implements SessionStore {
 	@Override
 	public Object getAttribute(String appKey,String contextpath, String sessionID, String attribute,Session session) {
 		// TODO Auto-generated method stub
-		String _attribute = SessionHelper.wraperAttributeName(appKey,contextpath,  attribute);
+		String _attribute = SessionUtil.wraperAttributeName(appKey,contextpath,  attribute);
 		Object value = sessionStore.getAttribute(appKey, contextpath, sessionID, _attribute,session);
 		if(session.isStoreReadAttributes() && value != null && readcanstore( value))
 			session.modifyAttribute(_attribute, value, ModifyValue.type_data, ModifyValue.type_read);	
@@ -119,9 +120,9 @@ public class DelegateSessionStore implements SessionStore {
 
 	@Override
 	public void invalidate(SimpleHttpSession session,String appKey,String contextpath, String sessionID) {
-		if(SessionHelper.haveSessionListener())
+		if(SessionUtil.haveSessionListener())
 		{
-			SessionHelper.dispatchEvent(new SessionEventImpl(session,SessionEvent.EventType_destroy));
+			SessionUtil.dispatchEvent(new SessionEventImpl(session,SessionEvent.EventType_destroy));
 		}
 		this.sessionStore.invalidate(session,appKey, contextpath, sessionID);
 		
@@ -139,12 +140,12 @@ public class DelegateSessionStore implements SessionStore {
 	@Override
 	public void removeAttribute(SimpleHttpSession session,String appKey,String contextpath, String sessionID,
 			String attribute) {
-		if(SessionHelper.haveSessionListener())
+		if(SessionUtil.haveSessionListener())
 		{
-			SessionHelper.dispatchEvent(new SessionEventImpl(session,SessionEvent.EventType_removeAttibute)
+			SessionUtil.dispatchEvent(new SessionEventImpl(session,SessionEvent.EventType_removeAttibute)
 										.setAttributeName(attribute));
 		}
-		String _attribute = SessionHelper.wraperAttributeName(appKey,contextpath,  attribute);
+		String _attribute = SessionUtil.wraperAttributeName(appKey,contextpath,  attribute);
 		if(!session.islazy())
 			this.sessionStore.removeAttribute(  session,appKey, contextpath, sessionID, _attribute);
 		else
@@ -160,8 +161,8 @@ public class DelegateSessionStore implements SessionStore {
 	public void addAttribute(SimpleHttpSession session,String appKey,String contextpath, String sessionID, String attribute,
 			Object value) {
 		
-		value = SessionHelper.serial(value);
-		String _attribute = SessionHelper.wraperAttributeName(appKey,contextpath,  attribute);
+		value = SessionUtil.serial(value);
+		String _attribute = SessionUtil.wraperAttributeName(appKey,contextpath,  attribute);
 		if(!session.islazy())
 		{
 			this.sessionStore.addAttribute(  session,appKey, contextpath, sessionID, _attribute, value);
@@ -171,9 +172,9 @@ public class DelegateSessionStore implements SessionStore {
 			session.modifyAttribute(_attribute, value, ModifyValue.type_data, ModifyValue.type_add);
 		}
 		
-		if(SessionHelper.haveSessionListener())
+		if(SessionUtil.haveSessionListener())
 		{
-			SessionHelper.dispatchEvent(new SessionEventImpl(session,SessionEvent.EventType_addAttibute)
+			SessionUtil.dispatchEvent(new SessionEventImpl(session,SessionEvent.EventType_addAttibute)
 										.setAttributeName(attribute));
 		}
 		

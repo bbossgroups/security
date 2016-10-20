@@ -6,16 +6,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
-import org.frameworkset.security.session.domain.CrossDomain;
+import org.frameworkset.security.session.SessionUtil;
 import org.frameworkset.security.session.entity.Apps;
 import org.frameworkset.security.session.entity.SessionCondition;
 import org.frameworkset.security.session.entity.SessionInfoBean;
-import org.frameworkset.security.session.impl.SessionHelper;
 import org.frameworkset.security.session.service.SessionManagerService;
 import org.frameworkset.security.session.statics.AttributeInfo;
 import org.frameworkset.security.session.statics.SessionAPP;
 import org.frameworkset.security.session.statics.SessionConfig;
-import org.frameworkset.soa.ObjectSerializable;
 import org.frameworkset.util.annotations.PagerParam;
 import org.frameworkset.util.annotations.ResponseBody;
 import org.frameworkset.web.servlet.ModelMap;
@@ -30,7 +28,7 @@ public class SessionManagerAction {
 	public String sessionManager(String appkey,ModelMap model) {
 		if(!StringUtil.isEmpty(appkey))
 		{
-			SessionConfig sessionConfig = SessionHelper .getSessionConfig(appkey);
+			SessionConfig sessionConfig = SessionUtil .getSessionConfig(appkey);
 			if(sessionConfig != null && sessionConfig.getExtendAttributeInfos() != null)		
 			{
 				
@@ -48,15 +46,15 @@ public class SessionManagerAction {
 		{
 			return "对不起，请选择要删除应用!";
 		}
-		String currentAppkey = SessionHelper.getAppKey(request);
+		String currentAppkey = SessionUtil.getAppKey(request);
 		if(appkey.equals(currentAppkey))
 		{
 			return "对不起，不能删除本系统对应的应用"+currentAppkey+"!";
 		}
-		if(SessionHelper.hasDeleteAppPermission(appkey, request))
+		if(SessionUtil.hasDeleteAppPermission(appkey, request))
 		{
 			try {
-				SessionHelper.deleteApp(appkey);
+				SessionUtil.deleteApp(appkey);
 				return "success";
 			} catch (Exception e) {
 				log.error("删除应用失败：", e);
@@ -96,15 +94,15 @@ public class SessionManagerAction {
 				return "path:sessionList";
 			}
 				
-			if(!SessionHelper.hasMonitorPermission(condition.getAppkey(), request))
+			if(!SessionUtil.hasMonitorPermission(condition.getAppkey(), request))
 			{
 				model.addAttribute("message","对不起，没有查询应用"+condition.getAppkey()+"的session数据的权限");
 			}
 			else
 			{
-				SessionConfig sessionConfig = SessionHelper.getSessionConfig(condition.getAppkey());
+				SessionConfig sessionConfig = SessionUtil.getSessionConfig(condition.getAppkey());
 				if(sessionConfig != null)
-					condition.setExtendAttributes(SessionHelper.parserExtendAttributes(request,sessionConfig));
+					condition.setExtendAttributes(SessionUtil.parserExtendAttributes(request,sessionConfig));
 				// 分页获取session数据
 				ListInfo AllSessions = sessionService.querySessionDataForPage(
 						sessionConfig,condition, offset, pagesize);
@@ -148,7 +146,7 @@ public class SessionManagerAction {
 			
 			if(loadextendattrs && StringUtil.isNotEmpty(appKey))
 			{
-				SessionConfig config = SessionHelper.getSessionConfig(appKey);
+				SessionConfig config = SessionUtil.getSessionConfig(appKey);
 				if(config != null)
 					apps.setExtendAttributes(config.getExtendAttributeInfos());
 			}
@@ -210,7 +208,7 @@ public class SessionManagerAction {
 	public @ResponseBody
 	String delSessions(String appkey, String sessionids, ModelMap model,HttpServletRequest request) {
 		try {
-			if(!SessionHelper.hasMonitorPermission(appkey, request))
+			if(!SessionUtil.hasMonitorPermission(appkey, request))
 			{
 				return "对不起，没有删除应用"+appkey+"的session数据的权限";
 			}
@@ -251,7 +249,7 @@ public class SessionManagerAction {
 	public @ResponseBody
 	String delAllSessions(String appkey, ModelMap model,HttpServletRequest request) {
 		try {
-			if(!SessionHelper.hasMonitorPermission(appkey, request))
+			if(!SessionUtil.hasMonitorPermission(appkey, request))
 			{
 				return "对不起，没有删除应用"+appkey+"的session数据的权限";
 			}
@@ -259,7 +257,7 @@ public class SessionManagerAction {
 			{
 				HttpSession session = request.getSession(false);
 				String sessionid = session != null?session.getId():null;
-				String currentappkey = SessionHelper.getAppKey(request);
+				String currentappkey = SessionUtil.getAppKey(request);
 				sessionService.delAllSessions(appkey,  currentappkey,sessionid);
 	
 				return "success";
@@ -278,7 +276,7 @@ public class SessionManagerAction {
 	public String viewSessionInfo(String sessionid, String appkey,
 			ModelMap model,HttpServletRequest request)  throws Exception{
 		try {
-			if(!SessionHelper.hasMonitorPermission(appkey, request))
+			if(!SessionUtil.hasMonitorPermission(appkey, request))
 			{
 				model.addAttribute("message","对不起，没有查看应用"+appkey+"的session数据的权限");
 			}
@@ -302,13 +300,13 @@ public class SessionManagerAction {
 	public String viewSessionConfig(  String appkey,
 			ModelMap model,HttpServletRequest request)  throws Exception{
 		try {
-			if(!SessionHelper.hasMonitorPermission(appkey, request))
+			if(!SessionUtil.hasMonitorPermission(appkey, request))
 			{
 				model.addAttribute("message","对不起，没有查看应用"+appkey+"的session共享的权限");
 			}
 			else
 			{
-				SessionConfig sessionConfig = SessionHelper .getSessionConfig(appkey,true);
+				SessionConfig sessionConfig = SessionUtil .getSessionConfig(appkey,true);
 				if(sessionConfig != null  )		
 				{
 					

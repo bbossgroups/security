@@ -1,8 +1,8 @@
-<%@page import="org.frameworkset.security.session.impl.SessionHelper"%>
+<%@page import="org.frameworkset.security.session.SessionUtil"%>
 <%@ page contentType="text/html; charset=UTF-8" session="false"%>
 
 <%
-SessionHelper.removeSession("9bd2142c-d5c5-4abf-978c-99c1c8483ea7", request);
+SessionUtil.removeSession("2290fa25-8cd2-4e33-b5fd-55b99a932714", request);
 out.println("<div>ID request.getSession(true).getId():"+request.getSession(true).getId()+"</div>");
 request.getSession().invalidate();
 out.println("<div>after invalidate session request.getSession(false):"+request.getSession(false)+"</div>");

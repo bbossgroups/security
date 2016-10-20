@@ -20,6 +20,7 @@ import org.frameworkset.security.session.InvalidateCallback;
 import org.frameworkset.security.session.MongoDBUtil;
 import org.frameworkset.security.session.Session;
 import org.frameworkset.security.session.SessionBasicInfo;
+import org.frameworkset.security.session.SessionUtil;
 import org.frameworkset.security.session.SimpleHttpSession;
 import org.frameworkset.security.session.domain.CrossDomain;
 import org.frameworkset.security.session.statics.SessionConfig;
@@ -30,7 +31,6 @@ import com.frameworkset.util.StringUtil;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
-import com.mongodb.Mongo;
 import com.mongodb.WriteConcern;
 
 public class MongDBSessionStore extends BaseSessionStore{
@@ -157,8 +157,8 @@ public class MongDBSessionStore extends BaseSessionStore{
 		long maxInactiveInterval = this.getSessionTimeout();
 		long lastAccessedTime = creationTime;
 	
-		boolean isHttpOnly = StringUtil.hasHttpOnlyMethod()?SessionHelper.getSessionManager().isHttpOnly():false;
-		boolean secure = SessionHelper.getSessionManager().isSecure();
+		boolean isHttpOnly = StringUtil.hasHttpOnlyMethod()?SessionUtil.getSessionManager().isHttpOnly():false;
+		boolean secure = SessionUtil.getSessionManager().isSecure();
 		DBCollection sessions =getAppSessionDBCollection( sessionBasicInfo.getAppKey());
 		MongoDB.insert(sessions,new BasicDBObject("sessionid",sessionid)
 		.append("creationTime", creationTime)
@@ -201,7 +201,7 @@ public class MongDBSessionStore extends BaseSessionStore{
 		DBObject obj = sessions.findOne(new BasicDBObject("sessionid",sessionID).append("_validate", true),keys);
 		if(obj == null)
 			return null;		
-		return SessionHelper.unserial((String)obj.get(attribute));
+		return SessionUtil.unserial((String)obj.get(attribute));
 //		return null;
 	}
 
@@ -422,11 +422,11 @@ public class MongDBSessionStore extends BaseSessionStore{
 					{
 						if(record == null)
 						{
-							record = new BasicDBObject(attribute, SessionHelper.serial(value.getValue())); 
+							record = new BasicDBObject(attribute, SessionUtil.serial(value.getValue())); 
 						}
 						else
 						{
-							record.append(attribute, SessionHelper.serial(value.getValue()));
+							record.append(attribute, SessionUtil.serial(value.getValue()));
 						}
 					}
 					else
@@ -529,7 +529,7 @@ public class MongDBSessionStore extends BaseSessionStore{
 			}
 			else
 			{
-				session.setHttpOnly(StringUtil.hasHttpOnlyMethod()?SessionHelper.getSessionManager().isHttpOnly():false);
+				session.setHttpOnly(StringUtil.hasHttpOnlyMethod()?SessionUtil.getSessionManager().isHttpOnly():false);
 			}
 			Map<String,Object> attributes = new HashMap<String,Object>();
 			for(int i = 0; attributeNames != null && i < attributeNames.size(); i ++)
@@ -537,9 +537,9 @@ public class MongDBSessionStore extends BaseSessionStore{
 				String name = attributeNames.get(i);
 				Object value = object.get(name);
 				try {
-					String temp = SessionHelper.dewraperAttributeName(appKey, contextpath, copy.get(i));		
+					String temp = SessionUtil.dewraperAttributeName(appKey, contextpath, copy.get(i));		
 					if(temp != null)
-						attributes.put(temp, SessionHelper.unserial((String)value));
+						attributes.put(temp, SessionUtil.unserial((String)value));
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -672,7 +672,7 @@ public class MongDBSessionStore extends BaseSessionStore{
 			}
 			else
 			{
-				session.setHttpOnly(StringUtil.hasHttpOnlyMethod()?SessionHelper.getSessionManager().isHttpOnly():false);
+				session.setHttpOnly(StringUtil.hasHttpOnlyMethod()?SessionUtil.getSessionManager().isHttpOnly():false);
 			}
 			session.setLastAccessedHostIP((String)object.get("lastAccessedHostIP"));
 			return session;

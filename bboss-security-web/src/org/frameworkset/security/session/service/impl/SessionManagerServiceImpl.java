@@ -9,9 +9,9 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.frameworkset.security.session.SessionUtil;
 import org.frameworkset.security.session.entity.SessionCondition;
 import org.frameworkset.security.session.entity.SessionInfoBean;
-import org.frameworkset.security.session.impl.SessionHelper;
 import org.frameworkset.security.session.service.SessionManagerService;
 import org.frameworkset.security.session.statics.SessionAPP;
 import org.frameworkset.security.session.statics.SessionConfig;
@@ -45,7 +45,7 @@ public class SessionManagerServiceImpl implements SessionManagerService {
 				queryParams.put("validate",
 						condition.getValidate().equals("1") ? "true" : "false");
 			}
-			List<SessionInfo> infoList = SessionHelper
+			List<SessionInfo> infoList = SessionUtil
 					.getSessionStaticManager().getAllSessionInfos(   config, queryParams,
 							pagesize, offset);
 			
@@ -119,19 +119,19 @@ public class SessionManagerServiceImpl implements SessionManagerService {
 	@Override
 	public List<SessionAPP> queryAppSessionData(String appKey,HttpServletRequest request) {
 
-		return SessionHelper.getSessionStaticManager().getSessionAPP(request);
+		return SessionUtil.getSessionStaticManager().getSessionAPP(request);
 	}
 	
 	@Override
 	public SessionAPP getSingleSessionAPP(HttpServletRequest request) {
 
-		return SessionHelper.getSessionStaticManager().getSingleSessionAPP(request);
+		return SessionUtil.getSessionStaticManager().getSingleSessionAPP(request);
 	}
 	
 	@Override
 	public SessionAPP getSingleSessionAPP(String appKey) {
 
-		return SessionHelper.getSessionStaticManager().getSingleSessionAPP(appKey);
+		return SessionUtil.getSessionStaticManager().getSingleSessionAPP(appKey);
 	}
 
 	@Override
@@ -144,7 +144,7 @@ public class SessionManagerServiceImpl implements SessionManagerService {
 
 				if (StringUtil.isNotEmpty(sessionid)) {
 
-					SessionHelper.getSessionStaticManager().removeSessionInfo(
+					SessionUtil.getSessionStaticManager().removeSessionInfo(
 							appkey, sessionid);
 				}
 			}
@@ -158,7 +158,7 @@ public class SessionManagerServiceImpl implements SessionManagerService {
 	public SessionInfoBean getSessionInfo(String appkey, String sessionid)  throws Exception{
 		try {
 
-			SessionInfo info = SessionHelper.getSessionStaticManager()
+			SessionInfo info = SessionUtil.getSessionStaticManager()
 					.getSessionInfo(appkey, sessionid);
 
 			SessionInfoBean bean = new SessionInfoBean();
@@ -217,7 +217,7 @@ public class SessionManagerServiceImpl implements SessionManagerService {
 	@Override
 	public void delAllSessions(String appkey,String currentappkey,String currentsessionid) throws Exception {
 		try {
-			SessionHelper.getSessionStaticManager().removeAllSession(appkey,  currentappkey,currentsessionid);
+			SessionUtil.getSessionStaticManager().removeAllSession(appkey,  currentappkey,currentsessionid);
 		} catch (Exception e) {
 			throw e;
 		}

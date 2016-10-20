@@ -4,7 +4,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.frameworkset.security.session.impl.SessionHelper;
+import org.frameworkset.security.session.SessionUtil;
 
 public abstract class BaseSessionStaticManagerImpl implements SessionStaticManager{
 
@@ -45,7 +45,7 @@ public abstract class BaseSessionStaticManagerImpl implements SessionStaticManag
 	 */
 	public boolean hasMonitorPermission(String app,HttpServletRequest request)
 	{
-		String currentAPP = SessionHelper.getAppKey(request);
+		String currentAPP = SessionUtil.getAppKey(request);
 		if(this.monitorScope == null || this.monitorScope.equals(MONITOR_SCOPE_SELF))
 		{
 			return app.equals(currentAPP);
@@ -124,7 +124,7 @@ public abstract class BaseSessionStaticManagerImpl implements SessionStaticManag
 	@Override
 	public SessionAPP getSingleSessionAPP(HttpServletRequest request)
 	{
-		String currentAPP = SessionHelper.getAppKey(request);
+		String currentAPP = SessionUtil.getAppKey(request);
 		return getSingleSessionAPP(currentAPP);
 	}
 	@Override
@@ -135,13 +135,13 @@ public abstract class BaseSessionStaticManagerImpl implements SessionStaticManag
 
 	@Override
 	public AttributeInfo[] getExtendAttributeArray(String appkey) {
-		SessionConfig sessionConfig = SessionHelper.getSessionConfig(appkey);
+		SessionConfig sessionConfig = SessionUtil.getSessionConfig(appkey);
 		return sessionConfig == null?null:sessionConfig.getExtendAttributeInfos();
 	}
 	
 	public SessionConfig getSessionConfig(String appkey)
 	{
-		return SessionHelper.getSessionConfig(appkey);
+		return SessionUtil.getSessionConfig(appkey);
 	}
 
 }

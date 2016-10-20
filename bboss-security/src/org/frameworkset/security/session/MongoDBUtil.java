@@ -8,7 +8,6 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.frameworkset.nosql.mongodb.MongoDB;
 import org.frameworkset.nosql.mongodb.MongoDBHelper;
-import org.frameworkset.security.session.impl.SessionHelper;
 import org.frameworkset.spi.BaseApplicationContext;
 import org.frameworkset.spi.DefaultApplicationContext;
 
@@ -101,36 +100,11 @@ public class MongoDBUtil {
 //		}
 //		
 //	}
-	private static final String dianhaochar = "____";
-	private static final String moneychar = "_____";
-	private static final int msize = moneychar.length();
 
-	public static String recoverSpecialChar(String attribute) {
-		if (attribute.startsWith(moneychar)) {
-			attribute = "$" + attribute.substring(msize);
-		}
 
-		attribute = attribute.replace(dianhaochar, ".");
-		return attribute;
-	}
-	public static String converterSpecialChar(String attribute)
-	{
-		attribute = attribute.replace(".", dianhaochar);
-		if(attribute.startsWith("$"))
-		{
-			if(attribute.length() == 1)
-			{
-				attribute = moneychar;
-			}
-			else
-			{
-				attribute = moneychar + attribute.substring(1);
-			}
-		}
-		return attribute;
-	}
+	
 	public static boolean filter(String key) {
-		return SessionHelper.filter(key);
+		return SessionUtil.filter(key);
 			
 	}
 	
@@ -186,7 +160,7 @@ public class MongoDBUtil {
 					Object value = object.get(key);
 					try {
 						attrs.put(MongoDBHelper.recoverSpecialChar(key),
-								deserial?SessionHelper.unserial((String) value):value);
+								deserial?SessionUtil.unserial((String) value):value);
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -210,10 +184,10 @@ public class MongoDBUtil {
 					Object value = object.get(key);
 					try {
 						String temp = MongoDBHelper.recoverSpecialChar(key);
-						temp = SessionHelper.dewraperAttributeName(appkey, contextpath, temp);
+						temp = SessionUtil.dewraperAttributeName(appkey, contextpath, temp);
 						if(temp != null)
 							attrs.put(temp,
-									deserial?SessionHelper.unserial((String) value):value);
+									deserial?SessionUtil.unserial((String) value):value);
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

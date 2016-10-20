@@ -1,6 +1,5 @@
 package org.frameworkset.security.session.statics;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -9,25 +8,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.frameworkset.nosql.mongodb.MongoDB;
-import org.frameworkset.nosql.mongodb.MongoDBHelper;
 import org.frameworkset.nosql.redis.RedisFactory;
 import org.frameworkset.nosql.redis.RedisHelper;
 import org.frameworkset.security.session.SessionSerial;
+import org.frameworkset.security.session.SessionUtil;
 import org.frameworkset.security.session.impl.RedisSessionStore;
-import org.frameworkset.security.session.impl.SessionHelper;
 import org.frameworkset.spi.InitializingBean;
 
 import com.frameworkset.util.StringUtil;
-import com.mongodb.BasicDBList;
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
 
 public class RedisSessionStaticManagerImpl extends BaseSessionStaticManagerImpl implements InitializingBean {
 	
@@ -103,7 +94,7 @@ public class RedisSessionStaticManagerImpl extends BaseSessionStaticManagerImpl 
 			}
 			else
 			{
-				String currentAPP = SessionHelper.getAppKey(request);
+				String currentAPP = SessionUtil.getAppKey(request);
 				 
 				// 获取所有当前db所有信息集合
 				Set<String> apps = redisHelper.smembers(RedisSessionStore.sessionapps);
@@ -228,12 +219,12 @@ public class RedisSessionStaticManagerImpl extends BaseSessionStaticManagerImpl 
 				}
 				else
 				{
-					info.setHttpOnly(StringUtil.hasHttpOnlyMethod()?SessionHelper.getSessionManager().isHttpOnly():false);
+					info.setHttpOnly(StringUtil.hasHttpOnlyMethod()?SessionUtil.getSessionManager().isHttpOnly():false);
 				}
 				info.setLastAccessedHostIP(data.get(12));
 					
 				 
-					List<AttributeInfo> extendAttrs = SessionHelper.evalqueryfiledsValue(attributeInfos,data,13,serialType);
+					List<AttributeInfo> extendAttrs = SessionUtil.evalqueryfiledsValue(attributeInfos,data,13,serialType);
 					
 					info.setExtendAttributes(extendAttrs);
 				 
@@ -312,7 +303,7 @@ public class RedisSessionStaticManagerImpl extends BaseSessionStaticManagerImpl 
 					}
 					else
 					{
-						info.setHttpOnly(StringUtil.hasHttpOnlyMethod()?SessionHelper.getSessionManager().isHttpOnly():false);
+						info.setHttpOnly(StringUtil.hasHttpOnlyMethod()?SessionUtil.getSessionManager().isHttpOnly():false);
 					}
 					info.setLastAccessedHostIP(data.get("lastAccessedHostIP"));
 						
@@ -347,11 +338,11 @@ public class RedisSessionStaticManagerImpl extends BaseSessionStaticManagerImpl 
 			Iterator<Entry<String, String>> it = set.iterator();
 			while (it.hasNext()) {
 				Entry<String, String> entry =   it.next();
-				if (!SessionHelper.filter(entry.getKey())) {
+				if (!SessionUtil.filter(entry.getKey())) {
 					String value = entry.getValue();
 					try {
 						attrs.put(entry.getKey(),
-								deserial?SessionHelper.unserial((String) value):value);
+								deserial?SessionUtil.unserial((String) value):value);
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

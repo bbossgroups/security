@@ -19,6 +19,7 @@ import org.frameworkset.security.session.AttributeNamesEnumeration;
 import org.frameworkset.security.session.InvalidateCallback;
 import org.frameworkset.security.session.Session;
 import org.frameworkset.security.session.SessionBasicInfo;
+import org.frameworkset.security.session.SessionUtil;
 import org.frameworkset.security.session.SimpleHttpSession;
 import org.frameworkset.security.session.statics.SessionConfig;
 import org.frameworkset.soa.ObjectSerializable;
@@ -146,8 +147,8 @@ public class RedisSessionStore extends BaseSessionStore{
 		long maxInactiveInterval = this.getSessionTimeout();
 		long lastAccessedTime = creationTime;
 	
-		boolean isHttpOnly = StringUtil.hasHttpOnlyMethod()?SessionHelper.getSessionManager().isHttpOnly():false;
-		boolean secure = SessionHelper.getSessionManager().isSecure();
+		boolean isHttpOnly = StringUtil.hasHttpOnlyMethod()?SessionUtil.getSessionManager().isHttpOnly():false;
+		boolean secure = SessionUtil.getSessionManager().isSecure();
 		RedisHelper redisHelper = null;
 		try
 		{
@@ -215,7 +216,7 @@ public class RedisSessionStore extends BaseSessionStore{
 			String value = redisHelper.hget(sessionkey, attribute);
 			if(value == null || value.equals(""))
 				return null;
-			return SessionHelper.unserial(value);
+			return SessionUtil.unserial(value);
 		}
 		 catch (Exception e) {
 				log.error("",e);
@@ -536,7 +537,7 @@ public class RedisSessionStore extends BaseSessionStore{
 							record = new HashMap<String,String>();
 						}
 						if(value.getValue() != null)
-							record.put(entry.getKey(), SessionHelper.serial(value.getValue()));
+							record.put(entry.getKey(), SessionUtil.serial(value.getValue()));
 						else
 						{
 							if(removes == null)
@@ -696,7 +697,7 @@ public class RedisSessionStore extends BaseSessionStore{
 				}
 				else
 				{
-					session.setHttpOnly(StringUtil.hasHttpOnlyMethod()?SessionHelper.getSessionManager().isHttpOnly():false);
+					session.setHttpOnly(StringUtil.hasHttpOnlyMethod()?SessionUtil.getSessionManager().isHttpOnly():false);
 				}
 				session.setLastAccessedHostIP(values.get(10));
 				Map<String,Object> attributes = new HashMap<String,Object>();
@@ -705,9 +706,9 @@ public class RedisSessionStore extends BaseSessionStore{
 					String name = attributeNames.get(i);
 					String value = values.get(i+11);
 					try {
-						String temp = SessionHelper.dewraperAttributeName(appKey, contextpath, name);		
+						String temp = SessionUtil.dewraperAttributeName(appKey, contextpath, name);		
 						if(temp != null)
-							attributes.put(temp, SessionHelper.unserial((String)value));
+							attributes.put(temp, SessionUtil.unserial((String)value));
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -889,7 +890,7 @@ public class RedisSessionStore extends BaseSessionStore{
 				}
 				else
 				{
-					session.setHttpOnly(StringUtil.hasHttpOnlyMethod()?SessionHelper.getSessionManager().isHttpOnly():false);
+					session.setHttpOnly(StringUtil.hasHttpOnlyMethod()?SessionUtil.getSessionManager().isHttpOnly():false);
 				}
 				session.setLastAccessedHostIP(values.get(10));
 				 
