@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- =================================================================== -->
+<!--            Define All Information Manager:                          -->
+<!--               Security,Authenticate(loginmodules),                  -->
+<!--               ServiceProvider,ResourceIdentity,                     -->
+<!--                                                                      -->
+<!-- =================================================================== -->
+<!--
+
+	securityenabled="true"，平台全局安全性启用开关
+
+	<config-manager securityenabled="false">
+    securitycookieenabled:登录时是否允许cookie
+
+--> 
+<config-manager securityenabled="true" securitycookieenabled="false">
+	<!--
+		application:指定应用名称
+		module:指定web模块名称
+		cachable:系统全局缓冲机制开关，true标识启用，false表示关闭缓冲，缺省为true
+		cacheType：系统采用的全局缓冲机制类型，主要包括JCSCache,OSCache,JBOSSCache等等
+	-->
+	<application default="true" name="bspf" cachable="true" cacheType="JCS">
+
+		<resources module="console" languages="zh_CN,en_US">
+		  <resourcefile src="resource.xml" desc="公用权限授予资源配置文件"/>
+		  <resourcefile src="resources-sys.xml" desc="系统管理资源配置文件"/>		
+		  <resourcefile src="resources-content.xml" desc="内容管理资源配置文件"/>
+		  <resourcefile src="resources-application.xml" desc="应用管理资源配置文件"/>
+		  
+		</resources>
+
+		<!--
+			authorfaileddirect:权限检测失败跳转页面
+			securityenabled：安全机制启用开关,true启用系统安全性，false关闭系统安全性，缺省为true
+		-->
+		<authorizable authorfaileddirect="authorfailed.jsp">
+			<!--
+				资源操作许可表
+				cachable：可选属性，是否需要缓冲资源/操作/角色之间的关系
+				class：资源/操作/角色之间的关系映射实现
+				allowIfNoRequiredRole:如果资源没有授予相应的角色，
+				是否允许用户访问该资源，
+				true表示可以访问，
+				false表示不能访问
+				providerType指定资源操作许可服务提供者类型，目前支持LDAP和DB两种方式，缺省为DB
+
+			-->
+			<permissionrolemap default="true" module="console" cachable="true" cachetype="JBOSS" providerType="DB" allowIfNoRequiredRole="false" class="com.frameworkset.platform.sysmgrcore.authorization.AppPermissionRoleMap" />
+			<!--
+				权限控制表
+				cachable：可选属性，是否需要缓冲用户/角色之间的关系
+				cachetype:缓冲机制
+				class：用户/角色之间的关系映射实现
+				providerType指定资源操作许可服务提供者类型，目前支持LDAP和DB两种方式，缺省为DB
+				adminrole: 指定系统管理员角色
+				everyonegrantedrole 定义每个人都授予的角色
+			-->
+			<authorizetable module="console"
+			                cachable="true"
+			                cachetype="JBOSS"
+			                providerType="DB"
+			                adminrole="administrator"
+			                everyonegrantedrole="roleofeveryone"
+			                class="com.frameworkset.platform.sysmgrcore.authorization.AppAuthorizationTable" />
+		</authorizable>
+		<!--
+			name:名称属性
+			sso:是否允许单点登录，true允许，false不允许，缺省为false
+			ssoDomain:单点登录域
+			loginpage：登陆失败跳转页面,或者登录退出页面
+
+		-->
+		<authenticate loginpage="login.page">
+			<!--
+				登录验证模块
+				name:登录模块名称
+				callbackHandler：回调函数
+				controlFlag:
+				取值范围:required, sufficient, requisite, optional ，相关值含义参考如下：
+				required 表示登录模块必须成功。即使它不成功，还将调用其它登录模块。
+				optional 表示登录模块可以失败，但如果另一个登录模块成功，总体登录仍可以成功。如果所有登录模块都是可选的，那么要使整个认证成功至少必须有一个模块是成功的。
+				requisite 表示登录模块必须成功，而且如果它失败，将不调用其它登录模块。
+				sufficient 表示如果登录模块成功，则总体登录将成功，同时假设没有其它必需或必不可少的登录模块失败。
+				debug：是否进行调试
+				class：登录模块实现类
+				registTable:配置用户注册表，目前提供LDAP和DB两种方式，缺省为DB方式
+			-->
+			<!-- 域账号登陆 -->
+
+		 <!-- <loginModule name="console" controlFlag="required" debug="true" registTable="DB" class="com.sany.ldap.LdapLoginModule" />  -->
+ 		<!-- <loginModule name="console" controlFlag="required" debug="true" registTable="DB" class="com.sany.application.util.WebSealLDAPLoginModule" />  -->
+<!-- 		<loginModule name="console" controlFlag="required" debug="true" registTable="DB" class="com.sany.application.util.TicketUserPasswordLoginModule" /> -->
+<!-- 		<loginModule name="console" controlFlag="required" debug="true" registTable="DB" class="com.sany.application.util.TicketLDAPLoginModule" /> -->
+					<loginModule name="console" controlFlag="required" debug="true" registTable="DB" class="com.frameworkset.platform.sysmgrcore.authenticate.UserPasswordLoginModule" />
+		</authenticate>
+		<!--
+			事件激发器工厂类
+		-->
+		<notifiable type="security" factory="com.frameworkset.platform.sysmgrcore.authorization.ACLNotifiableFactory" />
+		<!--
+		    公共属性定义
+		    
+		    根据名称获取属性值，当属性不存在时，返回null值,否则返回字符串类型的值
+            com.frameworkset.platform.config.ConfigManager.getConfigValue(String name)
+            
+            根据名称获取int属性值，当属性不存在或不是整数时，将抛ConfigException异常,否则返回整数类型的值
+            public int getConfigIntValue(String name) throws ConfigException
+            
+            根据名称获取boolean类型属性值，当属性不存在时或者值不是true或者false时，抛出ConfigException异常,否则返回boolean类型的值
+            public boolean getConfigBooleanValue(String name) throws 
+            ConfigException
+            
+            根据名称获取属性值，当属性不存在时，返回defaultValue值,否则返回boolean类型的值
+            public String getConfigValue(String name, String defaultValue)
+            
+            根据名称获取属性值，当属性不存在或不是整数时，返回defaultValue值,否则返回int类型的值
+            public int getConfigIntValue(String name, int defaultValue)
+            
+            根据名称获取属性值，当属性不存在或不是boolean值时，返回defaultValue值,否则返回boolean类型的值
+            public boolean getConfigBooleanValue(String name, boolean 
+            defaultValue)
+
+		-->
+		
+	</application>
+	<datasource>
+		<database name="DB2" default="true" />
+		<ldap name="IBMLDAP" 
+			default="true" 
+			initial_context_factory="com.sun.jndi.ldap.LdapCtxFactory" 
+			provider_url="ldap://202.197.40.230:389" 
+			security_authentication="simple" 
+			security_pricipal="cn=root" 
+			security_credentials="root" />
+	</datasource>
+	<!--
+		当前系统应用模块设置
+	-->
+	<context application="bspf" webmodule="console" />
+	
+	<!--
+		系统任务配置：配置系统中各种各样的计划的处理服务，例如任务日程管理提示，
+				   定时收发邮件等功能。
+		
+		属性描述
+			used 控制变量，控制系统启动时是否加载任务管理控制器
+			     true 加载，缺省值
+				 false 不加载
+		子元素:scheduleservice	
+	-->
+	<taskservice used="false">
+		<scheduleservice name="定时任务执行器" id="default"
+				class="com.frameworkset.platform.task.DefaultScheduleService" used="true">
+			<!--
+				可执行的任务项
+				属性说明：
+					name：任务项名称
+					id:任务项标识
+					class:具体的任务执行处理程序,实现com.frameworkset.platform.task.Execute接口
+					cron_time：	cron格式的时间表达式，用来管理任务执行的生命周期，相关的规则请参照日期管理控件quartz的说明文档
+					used 是否使用
+			     		true 加载，缺省值
+						false 不加载	  
+				子元素说明：
+					parameter:设置任务执行的参数，name标识参数名称，value指定参数的值
+			-->
+			<schedulejob name="workbroker" id="workbroker" 
+						 class="com.frameworkset.platform.mobile.test.JMXXExecuteTest" 
+						 cronb_time="0/10 * * * * ?"
+                         used="true">
+				<parameter name="send_count" value="2"/>
+			</schedulejob>
+		</scheduleservice>
+		<scheduleservice name="SP定时下发管理" id="spschedule" class="com.frameworkset.platform.schedule.SPScheduleSerice" used="false">
+			<!--
+				可执行的任务项
+				属性说明：
+					name：任务项名称
+					id:任务项标识
+					class:具体的任务执行处理程序,实现com.frameworkset.platform.task.Execute接口
+					cron_time：	cron格式的时间表达式，用来管理任务执行的生命周期，相关的规则请参照日期管理控件quartz的说明文档
+					used 是否使用
+			     		true 加载，缺省值
+						false 不加载	  
+				子元素说明：
+					parameter:设置任务执行的参数，name标识参数名称，value指定参数的值
+			-->
+			<schedulejob name="" id="" 
+						 class="com.frameworkset.platform.mobile.test.JMXXExecuteTest" 
+						 cronb_time="0/10 * * * * ?"
+                         used="true">
+				<parameter name="send_count" value="2"/>
+			</schedulejob>
+		</scheduleservice>
+		<!--
+			任务管理模块，不同的任务管理可以定义相关任务处理服务模块，
+			每个模块同时可以配置一些可执行的工作，也可以不指定。
+			属性描述
+				name：任务模块名称
+				id:任务模块标识，保持全局唯一
+				class：任务模块管理实现类，从抽象类com.frameworkset.platform.task.ScheduleSerice继承			
+				      实现抽象方法 setupScheduleService(Scheduler scheduler) throws ScheduleServiceException;
+				used 控制变量，控制系统启动时是否加载任务管理控制器
+			     	true 加载，缺省值
+					false 不加载	  
+			子元素描述
+				schedulejob：scheduleservice元素中可以包含0到多个schedulejob，用来指定固有的任务
+		-->
+		<scheduleservice name="日程管理" 
+						 id="dateschedule" 
+						 class="com.frameworkset.platform.task.DayScheduleService" 
+						 used="true">			
+		</scheduleservice>
+
+		<scheduleservice name="SP定时下发管理" id="spschedule" class="com.frameworkset.platform.schedule.SPScheduleSerice" used="false">
+			<!--
+				可执行的任务项
+				属性说明：
+					name：任务项名称
+					id:任务项标识
+					class:具体的任务执行处理程序,实现com.frameworkset.platform.task.Execute接口
+					cron_time：	cron格式的时间表达式，用来管理任务执行的生命周期，相关的规则请参照日期管理控件quartz的说明文档
+					used 是否使用
+			     		true 加载，缺省值
+						false 不加载	  
+				子元素说明：
+					parameter:设置任务执行的参数，name标识参数名称，value指定参数的值
+			-->
+			<schedulejob name="" id="" 
+						 class="com.frameworkset.platform.mobile.test.JMXXExecuteTest" 
+						 cronb_time="0/10 * * * * ?"
+                         used="true">
+				<parameter name="send_count" value="2"/>
+			</schedulejob>
+		</scheduleservice>
+	</taskservice>
+	
+	
+	<!--
+		dictionary元素配置管理数据字典的类信息，dictionary属性制定字典管理的提供程序
+		
+		根据字典类名称获取字典数据项列表的方法：
+			List<com.frameworkset.dictionary.Item> com.frameworkset.dictionary.DataManagerFactory.getDataManager().getDataItems(String dictionayid);
+			
+		根据字典类名称和数据项的名称获取字典数据项值的方法：
+			String com.frameworkset.dictionary.DataManagerFactory.getDataManager().getItemValue(String dictionayid,String dataitemname);
+		
+		根据字典类名称和数据项的值获取字典数据项名称的方法：
+			String com.frameworkset.dictionary.DataManagerFactory.getDataManager()getItemName(String dictionayid,String dataitemvalue);
+			
+			
+			
+	-->
+	<dictionary dictionary="com.frameworkset.platform.dictionary.DictDataProvide"/>
+	<!--
+		所有需要加载和启动的应用系统初始化程序
+		元素说明：
+			system-待初始化的系统程序配置
+			       属性：class对应的类路径，必须从com.frameworkset.platform.config.SystemInit接口继承	
+	 -->
+	<systems>
+	
+		 <system class="com.frameworkset.platform.sysmgrcore.manager.SysmanagerInit"/>
+	<!-- 
+		 <system class="com.frameworkset.platform.dictionary.DictionaryInit"/>
+	-->
+		 
+	</systems>
+</config-manager>
