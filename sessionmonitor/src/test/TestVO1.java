@@ -1,6 +1,6 @@
 package test;
 
-public class TestVO1 {
+public class TestVO1  implements java.io.Serializable{
 	private String name;
 	
 

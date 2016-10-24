@@ -100,12 +100,15 @@ public class SessionManager extends org.frameworkset.spi.BaseApplicationContextA
 	private boolean usewebsession = false;
 	private SessionSerial bbossSessionSerial;
 	private SessionSerial jsonSessionSerial;
+	private SessionSerial jvmSessionSerial;
+	
 	public SessionManager()
 	{
 		 
 		bbossSessionSerial = new BBossSessionSerial();
 		 
 		jsonSessionSerial = new JacksonSessionSerial();
+		jvmSessionSerial = new JVMSessionSerial();
 		 
 	}
 	public SessionManager(long sessionTimeout, Object sessionStore,
@@ -126,6 +129,7 @@ public class SessionManager extends org.frameworkset.spi.BaseApplicationContextA
 		bbossSessionSerial = new BBossSessionSerial();
 		 
 		jsonSessionSerial = new JacksonSessionSerial();
+		jvmSessionSerial = new JVMSessionSerial();
 		if(!usewebsession && startLifeScan)
 		{
 			 log.debug("Session life scan monitor start.");
@@ -223,6 +227,10 @@ public class SessionManager extends org.frameworkset.spi.BaseApplicationContextA
 		else if(serialType.equals(SessionSerial.SERIAL_TYPE_JSON))
 		{
 			sessionSerial = this.jsonSessionSerial;
+		}
+		else if(serialType.equals(SessionSerial.SERIAL_TYPE_JVM))
+		{
+			sessionSerial = this.jvmSessionSerial;
 		}
 		else
 		{
@@ -466,6 +474,10 @@ public class SessionManager extends org.frameworkset.spi.BaseApplicationContextA
 		}
 		else if(serialType.equals(SessionSerial.SERIAL_TYPE_JSON))
 			return this.jsonSessionSerial;
+		else if(serialType.equals(SessionSerial.SERIAL_TYPE_JVM))
+		{
+			return jvmSessionSerial;
+		}
 		else
 		{
 			throw new RuntimeException("ERROR serialType:"+serialType+",serialType only be bboss or json.check sessionconf.xml and set serialType attribute to bboss or json.");

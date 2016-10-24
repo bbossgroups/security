@@ -1,6 +1,6 @@
 package test;
 
-public class TestVO {
+public class TestVO implements java.io.Serializable{
 	private String id;
 	private TestVO1 testVO1;
 	public TestVO() {
