@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  
+	系统管理和内容管理公用权限授予资源配置文件
+	该文件中的配置与具体业务无关
+	包含：机构资源，岗位资源，角色资源，用户组资源，菜单资源
+-->
+<resources >
+	<operations>
+		<group id="group23" name="组23">
+			<operation id="visible" priority="10" name="可点击" />
+	    </group>
+		<!--  
+			角色管理操作组
+		-->
+		<group id="roleoperation" name="角色管理操作组" i18n:en_US="Grant Roles">
+			<operation id="roleset" priority="30" name="角色授予" i18n:en_US="Grant Roles">
+			  <description i18n:en_US="Grant Roles,You can grant some role to other users since that role's grant authoriation be granted to you.">
+				<![CDATA[
+					角色授予，用户拥有角色的角色授予权限就可以将该角色赋给其他用户，用户自己创建的角色缺省拥有该权限
+				]]>
+			  </description>
+			</operation>
+			
+			
+		</group>
+	    <!--
+	    	角色全局资源操作组 
+	    -->
+		<group id="globalroleoperation" name="角色全局资源操作组" i18n:en_US="Grant Global resources">
+			<operation id="rolemanager" priority="20" name="角色管理" i18n:en_US="Role Manager">
+			  <description i18n:en_US="Role Manager:Add,Delete,Edit,Query Role or RoleType,These operations Only for the owner of Roles.">
+				<![CDATA[
+					新增角色，删除角色只能删除自己创建的角色，角色修改，角色类型添加，角色类型删除，角色查询，角色信息查看，用户只能对自己创建的角色进行角色管理
+				]]>
+			  </description>
+			</operation>
+    	</group>
+		
+		<!--
+			机构资源操作组 
+		-->
+		<group id="orgoperations" name="机构资源操作组">
+			<operation id="readorgname" priority="30" name="可访问机关" />
+			
+		</group>
+		<!--
+			机构全局资源操作组 
+		-->
+	    <group id="gloabelorgunit" name="机构全局资源操作组">
+			<operation id="tranorg" priority="30" name="机构转移" >
+			  <description>
+				<![CDATA[
+					转移机构，不能转移自己所属机构，只能转移其管理的下级机构
+				]]>
+			   </description>
+		    </operation>
+		    <operation id="newdelorg" priority="30" name="机构新增删除">
+			  <description>
+			     <![CDATA[
+			         建子机构，删除机构
+			     ]]>
+			 </description>
+			</operation>
+			<operation id="changeorgadmin" priority="30" name="机构管理员设置" >
+			  <description>
+				<![CDATA[
+					不能设置自己所属机构的部门管理员
+				]]>
+			  </description>
+			</operation>
+			<operation id="orgupdate" priority="30" name="机构信息修改">
+			  <description>
+				<![CDATA[
+					机构基本信息修改，一般只有超级管理员才能进行机构管理
+				]]>
+			  </description>
+			</operation>
+			<operation id="purset" priority="30" name="权限设置管理" >
+			  <description>
+				<![CDATA[
+					用户批量权限回收（授权）,用户批量权限授予（授权）,用户权限授予（授权）,
+					用户权限复制（授权）,用户权限回收（授权）,机构权限回收（授权）
+				]]>
+			  </description>
+			</operation>
+			<operation id="usermanager" priority="30" name="用户调入调出" >
+			  <description>
+				<![CDATA[
+					用户调入，用户调出，内容管理中的用户状态修改，包括开通、停用、删除、离散管理
+				]]>
+			  </description>
+			</operation>
+			<operation id="newdeluser" priority="30" name="用户新增删除" >
+			  <description>
+				<![CDATA[
+					新增用户，删除用户
+				]]>
+			  </description>
+			</operation>
+			<operation id="userupdate" priority="30" name="用户信息修改" >
+			  <description>
+				<![CDATA[
+					用户基本信息修改
+				]]>
+			  </description>
+			</operation>
+			
+			
+			 
+<!--			<operation id="userupduuu" priority="30" name="我的测试操作" >-->
+<!--			  <description>-->
+<!--				<![CDATA[-->
+<!--					我的测试冗余操作-->
+<!--				]]>-->
+<!--			  </description>-->
+<!--			</operation>-->
+			 
+		</group>
+		
+		<!--
+			岗位全局操作组 
+		-->
+		<group id="joboperation" name="岗位管理操作组">
+			<operation id="jobset" priority="30" name="岗位授予机构" />
+		</group>
+		<!--
+			岗位全局资源操作组 
+		-->
+		<group id="globaljoboperation" name="岗位全局资源操作组">
+			<operation id="jobmanager" priority="20" name="岗位管理" />
+		</group>
+	
+		<!--
+			用户组全局资源操作组 
+		-->
+		<group id="globalgroupoperation" name="用户组全局资源操作组">
+			<operation id="groupmanager" priority="20" name="用户组管理" >
+			  <description>
+				<![CDATA[
+					新增一级组，修改自己创建的用户组信息，删除自己创建的用户组，查看用户组信息，新增子组
+				]]>
+			  </description>
+			</operation>
+   		</group>
+   		<!--
+			用户组资源操作组 
+		-->
+   		<group id="usergroupoperation" name="用户组操作">
+		  <!-- operation id="usergroupset" priority="30" name="组用户添加" >
+			<description>
+				<![CDATA[
+					组用户添加，操作员可以将其管理的用户添加到有【组用户添加】权限的用户组中，其有用户自动用户自己创建岗位的【岗位设置机构】权限
+				]]>
+			</description>
+		  </operation-->
+    	</group>
+    
+    	
+	</operations>
+	
+	  
+	
+	
+	<!--  
+		权限资源授予配置start
+	-->
+	<!-- 机构资源 -->
+	<resource id="orgunit" name="机构资源"  i18n:en_US="Organization Resource"  class="resOrgTree.jsp" default="true" allowIfNoRequiredRole="false" auto="true" system="module,cms,mbp,esb,autodeploy,dp">
+		<!--定义非未受保护的特殊资源-->	
+		<!--<exclude resourceid="*"/>
+		<operation id="userorgset"/>
+		</exclude>-->
+			
+        <!--
+			定义资源操作组
+			name:指定资源操作组的名称，具体的操作定义在操作组中
+        -->
+        <operationgroup groupid="orgoperations"/>
+                
+        <!-- 
+        	机构资源全局操作
+       		globalresourceid:全局操作对应的资源标识id
+        	groupid:全局操作对应的操作组
+        -->
+        <globaloperationgroup globalresourceid="orgunit" groupid="gloabelorgunit"/>
+	</resource>
+	<!-- 角色资源 -->
+	<resource id="role" name="角色资源"  i18n:en_US="Role Resource"  class="resRoleTree.jsp"  auto="true" system="module,cms,trans_server,trans_client,esb,autodeploy,mbp,sanylog">
+		<!--定义非未受保护的特殊资源-->
+		<!--
+                定义资源操作组
+               name:指定资源操作组的名称，具体的操作定义在操作组中
+        -->
+        <operationgroup groupid="roleoperation"/>		
+		<!-- 角色资源全局操作组 -->
+		<globaloperationgroup globalresourceid="globalrole" groupid="globalroleoperation"/>
+	</resource>
+	<!-- 用户组资源 -->
+	<resource id="group" name="用户组资源"  i18n:en_US="UserGroup Resource"  class="resGroupTree.jsp"  auto="true"  system="module,cms,trans_server,trans_client,esb,autodeploy,mbp,sanylog">
+		<!--定义非未受保护的特殊资源-->
+
+              <!--
+                      定义资源操作组
+                   name:指定资源操作组的名称，具体的操作定义在操作组中
+              -->
+              <operationgroup groupid="usergroupoperation"/>
+		
+		<!-- 用户组全局操作组 -->
+		<globaloperationgroup globalresourceid="globalgroup" groupid="globalgroupoperation"/>
+	</resource>
+	<!-- 菜单资源 -->
+	<resource id="column" name="菜单资源"  i18n:en_US="Menu Resource"   class="resColumnTree.jsp" auto="true" allowIfNoRequiredRole="false" struction="tree"  system="module,cms,trans_server,trans_client,cimconsole,esb,autodeploy,mbp,sanylog">
+		<unprotected resourceid="personuserinfomodify" />
+		<unprotected resourceid="personsecretpassword" />
+		<unprotected resourceid="appManager" />
+		<unprotected resourceid="appManageItem" />
+					
+		<!--<unprotected resourceid="contentManageItem" />-->
+		<!--<unprotected resourceid="templetmanager" />-->
+		<!--定义非未受保护的特殊资源-->
+		<!--<unprotected resourceid="indexpage" >-->
+		<!--<operation id="visible"/>-->
+		<!--</unprotected>-->
+
+		<!--unprotected resourceid="indexpage" ></unprotected>-->
+		<!--<unprotected resourceid="sitebuilder" >-->
+		<!--<operation id="unvisible"/>-->
+		<!--</unprotected>-->
+		<!--
+		控制特定的资源除了超级管理员外，其他人都访问不了的资源
+		-->
+		<!--<exclude resourceid="sysuserpassword"/>-->
+		<!--<exclude resourceid="sitebuilder">-->
+		<!--<operation id="visible"/>-->
+		<!--</exclude>-->
+		<!--定义资源操作组-->
+		<operationgroup groupid="group23"/>
+	</resource>
+	<!-- 岗位资源 -->
+	<resource id="job" name="岗位资源"  i18n:en_US="Post Resource"   class="resJobTree.jsp" auto="true" system="module,cms,trans_server,trans_client,esb,autodeploy,mbp,sanylog" >
+		<!--定义非未受保护的特殊资源-->
+
+		<!--定义资源操作组-->
+		<operationgroup groupid="joboperation"/>
+		<!-- 岗位资源全局操作组 -->
+		<globaloperationgroup globalresourceid="globaljob" groupid="globaljoboperation"/>
+	</resource>
+	
+	
+	<!--  
+		权限资源授予配置end
+	-->
+</resources >

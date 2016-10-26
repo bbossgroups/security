@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources >
+	<!--
+		操作组定义：
+		定义系统资源的操作组，不同的资源类型涉及不同的操作组，操作组中定义同一类型的操作
+	-->
+	<operations>		   
+		
+		
+		<group id="custom_" name="自定义">
+			<operation id="visible" priority="10" name="可点击" />
+	    </group>
+		
+		
+	</operations>
+	
+	
+	<resource id="custom_" name="自定义资源" auto="false" system="module,dp,sanylog" >
+		<!--定义非未受保护的特殊资源-->
+
+                <!--
+                定义资源操作组
+                name:指定资源操作组的名称，具体的操作定义在操作组中
+                -->
+        <operationgroup groupid="custom_"/> 
+				
+		
+	</resource>
+	<!--cs菜单资源 -->
+	<!-- 
+    <resource id="cs_column" name="cs菜单资源" class="resTempletTree.jsp" auto="true" system="module" > -->
+		<!--定义资源操作组-->
+		<!-- <operationgroup groupid="groupColumn"/> -->
+	<!-- </resource> -->
+</resources>

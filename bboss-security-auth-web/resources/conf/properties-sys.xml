@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+		
+		
+			
+			<!-- 系统管理加密方式属性配置 start -->
+			<!--  
+			  # Set the following encryption algorithm to encrypt passwords. The default
+  				  # algorithm is SHA (SHA-1). If set to NONE, passwords are stored in the
+  				  # database as plain text. The SHA-512 algorithm is currently unsupported.
+  				     所请求算法的名称
+				    #passwords.encryption.algorithm=CRYPT - 该加密方式需要加密后的密码，系统管理不支持这种加密方式
+  					passwords.encryption.algorithm=MD2
+  					passwords.encryption.algorithm=MD5
+  					passwords.encryption.algorithm=NONE
+  					passwords.encryption.algorithm=SHA
+  					passwords.encryption.algorithm=SHA-256
+  					passwords.encryption.algorithm=
+  					#passwords.encryption.algorithm=SSHA - 该加密方式需要加密后的密码，系统管理不支持这种加密方式
+			-->
+			<property name="passwordsEncryptionAlgorithm" value="NONE" />
+            <!--
+                    定义系统管理密码的加密机制(算法)，目前系统管理中提供以下几种方式：
+                     MD5：一种不可逆算法，安全
+                     BASE64：可逆算法，比较安全
+                     HEX passwordsEncryptionAlgorithm=SHA-384
+                     NONE：对密码不加密
+   			      和所请求算法的结合进行加密
+   			      
+   			      admin默认密码：
+   			      MD5:E10ADC3949BA59ABBE56E057F20F883E
+   			      NONE:123456
+   			      HEX passwordsEncryptionAlgorithm=SHA-384:0a989ebc4a77b56a6e2bb7b19d995d185ce44090c13e2984b7ecc6d446d4b61ea9991b76a4c2f04b1b4d244841449454
+            -->
+  			<property name="encrpytype" value="MD5"/>
+  			<!-- 系统管理加密方式属性配置 end -->
+  			
+  			<!-- 
+  				portal加密方式属性配置 start
+  				一定要与portal的加密配置相同 
+  			-->
+  			<!--  
+			  # Set the following encryption algorithm to encrypt passwords. The default
+  				  # algorithm is SHA (SHA-1). If set to NONE, passwords are stored in the
+  				  # database as plain text. The SHA-512 algorithm is currently unsupported.
+  				     所请求算法的名称
+				    #passwords.encryption.algorithm=CRYPT - 该加密方式需要加密后的密码，系统管理不支持这种加密方式
+  					passwords.encryption.algorithm=MD2
+  					passwords.encryption.algorithm=MD5
+  					passwords.encryption.algorithm=NONE
+  					passwords.encryption.algorithm=SHA
+  					passwords.encryption.algorithm=SHA-256
+  					passwords.encryption.algorithm=SHA-384
+  					#passwords.encryption.algorithm=SSHA - 该加密方式需要加密后的密码，系统管理不支持这种加密方式
+			-->
+			<property name="portalAlgorithm" value="SHA" />
+            <!--
+                    定义系统管理密码的加密机制(算法)，目前系统管理中提供以下几种方式：
+                     MD5：一种不可逆算法，安全
+                     BASE64：可逆算法，比较安全
+                     HEX
+                     NONE：对密码不加密
+   			      和所请求算法的结合进行加密
+            -->
+  			<property name="portalencrpytype" value="BASE64"/>
+  			<!-- portal加密方式属性配置 end -->
+  			
+  
+  			
+  			<!--  
+  				系统管理版本配置
+  				默认为1.0，1.0为以前的老版本
+  				最新系统管理2.0
+  			-->
+  			<property name="system.version" value="2.0"/>
+                         
+            <!-- 单点登录相关开关 end -->
+           
+			
+		
+<!--   -->  
+	<property name="menu_monitor" value="true"/>
+	
+	<!-- 系统默认登录模块，如果在登录时没有指定特定的模块,则使用这个配置值  -->
+	<property name="default_module" value="module"/>
+	
+	
+	<!-- 密码过期时间，大于0时有效，小于等于0时无效  -->
+	<property name="password_dualtime" value="90"/>
+	
+	<!-- 是否启用登录验证码  -->
+	<property name="enable_login_validatecode" value="false"/>
+	<!-- 是否启用用户级的口令过期时间  -->
+	<property name="enableUserScopePasswordExpiredDays" value="true"/>
+	
+	<!-- 密码是否可以重用:true 可以，false不可以 -->
+	<property name="passwordreusable" value="true"/>
+	
+	<property name="destop.showboot" value="false"/>
+	
+	<property name="destop.defaultstyle" value="5"/>
+	 
+
+</properties>

@@ -1,0 +1,8 @@
+<properties>
+ 	<property name="port" value="8080"/>  
+	<property name="context" value="/security-auth"/>  
+	<property name="webxml" value="./WebRoot/WEB-INF/web.xml"/>  
+	<property name="resourceBase" value="./WebRoot"/>  
+	
+</properties>
+ 

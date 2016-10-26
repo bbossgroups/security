@@ -1,0 +1,41 @@
+[2016-10-24 22:51:39][DEBUG][org.frameworkset.spi.assemble.ProviderManagerInfo] class org.frameworkset.spi.interceptor.InterceptorFacttoryImpl not found in classpath,use DummyInterceptorFacttory. 
+[2016-10-24 22:51:39][DEBUG][org.frameworkset.spi.BaseApplicationContext] Unable to locate MessageSource with name 'messageSource': using default [org.frameworkset.spi.support.DelegatingMessageSource]
+[2016-10-24 22:51:47][DEBUG][org.frameworkset.spi.BaseApplicationContext] Unable to locate MessageSource with name 'messageSource': using default [org.frameworkset.spi.support.DelegatingMessageSource]
+[2016-10-24 22:51:47][DEBUG][org.frameworkset.spi.BaseApplicationContext] Unable to locate MessageSource with name 'messageSource': using default [org.frameworkset.spi.support.DelegatingMessageSource]
+[2016-10-24 22:51:47][DEBUG][org.frameworkset.soa.SerialFactory] buildMagicClass [org.frameworkset.hibernate.serial.PersistentBagSerial] ClassNotFoundException:org.frameworkset.hibernate.serial.PersistentBagSerial
+[2016-10-24 22:51:47][DEBUG][org.frameworkset.soa.SerialFactory] buildMagicClass [org.frameworkset.hibernate.serial.PersistentList] ClassNotFoundException:org.frameworkset.hibernate.serial.PersistentList
+[2016-10-24 22:51:47][DEBUG][org.frameworkset.soa.SerialFactory] buildMagicClass [org.frameworkset.hibernate.serial.PersistentMap] ClassNotFoundException:org.frameworkset.hibernate.serial.PersistentMap
+[2016-10-24 22:51:47][DEBUG][org.frameworkset.soa.SerialFactory] buildMagicClass [org.frameworkset.hibernate.serial.PersistentSet] ClassNotFoundException:org.frameworkset.hibernate.serial.PersistentSet
+[2016-10-24 22:51:47][DEBUG][org.frameworkset.soa.SerialFactory] buildMagicClass [org.frameworkset.hibernate.serial.PersistentSortedMap] ClassNotFoundException:org.frameworkset.hibernate.serial.PersistentSortedMap
+[2016-10-24 22:51:47][DEBUG][org.frameworkset.soa.SerialFactory] buildMagicClass [org.frameworkset.hibernate.serial.PersistentSortedSet] ClassNotFoundException:org.frameworkset.hibernate.serial.PersistentSortedSet
+[2016-10-24 22:51:47][DEBUG][org.frameworkset.spi.BaseApplicationContext] Unable to locate MessageSource with name 'messageSource': using default [org.frameworkset.spi.support.DelegatingMessageSource]
+[2016-10-24 22:51:48][DEBUG][org.frameworkset.security.session.impl.NullSessionListener] createSession session id:406979ed-f372-4a23-a720-374247cad089
+[2016-10-24 22:51:48][DEBUG][org.frameworkset.security.session.impl.NullSessionListener] addAttribute session id:406979ed-f372-4a23-a720-374247cad089,attirbute name is $a.b.c
+[2016-10-24 22:51:48][DEBUG][org.frameworkset.security.session.impl.NullSessionListener] addAttribute session id:406979ed-f372-4a23-a720-374247cad089,attirbute name is local
+[2016-10-24 22:51:48][DEBUG][org.frameworkset.security.session.impl.NullSessionListener] addAttribute session id:406979ed-f372-4a23-a720-374247cad089,attirbute name is testVO
+[2016-10-24 22:51:48][DEBUG][org.frameworkset.security.session.impl.NullSessionListener] addAttribute session id:406979ed-f372-4a23-a720-374247cad089,attirbute name is testVO
+[2016-10-24 22:51:48][DEBUG][org.frameworkset.security.session.impl.NullSessionListener] addAttribute session id:406979ed-f372-4a23-a720-374247cad089,attirbute name is userAccount
+[2016-10-26 20:09:59][DEBUG][org.frameworkset.spi.assemble.ProviderManagerInfo] class org.frameworkset.spi.interceptor.InterceptorFacttoryImpl not found in classpath,use DummyInterceptorFacttory. 
+[2016-10-26 20:09:59][DEBUG][org.frameworkset.spi.BaseApplicationContext] Unable to locate MessageSource with name 'messageSource': using default [org.frameworkset.spi.support.DelegatingMessageSource]
+[2016-10-26 20:10:10][DEBUG][org.frameworkset.spi.BaseApplicationContext] Unable to locate MessageSource with name 'messageSource': using default [org.frameworkset.spi.support.DelegatingMessageSource]
+[2016-10-26 20:10:10][DEBUG][org.frameworkset.soa.SerialFactory] buildMagicClass [org.frameworkset.hibernate.serial.PersistentBagSerial] ClassNotFoundException:org.frameworkset.hibernate.serial.PersistentBagSerial
+[2016-10-26 20:10:10][DEBUG][org.frameworkset.soa.SerialFactory] buildMagicClass [org.frameworkset.hibernate.serial.PersistentList] ClassNotFoundException:org.frameworkset.hibernate.serial.PersistentList
+[2016-10-26 20:10:10][DEBUG][org.frameworkset.soa.SerialFactory] buildMagicClass [org.frameworkset.hibernate.serial.PersistentMap] ClassNotFoundException:org.frameworkset.hibernate.serial.PersistentMap
+[2016-10-26 20:10:10][DEBUG][org.frameworkset.soa.SerialFactory] buildMagicClass [org.frameworkset.hibernate.serial.PersistentSet] ClassNotFoundException:org.frameworkset.hibernate.serial.PersistentSet
+[2016-10-26 20:10:10][DEBUG][org.frameworkset.soa.SerialFactory] buildMagicClass [org.frameworkset.hibernate.serial.PersistentSortedMap] ClassNotFoundException:org.frameworkset.hibernate.serial.PersistentSortedMap
+[2016-10-26 20:10:10][DEBUG][org.frameworkset.soa.SerialFactory] buildMagicClass [org.frameworkset.hibernate.serial.PersistentSortedSet] ClassNotFoundException:org.frameworkset.hibernate.serial.PersistentSortedSet
+[2016-10-26 20:10:10][DEBUG][org.frameworkset.spi.BaseApplicationContext] Unable to locate MessageSource with name 'messageSource': using default [org.frameworkset.spi.support.DelegatingMessageSource]
+[2016-10-26 20:10:11][DEBUG][org.frameworkset.security.session.impl.NullSessionListener] createSession session id:e2c918b7-c704-4b8e-ae6f-55910e49bcff
+[2016-10-26 20:10:11][DEBUG][org.frameworkset.security.session.impl.NullSessionListener] addAttribute session id:e2c918b7-c704-4b8e-ae6f-55910e49bcff,attirbute name is $a.b.c
+[2016-10-26 20:10:11][DEBUG][org.frameworkset.security.session.impl.NullSessionListener] addAttribute session id:e2c918b7-c704-4b8e-ae6f-55910e49bcff,attirbute name is local
+[2016-10-26 20:10:11][DEBUG][org.frameworkset.security.session.impl.NullSessionListener] addAttribute session id:e2c918b7-c704-4b8e-ae6f-55910e49bcff,attirbute name is testVO
+[2016-10-26 20:10:11][DEBUG][org.frameworkset.security.session.impl.NullSessionListener] addAttribute session id:e2c918b7-c704-4b8e-ae6f-55910e49bcff,attirbute name is testVO
+[2016-10-26 20:10:11][DEBUG][org.frameworkset.security.session.impl.NullSessionListener] addAttribute session id:e2c918b7-c704-4b8e-ae6f-55910e49bcff,attirbute name is userAccount
+[2016-10-26 20:16:41][DEBUG][org.frameworkset.spi.assemble.ProviderManagerInfo] class org.frameworkset.spi.interceptor.InterceptorFacttoryImpl not found in classpath,use DummyInterceptorFacttory. 
+[2016-10-26 20:16:41][DEBUG][org.frameworkset.spi.BaseApplicationContext] Unable to locate MessageSource with name 'messageSource': using default [org.frameworkset.spi.support.DelegatingMessageSource]
+[2016-10-26 20:16:41][DEBUG][org.frameworkset.spi.BaseApplicationContext] Unable to locate MessageSource with name 'messageSource': using default [org.frameworkset.spi.support.DelegatingMessageSource]
+[2016-10-26 20:16:41][DEBUG][org.frameworkset.spi.BaseApplicationContext] Unable to locate MessageSource with name 'messageSource': using default [org.frameworkset.spi.support.DelegatingMessageSource]
+[2016-10-26 20:16:42][DEBUG][org.frameworkset.security.session.impl.NullSessionListener] addAttribute session id:e2c918b7-c704-4b8e-ae6f-55910e49bcff,attirbute name is local
+[2016-10-26 20:16:42][DEBUG][org.frameworkset.security.session.impl.NullSessionListener] addAttribute session id:e2c918b7-c704-4b8e-ae6f-55910e49bcff,attirbute name is testVO
+[2016-10-26 20:16:42][DEBUG][org.frameworkset.security.session.impl.NullSessionListener] addAttribute session id:e2c918b7-c704-4b8e-ae6f-55910e49bcff,attirbute name is testVO
+[2016-10-26 20:16:42][DEBUG][org.frameworkset.security.session.impl.NullSessionListener] addAttribute session id:e2c918b7-c704-4b8e-ae6f-55910e49bcff,attirbute name is userAccount

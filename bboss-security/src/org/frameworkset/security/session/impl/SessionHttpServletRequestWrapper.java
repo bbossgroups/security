@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.frameworkset.security.session.InvalidateCallback;
 import org.frameworkset.security.session.Session;
 import org.frameworkset.security.session.SessionBasicInfo;
@@ -44,20 +45,33 @@ import com.frameworkset.util.StringUtil;
  * @version 3.8.0
  */
 public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper implements InvalidateCallback {
+	private static Logger log = Logger.getLogger(SessionHttpServletRequestWrapper.class);
 	private String sessionid;
 	private HttpSessionImpl session;
 	private HttpServletResponse response;
 	private ServletContext servletContext;	
 	private String appkey ;
+	private boolean usewebsession = true;
 	public SessionHttpServletRequestWrapper(HttpServletRequest request,HttpServletResponse response,ServletContext servletContext) {
 		super(request);
-		SessionUtil.init(SessionUtil.getAppKeyFromRequest(this));
-		
-		sessionid = StringUtil.getCookieValue((HttpServletRequest)request, SessionUtil.getSessionManager().getCookiename());
+		try
+		{
+			SessionUtil.init(SessionUtil.getAppKeyFromRequest(this));
+			if(SessionUtil.getSessionManager() != null)
+			{
+				sessionid = StringUtil.getCookieValue((HttpServletRequest)request, SessionUtil.getSessionManager().getCookiename());
+				usewebsession = SessionUtil.getSessionManager().usewebsession();
+				if( !usewebsession)
+					appkey = SessionUtil.getAppKey(this);
+			}
+		}
+		catch(Throwable e)
+		{
+			log.debug("Init bboss session failed:",e);
+		}
 		this.servletContext = servletContext;
 		this.response = response;
-		if( !SessionUtil.getSessionManager().usewebsession())
-			appkey = SessionUtil.getAppKey(this);
+		
 	}
 
 	@Override
@@ -70,7 +84,7 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 	 */
 	public void removeSession(String sessionid)
 	{
-		if( SessionUtil.getSessionManager().usewebsession())
+		if( usewebsession)
 			return;
 		if(this.sessionid != null && this.sessionid.equals(sessionid))
 		{
@@ -102,7 +116,7 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 	}
 	@Override
 	public HttpSession getSession(boolean create) {
-		if( SessionUtil.getSessionManager().usewebsession())
+		if( usewebsession)
 		{
 			// TODO Auto-generated method stub
 			return super.getSession(create);
@@ -170,7 +184,7 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 	
 	
 	private HttpSession _getSession(String sessionid) {
-		if( SessionUtil.getSessionManager().usewebsession())
+		if( usewebsession)
 		{
 			return null;
 		}
@@ -201,7 +215,7 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 	}
 
 	public void touch() {
-		if( SessionUtil.getSessionManager().usewebsession())
+		if( usewebsession)
 			return;
 		if(this.sessionid != null )
 		{
@@ -302,7 +316,7 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 
 	@Override
 	public String getRequestedSessionId() {
-		if( SessionUtil.getSessionManager().usewebsession())
+		if( usewebsession)
 		{
 			return super.getRequestedSessionId();
 		}
@@ -317,7 +331,7 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 
 	@Override
 	public boolean isRequestedSessionIdFromCookie() {
-		if( SessionUtil.getSessionManager().usewebsession())
+		if( usewebsession)
 		{
 			return super.isRequestedSessionIdFromCookie();
 		}
@@ -326,7 +340,7 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 
 	@Override
 	public boolean isRequestedSessionIdFromURL() {
-		if( SessionUtil.getSessionManager().usewebsession())
+		if( usewebsession)
 		{
 			return super.isRequestedSessionIdFromURL();
 		}
@@ -335,7 +349,7 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 
 	@Override
 	public boolean isRequestedSessionIdFromUrl() {
-		if( SessionUtil.getSessionManager().usewebsession())
+		if( usewebsession)
 		{
 			return super.isRequestedSessionIdFromUrl();
 		}
@@ -344,7 +358,7 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 
 	@Override
 	public boolean isRequestedSessionIdValid() {
-		if( SessionUtil.getSessionManager().usewebsession())
+		if( usewebsession)
 		{
 			return super.isRequestedSessionIdValid();
 		}

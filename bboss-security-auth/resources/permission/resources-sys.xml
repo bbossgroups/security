@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources >
+	<!--
+		操作组定义：
+		定义系统资源的操作组，不同的资源类型涉及不同的操作组，操作组中定义同一类型的操作
+	-->
+	<operations>		   
+		<!--字典定义全局资源操作组 -->
+		<group id="globaldictoperation" name="字典定义全局资源操作组">
+		</group>
+		
+		<group id="groupColumn" name="菜单可见">
+			<operation id="visible" priority="10" name="可点击" />
+	    </group>
+		
+		<group id="dictoperation" name="字典定义操作组" i18n:en_US="Dictionary Resource Operation Group">
+			<operation id="read" priority="10" name="可见" i18n:en_US="Read"/>
+			<operation id="write" priority="20" name="可操作" i18n:en_US="Write"/>
+			<operation id="delete" priority="30" name="删除" i18n:en_US="Delete"/>
+			<operation id="edit" priority="30" name="修改" i18n:en_US="Edit"/>
+			<operation id="addson" priority="30" name="添加子字典" i18n:en_US="Add Sub Dictionary"/>	
+			<operation id="datamanage" priority="30" name="字典数据采集" i18n:en_US="DicData Manage"/>									
+		</group>
+	</operations>
+	
+	<group id="testgroup" name="测试权限组" >
+        <operation id="read" priority="10" name="可读">
+        	<authoration>		 	
+			 	<url>/test/testresopurlpermissionread.jsp{"resource":"opCode"|"required":true}?code=aaa</url>
+			</authoration>
+        </operation>
+		<operation id="write" priority="20" name="可写" >
+        	<authoration>		 	
+			 	<url>/test/testresopurlpermissionread.jsp{"resource":"opCode"|"required":true}?code=bbb</url>
+			</authoration>
+        </operation>
+		<operation id="delete" priority="30" name="删除" >
+        	<authoration>		 	
+			 	<url>/test/testresopurlpermissionread.jsp{"resource":"opCode"|"required":true}</url>
+			</authoration>
+        </operation>
+		<operation id="add" priority="30" name="添加"  >
+        	<authoration>		 	
+			 	<url>/test/testresopurlpermissionread.jsp{"resource":"opCode"|"required":true}?code=ccc</url>
+			</authoration>
+        </operation>
+     </group>
+     <group id="globaltestgroup" name="全局测试权限组" >
+        <operation id="read" priority="10" name="可读" >
+        	<!-- 
+        		
+        	 -->
+        	<authoration>		 	
+			 	<url>/test/testopurlpermissionread.jsp</url>
+			</authoration>
+        </operation>
+		
+		<operation id="delete" priority="30" name="删除" >
+		    <!-- 
+        		url说明：
+        		
+        		地址分两部分：
+        		第一部分是url地址必选项/test/testopurlpermissiondelete.jsp				
+				第二部分是json格式的参数，其中资源操作参数resource，必选项参数，resource参数值对应一个request请求参数名称，
+				对应的request参数值匹配一个资源标识，匹配url的资源操作权限资源标识必须和其保持一致，
+				参数required标识resource是否必须false表示如果url /test/testopurlpermissiondelete.jsp可以带资源码参数，也可以不带，
+				如果带了则按照resource匹配规则来控制url访问权限，true标识必须带资源码，如果没带直接阻止url访问。
+        	 -->
+			<authoration>				 
+			 	<url><![CDATA[/test/testopurlpermissiondelete.jsp]]></url>
+			</authoration>
+		</operation>
+		
+     </group>
+	<resource id="testresource" name="测试资源" auto="false" system="cms,module,esb,mbp,sanylog">
+	<!--定义资源操作组-->
+		<operationgroup groupid="testgroup"/>
+	<!-- 字典资源全局操作组 -->
+		<globaloperationgroup globalresourceid="globaltest" groupid="globaltestgroup"/>
+	</resource>
+
+	<resource id="dict" name="字典定义资源" i18n:en_US="Dictionary Resource" class="resDictTree.jsp" auto="true" system="module,mbp,sanylog">
+		<!--定义非未受保护的特殊资源-->
+
+                <!--
+                定义资源操作组
+                name:指定资源操作组的名称，具体的操作定义在操作组中
+                -->
+        <operationgroup groupid="dictoperation"/> 
+				
+		<!-- 字典资源全局操作组 -->
+		<globaloperationgroup globalresourceid="globaldict" groupid="globaldictoperation"/>
+	</resource>
+	<!--cs菜单资源 -->
+	<!-- 
+    <resource id="cs_column" name="cs菜单资源" class="resTempletTree.jsp" auto="true" system="module" > -->
+		<!--定义资源操作组-->
+		<!-- <operationgroup groupid="groupColumn"/> -->
+	<!-- </resource> -->
+</resources>

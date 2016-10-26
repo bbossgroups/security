@@ -1,0 +1,1045 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 定义系统中的子系统功能模块 子元素：subsystem－对应不同的子系统，例如：内容管理和工作流 -->
+<system languages="zh_CN,en_US">
+	<!-- 定义系统中的子系统功能模块 属性：name－子系统中文名称 id－子系统标识 module－模块文件名称 baseuri－如果子系统部署在其他的应用 -->
+	<subsystem name="内容管理" i18n:en_US="Content Manager" id="cms" template="cms" module="module-content.xml"
+	 	
+		baseuri="http://localhost:7000/creatorcms" />
+	<subsystem name="请求服务管理" i18n:en_US="ESB Manager" id="esb" module="module-esb.xml"
+	 	
+		baseuri="http://localhost:7000/creatorcms" />
+		
+	<subsystem name="代理商门户" i18n:en_US="代理商门户" id="dp" module="module-dp.xml"	 	
+		baseuri="http://localhost:7000/creatorcms" />
+	<subsystem name="WEB应用统计平台" i18n:en_US="WEB应用统计平台" id="sanylog" module="module-sanylog.xml"	 	
+		baseuri="http://localhost:7000/creatorcms" />		
+		
+	<subsystem name="移动门户" i18n:en_US="移动门户" id="mbp" module="module-mbp.xml"
+		baseuri="http://localhost:7000/creatorcms" 
+		successRedirect="sanydesktop/index.page"
+		logoutredirect="/sanymbp/login.page"/>
+	
+	<!-- 可以配置一些菜单变量,
+	菜单路径配置中除了可以配置#[userAccount]类的变量，还可以配置#[p:userAccount]类型变量，p:开头的变量的值可以从属性文件中获取，属性文件的配置方法是：
+	
+	 -->
+	<property file="urls.xml"/>	
+		
+	<!-- 
+		系统菜单国际化规范：
+		两种方式来实现菜单国际化
+		方法1 可以通过messagesource来，用来指定菜单的公共元素国际化，诸如：
+			个人中心，您的当前位置：
+		等等
+		方法2 直接在菜单相关元素上设置国际化代码信息
+	
+		属性说明：
+		messagesource 菜单国际化属性文件名称，相对于classpath的路径即可，一个子系统对应自己的国际化菜单配置文件，
+		子系统之间属性文件独立管理，code可以重复
+		多个文件用逗号分隔具体配置可参考文档：
+		http://yin-bp.iteye.com/blog/1518454 
+		
+		菜单国际化涉及到菜单标题和相关图片的国际化，标题国际化code与每个module或者item的id相对应，每个module或者item相关
+		图片路径的code为id + . + 图片元素的名称对应，例如indexpage.mouseupimg，indexpage.mouseoverimg，
+		indexpage.mouseoutimg，indexpage.headimg
+		
+		如果没有指定messagesource，那么忽略相依子系统的国际化处理
+		如果对应module和item没有指定code，那么直接输出原始配置的name属性值和对应得图标元素的值
+		
+		languages:用来设置需要支持的语言种类，每个子系统可以自行设置，语言之间用逗号分隔		
+		"zh_CN,en_US"
+		
+		
+		logoimage:需要国际化
+	-->	
+	<sysmenu name="spplatform" left_width="12%" top_height="70"
+		showhidden="true" showhidden_width="10" showrootleftmenu="true" messagesource="messages_module"
+		
+		>
+		<description i18n:en_US="Public Develop Platform" >公共开发平台</description>
+		<!-- 公共缺省的栏目，如果用户登录系统后无访问权限，或者main为true时，将显示该栏目 -->
+		<publicitem name="首页" 
+			i18n:en_US="Index" 	
+			id="indexpage" main="true">
+			<mouseclickimg>html/images/date_work.jpg</mouseclickimg>
+			
+			<top>headersimple.page</top>
+			<!--<left>perspective_outlookbar.jsp</left> -->
+			<workspace>
+				<!--<content>detail.html</content> -->
+				<content isany="/sanydesktop/frame_common.jsp"
+						 logoimage="/html/images/top_logo.jpg"
+						 i18n:en_US="/html/images/top_logo_en.jpg">contentoutlook.page</content>
+
+			</workspace>
+			<authoration>				 
+				 	<url>/sysmanager/resmanager/res_query.jsp,/sysmanager/user/userres_querylist.jsp</url>
+				 	<url>/sysmanager/resmanager/delRedundance.jsp,/sysmanager/password/saveModifySelfPWD.jsp,/sysmanager/password/modifySelfPassword.jsp</url>
+				 	<url>/sysmanager/user/userres_querylist.jsp</url>
+				 	<url>/sysmanager/resmanager/res_queryframe.jsp</url>	
+				 	<url>/sysmanager/user/resChangeAjax.jsp</url>					 	
+			</authoration>
+		</publicitem>
+		<module name="统一待办" 
+		             i18n:en_US="Line Information Query" 
+		            id="veh_line_query" used="true"
+		           option="{popup:true,width:700,height:500,maxstate:true}"
+		             url="workflow/pending/pendingIndex.page" menuType="type1">	
+				<mouseclickimg>html3/hrm/images/app1.png</mouseclickimg>	
+		</module>
+		
+		<module name="路径变量" 
+		             i18n:en_US="pathvariable" 
+		            id="pathvariable" used="true"
+		             url="workflow/pending/pendingIndex.page" menuType="type1">	
+				  <item name="路径变量演示"
+				i18n:en_US="pathvariable demo" id="pathvariabledemo"  showleftmenu="false" menuType="type1">
+					
+					<top>header.page</top>
+					<workspace>
+						<content>#[p:hrmappurl]/html3/rms/conference.html?aaa=#[userAccount]</content>
+					</workspace>
+				
+				</item> 
+				 <item name="行政区划"
+					i18n:en_US="area demo" id="areaManage"  showleftmenu="true" menuType="type1">
+					<top>header.page</top>
+					<workspace>
+						<content>/lcjf/area/index.page</content>
+					</workspace>
+				 </item> 
+		</module>
+		
+		<module name="前端组件" 
+		             i18n:en_US="WEB UI Show" 
+		            id="WEB_UI_Show" used="true"  showleftmenu="false"
+		             url="appbom/index.page">
+			
+			  
+		   
+			<module name="接待系统" 
+		             i18n:en_US="RMS UI Show" 
+		            id="WEB_rms" used="true" showleftmenu="true">
+		            <item name="会议室"
+				i18n:en_US="web list" id="conference_rms"  showleftmenu="false" menuType="type1">
+					<mouseclickimg>html3/hrm/images/app2.png</mouseclickimg>
+					<top>header.page</top>
+					<!-- <top>perspective_toolbar.jsp</top> <left>perspective_outlookbar.jsp</left> -->
+					<workspace>
+						<content>/html3/rms/conference.html</content>
+					</workspace>
+				
+				</item> 
+				
+				<item name="接待管理"
+				i18n:en_US="web list" id="reception_rms"  showleftmenu="false" menuType="type1">
+					<mouseclickimg>html3/hrm/images/app2.png</mouseclickimg>
+					<top>header.page</top>
+					<!-- <top>perspective_toolbar.jsp</top> <left>perspective_outlookbar.jsp</left> -->
+					<workspace>
+						<content>/html3/rms/reception_ready.html</content>
+					</workspace>
+				
+				</item>	
+				<item name="电话会议"
+				i18n:en_US="web list" id="phone_rms"  showleftmenu="false" menuType="type1">
+					<mouseclickimg>html3/hrm/images/app2.png</mouseclickimg>
+					<top>header.page</top>
+					<!-- <top>perspective_toolbar.jsp</top> <left>perspective_outlookbar.jsp</left> -->
+					<workspace>
+						<content>/html3/rms/phone.html</content>
+					</workspace>
+				
+				</item>	
+				
+			</module>
+			<module name="物资出门" 
+		             i18n:en_US="MAM UI Show" 
+		            id="WEB_mam" used="true" showleftmenu="true">
+		            <item name="首页"
+				i18n:en_US="web list" id="index_mam"  showleftmenu="false" menuType="type1">
+					<mouseclickimg>html3/hrm/images/app2.png</mouseclickimg>
+					<top>header.page</top>
+					<!-- <top>perspective_toolbar.jsp</top> <left>perspective_outlookbar.jsp</left> -->
+					<workspace>
+						<content>/html3/mam/main_index.html</content>
+					</workspace>
+				
+				</item> 	
+				 <item name="入门页面"
+				i18n:en_US="web list" id="entry"  showleftmenu="false"  menuType="type1">
+					<mouseclickimg>html3/hrm/images/app2.png</mouseclickimg>
+					<top>header.page</top>
+					<!-- <top>perspective_toolbar.jsp</top> <left>perspective_outlookbar.jsp</left> -->
+					<workspace>
+						<content>/html3/mam/entry_info.html</content>
+					</workspace>
+				
+				</item> 
+								 <item name="流程审批页面"
+				i18n:en_US="web list" id="entryaudit"  showleftmenu="false"  menuType="type1">
+					<mouseclickimg>html3/hrm/images/app2.png</mouseclickimg>
+					<top>header.page</top>
+					<!-- <top>perspective_toolbar.jsp</top> <left>perspective_outlookbar.jsp</left> -->
+					<workspace>
+						<content>/html3/mam/approval.html</content>
+					</workspace>
+				
+				</item> 
+				 <item name="待办列表"
+				i18n:en_US="web list" id="to_do"  showleftmenu="true"  menuType="type1">
+					<mouseclickimg>html3/hrm/images/app2.png</mouseclickimg>
+					<top>header.page</top>
+					<!-- <top>perspective_toolbar.jsp</top> <left>perspective_outlookbar.jsp</left> -->
+					<workspace>
+						<content>/html3/mam/to_do.html</content>
+					</workspace>
+				
+				</item> 
+				<item name="表格控件"
+				i18n:en_US="web list" id="table"  showleftmenu="true"  menuType="type1">
+					<mouseclickimg>html3/hrm/images/app2.png</mouseclickimg>
+					<top>header.page</top>
+					<!-- <top>perspective_toolbar.jsp</top> <left>perspective_outlookbar.jsp</left> -->
+					<workspace>
+						<content>/html3/mam/table2.html</content>
+					</workspace>
+				
+				</item> 
+			</module>
+			<module name="人力资源管理系统" 
+		             i18n:en_US="HRM UI Show" 
+		            id="WEB_hrm" used="true" showleftmenu="true">
+		             <item name="首页"
+				i18n:en_US="web list" id="index_hrm"  showleftmenu="false" menuType="type1">
+					<mouseclickimg>html3/hrm/images/app2.png</mouseclickimg>
+					<top>header.page</top>
+					<!-- <top>perspective_toolbar.jsp</top> <left>perspective_outlookbar.jsp</left> -->
+					<workspace>
+						<content>/html3/hrm/main_index.html</content>
+					</workspace>
+				
+				</item> 	
+				 <item name="绩效提交页面"
+				i18n:en_US="web list" id="performance"  showleftmenu="true" menuType="type1">
+					<mouseclickimg>html3/hrm/images/app2.png</mouseclickimg>
+					<top>header.page</top>
+					<!-- <top>perspective_toolbar.jsp</top> <left>perspective_outlookbar.jsp</left> -->
+					<workspace>
+						<content>/html3/hrm/performance.html</content>
+					</workspace>
+				
+				</item> 
+
+				 <item name="绩效审批页面"
+				i18n:en_US="web list" id="performance_approval"  showleftmenu="false" menuType="type1">
+					<mouseclickimg>html3/hrm/images/app2.png</mouseclickimg>
+					<top>header.page</top>
+					<!-- <top>perspective_toolbar.jsp</top> <left>perspective_outlookbar.jsp</left> -->
+					<workspace>
+						<content>/html3/hrm/performance_approval.html</content>
+					</workspace>
+				
+				</item> 
+								<item name="列表页面1"
+				i18n:en_US="web list" id="list_hrm_1"  showleftmenu="false" menuType="type1">
+					<mouseclickimg>html3/hrm/images/app2.png</mouseclickimg>
+					<top>header.page</top>
+					<!-- <top>perspective_toolbar.jsp</top> <left>perspective_outlookbar.jsp</left> -->
+					<workspace>
+						<content>/html3/hrm/reservation_list2.html</content>
+					</workspace>
+				
+				</item>        
+				<item name="列表页面2"
+				i18n:en_US="web list" id="list_hrm_2"  showleftmenu="true" menuType="type1">
+					<mouseclickimg>html3/hrm/images/app2.png</mouseclickimg>
+					<top>header.page</top>
+					<!-- <top>perspective_toolbar.jsp</top> <left>perspective_outlookbar.jsp</left> -->
+					<workspace>
+						<content>/html3/hrm/reservation_list2.html</content>
+					</workspace>
+				
+				</item> 
+			</module>
+			<module name="差旅管理" 
+		             i18n:en_US="TAS UI Show" 
+		            id="WEB_tas" used="true" showleftmenu="true">	
+				 <item name="我要出差页面申请"
+				i18n:en_US="web list" id="travel_requests" showleftmenu="false"  menuType="type1">
+					<mouseclickimg>html3/hrm/images/app2.png</mouseclickimg>
+					<top>header.page</top>
+					<!-- <top>perspective_toolbar.jsp</top> <left>perspective_outlookbar.jsp</left> -->
+					<workspace>
+						<content>/html3/TAS/travel_requests.html</content>
+					</workspace>
+				
+				</item> 
+			</module>
+			
+			<module name="前端框架" 
+		             i18n:en_US="TAS UI Show" 
+		            id="WEB_tas" used="true" showleftmenu="true">	
+				 <item name="基本元素"
+				i18n:en_US="web list" id="normal_elements" showleftmenu="false"  menuType="type1">
+					<mouseclickimg>html3/hrm/images/app2.png</mouseclickimg>
+					<top>header.page</top>
+					<!-- <top>perspective_toolbar.jsp</top> <left>perspective_outlookbar.jsp</left> -->
+					<workspace>
+						<content>/html3/component/component.jsp</content>
+					</workspace>
+				
+				</item> 
+				
+				<item name="基础表格"
+				i18n:en_US="web list" id="normal_table" showleftmenu="false"  menuType="type1">
+					<mouseclickimg>html3/hrm/images/app2.png</mouseclickimg>
+					<top>header.page</top>
+					<!-- <top>perspective_toolbar.jsp</top> <left>perspective_outlookbar.jsp</left> -->
+					<workspace>
+						<content>/html3/component/table_normal.jsp</content>
+					</workspace>
+				
+				</item> 
+				
+				<item name="表格滚动"
+				i18n:en_US="web list" id="scro_table" showleftmenu="false"  menuType="type1">
+					<mouseclickimg>html3/hrm/images/app2.png</mouseclickimg>
+					<top>header.page</top>
+					<!-- <top>perspective_toolbar.jsp</top> <left>perspective_outlookbar.jsp</left> -->
+					<workspace>
+						<content>/html3/component/tableScroll.jsp</content>
+					</workspace>
+				</item> 
+				
+					<item name="高级搜索"
+				i18n:en_US="web list" id="search_senior" showleftmenu="false"  menuType="type1">
+					<mouseclickimg>html3/hrm/images/app2.png</mouseclickimg>
+					<top>header.page</top>
+					<!-- <top>perspective_toolbar.jsp</top> <left>perspective_outlookbar.jsp</left> -->
+					<workspace>
+						<content>/html3/component/searchSenior.jsp</content>
+					</workspace>
+				</item>
+			</module>
+			
+			
+			 	
+		</module>	
+		<!-- name 模块名称 id 模块标识 used 标识模块是否使用，true为使用，false不使用，缺省为true -->
+
+		<module name="应用台账模块"
+				i18n:en_US="App Bom module" 
+				id="appbommanagermodule" used="true" showleftmenu="true"
+				url="appbom/index.page" option="{popup:true}"
+				>
+			
+			<description i18n:en_US="App Bom" >应用台账</description>
+			<item name="应用台账"
+			i18n:en_US="App Bom" id="appbommanager" menuType="type2">
+				<mouseclickimg>html3/hrm/images/app6.png</mouseclickimg>
+				<top>header.page</top>
+				<!-- <top>perspective_toolbar.jsp</top> <left>perspective_outlookbar.jsp</left> -->
+				<workspace>
+					<content>appbom/index.page</content>
+				</workspace>
+				<authoration>				 
+				 	<url>appbom/*.page</url>				 
+				</authoration>
+			</item>
+			
+			<item name="应用台账固定列宽"
+			i18n:en_US="App Bom" id="appbommanagerfixed" menuType="type2">
+				<mouseclickimg>html3/hrm/images/app7.png</mouseclickimg>
+				<top>header.page</top>
+				<!-- <top>perspective_toolbar.jsp</top> <left>perspective_outlookbar.jsp</left> -->
+				<workspace>
+					<content>appbom/indexFixed.page</content>
+				</workspace>
+				<authoration>				 
+				 	<url>appbom/*.page</url>				 
+				</authoration>
+			</item>
+		
+			
+			<item name="创建领料单" id="newGetDoc" i18n:en_US="Apply Materail" menuType="type2">
+				<mouseclickimg>html3/hrm/images/app8.png</mouseclickimg>
+					<top>header.page</top>
+				<!-- <top>perspective_toolbar.jsp</top> <left>perspective_outlookbar.jsp</left> -->
+				<workspace>
+					<content>appbom/index.page</content>
+				</workspace>
+			</item>
+			
+			<item name="创建退料单" id="newReturnDoc" i18n:en_US="Apply Return Materail" menuType="type2">
+				<mouseclickimg>html3/hrm/images/app9.png</mouseclickimg>
+					<top>header.page</top>
+				<!-- <top>perspective_toolbar.jsp</top> <left>perspective_outlookbar.jsp</left> -->
+				<workspace>
+					<content>appbom/index.page</content>
+				</workspace>
+			</item>
+			<item name="工单管理" id="docManage" i18n:en_US="Invoices Manage" option="{popup:true}" menuType="type2">
+				<mouseclickimg>html3/hrm/images/app10.png</mouseclickimg>
+					<top>header.page</top>
+				<!-- <top>perspective_toolbar.jsp</top> <left>perspective_outlookbar.jsp</left> -->
+				<workspace>
+					<content>appbom/index.page</content>
+				</workspace>
+			</item>
+			
+			<item name="台账查询" id="materailQuery" i18n:en_US="Query" option="{popup:true}" menuType="type2">
+				<mouseclickimg>html3/hrm/images/app11.png</mouseclickimg>
+					<top>header.page</top>
+				<!-- <top>perspective_toolbar.jsp</top> <left>perspective_outlookbar.jsp</left> -->
+				<workspace>
+					<content>appbom/index.page</content>
+				</workspace>
+			</item>
+			
+			
+			
+
+<module name="应用台账11" id="appbommanagermodule1e" used="true" i18n:en_US="App Bome" url="html/tab_edit.html" showleftmenu="true" popup="true">
+					<mouseclickimg>html/images/jixiao.jpg</mouseclickimg>
+				<description>应用台账ee</description>
+				<item name="标签页效果eee" id="appbommanager1eeee" i18n:en_US="Label Page Demo" menuType="type3">
+						<mouseclickimg>html3/hrm/images/app12.png</mouseclickimg>
+					<top>header.page</top>
+					<!-- <top>perspective_toolbar.jsp</top> <left>perspective_outlookbar.jsp</left> -->
+					<workspace>
+						<content>html/tab_edit.html</content>
+					</workspace>
+				</item>
+				</module>
+
+			<module name="应用台账1" id="appbommanagermodule1" used="true" i18n:en_US="App Bom" url="html/tab_edit.html" showleftmenu="true" popup="true">
+					<mouseclickimg>html/images/jixiao.jpg</mouseclickimg>
+				<description>应用台账</description>
+				<item name="标签页效果" id="appbommanager1" i18n:en_US="Label Page Demo" menuType="type3">
+						<mouseclickimg>html3/hrm/images/app13.png</mouseclickimg>
+					<top>header.page</top>
+					<!-- <top>perspective_toolbar.jsp</top> <left>perspective_outlookbar.jsp</left> -->
+					<workspace>
+						<content>html/tab_edit.html</content>
+					</workspace>
+				</item>
+				<item name="列表页面" id="appbommanager11" i18n:en_US="Left Menu Demo">
+						<mouseclickimg>html/images/jixiao.jpg</mouseclickimg>
+					<top>header.page</top>
+					<!-- <top>perspective_toolbar.jsp</top> <left>perspective_outlookbar.jsp</left> -->
+					<workspace>
+						<content>html/table2.html</content>
+					</workspace>
+				</item>
+				<item name="列表页面二" id="appbommanager12" i18n:en_US="page">
+						<mouseclickimg>html/images/jixiao.jpg</mouseclickimg>
+					<top>header.page</top>
+					<!-- <top>perspective_toolbar.jsp</top> <left>perspective_outlookbar.jsp</left> -->
+					<workspace>
+						<content>html/table3.html</content>
+					</workspace>
+				</item>
+				<item name="列表页面三" id="appbommanager13" i18n:en_US="page">
+						<mouseclickimg>html/images/jixiao.jpg</mouseclickimg>
+					<top>header.page</top>
+					<!-- <top>perspective_toolbar.jsp</top> <left>perspective_outlookbar.jsp</left> -->
+					<workspace>
+						<content>html/table4.html</content>
+					</workspace>
+				</item>
+				<item name="列表页面四" id="appbommanager14" i18n:en_US="page">
+						<mouseclickimg>html/images/jixiao.jpg</mouseclickimg>
+					<top>header.page</top>
+					<!-- <top>perspective_toolbar.jsp</top> <left>perspective_outlookbar.jsp</left> -->
+					<workspace>
+						<content>html/table5.html</content>
+					</workspace>
+				</item>
+				
+				<item name="下拉多选控件" id="selectgrid" i18n:en_US="selectgrid">
+						<mouseclickimg>html/images/jixiao.jpg</mouseclickimg>
+					<top>header.page</top>
+					<!-- <top>perspective_toolbar.jsp</top> <left>perspective_outlookbar.jsp</left> -->
+					<workspace>
+						<content>demo/selectgrid/selectedlist.htm</content>
+					</workspace>
+				</item>
+				<item name="报错页面" id="error" i18n:en_US="error">
+						<mouseclickimg>html/images/jixiao.jpg</mouseclickimg>
+					<top>header.page</top>
+					<!-- <top>perspective_toolbar.jsp</top> <left>perspective_outlookbar.jsp</left> -->
+					<workspace>
+						<content>demo/error/error.html</content>
+					</workspace>
+				</item>
+				
+				
+				
+				
+				
+				
+
+			</module>
+
+
+
+		</module>
+	
+		
+
+		<module name="系统管理" id="sysmanager" used="true" showleftmenu="false"  i18n:en_US="System Manage">
+		
+			<description>系统管理</description>
+			<item name="权限管理" id="purviewmanager" default="true" i18n:en_US="Authoration Manage" >
+				<mouseclickimg>html/images/date_work.jpg</mouseclickimg>
+				<top>headersimple.page</top>
+				<!-- <top>perspective_toolbar.jsp</top> <left>perspective_outlookbar.jsp</left> -->
+				<workspace>
+					<content>purviewmanager/main.jsp</content>
+				</workspace>
+				<authoration>				 
+				 	<url>/purviewmanager/userorgmanager/org/*.jsp</url>	
+				 	<url>/purviewmanager/userorgmanager/user/*.jsp</url>
+				 	<url>/purviewmanager/rolemanager/*.jsp</url>
+				 	<url>/purviewmanager/jobmanager/*.jsp</url>
+				 	<url>/purviewmanager/groupmanager/*.jsp</url>
+				 	<url>/purviewmanager/resmanager/*.jsp</url>					 			 
+				</authoration>
+			</item>
+
+			<item name="菜单管理" id="menumanage" area="main" i18n:en_US="Menu Manage" >
+					<mouseclickimg>html/images/jixiao.jpg</mouseclickimg>
+				<top>header.page</top>
+				<!-- <top>perspective_toolbar.jsp</top> -->
+				<!-- <left>perspective_outlookbar.jsp</left> -->
+				<navigator>
+					<content>sysmanager/menumanager/resColumnTree.jsp</content>
+				</navigator>
+				<workspace>
+					<content>sysmanager/menumanager/menuList.jsp</content>
+				</workspace>
+				
+				<authoration>				 
+				 	<url>/sysmanager/menumanager/*.jsp</url>	
+				 	<url>/sysmanager/menumanager/*.page</url>
+				 				 			 
+				</authoration>
+				
+			</item>
+
+			<item name="用户查询" id="userquery"   i18n:en_US="User Query">
+					<mouseclickimg>html/images/jixiao.jpg</mouseclickimg>
+				<top>header.page</top>
+				<!-- <top>perspective_toolbar.jsp</top> -->
+				<!-- <left>perspective_outlookbar.jsp</left> -->
+				<navigator></navigator>
+				<workspace>
+					<content>sysmanager/user/userquery_content_tab.jsp</content>
+				</workspace>
+				<authoration>				 
+				 	<url>/sysmanager/user/*.jsp</url>
+				</authoration>
+				
+			</item>
+			<item name="资源查询" id="resquery"   i18n:en_US="Resource Query">
+					<mouseclickimg>html/images/jixiao.jpg</mouseclickimg>
+				<top>header.page</top>
+				<!-- <top>perspective_toolbar.jsp</top> -->
+				<!-- <left>perspective_outlookbar.jsp</left> -->
+				<navigator></navigator>
+				<workspace>
+					<content>sysmanager/resmanager/resquery_tab.jsp</content>
+				</workspace>
+				<authoration>				 
+				 	<url>/sysmanager/resmanager/*.jsp</url>
+				</authoration>
+			</item>
+
+			<item name="日志查询" id="logquery"   i18n:en_US="Log Query">
+					<mouseclickimg>html/images/jixiao.jpg</mouseclickimg>
+				<top>header.page</top>
+				<!-- <top>perspective_toolbar.jsp</top> -->
+				<!-- <left>perspective_outlookbar.jsp</left> -->
+				<navigator></navigator>
+				<workspace>
+					<content>sysmanager/logmanager/logList_tab.jsp</content>
+				</workspace>
+				<authoration>				 
+				 	<url>/sysmanager/logmanager/*.jsp</url>
+				</authoration>
+				
+			</item>
+
+			<item name="IP限制管理" id="ipcontrol" i18n:en_US="Ip Control">
+					<mouseclickimg>html/images/jixiao.jpg</mouseclickimg>
+				<top>header.page</top>
+				<!-- <top>perspective_toolbar.jsp</top> -->
+				<!-- <left>perspective_outlookbar.jsp</left> -->
+				<navigator></navigator>
+				<workspace>
+					<content>sysmanager/ipcontrol/index.page</content>
+				</workspace>
+				<authoration>				 
+				 	<url>/sysmanager/ipcontrol/*.page</url>
+				</authoration>
+				
+			</item>
+			<item name="Session管理" id="sessioncontrol" showleftmenu="false" i18n:en_US="Session Control">
+					<mouseclickimg>html/images/jixiao.jpg</mouseclickimg>
+				<top>header.page</top>
+				<navigator></navigator>
+				<workspace>
+					<content>session/sessionManager/sessionManager.page</content>
+				</workspace>
+				<authoration>				 
+				 	<url>/session/sessionManager/*.page</url>
+				</authoration>
+				
+			</item>
+		</module>
+		<module name="应用管理" id="wfappmanager" used="true" showleftmenu="true" i18n:en_US="App Manage">
+				<mouseclickimg>html/images/jixiao.jpg</mouseclickimg>
+			<item name="数据源管理" id="appdatasourcMg">
+				<mouseclickimg>common/ico/zjcx_c.gif</mouseclickimg>
+				
+				<top>header.page</top>
+				
+				<workspace>
+					<content>/datareuse/datasource/main.page</content>
+				</workspace>
+			</item>
+			<item name="应用管理" id="app">
+				<mouseclickimg>common/ico/zjcx_c.gif</mouseclickimg>
+				
+				<top>header.page</top>
+				
+				<workspace>
+					<content>/application/index.page</content>
+				</workspace>
+			</item>
+			<item name="参数管理" id="argsmanager">
+				<mouseclickimg>common/ico/zjcx_c.gif</mouseclickimg>
+				
+				<top>header.page</top>
+				
+				<workspace>
+					<content><![CDATA[/params/showParams.page?paramId=Token&paramType=Token&handler=cms.siteparamshandler]]></content>
+				</workspace>
+			</item>
+			<item name="微信参数管理" id="weixin-argsmanager">
+				<mouseclickimg>common/ico/zjcx_c.gif</mouseclickimg>
+				
+				<top>header.page</top>
+				
+				<workspace>
+					<content><![CDATA[/params/showParams.page?paramId=weixin&paramType=weixin&handler=cms.siteparamshandler]]></content>
+				</workspace>
+			</item>
+			<!-- 
+			<item name="邮件消息参数管理" id="mailmsgmanager">
+				<mouseclickimg>common/ico/zjcx_c.gif</mouseclickimg>
+				
+				<top>header.page</top>
+				
+				<workspace>
+					<content><![CDATA[/params/showParams.page?paramId=mail&paramType=msg&handler=sys.msg.paramshandler]]></content>
+				</workspace>
+			</item>
+			
+			<item name="短信消息参数管理" id="smsmsgmanager">
+				<mouseclickimg>common/ico/zjcx_c.gif</mouseclickimg>
+				
+				<top>header.page</top>
+				
+				<workspace>
+					<content><![CDATA[/params/showParams.page?paramId=msg&paramType=msg&handler=sys.msg.paramshandler]]></content>
+				</workspace>
+			</item>
+			 -->
+			<item name="节假日管理" id="holidaymanager">
+				<mouseclickimg>common/ico/zjcx_c.gif</mouseclickimg>
+				
+				<top>header.page</top>
+				
+				<workspace>
+					<content><![CDATA[/sysmanager/holiday/index.page]]></content>
+				</workspace>
+			</item>
+			
+			
+			
+		</module>
+		<module name="工作流" id="workflow" used="true" showleftmenu="false" i18n:en_US="Workflow Manage">
+				<mouseclickimg>html/images/jixiao.jpg</mouseclickimg>
+			<description>工作流管理</description>
+			<item name="工作流管理新" id="workflowmanagernew" i18n:en_US="Workflow Manage">
+					<mouseclickimg>html/images/jixiao.jpg</mouseclickimg>
+				<top>header.page</top>
+				<!-- <top>perspective_toolbar.jsp</top> <left>perspective_outlookbar.jsp</left> -->
+				<!--
+				<navigator>
+					<content>workflow/repository/resColumnCmsTree.jsp</content>
+				</navigator>
+				<workspace>
+					<content>workflow/repository/menuList.jsp</content>
+				</workspace>
+				workflow/repository/index.page-旧入口地址
+				-->
+				<workspace>
+					<content>workflow/repository/workflowmanager.page</content>
+				</workspace>
+				<authoration>				 
+				 	<url>workflow/repository/*.page</url>
+				</authoration>
+			</item>
+			 
+			<item name="业务类别管理" id="businesstype" i18n:en_US="Business Type Manage">
+					<mouseclickimg>html/images/jixiao.jpg</mouseclickimg>
+				<top>header.page</top>
+				<workspace>
+					<content>workflow/businesstype/index.page</content>
+				</workspace>
+				<authoration>				 
+				 	<url>workflow/businesstype/*.page</url>
+				</authoration>
+			</item>
+			<!--  
+			<item name="工作流demo" id="workflowdemo" i18n:en_US="Workflow Demo">
+					<mouseclickimg>html/images/jixiao.jpg</mouseclickimg>
+				<top>header.page</top>
+				<workspace>
+					<content>test/toApplyPage.page</content>
+				</workspace>
+			</item>
+
+			<item name="用户待办" id="workflowusertask" i18n:en_US="User Tasks">
+					<mouseclickimg>html/images/jixiao.jpg</mouseclickimg>
+				<top>header.page</top>
+				<workspace>
+					<content>test/task_userlist.jsp</content>
+				</workspace>
+			</item>
+			
+			<item name="用户待审" id="workflowuserdedetails" i18n:en_US="User Check Tasks">
+					<mouseclickimg>html/images/jixiao.jpg</mouseclickimg>
+				<top>header.page</top>
+				<workspace>
+					<content>test/details_userlist.jsp</content>
+				</workspace>
+			</item>
+			<item name="用户已办" id="workflowuserhis" i18n:en_US="User History Tasks">
+				
+				<top>header.page</top>
+				<workspace>
+					<content>test/his_userlist.jsp</content>
+				</workspace>
+			</item>
+			-->
+			<module name="任务管理" id="taskmanage" used="true" i18n:en_US="task manager"
+				url="workflow/taskManage/ontimeTaskManager.page" showleftmenu="true" popup="true">
+				<mouseclickimg>html/images/jixiao.jpg</mouseclickimg>
+				<item name="流程实例" id="processInsts" i18n:en_US="process Insts">
+					<mouseclickimg>html/images/jixiao.jpg</mouseclickimg>
+					<top>header.page</top>
+					<workspace>
+						<content>workflow/repository/toProcessInstance.page</content>
+					</workspace>
+					<authoration>				 
+					 	<url>workflow/repository/*.page</url>
+					</authoration>
+				</item>
+				<item name="实时任务" id="ontimeTask" i18n:en_US="ontime task">
+					<mouseclickimg>html/images/jixiao.jpg</mouseclickimg>
+					<top>header.page</top>
+					<workspace>
+						<content>workflow/taskManage/ontimeTaskManager.page</content>
+					</workspace>
+					<authoration>				 
+					 	<url>workflow/taskManage/*.page</url>
+					</authoration>
+				</item>
+				<item name="历史任务" id="historyTask" i18n:en_US="history task">
+					<mouseclickimg>html/images/jixiao.jpg</mouseclickimg>
+					<top>header.page</top>
+					<workspace>
+						<content>workflow/taskManage/historyTaskManager.page</content>
+					</workspace>
+					<authoration>				 
+					 	<url>workflow/taskManage/*.page</url>
+					</authoration>
+				</item>
+			</module>
+
+			<item name="模板管理" id="templemanage" i18n:en_US="temple manager">
+				<mouseclickimg>html/images/jixiao.jpg</mouseclickimg>
+				<top>header.page</top>
+				<workspace>
+					<content>workflow/templeManage/templeManager.page</content>
+				</workspace>
+				<authoration>				 
+					 <url>workflow/templeManage/*.page</url>
+				</authoration>
+			</item>
+			
+			<module name="统计分析" id="statistics" used="true" i18n:en_US="workflow statistics"
+				url="workflow/statistics/toProcessCount.page" showleftmenu="true" popup="true">
+				<mouseclickimg>html/images/jixiao.jpg</mouseclickimg>
+				<item name="流程统计" id="processCount" i18n:en_US="process Count">
+					<mouseclickimg>html/images/jixiao.jpg</mouseclickimg>
+					<top>header.page</top>
+					<workspace>
+						<content>workflow/statistics/toProcessCount.page</content>
+					</workspace>
+					<authoration>				 
+					 	<url>workflow/statistics/*.page</url>
+					</authoration>
+				</item>
+				<item name="个人统计" id="personalCount" i18n:en_US="personal Count">
+					<mouseclickimg>html/images/jixiao.jpg</mouseclickimg>
+					<top>header.page</top>
+					<workspace>
+						<content>workflow/statistics/toPersonalCount.page</content>
+					</workspace>
+					<authoration>				 
+					 	<url>workflow/statistics/*.page</url>
+					</authoration>
+				</item>
+			</module>
+			
+			<module name="业务演示" id="businessDemo" used="true" i18n:en_US="business Demo"
+				url="workflow/businessDemo/toDemo.page" showleftmenu="true" popup="true">
+				<mouseclickimg>html/images/jixiao.jpg</mouseclickimg>
+				<item name="流程演示" id="processDemo" i18n:en_US="process Demo">
+					<mouseclickimg>html/images/jixiao.jpg</mouseclickimg>
+					<top>header.page</top>
+					<workspace>
+						<content>workflow/businessDemo/toDemo.page</content>
+					</workspace>
+					
+				</item>
+			</module>
+			
+			<item name="流程授权管理" id="entrustmanager">
+				<mouseclickimg>common/ico/zjcx_c.gif</mouseclickimg>
+				
+				<top>header.page</top>
+				
+				<workspace>
+					<content>workflow/entrust/index.page</content>
+				</workspace>
+				<authoration>				 
+				 	<url>sysmanager/user/userquery_help_choose.jsp</url>
+				</authoration>
+			</item>
+		</module>
+
+		<module name="统计报表" id="counter" used="true" showleftmenu="false" i18n:en_US="Counter">
+			<item name="站点浏览统计" id="browserCounter" i18n:en_US="BrowserCounter">
+				
+				<top>header.page</top>
+				<!-- <top>perspective_toolbar.jsp</top> <left>perspective_outlookbar.jsp</left> -->
+				<workspace>
+					<content>counter/index.freepage</content>
+				</workspace>
+				
+				
+			</item>
+			
+			<item name="浏览统计" id="attachCounter" i18n:en_US="attachCounter">
+				
+				<top>header.page</top>
+				<!-- <top>perspective_toolbar.jsp</top> <left>perspective_outlookbar.jsp</left> -->
+				<workspace>
+					<content>sanylog/attachIndex.page</content>
+				</workspace>
+			</item>
+			
+			<item name="操作统计" id="operateCounter" i18n:en_US="operateCounter">
+				
+				<top>header.page</top>
+				<!-- <top>perspective_toolbar.jsp</top> <left>perspective_outlookbar.jsp</left> -->
+				<workspace>
+					<content>sanylog/operateIndex.page</content>
+				</workspace>
+			</item>
+			<item name="权限配置管理" id="permissionConfig" i18n:en_US="permissionConfig">
+					<mouseclickimg>html/images/jixiao.jpg</mouseclickimg>
+				<top>header.page</top>
+				<!-- <top>perspective_toolbar.jsp</top> <left>perspective_outlookbar.jsp</left> -->
+				<workspace>
+					<content>sanylog/config/permissionConfig.jsp</content>
+				</workspace>
+			</item>
+			
+			<item name="应用配置管理" id="AppModuleList" i18n:en_US="AppModuleList">
+					<mouseclickimg>html/images/jixiao.jpg</mouseclickimg>
+				<top>header.page</top>
+				<workspace>
+					<content>sanylog/config/appModuleIndex.jsp</content>
+				</workspace>
+			</item>
+			
+		</module>
+
+
+		<module name="字典管理" id="dictionarymanager" used="true" i18n:en_US="Dictionary Manage">
+			<mouseclickimg>html/images/jixiao.jpg</mouseclickimg>
+			<item name="字典定义" id="dictmanage_info" area="main" i18n:en_US="Dictmanage Infomation">
+					<mouseclickimg>html/images/jixiao.jpg</mouseclickimg>
+				<top>perspective_toolbar.jsp</top>
+				<left>perspective_outlookbar.jsp</left>
+				<navigator>
+					<content>sysmanager/dictmanager/navigator_info_content.jsp
+					</content>
+				</navigator>
+
+				<workspace>
+					<content>sysmanager/dictmanager/newDict.jsp</content>
+				</workspace>
+			</item>
+
+			<item name="字典高级字段配置" id="dictAttachField" area="main" i18n:en_US="Advanced Dictionary Manage">
+					<mouseclickimg>html/images/jixiao.jpg</mouseclickimg>
+				<top>perspective_toolbar.jsp</top>
+				<left>perspective_outlookbar.jsp</left>
+				<navigator>
+					<toolbar>sysmanager/dictmanager/dictAttachField/navigator_toolbar.jsp
+					</toolbar>
+					<content>sysmanager/dictmanager/dictAttachField/navigator_content.jsp
+					</content>
+				</navigator>
+
+				<workspace>
+					<toolbar>sysmanager/dictmanager/dictAttachField/properties_toolbar.jsp
+					</toolbar>
+					<content>sysmanager/dictmanager/dictAttachField/properties_content.jsp
+					</content>
+				</workspace>
+			</item>
+
+			<item name="输入类型管理" id="inputtypemanage" area="main" i18n:en_US="Input Type Manage">
+					<mouseclickimg>html/images/jixiao.jpg</mouseclickimg>
+				<top>perspective_toolbar.jsp</top>
+				<left>perspective_outlookbar.jsp</left>
+				<navigator></navigator>
+				<workspace>
+					<content>sysmanager/inputtypemanager/inputTypeQuery.jsp</content>
+				</workspace>
+			</item>
+
+
+			<item name="基础字典数据采集" id="dictmanage_content_0" area="main" i18n:en_US="Base Dictionary Manage">
+					<mouseclickimg>html/images/jixiao.jpg</mouseclickimg>
+				<top>perspective_toolbar.jsp</top>
+				<left>perspective_outlookbar.jsp</left>
+				<navigator>
+					<content>sysmanager/dictmanager/navigator_content_content.jsp?dicttype_type=0
+					</content>
+				</navigator>
+
+				<workspace>
+					<content>sysmanager/dictmanager/orgTaxcode/org_dictdataShow.jsp</content>
+				</workspace>
+			</item>
+		</module>
+
+		<item name="个人信息修改" id="personuserinfomodify" i18n:en_US="User Infomation Modification">
+				<mouseclickimg>html/images/jixiao.jpg</mouseclickimg>
+			<top>perspective_toolbar.jsp</top>
+			<left>perspective_outlookbar.jsp</left>
+			<workspace>
+				<content>person/personinfo.jsp</content>
+			</workspace>
+			<authoration>				 
+				 	<url>/person/*.jsp,/sysmanager/resmanager/res_query.jsp,/sysmanager/user/userres_querylist.jsp</url>	 	
+				 	<url>/sysmanager/resmanager/delRedundance.jsp</url>
+				 	<url>/sysmanager/user/userres_querylist.jsp</url>
+				 	<url>/sysmanager/resmanager/res_queryframe.jsp</url>
+			</authoration>
+		</item>
+		<item name="系统帐户修改" id="sysuserpassword" i18n:en_US="System Infomation Modification">
+				<mouseclickimg>html/images/jixiao.jpg</mouseclickimg>
+			<top>perspective_toolbar.jsp</top>
+			<left>perspective_outlookbar.jsp</left>
+			<workspace>
+				<content>sysmanager/password/modifyUserPWD.jsp</content>
+			</workspace>
+			<authoration>				 
+				 	<url>/sysmanager/password/*.jsp</url>
+			</authoration>
+		</item>
+		<item name="个人密码修改" id="personsecretpassword" i18n:en_US="User Password Modification">
+				<mouseclickimg>html/images/jixiao.jpg</mouseclickimg>
+			<top>perspective_toolbar.jsp</top>
+			<left>perspective_outlookbar.jsp</left>
+			<workspace>
+				<content>sysmanager/password/modifySelfPassword.jsp</content>
+			</workspace>
+			<authoration>				 
+				 	<url>/sysmanager/password/saveModifySelfPWD.jsp</url>
+			</authoration>
+		</item>
+
+		<item name="系统监控" id="dbmonitor" i18n:en_US="System Monitor">
+				<mouseclickimg>html/images/jixiao.jpg</mouseclickimg>
+			<top>perspective_toolbar.jsp</top>
+			<left>perspective_outlookbar.jsp</left>
+			<navigator></navigator>
+			<workspace>
+				<content>monitor/monitor_console.jsp</content>
+			</workspace>
+			<authoration>				 
+				 <url>monitor/*.jsp</url>
+				 <url>monitor/spi/*.jsp</url>
+				 <url>/druid/*</url>
+			</authoration>
+		</item>
+		
+		
+		<item name="数据库管理" id="dbmanager_" i18n:en_US="DB Manager">
+			<mouseclickimg>html/images/jixiao.jpg</mouseclickimg>
+			<top>perspective_toolbar.jsp</top>
+			<left>perspective_outlookbar.jsp</left>
+			<navigator></navigator>
+			<workspace>
+				<content>sysmanager/dbmanager/tablesmanager.jsp</content>
+			</workspace>
+			<authoration>				 
+				 <url>sysmanager/dbmanager/*.jsp</url>
+				<url>sysmanager/dbmanager/tableinfo/*.jsp</url>
+			</authoration>
+		</item>
+		
+		<item name="缓存管理" id="cachemonitor" i18n:en_US="Cache Monitor">
+				<mouseclickimg>html/images/jixiao.jpg</mouseclickimg>
+			<workspace>
+				<content>monitor/cache_console.page</content>
+			</workspace>
+			<authoration>				 
+				 	<url>monitor/*.page</url>
+			</authoration>
+		</item>
+
+		<item name="权限测试" id="permissiontest" i18n:en_US="Role Unit">
+				<mouseclickimg>html/images/jixiao.jpg</mouseclickimg>
+			<top>header.page</top>
+			<!-- <top>perspective_toolbar.jsp</top> <left>perspective_outlookbar.jsp</left> -->
+			<workspace>
+				<content>test/testcheckpermission.jsp</content>
+			</workspace>
+		</item>
+		
+		<item name="桌面快捷管理" id="desktopmanager" i18n:en_US="desktop manager">
+				<mouseclickimg>html/images/jixiao.jpg</mouseclickimg>
+			<top>header.page</top>
+			<!-- <top>perspective_toolbar.jsp</top> <left>perspective_outlookbar.jsp</left> -->
+			<workspace>
+				<content>menu/setting.page</content>
+			</workspace>
+		</item>
+		
+		
+
+	</sysmenu>
+</system>

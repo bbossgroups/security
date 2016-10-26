@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE taglib PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.1//EN" "http://java.sun.com/j2ee/dtds/web-jsptaglibrary_1_1.dtd">
+
+<taglib>
+    <tlibversion>1.1.0</tlibversion>
+    <jspversion>1.2</jspversion>
+    <shortname>sany Tag</shortname>
+    <uri>sany-taglib</uri>
+  <tag>
+        <name>accesscontrol</name>
+        <tagclass>com.sany.common.menu.tag.AccessControlTag</tagclass>
+        <bodycontent>empty</bodycontent>
+ 		<attribute>
+			<name>userattribute</name>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+    </tag>
+  
+    <tag>
+        <name>menus</name>
+        <tagclass>com.sany.common.menu.tag.MenuTag</tagclass>
+        <bodycontent>empty</bodycontent>
+		<attribute>
+			<name>level</name>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>web</name>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>enableindex</name>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+		
+    </tag>
+	<!-- 功能说明：当前位置标签 
+		 属性说明：
+		 	menuid 当前菜单id，可以手动指定，默认为当前操作的菜单功能项的id
+		 	showappname 控制在当前位置前是否添加应用名称，true时添加，默认为false
+		 	pretitle 用来指定当前位置前缀信息，默认为："您的当前位置："
+	-->
+    <tag>
+        <name>menupath</name>
+        <tagclass>com.sany.common.menu.tag.MenuPathTag</tagclass>
+        <bodycontent>empty</bodycontent>
+        <attribute>
+			<name>menuid</name>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>showappname</name>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>pretitle</name>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+
+       
+    </tag>
+	    <tag>
+        <name>leftmenu</name>
+        <tagclass>com.sany.common.menu.tag.LeftMenuTag</tagclass>
+        <bodycontent>empty</bodycontent>
+        <attribute>
+			<name>target</name>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>menupath</name>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+    </tag>    
+    
+    <tag>
+        <name>webleftmenu</name>
+        <tagclass>com.sany.common.menu.tag.WebLeftMenuTag</tagclass>
+        <bodycontent>empty</bodycontent>
+        <attribute>
+			<name>target</name>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>menupath</name>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+    </tag>    
+    
+     <tag>
+        <name>webmenus</name>
+        <tagclass>com.sany.common.menu.tag.WebMenuTag</tagclass>
+        <bodycontent>empty</bodycontent>
+		<attribute>
+			<name>level</name>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		
+    </tag>
+    
+    
+   
+</taglib>

@@ -49,18 +49,21 @@ public class SessionUtil {
 				SessionManager sessionManager = context.getTBeanObject("sessionManager", SessionManager.class);
 				SessionStaticManager sessionStaticManager = null;
 				String monitorScope = null;
-				if(!sessionManager.usewebsession())
+				if(sessionManager != null)
 				{
-					sessionStaticManager = context.getTBeanObject("sessionStaticManager", SessionStaticManager.class);
-					monitorScope = sessionStaticManager.getMonitorScope();
+					if(!sessionManager.usewebsession())
+					{
+						sessionStaticManager = context.getTBeanObject("sessionStaticManager", SessionStaticManager.class);
+						monitorScope = sessionStaticManager.getMonitorScope();
+					}
+					else
+						sessionStaticManager = new NullSessionStaticManagerImpl();
+					if(monitorScope == null)
+						monitorScope = SessionStaticManager.MONITOR_SCOPE_SELF;
+					sessionManager.initSessionConfig(contextpath,monitorScope);
+					SessionUtil.sessionManager = sessionManager;
+					SessionUtil.sessionStaticManager = sessionStaticManager;
 				}
-				else
-					sessionStaticManager = new NullSessionStaticManagerImpl();
-				if(monitorScope == null)
-					monitorScope = SessionStaticManager.MONITOR_SCOPE_SELF;
-				sessionManager.initSessionConfig(contextpath,monitorScope);
-				SessionUtil.sessionManager = sessionManager;
-				SessionUtil.sessionStaticManager = sessionStaticManager;
 			}
 			finally
 			{
@@ -306,7 +309,7 @@ public class SessionUtil {
 	
 	}
 	private static HttpSession _getSession(String appkey,String sessionid) {
-		if( getSessionManager().usewebsession())
+		if(getSessionManager() == null || getSessionManager().usewebsession())
 		{
 			return null;
 		}

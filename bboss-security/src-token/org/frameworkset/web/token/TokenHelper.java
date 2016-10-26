@@ -93,11 +93,15 @@ public class TokenHelper {
 			}
 			catch (RuntimeException e) {
 				tokenService = new DummyTokenService();
+				
 				log.warn("",e);
 			}
 			catch (Exception e) {
 				tokenService = new DummyTokenService();
-				log.warn("",e);
+				if(!(e instanceof java.io.FileNotFoundException))
+					log.warn("",e);
+				else
+					log.warn(e.getMessage());
 			}
 			catch (Throwable e) {
 				tokenService = new DummyTokenService();
