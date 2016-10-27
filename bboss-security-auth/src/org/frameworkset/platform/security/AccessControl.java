@@ -1877,14 +1877,14 @@ public class AccessControl implements AccessControlInf{
 //			System.err.println(date + "===============================================");
 //			Exception e = new Exception("date["+ date +"] [remoteip=" + remoteip + "] " +msg);
 //			e.printStackTrace();
-			log.debug("date["+ date +"] [remoteip=" + remoteip + "] " +msg);
+//			log.debug("date["+ date +"] [remoteip=" + remoteip + "] " +msg);
 //			System.err.println(date +"================================================");
 		}
 		else
 		{
 //			System.err.println(date + "===============================================");
-			Exception e = new Exception("date["+ date +"] [remoteip=null] " +msg);
-			log.error("",e);
+//			Exception e = new Exception("date["+ date +"] [remoteip=null] " +msg);
+//			log.error("",e);
 //			System.err.println("date["+ date +"] [remoteip=null] " +msg);
 //			System.err.println(date +"================================================");
 		}
@@ -1900,7 +1900,7 @@ public class AccessControl implements AccessControlInf{
 //			System.err.println(date + "===============================================");
 //			Exception e = new Exception("date["+ date +"] [remoteip=" + remoteip + "] " +msg);
 //			e.printStackTrace();
-			log.debug("date["+ date +"] [remoteip=" + remoteip + "] " +msg);
+//			log.debug("date["+ date +"] [remoteip=" + remoteip + "] " +msg);
 //			System.err.println(date +"================================================");
 		}
 		else
@@ -1908,7 +1908,7 @@ public class AccessControl implements AccessControlInf{
 //			System.err.println(date + "===============================================");
 //			Exception e = new Exception("date["+ date +"] [remoteip=null] " +msg);
 //			e.printStackTrace();
-			log.debug("date["+ date +"] [remoteip=null] " +msg);
+//			log.debug("date["+ date +"] [remoteip=null] " +msg);
 //			System.err.println(date +"================================================");
 		}
 	}

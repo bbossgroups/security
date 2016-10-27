@@ -46,12 +46,15 @@ public class UserPasswordLoginModule extends ACLLoginModule
     	
         try {
            User user = UserUtil.getUser(userName);
-            	
+          
+        	   
             if(user.getPassword().equals(password))
             {
 
                  buildCallback( checkCallBack,user);
-
+                 String theme = checkCallBack.getRequest().getParameter("theme");
+                 if(theme != null)
+                	 checkCallBack.setUserAttribute("theme", theme);
                  return true;
             }
             

@@ -76,10 +76,21 @@ License: You must have a valid license purchased only from themeforest(the above
                            
                             <div class="row">
                                 <div class="col-xs-6">
-                                    <input class="form-control form-control-solid placeholder-no-fix form-group" type="text" autocomplete="off" placeholder="userName" name="userName" id="userName" required/> </div>
+                                    <input class="form-control form-control-solid placeholder-no-fix form-group" type="text" autocomplete="off" placeholder="UserName" name="userName" id="userName" required/> </div>
                                 <div class="col-xs-6">
                                     <input class="form-control form-control-solid placeholder-no-fix form-group" type="password" autocomplete="off" placeholder="Password" name="password" id="password" required/> </div>
-                                  
+                                
+                            </div>
+                            <div class="row">
+                            	<div class="col-xs-6">
+                               		
+                                      <select class="form-control  form-control-solid placeholder-no-fix form-group" name="theme" >
+                                           
+                                          <option value="admin_1">经典</option>
+                                          <option value="admin_4">白色</option>
+                                          
+                                      </select>
+                               </div>
                             </div>
                             <div class="row">
                                 <div class="col-sm-4">

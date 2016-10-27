@@ -70,7 +70,7 @@ public class SessionUtil {
 			}
 			catch(SPIException e)
 			{
-				log.info("初始化bboss sessionfailed:"+e.getMessage());
+				log.info("初始化bboss session结果:"+e.getMessage());
 				
 			}
 			finally
