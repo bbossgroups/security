@@ -86,7 +86,10 @@ public class UserPasswordLoginModule extends ACLLoginModule
     {
     	checkCallBack.setUserAttribute("userName", user.getUserName());
         checkCallBack.setUserAttribute("userID", user.getUserId().toString());
+        checkCallBack.setUserAttribute("depart", "电渠事业部技术架构部");
+        checkCallBack.setUserAttribute("job", "架构师");
         
+        checkCallBack.setUserAttribute("title", "电渠事业部-技术架构部-架构师-"+user.getUserName()+"("+user.getUserAccount()+")");
         checkCallBack.setUserAttribute("userAccount", user.getUserAccount());
         checkCallBack.setUserAttribute("userSex", user.getUserSex());
          

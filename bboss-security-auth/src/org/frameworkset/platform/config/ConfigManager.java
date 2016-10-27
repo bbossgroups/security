@@ -992,7 +992,14 @@ public class ConfigManager implements ResourceInitial {
     	ResourceInfo resourceInfo = this.getApplicationInfo(appName).getResourceInfoById(moduleName,
                 type);
     	if(resourceInfo == null)
-    		throw new ConfigException("获取类型为[" + type + "]的资源信息异常[java.lang.NullpointException]，请检查config-manager.xml文件中是否配置了id为[" + type + "]资源类别！");
+    	{
+    		log.debug(new StringBuilder().append("获取")
+    				.append("类型为[" )
+    				.append( type )
+    				.append( "]的资源信息异常[java.lang.NullpointException]，请检查config-manager.xml文件中是否配置了id为[" )
+    				.append( type )
+    				.append( "]资源类别！").toString());
+    	}
         return resourceInfo;
     }
 
@@ -1006,7 +1013,13 @@ public class ConfigManager implements ResourceInitial {
                     getModuleName(), resourcetype);
         	if(ret == null)
         	{
-        		throw new ConfigException("获取类型为[" + resourcetype + "]的资源信息异常[java.lang.NullpointException]，请检查config-manager.xml文件中是否配置了id为[" + resourcetype + "]资源类别！");
+        		log.debug(new StringBuilder().append("获取")
+        				.append("类型为[" )
+        				.append( resourcetype )
+        				.append( "]的资源信息异常[java.lang.NullpointException]，请检查config-manager.xml文件中是否配置了id为[" )
+        				.append( resourcetype )
+        				.append( "]资源类别！").toString());
+//        		throw new ConfigException("获取类型为[" + resourcetype + "]的资源信息异常[java.lang.NullpointException]，请检查config-manager.xml文件中是否配置了id为[" + resourcetype + "]资源类别！");
         	}
             return ret;
         }
@@ -1017,8 +1030,13 @@ public class ConfigManager implements ResourceInitial {
                     getModuleName(), resourcetype);
         	if(ret == null)
         	{
-        		throw new ConfigException("获取类型为[" + resourcetype + "]的资源信息异常[java.lang.NullpointException]，请检查config-manager.xml文件中是否配置了id为[" + resourcetype + "]资源类别！");
-        	}
+        		log.debug(new StringBuilder().append("获取")
+        				.append("类型为[" )
+        				.append( resourcetype )
+        				.append( "]的资源信息异常[java.lang.NullpointException]，请检查config-manager.xml文件中是否配置了id为[" )
+        				.append( resourcetype )
+        				.append( "]资源类别！").toString());
+        		}
             return ret;
         }
         

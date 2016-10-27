@@ -279,10 +279,7 @@ public class SSOControler {
                 if (userName != null) {
                     try {
                         if (enable_login_validatecode) {
-
-                           
                             permissionModule.validatecode(request);
-                            
                         }
 
                         AccessControl.getInstance().login(request, response, userName, password);

@@ -9,6 +9,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.frameworkset.security.session.domain.CrossDomain;
 import org.frameworkset.security.session.impl.HttpSessionImpl;
 import org.frameworkset.security.session.impl.SessionEventImpl;
@@ -20,11 +21,13 @@ import org.frameworkset.security.session.statics.SessionConfig;
 import org.frameworkset.security.session.statics.SessionStaticManager;
 import org.frameworkset.spi.BaseApplicationContext;
 import org.frameworkset.spi.DefaultApplicationContext;
+import org.frameworkset.spi.SPIException;
 
 import com.frameworkset.util.SimpleStringUtil;
 import com.frameworkset.util.StringUtil;
 
 public class SessionUtil {
+	private static Logger log = Logger.getLogger(SessionUtil.class);
 	private static SessionManager sessionManager;
 	private static SessionStaticManager sessionStaticManager;
  
@@ -64,6 +67,11 @@ public class SessionUtil {
 					SessionUtil.sessionManager = sessionManager;
 					SessionUtil.sessionStaticManager = sessionStaticManager;
 				}
+			}
+			catch(SPIException e)
+			{
+				log.info("初始化bboss sessionfailed:"+e.getMessage());
+				
 			}
 			finally
 			{

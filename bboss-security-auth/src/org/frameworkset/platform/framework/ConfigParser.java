@@ -221,6 +221,8 @@ public class ConfigParser extends I18nXMLParser  {
             this.showhidden_width = StringUtil.replaceNull(attributes.getValue("showhidden_width"),"12");
             this.global_target = StringUtil.replaceNull(attributes.getValue("global_target"),"perspective_content");
             this.showrootleftmenu = StringUtil.getBoolean(attributes.getValue("showrootleftmenu"),false);
+            this.logoutredirect = attributes.getValue("logoutredirect");
+            this.successRedirect = attributes.getValue("successRedirect");
             String tempfiles = attributes.getValue("messagesource");
             if(tempfiles != null && !tempfiles.equals(""))
             	this.messagesourcefiles = tempfiles;
@@ -925,6 +927,8 @@ public class ConfigParser extends I18nXMLParser  {
 	private String showhidden_width = "12";
 	private Map subsystems;
 	private List<SubSystem> subsystemList; 
+	private String successRedirect;
+	private String logoutredirect;
 
 
 	public String getShowhidden_width() {
@@ -967,6 +971,14 @@ public class ConfigParser extends I18nXMLParser  {
 
 	public List<SubSystem> getSubsystemList() {
 		return subsystemList;
+	}
+
+	public String getSuccessRedirect() {
+		return successRedirect;
+	}
+
+	public String getLogoutredirect() {
+		return logoutredirect;
 	}
 
 }

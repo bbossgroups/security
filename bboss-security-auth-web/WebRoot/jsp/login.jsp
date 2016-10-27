@@ -3,305 +3,205 @@
 
 <%@ taglib uri="/WEB-INF/pager-taglib.tld" prefix="pg" %>
 
- 
+<!DOCTYPE html>
+<!-- 
+Template Name: Metronic - Responsive Admin Dashboard Template build with Twitter Bootstrap 3.3.6
+Version: 4.5.6
+Author: KeenThemes
+Website: http://www.keenthemes.com/
+Contact: support@keenthemes.com
+Follow: www.twitter.com/keenthemes
+Dribbble: www.dribbble.com/keenthemes
+Like: www.facebook.com/keenthemes
+Purchase: http://themeforest.net/item/metronic-responsive-admin-dashboard-template/4021469?ref=keenthemes
+Renew Support: http://themeforest.net/item/metronic-responsive-admin-dashboard-template/4021469?ref=keenthemes
+License: You must have a valid license purchased only from themeforest(the above link) in order to legally use the theme for your project.
+-->
+<!--[if IE 8]> <html lang="en" class="ie8 no-js"> <![endif]-->
+<!--[if IE 9]> <html lang="en" class="ie9 no-js"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en">
+    <!--<![endif]-->
+    <!-- BEGIN HEAD -->
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <head>
+        <meta charset="utf-8" />
+        <title>${defaultmodulename }</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta content="width=device-width, initial-scale=1" name="viewport" />
+        <meta content="" name="description" />
+        <meta content="" name="author" />
+        <!-- BEGIN GLOBAL MANDATORY STYLES -->
+        <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css" />
+        <link href="assets/global/plugins/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+        <link href="assets/global/plugins/simple-line-icons/simple-line-icons.min.css" rel="stylesheet" type="text/css" />
+        <link href="assets/global/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+        <link href="assets/global/plugins/bootstrap-switch/css/bootstrap-switch.min.css" rel="stylesheet" type="text/css" />
+        <!-- END GLOBAL MANDATORY STYLES -->
+        <!-- BEGIN PAGE LEVEL PLUGINS -->
+        <link href="assets/global/plugins/bootstrap-toastr/toastr.min.css" rel="stylesheet" type="text/css" />
+        <link href="assets/global/plugins/select2/css/select2.min.css" rel="stylesheet" type="text/css" />
+        <link href="assets/global/plugins/select2/css/select2-bootstrap.min.css" rel="stylesheet" type="text/css" />
+        <!-- END PAGE LEVEL PLUGINS -->
+        <!-- BEGIN THEME GLOBAL STYLES -->
+        <link href="assets/global/css/components.min.css" rel="stylesheet" id="style_components" type="text/css" />
+        <link href="assets/global/css/plugins.min.css" rel="stylesheet" type="text/css" />
+        <!-- END THEME GLOBAL STYLES -->
+        <!-- BEGIN PAGE LEVEL STYLES -->
+        <link href="assets/pages/css/login-5.min.css" rel="stylesheet" type="text/css" />
+        <!-- END PAGE LEVEL STYLES -->
+        <!-- BEGIN THEME LAYOUT STYLES -->
+        <!-- END THEME LAYOUT STYLES -->
+        <link rel="shortcut icon" href="favicon.ico" /> </head>
+    <!-- END HEAD -->
 
-<script type="text/javascript" src="${pageContext.request.contextPath}/include/jquery-1.4.2.min.js"></script>
+    <body class=" login">
+        <!-- BEGIN : LOGIN PAGE 5-1 -->
+        <div class="user-login-5">
+            <div class="row bs-reset">
+                <div class="col-md-6 bs-reset">
+                    <div class="login-bg" style="background-image:url(assets/pages/img/login/bg1.jpg)">
+                        <img class="login-logo" src="assets/pages/img/login/logo.png" /> </div>
+                </div>
+                <div class="col-md-6 login-container bs-reset">
+                    <div class="login-content">
+                        <h1>${defaultmodulename } 用户登陆</h1>
+                        <p> 亚信2.0：产业互联网时代的领航者. </p>
+                        <form id="IntegralFormPanel" name="IntegralFormPanel" class="login-form" action="login.page" method="post" target="_self">
+							<input type="hidden" name="flag" value="yes" />
+                            <div class="alert alert-danger display-hide">
+                                <button class="close" data-close="alert"></button>
+                                <span class="msg">Enter any username and password. </span>
+                            </div>
+                           
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    <input class="form-control form-control-solid placeholder-no-fix form-group" type="text" autocomplete="off" placeholder="userName" name="userName" id="userName" required/> </div>
+                                <div class="col-xs-6">
+                                    <input class="form-control form-control-solid placeholder-no-fix form-group" type="password" autocomplete="off" placeholder="Password" name="password" id="password" required/> </div>
+                                  
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <div class="rem-password">
+                                        <label class="rememberme mt-checkbox mt-checkbox-outline">
+                                            <input type="checkbox" name="remember" value="1" /> Remember me
+                                            <span></span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-8 text-right">
+                                    <div class="forgot-password">
+                                        <a href="javascript:;" id="forget-password" class="forget-password">Forgot Password?</a>
+                                    </div>
+                                    <button class="btn green" type="submit" >Sign In</button>
+                                </div>
+                            </div>
+                        </form>
+                        <!-- BEGIN FORGOT PASSWORD FORM -->
+                        <form class="forget-form" action="javascript:;" method="post">
+                            <h3 class="font-green">Forgot Password ?</h3>
+                            <p> Enter your e-mail address below to reset your password. </p>
+                            <div class="form-group">
+                                <input class="form-control placeholder-no-fix form-group" type="text" autocomplete="off" placeholder="Email" name="email" /> </div>
+                            <div class="form-actions">
+                                <button type="button" id="back-btn" class="btn green btn-outline">Back</button>
+                                <button type="submit" class="btn btn-success uppercase pull-right">Submit</button>
+                            </div>
+                        </form>
+                        <!-- END FORGOT PASSWORD FORM -->
+                    </div>
+                    <div class="login-footer">
+                        <div class="row bs-reset">
+                            <div class="col-xs-5 bs-reset">
+                                <ul class="login-social">
+                                    <li>
+                                        <a href="javascript:;">
+                                            <i class="icon-social-facebook"></i>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:;">
+                                            <i class="icon-social-twitter"></i>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:;">
+                                            <i class="icon-social-dribbble"></i>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-xs-7 bs-reset">
+                                <div class="login-copyright text-right">
+                                    <p>Copyright &copy; Keenthemes 2015</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- END : LOGIN PAGE 5-1 -->
+        <!--[if lt IE 9]>
+<script src="assets/global/plugins/respond.min.js"></script>
+<script src="assets/global/plugins/excanvas.min.js"></script> 
+<![endif]-->
+        <!-- BEGIN CORE PLUGINS -->
+        <script src="assets/global/plugins/jquery.min.js" type="text/javascript"></script>
+        <script src="assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+        <script src="assets/global/plugins/js.cookie.min.js" type="text/javascript"></script>
+        <script src="assets/global/plugins/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js" type="text/javascript"></script>
+        <script src="assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
+        <script src="assets/global/plugins/jquery.blockui.min.js" type="text/javascript"></script>
+        <script src="assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js" type="text/javascript"></script>
+        <!-- END CORE PLUGINS -->
+        <!-- BEGIN PAGE LEVEL PLUGINS -->
+        <script src="assets/global/plugins/jquery-validation/js/jquery.validate.min.js" type="text/javascript"></script>
+        <script src="assets/global/plugins/jquery-validation/js/additional-methods.min.js" type="text/javascript"></script>
+        <script src="assets/global/plugins/select2/js/select2.full.min.js" type="text/javascript"></script>
+        <script src="assets/global/plugins/backstretch/jquery.backstretch.min.js" type="text/javascript"></script>
+         <script src="assets/global/plugins/bootstrap-toastr/toastr.min.js" type="text/javascript"></script>
+        <!-- END PAGE LEVEL PLUGINS -->
+        <!-- BEGIN THEME GLOBAL SCRIPTS -->
+        <script src="assets/global/scripts/app.min.js" type="text/javascript"></script>
+        <!-- END THEME GLOBAL SCRIPTS -->
+        <!-- BEGIN PAGE LEVEL SCRIPTS -->
+        <script src="assets/pages/scripts/login-5.min.js" type="text/javascript"></script>
+        <!-- END PAGE LEVEL SCRIPTS -->
+        <!-- BEGIN THEME LAYOUT SCRIPTS -->
+        <!-- END THEME LAYOUT SCRIPTS -->
+    </body>
+<script type="application/javascript">
+	jQuery(document).ready(function() {
+		//Login.showMessage('login failed','登陆失败','error');
+		<pg:notempty actual="${errorMessage}">
+			$('.msg','.alert-danger', $('.login-form')).text('${errorMessage}');
+			$('.alert-danger', $('.login-form')).show();
+		</pg:notempty> 
+	});
 
-
-<script language="JavaScript">
-
-	
-	function reloadhref()
-	{
-		location.href = "login.page";
-	}
-	
-	function changcode()
-	{
-		
-		$("#img1").attr("src","Kaptcha.jpg?"+Math.random());
-		
-	}
-	
-	 
-	
-	function login(event){
-	
-		var s = $("#userName").val();
-		var p = $("#password").val();
-		var y = $("#rand").val();
-		if(y==""){
-			alert("验证码不能为空");
-			return;
-		}
-		if((s==""&&p!="")||(s==""&&p=="")){
-			$.dialog.alert("<pg:message code='sany.pdp.input.login.name'/>",function(){},null,"<pg:message code='sany.pdp.common.alert'/>");
-	    	$("#userName").focus();
-	    	event.returnValue=false;
-		    }else if(p==""&&s!=""){
-		    $.dialog.alert("<pg:message code='sany.pdp.input.password'/>",function(){},null,"<pg:message code='sany.pdp.common.alert'/>");
-	    	$("#password").focus();
-	    	event.returnValue=false;
-		    }
-		    
-	    if(s!=""&&p!=""){
- 			document.getElementById('password').value = strEnc(p,s, "", "");
-	    	$("#loginForm").submit();
-		 }
-		   
-		/*var ischecked = document.getElementById("remeberpassword").checked;	
-		if(ischecked){
-			if (s!="" && p!=""){
-				s="USERNAME="+s;
-				p="PASSWORD="+p;
-				document.cookie=s+"#"+p;  // 将保存到客户机中
-				//alert(s);
-			}
-		}*/
-		
-	}
-	
-	function reset(){
-		$("#loginForm").reset();
-	}
-	
-	function enterKeydowngoU(event){
-		var userName = $("#userName").val();
-		var password = $("#password").val();
-		if(event.keyCode == 13){
-		var y = $("#rand").val();
-		if(y==""){
-			$.dialog.alert("验证码不能为空");
-			return;
-		}
-			if(userName == ""){
-				$.dialog.alert("<pg:message code='sany.pdp.input.login.name'/>",function(){},null,"<pg:message code='sany.pdp.common.alert'/>");
-				$("#userName").focus();
-				event.returnValue=false;
-			}else{
-				$("#password").focus();
-				event.returnValue=false;
-			}
-		}
-	}
-	
-	function enterKeydowngoP(event){
-		var userName = $("#userName").val();
-		var password = $("#password").val();
-		if(event.keyCode == 13){
-		var y = $("#rand").val();
-		if(y==""){
-			$.dialog.alert("验证码不能为空");
-			return;
-		}
-			if(userName == "" ){
-				$.dialog.alert("<pg:message code='sany.pdp.input.login.name'/>",function(){},null,"<pg:message code='sany.pdp.common.alert'/>");
-				$("#userName").focus();
-				event.returnValue=false;
-			}else if(userName != "" && password == ""){
-				$.dialog.alert("<pg:message code='sany.pdp.input.password'/>",function(){},null,"<pg:message code='sany.pdp.common.alert'/>");
-				$("#password").focus();
-				event.returnValue=false;
-			}else if(userName != "" && password != ""){
-				//loginForm.subsystem_id.focus();
-				
-				document.getElementById('password').value = strEnc(password,userName, "", "");
-				$("#loginForm").submit();
-				event.returnValue=false;
-			}
-		}
-	}
-	
-	
-	function enterKeydowngoV(event){
-		var userName = $("#userName").val();
-		var password = $("#password").val();
-		if(event.keyCode == 13){
-		var y = $("#rand").val();
-		if(y==""){
-			$.dialog.alert("验证码不能为空");
-			$("#rand").focus();
-			return;
-		}
-			if(userName == "" ){
-				$.dialog.alert("<pg:message code='sany.pdp.input.login.name'/>",function(){},null,"<pg:message code='sany.pdp.common.alert'/>");
-				$("#userName").focus();
-				event.returnValue=false;
-			}else if(userName != "" && password == ""){
-				$.dialog.alert("<pg:message code='sany.pdp.input.password'/>",function(){},null,"<pg:message code='sany.pdp.common.alert'/>");
-				$("#password").focus();
-				event.returnValue=false;
-			}else if(userName != "" && password != ""){
-				//loginForm.subsystem_id.focus();
-				
-				document.getElementById('password').value = strEnc(password,userName, "", "");
-				$("#loginForm").submit();
-				event.returnValue=false;
-			}
-		}
-	}
-	
-	
-	function changeLan(){
-		window.location.href="${pageContext.request.contextPath}/security/cookieLocale.page?language="+$('#language').val() ;
-	}
-</script>
-</HEAD>
-<body>
-<body id="logging_bg">
-  <div class="c_log">
-	<div class="c_logWrapper">
-		<div class="c_logContent">
-            
-			<form id="loginForm" name="loginForm" action="login.page" method="post">
-			<pg:dtoken/>
-			<input type="hidden" name="flag" value="yes" />
-			<input name="macaddr_" type="hidden" />
-			<input name="machineName_" type="hidden" />
-			<input name="machineIp_" type="hidden" />
-			<pg:notempty actual="${successRedirect  }">
-				<input name="<%=org.frameworkset.web.interceptor.AuthenticateFilter.referpath_parametername %>" type="hidden" value="${successRedirect  }"/>
-				
-				
-			</pg:notempty>
-			<ul class="c_log_right">
-				<pg:null actual="${ errorMessage}" evalbody="true">
-					<pg:yes></pg:yes>
-					<pg:no>
-						<pg:equal actual="${ errorMessage}" value="PasswordExpired" evalbody="true">
-							<pg:yes><li><label></label><font color='red'>密码已经失效（有效期为${ expiredays}天），过期时间为${expriedtime_}!<a href='#' onclick='javascript:modifyExpiredPassword()'>点击修改</a></font></li></pg:yes>
-							<pg:no><li><label></label><font color='red'>${ errorMessage}</font></li></pg:no>
-						</pg:equal>
-					</pg:no>
-				</pg:null>
-				 
-				<li><label><pg:message code="sany.pdp.user.login.name"/>：</label><input id="userName" name="userName" type="text"   onkeydown="enterKeydowngoU(event)"  /></li>
-				<li><label><pg:message code="sany.pdp.login.password"/>：</label><input id="password" name="password" type="password" type="text"	onkeydown="enterKeydowngoP(event)" autocomplete = "off"/></li>
-				<pg:true actual="${enable_login_validatecode }">
-					<li><label>验证码：</label>
-					<input id="rand" name="rand" type="text" style="width:120px" onkeydown="enterKeydowngoV(event)"/><a onclick="changcode()">看不清,换一张</a>
-					
-					</li>
-					<li >
-					<img src="Kaptcha.jpg" height="25" width="200" id="img1">
-					</li>
-				</pg:true>
-				<pg:notempty actual="${systemList }" evalbody="true">
-					<pg:yes>
-					<li><label><pg:message code="sany.pdp.system"/>：</label>
-					
-					<select name="subsystem_id" style="width:160px;margin-left:-110px;">
-						<pg:list actual="${systemList }">
-							<option value="<pg:cell colName="sysid"/>"
-								<pg:true colName="selected">
-								selected </pg:true>
-								>
-								<pg:cell colName="name"/>
-							</option>
-						</pg:list>
-						
-						
-						
-					</select>
-					
-					</li>
-					</pg:yes>
-					<pg:no>
-						<input type="hidden" name="subsystem_id" value="module"/>
-					</pg:no>
-				</pg:notempty>
-				
-				<pg:notempty actual="${loginStyle }" evalbody="true">
-					<pg:yes>
-						<li><label><pg:message code="sany.pdp.style"/>：</label>               
-						<select name="loginPath"  style="width:160px;margin-left:-110px;">
-							<pg:case actual="${loginStyle }">
-								<option value="5"
-									<pg:empty>selected</pg:empty>
-									<pg:equal value="5">selected</pg:equal>>
-									common
-								</option>
-								<option value="6"
-									<pg:equal value="6">selected</pg:equal>>
-									common-fixwidth
-								</option>
-								<option value="3"
-									<pg:equal value="3">selected</pg:equal>>
-									ISany
-								</option>
-								<option value="1"
-									<pg:equal value="1">selected</pg:equal>>
-									<pg:message code="sany.pdp.tradition"/>
-								</option>
-								<option value="2"
-									<pg:equal value="2">selected</pg:equal>>
-									Desktop
-								</option>
-								<option value="4"
-									<pg:equal value="4">selected</pg:equal>>
-									WEBIsany
-								</option>
-							</pg:case>
-						</select>
-						</li>
-					</pg:yes>
-					<pg:no>
-						<input type="hidden" name="loginPath" value="5"/>
-					</pg:no>
-				</pg:notempty>
-                
-                
-                <pg:notempty actual="${language }" evalbody="true">
-					<pg:yes>
-						<li>
-							<label><pg:message code="sany.pdp.language"/>：</label>
-							<select name="language" id="language" style="width:160px;margin-left:-110px;" onchange="changeLan()">
-							<pg:case actual="${language }">
-								<option value="zh_CN" <pg:equal value="zh_CN">selected</pg:equal>>
-									<pg:message code="sany.pdp.language.chinese"/>
-								</option>
-								<option value="en_US" <pg:equal value="en_US">selected</pg:equal>>
-									<pg:message code="sany.pdp.language.english"/>
-								</option>
-								
-							</pg:case>	
-							</select>
-						</li>
-					</pg:yes>
-					<pg:no>
-						<input type="hidden" name="language" value="zh_CN"/>
-					</pg:no>
-				</pg:notempty>
-                
-				
-				<li class="log_bts" ><a href="javascript:void(0)" class="log_bt c_20"  onclick="login(event)"><span><pg:message code="sany.pdp.login"/></span></a><a href="javascript:void(0)" class="log_bt log_cancel" onclick="reset()" ><span><pg:message code="sany.pdp.common.operation.reset"/></span></a></li>
-			</ul>
-			</form>			
-			 			
-		  </div>
-		   <div class="c_log_bot"></div>
-		   <p class="c_edition"><a href="http://www.bbossgroups.com" target="_blank" ><font color="white">BBoss V1.0</font> </a> <a href="http://www.miitbeian.gov.cn" target="_blank" ><font color="white">湘ICP备16000994号</font></a> 				 
-				<script type="text/javascript">
-					var cnzz_protocol = (("https:" == document.location.protocol) ? " https://"
-							: " http://");
-					document
-							.write(unescape("%3Cspan id='cnzz_stat_icon_1254131450'%3E%3C/span%3E%3Cscript src='"
-									+ cnzz_protocol
-									+ "s11.cnzz.com/z_stat.php%3Fid%3D1254131450%26show%3Dpic2' type='text/javascript'%3E%3C/script%3E"));
-				</script>
-				 
-			 
-		   </p>
-      </div>
-        <div class="c_logHeight"></div>
-	</div>
-</div>		
-
-</body>
+    	function reloadhref()
+    	{
+    		location.href = "login.page";
+    	}
+    	
+    	function changcode()
+    	{
+    		
+    		$("#img1").attr("src","Kaptcha.jpg?"+Math.random());
+    		
+    	}
+    	
+     
+    	function reset(){
+    		$("#IntegralFormPanel").reset();
+    	}
+    	
+    	
+    	
+    	function changeLan(){
+    		window.location.href="${pageContext.request.contextPath}/security/cookieLocale.page?language="+$('#language').val() ;
+    	}
+    </script>
 </html>
-

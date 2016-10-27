@@ -513,7 +513,7 @@ public class AccessControl implements AccessControlInf{
 	 */
 	public static final String MEMBERCHANNEL_RESOURCE = "memberchannel";
 
-	public static final String LOGOUT_REDIRECT = "sysmanager/logoutredirect.jsp";
+	public static final String LOGOUT_REDIRECT = "jsp/logoutredirect.jsp";
 
 	/**
 	 * 2007-08-29 ge.tao 系统管理 机构管理 编辑机构

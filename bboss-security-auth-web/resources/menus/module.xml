@@ -9,11 +9,11 @@
 <!-- 		successRedirect="sanydesktop/index.page" -->
 <!-- 		logoutredirect="/sanymbp/login.page"/> -->
 	
-	<!-- 可以配置一些菜单变量,
+<!-- 可以配置一些菜单变量,
 	菜单路径配置中除了可以配置#[userAccount]类的变量，还可以配置#[p:userAccount]类型变量，p:开头的变量的值可以从属性文件中获取，属性文件的配置方法是：
 	
 	 -->
-	<property file="urls.xml"/>	
+	<property file="menus/urls.xml"/>		
 		
 	<!-- 
 		系统菜单国际化规范：
@@ -42,8 +42,10 @@
 		
 		logoimage:需要国际化
 	-->	
-	<sysmenu name="spplatform" left_width="12%" top_height="70"
-		showhidden="true" showhidden_width="10" showrootleftmenu="true" messagesource="menus/messages_module"
+	<sysmenu name="spplatform" 
+			successRedirect="admin/index.page" 
+			logoutredirect="login.page"
+			showrootleftmenu="true" messagesource="menus/messages_module"
 		
 		>
 		<description i18n:en_US="Public Develop Platform" >公共开发平台</description>

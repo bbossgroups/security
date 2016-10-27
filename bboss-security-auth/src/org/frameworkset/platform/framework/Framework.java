@@ -192,7 +192,7 @@ public class Framework implements ResourceInitial,MessageSource {
 	private String description;
 	private Map<Locale,String> localeDescriptions;
 	private SubSystem frameworkmeta = null;
-	
+	private SubSystem rootsystem = null;
 	private String messagesourcefiles;
 	private MessageSource messagesource;
 	private static Framework init;
@@ -625,7 +625,14 @@ public class Framework implements ResourceInitial,MessageSource {
 			if (this.frameworkmeta != null)
 				config.setOwnersubsystem(frameworkmeta);
 			config.setLanguages(languages);
+			
 			buildFramework( config);
+			if(this.systemid == null || this.systemid.equals("module"))
+			{
+				this.rootsystem = new SubSystem();
+				rootsystem.setSuccessRedirect(config.getSuccessRedirect());
+				rootsystem.setLogoutredirect(config.getLogoutredirect());
+			}
 			Map temp_sys = config.getSubsystems();
 			this.subsystemList = config.getSubsystemList();
 			synSubsystems(temp_sys);
@@ -633,6 +640,10 @@ public class Framework implements ResourceInitial,MessageSource {
 		} catch (Exception ex) {
 			log.error(ex.getMessage(), ex);
 		}
+	}
+	public void init()
+	{
+		init((String)null);
 	}
 	public void init(String configFile) {
 		if (!inited) {
@@ -677,7 +688,12 @@ public class Framework implements ResourceInitial,MessageSource {
 //				this.showrootleftmenu = config.isShowrootleftmenu();
 //				
 				buildFramework( config);
+				this.rootsystem = new SubSystem();
+				rootsystem.setSuccessRedirect(config.getSuccessRedirect());
+				rootsystem.setLogoutredirect(config.getLogoutredirect());
 				this.subsystems = config.getSubsystems();
+				
+				
 				this.subsystemList = config.getSubsystemList();
 				initSubSystems();
 				this.monitor(configFile);
@@ -2195,10 +2211,13 @@ public class Framework implements ResourceInitial,MessageSource {
 		return Framework.getInstance()._getSubSystem( systemid);
 	}
 	private SubSystem _getSubSystem(String systemid) {
+		if(systemid == null || systemid.equals("module"))
+			return this.rootsystem;
 		if(this.subsystems != null)
 		{
 			return subsystems.get(systemid);
 		}
+		
 		return null;
 		
 	}
@@ -2226,8 +2245,8 @@ public class Framework implements ResourceInitial,MessageSource {
 	}
 
 	public SubSystem getSubsystem(String systemid) {
-		return this.subsystems != null ?(SubSystem)this.subsystems.get(systemid):null;
-		
+//		return this.subsystems != null ?(SubSystem)this.subsystems.get(systemid):null;
+		return getSubSystem( systemid);
 	}
 
 	public String getLeft_width() {

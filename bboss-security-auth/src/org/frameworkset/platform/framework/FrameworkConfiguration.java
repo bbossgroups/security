@@ -36,6 +36,8 @@ public class FrameworkConfiguration  {
      */
     private boolean showrootleftmenu = false;
     private Map indexs;
+	private String successRedirect;
+	private String logoutredirect;
     /**
 	 * 菜单id索引表
 	 */
@@ -184,6 +186,8 @@ public class FrameworkConfiguration  {
             this.messagesourcefiles = handler.getMessagesourcefiles();
             this.languages = handler.getLanguages();
             this.localeDescriptions = handler.getLocaleDescriptions();
+            this.logoutredirect = handler.getLogoutredirect();
+            this.successRedirect = handler.getSuccessRedirect();
     }
 
     private static ClassLoader getTCL()
@@ -297,5 +301,13 @@ public class FrameworkConfiguration  {
 
 	public List<SubSystem> getSubsystemList() {
 		return subsystemList;
+	}
+
+	public String getSuccessRedirect() {
+		return successRedirect;
+	}
+
+	public String getLogoutredirect() {
+		return logoutredirect;
 	}
 }

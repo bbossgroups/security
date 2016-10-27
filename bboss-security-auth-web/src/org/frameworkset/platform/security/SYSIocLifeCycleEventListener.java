@@ -23,7 +23,7 @@ public class SYSIocLifeCycleEventListener implements IocLifeCycleEventListener {
 		//启动分布式事件服务
 		EventUtils.init();  */
 		System.out.println("public void afterstart(BaseApplicationContext arg0) ");
-		Framework.getInstanceWithContext(((WebApplicationContext)arg0).getServletContext()).init(ConfigManager.getInstance().getMenus());
+		Framework.getInstanceWithContext(((WebApplicationContext)arg0).getServletContext()).init();
 	}
 
 	@Override

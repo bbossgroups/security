@@ -17,20 +17,17 @@
 	<!--
 		application:指定应用名称
 		module:指定web模块名称
-		cachable:系统全局缓冲机制开关，true标识启用，false表示关闭缓冲，缺省为true
-		cacheType：系统采用的全局缓冲机制类型，主要包括JCSCache,OSCache,JBOSSCache等等
+		
 	-->
 	<application default="true" name="bspf" >
 		 
 		 <resources module="console" languages="zh_CN,en_US">
 			  <resourcefile src="permission/resource.xml" desc="公用权限授予资源配置文件"/>
 			  <resourcefile src="permission/resources-sys.xml" desc="系统管理资源配置文件"/>		
-			  <resourcefile src="permission/resources-content.xml" desc="内容管理资源配置文件"/>
-			  <resourcefile src="permission/resources-application.xml" desc="应用管理资源配置文件"/>
-		  
+			 
 		</resources>
-		<permissionModule class="org.frameworkset.platform.security.DefaultPermissionModule"/>
-		<logmanager class="org.frameworkset.platform.log.DefaultLogManager"/>
+		<permissionModule class="org.frameworkset.platform.security.AppPermissionModule"/>
+		<logmanager class="org.frameworkset.platform.log.AppLogManager"/>
 		<globalconfig file="conf/manager-provider.xml"/>
 		<globalmenu file="menus/module.xml"/>
 		
@@ -50,7 +47,10 @@
 				providerType指定资源操作许可服务提供者类型，目前支持LDAP和DB两种方式，缺省为DB
 
 			-->
-			<permissionrolemap default="true" module="console" cachable="true" allowIfNoRequiredRole="false" class="org.frameworkset.platform.security.authorization.AppPermissionRoleMap" />
+			<permissionrolemap default="true" 
+						module="console" cachable="true" 
+						allowIfNoRequiredRole="false" 
+						class="org.frameworkset.platform.security.authorization.AppPermissionRoleMap" />
 			<!--
 				权限控制表
 				cachable：可选属性，是否需要缓冲用户/角色之间的关系
