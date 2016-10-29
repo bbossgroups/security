@@ -418,6 +418,7 @@ public class ConfigParser extends I18nXMLParser  {
                 	 parentPath = Framework.getSuperMenu("module");
                  }
                 this.items.addItem(item);
+                this.menus.addMenuItem(item);
                 if(showleftmenu == null )
                 	item.setShowleftmenu(showrootleftmenu);
 //                if(popup == null )

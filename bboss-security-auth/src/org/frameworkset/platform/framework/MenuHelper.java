@@ -31,7 +31,7 @@ import com.frameworkset.util.StringUtil;
  * </p>
  * 
  * <p>
- * Company: 三一集团
+ * Company:bboss
  * </p>
  * 
  * @author biaoping.yin
@@ -2296,10 +2296,10 @@ public class MenuHelper  {
 	public Framework getFramework() {
 		return framework;
 	}
-	public final static String  sanymenupath_menuid = "sanymenupath_menuid";
-	public final static String  sanymenupath = "sany_menupath";
-	public final static String  sany_selecturl = "sany_selecturl";
-	public final static String  sanyselectedmodule = "sanyselectedmodule";
+	public final static String  menupath_menuid = "menupath_menuid";
+	public final static String  menupath = "pdp_menupath";
+	public final static String  selecturl = "pdp_selecturl";
+	public final static String  selectedmodule = "pdp_selectedmodule";
 	public static String getItemUrl(Item subitem,String contextpath,String framepath,AccessControl control)
 	{
 		return getItemUrl(subitem,contextpath,framepath,(String)null,control);
@@ -2314,7 +2314,7 @@ public class MenuHelper  {
 			if(area != null && area.equals("main"))
 			{
 				java.util.Map<String,String> param = new HashMap<String,String>();
-				param.put(sanymenupath_menuid, subitem.getId());
+				param.put(menupath_menuid, subitem.getId());
 				if(selecturl == null || selecturl.equals(""))
 				{				
 					
@@ -2322,7 +2322,7 @@ public class MenuHelper  {
 				else
 				{
 					selecturl = java.net.URLEncoder.encode(selecturl);
-					param.put(sany_selecturl, selecturl);
+					param.put(selecturl, selecturl);
 				}
 				url = MenuHelper.getMainUrl(contextpath, subitem,
 						param);
@@ -2332,13 +2332,13 @@ public class MenuHelper  {
 				if(selecturl == null || selecturl.equals(""))
 				{				
 					url = MenuHelper.getRealUrl(contextpath, 
-							Framework.getWorkspaceContent(subitem,control),sanymenupath_menuid,subitem.getId());
+							Framework.getWorkspaceContent(subitem,control),menupath_menuid,subitem.getId());
 				}
 				else
 				{
 //					selecturl = java.net.URLEncoder.encode(selecturl);
 					url = MenuHelper.getRealUrl(contextpath, 
-							selecturl,sanymenupath_menuid,subitem.getId());
+							selecturl,menupath_menuid,subitem.getId());
 				}
 				
 				
@@ -2348,7 +2348,7 @@ public class MenuHelper  {
 		{
 			if(selecturl == null || selecturl.equals("")){
 				url = new StringBuffer().append(framepath).append("?")
-						 .append(sanymenupath)
+						 .append(menupath)
 						 .append("=")
 						 .append(subitem.getPath()).toString();
 			}
@@ -2356,10 +2356,10 @@ public class MenuHelper  {
 			{
 				selecturl = java.net.URLEncoder.encode(selecturl);
 				url = new StringBuffer().append(framepath).append("?")
-						 .append(sanymenupath)
+						 .append(menupath)
 						 .append("=")
 						 .append(subitem.getPath()).append("&")
-						 .append(sany_selecturl)
+						 .append(selecturl)
 						 .append("=")
 						 .append(selecturl).toString();
 			}
@@ -2370,8 +2370,10 @@ public class MenuHelper  {
 	public static String getModuleUrl(Module subitem,String contextpath,AccessControl control)
 	{
 		String url = subitem.getUrl();
+		if(url == null || url.equals(""))
+			return null;
 		url = MenuHelper.getRealUrl(contextpath, 
-							url,sanymenupath_menuid,subitem.getId());
+							url,menupath_menuid,subitem.getId());
 		return url;
 	}
 

@@ -5,7 +5,7 @@
 <taglib>
     <tlibversion>1.1.0</tlibversion>
     <jspversion>1.2</jspversion>
-    <shortname>sany Tag</shortname>
+    <shortname>admin Tag</shortname>
     <uri>admin-taglib</uri>
   <tag>
         <name>accesscontrol</name>
@@ -17,6 +17,19 @@
 		</attribute>
     </tag>
   
+    <tag>
+        <name>menu</name>
+        <tagclass>org.frameworkset.platform.desktop.tag.MenuTag</tagclass>
+        <bodycontent>empty</bodycontent>
+ 		 
+    </tag> 
+    
+    <tag>
+        <name>menuposition</name>
+        <tagclass>org.frameworkset.platform.desktop.tag.MenuPathTag</tagclass>
+        <bodycontent>empty</bodycontent>
+ 		 
+    </tag> 
     
 	 
 	    

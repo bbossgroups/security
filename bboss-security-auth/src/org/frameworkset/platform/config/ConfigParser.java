@@ -14,40 +14,24 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.log4j.Logger;
-import org.frameworkset.spi.ApplicationContext;
-import org.frameworkset.spi.assemble.InterceptorInfo;
-import org.frameworkset.spi.assemble.ManagerImport;
-import org.frameworkset.spi.assemble.Param;
-import org.frameworkset.spi.assemble.ProviderManagerInfo;
-import org.frameworkset.spi.assemble.Reference;
-import org.frameworkset.spi.assemble.RollbackException;
-import org.frameworkset.spi.assemble.SecurityProviderInfo;
-import org.frameworkset.spi.assemble.SynchronizedMethod;
-import org.frameworkset.spi.assemble.Transactions;
-import org.xml.sax.Attributes;
-import org.xml.sax.helpers.DefaultHandler;
-
 import org.frameworkset.platform.config.model.ApplicationInfo;
 import org.frameworkset.platform.config.model.AuthorTableInfo;
 import org.frameworkset.platform.config.model.Context;
 import org.frameworkset.platform.config.model.DataSourceConfig;
-import org.frameworkset.platform.config.model.DatabaseConfig;
 import org.frameworkset.platform.config.model.ImportResource;
-import org.frameworkset.platform.config.model.LDAPConfig;
 import org.frameworkset.platform.config.model.LoginModuleInfo;
-import org.frameworkset.platform.config.model.NotifiableInfo;
 import org.frameworkset.platform.config.model.Operation;
 import org.frameworkset.platform.config.model.OperationGroup;
 import org.frameworkset.platform.config.model.PermissionRoleMapInfo;
-import org.frameworkset.platform.config.model.PropertiesFile;
 import org.frameworkset.platform.config.model.ResourceInfo;
 import org.frameworkset.platform.config.model.Resources;
-import org.frameworkset.platform.config.model.ScheduleServiceInfo;
-import org.frameworkset.platform.config.model.SchedulejobInfo;
 import org.frameworkset.platform.config.model.TaskServiceInfo;
 import org.frameworkset.platform.resource.ExcludeResource;
 import org.frameworkset.platform.resource.UNProtectedResource;
 import org.frameworkset.platform.util.I18nXMLParser;
+import org.xml.sax.Attributes;
+import org.xml.sax.helpers.DefaultHandler;
+
 import com.frameworkset.util.StringUtil;
 
 /**
@@ -57,7 +41,7 @@ import com.frameworkset.util.StringUtil;
  *
  * <p>Copyright: Copyright (c) 2006</p>
  *
- * <p>Company: 三一集团</p>
+ * <p>Company: bboss</p>
  *
  * @author biaoping.yin
  * @version 1.0

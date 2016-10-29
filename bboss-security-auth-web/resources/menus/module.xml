@@ -43,7 +43,7 @@
 		logoimage:需要国际化
 	-->	
 	<sysmenu name="spplatform" 
-			successRedirect="admin/index.page" 
+			successRedirect="theme/admin/index.page" 
 			logoutredirect="login.page"
 			showrootleftmenu="true" messagesource="menus/messages_module"
 		
@@ -52,14 +52,14 @@
 		<!-- 公共缺省的栏目，如果用户登录系统后无访问权限，或者main为true时，将显示该栏目 -->
 		<publicitem name="首页" 
 			i18n:en_US="Index" 	
-			id="indexpage" main="true">
+			id="indexpage" main="true" icon="icon-home">
 			<mouseclickimg>html/images/date_work.jpg</mouseclickimg>
 			
 			<top>headersimple.page</top>
 			<!--<left>perspective_outlookbar.jsp</left> -->
 			<workspace>
 				<!--<content>detail.html</content> -->
-				<content >jsp/index.html</content>
+				<content >theme/admin/content.page</content>
 
 			</workspace>
 			<authoration>				 
@@ -74,14 +74,14 @@
 		             i18n:en_US="Line Information Query" 
 		            id="veh_line_query" used="true"
 		           option="{popup:true,width:700,height:500,maxstate:true}"
-		             url="workflow/pending/pendingIndex.page" menuType="type1">	
+		             url="workflow/pending/pendingIndex.page" menuType="type1" icon="icon-home">	
 				<mouseclickimg>html3/hrm/images/app1.png</mouseclickimg>	
 		</module>
 		
 		<module name="路径变量" 
 		             i18n:en_US="pathvariable" 
 		            id="pathvariable" used="true"
-		             url="workflow/pending/pendingIndex.page" menuType="type1">	
+		             url="workflow/pending/pendingIndex.page" menuType="type1" icon="icon-home">	
 				  <item name="路径变量演示"
 				i18n:en_US="pathvariable demo" id="pathvariabledemo"  showleftmenu="false" menuType="type1">
 					
@@ -92,7 +92,7 @@
 				
 				</item> 
 				 <item name="行政区划"
-					i18n:en_US="area demo" id="areaManage"  showleftmenu="true" menuType="type1">
+					i18n:en_US="area demo" id="areaManage"  showleftmenu="true" menuType="type1" icon="icon-home">
 					<top>header.page</top>
 					<workspace>
 						<content>/lcjf/area/index.page</content>

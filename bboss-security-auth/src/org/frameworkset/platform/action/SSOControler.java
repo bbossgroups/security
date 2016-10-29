@@ -456,13 +456,13 @@ public class SSOControler {
 
                             Item menu = (Item) menuitem;
                             successRedirect = MenuHelper.getRealUrl(contextpath,
-                                    Framework.getWorkspaceContent(menu, control), MenuHelper.sanymenupath_menuid,
+                                    Framework.getWorkspaceContent(menu, control), MenuHelper.menupath_menuid,
                                     menu.getId());
                         } else {
 
                             Module menu = (Module) menuitem;
                             StringBuilder framepath = new StringBuilder();
-                            framepath .append(contextpath ).append( "/sanydesktop/singleframe.page?").append(MenuHelper.sanymenupath ).append( "=").append( menu.getPath());
+                            framepath .append(contextpath ).append( "/sanydesktop/singleframe.page?").append(MenuHelper.menupath ).append( "=").append( menu.getPath());
                             successRedirect = framepath.toString();
                         }
                         AccessControl.recordIndexPage(request, successRedirect);
@@ -492,13 +492,13 @@ public class SSOControler {
 
                         Item menu = (Item) menuitem;
                         successRedirect = MenuHelper.getRealUrl(contextpath,
-                                Framework.getWorkspaceContent(menu, control), MenuHelper.sanymenupath_menuid,
+                                Framework.getWorkspaceContent(menu, control), MenuHelper.menupath_menuid,
                                 menu.getId());
                     } else {
 
                         Module menu = (Module) menuitem;
                         StringBuilder framepath = new StringBuilder();
-                        framepath .append(contextpath ).append( "/sanydesktop/singleframe.page?" ).append( MenuHelper.sanymenupath
+                        framepath .append(contextpath ).append( "/sanydesktop/singleframe.page?" ).append( MenuHelper.menupath
                         		).append( "=" ).append( menu.getPath());
                         successRedirect = framepath.toString();
                     }

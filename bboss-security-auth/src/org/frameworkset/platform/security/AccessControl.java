@@ -3998,7 +3998,7 @@ passwordUpdateTime
 				}
 				else
 				{
-					url = MenuHelper.getRealUrl(contextpath, Framework.getWorkspaceContent(item,accesscontroler),MenuHelper.sanymenupath_menuid,item.getId());
+					url = MenuHelper.getRealUrl(contextpath, Framework.getWorkspaceContent(item,accesscontroler),MenuHelper.menupath_menuid,item.getId());
 				}
 				MenuItemU menuItemU = new MenuItemU();
 				menuItemU.setId(item.getId());

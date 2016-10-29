@@ -317,6 +317,11 @@
 	<location>/jsp/common/error.jsp</location>
   </error-page>
   
+<!--   <error-page> -->
+<!-- 	<error-code>404</error-code> -->
+<!-- 	<location>/jsp/common/404.jsp</location> -->
+<!--   </error-page> -->
+  
 
   
   	<security-constraint>

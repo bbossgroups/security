@@ -26,29 +26,43 @@ public class AppAuthorizationTable extends BaseAuthorizationTable{
 			if(userName.equals("zhangsan"))
         	{
 	        	AuthRole r = new AuthRole();
-	        	r.setRoleId("1");
+	        	r.setRoleId("3");
 	        	r.setRoleName("manager");
 	        	r.setRoleType(AuthRole.TYPE_ROLE);
 	        	roles[0] = r;
 	        	r = new AuthRole();
-	        	r.setRoleId("2");
+	        	r.setRoleId("4");
 	        	r.setRoleName("zhangsan");
+	        	r.setRoleType(AuthRole.TYPE_USER);
+	        	roles[1] = r;
+        	}
+			else if(userName.equals("admin"))
+        	{
+	        	AuthRole r = new AuthRole();
+	        	r.setRoleId("1");
+	        	r.setRoleName("administrator");
+	        	r.setRoleType(AuthRole.TYPE_ROLE);
+	        	roles[0] = r;
+	        	r = new AuthRole();
+	        	r.setRoleId("2");
+	        	r.setRoleName("admin");
 	        	r.setRoleType(AuthRole.TYPE_USER);
 	        	roles[1] = r;
         	}
         	else
         	{
         		AuthRole r = new AuthRole();
-	        	r.setRoleId("3");
+	        	r.setRoleId("5");
 	        	r.setRoleName("leader");
 	        	r.setRoleType(AuthRole.TYPE_ROLE);
 	        	roles[0] = r;
 	        	r = new AuthRole();
-	        	r.setRoleId("4");
+	        	r.setRoleId("6");
 	        	r.setRoleName("lisi");
 	        	r.setRoleType(AuthRole.TYPE_USER);
 	        	roles[1] = r;
         	}
+			
 			 
 			return roles;
 
