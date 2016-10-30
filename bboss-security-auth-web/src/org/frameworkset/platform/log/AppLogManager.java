@@ -1,7 +1,6 @@
 package org.frameworkset.platform.log;
 
 import org.apache.log4j.Logger;
-import org.frameworkset.platform.util.LogManagerInf;
 
 public class AppLogManager extends DefaultLogManager{
 	private static Logger logger = Logger.getLogger(AppLogManager.class);

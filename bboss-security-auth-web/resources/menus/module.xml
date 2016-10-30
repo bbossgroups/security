@@ -55,8 +55,6 @@
 			id="indexpage" main="true" icon="icon-home">
 			<mouseclickimg>html/images/date_work.jpg</mouseclickimg>
 			
-			<top>headersimple.page</top>
-			<!--<left>perspective_outlookbar.jsp</left> -->
 			<workspace>
 				<!--<content>detail.html</content> -->
 				<content >theme/admin/content.page</content>
@@ -70,6 +68,21 @@
 				 	<url>/sysmanager/user/resChangeAjax.jsp</url>					 	
 			</authoration>
 		</publicitem>
+		<module name="一级菜单" 
+		             i18n:en_US="Line Information Query" 
+		            id="veh_line_query1" used="true"
+		           option="{popup:true,width:700,height:500,maxstate:true}"
+		             url="theme/admin/content.page" menuType="type1" icon="icon-home">	
+				<item name="二级菜单"
+				i18n:en_US="pathvariable demo" id="pathvariabledemo2"  showleftmenu="false" menuType="type1">
+					
+					 
+					<workspace>
+						<content>theme/admin/content.page</content>
+					</workspace>
+				
+				</item> 
+		</module>
 		<module name="统一待办" 
 		             i18n:en_US="Line Information Query" 
 		            id="veh_line_query" used="true"

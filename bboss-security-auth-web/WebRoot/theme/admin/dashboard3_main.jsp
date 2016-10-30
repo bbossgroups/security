@@ -3300,10 +3300,19 @@
                     </div>
                  
                 <script src="../assets/global/plugins/horizontal-timeline/horozontal-timeline.min.js" type="text/javascript"></script>
+               
                 <script src="../assets/pages/scripts/dashboard.min.js" type="text/javascript"></script>
-                <!--  
+                 
                 <script   type="text/javascript"> 
 		        jQuery(document).ready(function() {
-		        	DesktopMenus.initTheme(); // init metronic core componets
-		        });</script>-->
+		        	//DesktopMenus.initTheme(); // init metronic core componets
+		        	 if (!$().counterUp) {
+		                 return;
+		             }
+
+		             $("[data-counter='counterup']").counterUp({
+		                 delay: 10,
+		                 time: 1000
+		             });
+		        });</script>
                 <!-- END CONTENT BODY -->

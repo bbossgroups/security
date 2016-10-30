@@ -5,6 +5,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.frameworkset.platform.framework.Framework;
 import org.frameworkset.platform.framework.Item;
 import org.frameworkset.platform.framework.MenuHelper;
+import org.frameworkset.platform.framework.MenuItem;
+import org.frameworkset.platform.framework.Module;
 import org.frameworkset.platform.security.AccessControl;
 import org.frameworkset.web.servlet.ModelMap;
 
@@ -21,20 +23,34 @@ public class AdminController {
 //		boolean successed = AccessControl.getAccessControl().checkPermission("menu1","view", "menu");
 //		System.out.println(successed);
 		Framework  framework = Framework.getInstance(control.getCurrentSystemID());
-		Item publicitem = framework.getPublicItem();
-		String url =  MenuHelper.getRealUrl(request.getContextPath(), Framework.getWorkspaceContent(publicitem,control),MenuHelper.menupath_menuid,publicitem.getId());
-		model.addAttribute("workspaceurl", url);
+		String menuid = request.getParameter(MenuHelper.menupath_menuid);
+		String selecturl = request.getParameter(MenuHelper.selecturl);
+		if(selecturl == null || selecturl.equals(""))
+		{
+			MenuItem publicitem = menuid == null || menuid.equals("")?framework.getPublicItem():framework.getMenuByID(menuid);
+			if(publicitem == null) publicitem = framework.getPublicItem();
+			if(publicitem instanceof Item)
+			{
+				String url =  MenuHelper.getRealUrl(request.getContextPath(), Framework.getWorkspaceContent((Item)publicitem,control),MenuHelper.menupath_menuid,publicitem.getId());
+				model.addAttribute("workspaceurl", url);
+			}
+			else
+			{
+				String url = MenuHelper.getModuleUrl((Module)publicitem, request.getContextPath(),  control);
+				model.addAttribute("workspaceurl", url);
+			}
+		}
+		else
+		{
+			MenuHelper.getRealUrl(request.getContextPath(), selecturl);
+			model.addAttribute("workspaceurl", selecturl);
+		}
+		
+		
 		String theme = AccessControl.getAccessControl().getUserAttribute("theme");
 		
 		model.addAttribute("theme", theme);
-//		if(theme == null)
-//			return "path:index_admin_3";
-//		else if(theme.equals("admin_1"))
-//			return "path:index_admin_1";
-//		else if(theme.equals("admin_3"))
-//			return "path:index_admin_3";
-//		else
-//			return "path:index_admin_1";
+
 		return "path:index_admin_1";
 	}
 	

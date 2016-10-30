@@ -10,6 +10,7 @@ import org.frameworkset.platform.framework.Framework;
 import org.frameworkset.platform.framework.Item;
 import org.frameworkset.platform.framework.MenuHelper;
 import org.frameworkset.platform.framework.MenuItem;
+import org.frameworkset.platform.framework.Module;
 import org.frameworkset.platform.framework.Root;
 import org.frameworkset.platform.security.AccessControl;
 import org.frameworkset.web.servlet.support.RequestContextUtils;
@@ -75,7 +76,7 @@ public class MenuPathTag extends BaseTag {
 		Item publicitem = framework.getPublicItem();
 		String mname = publicitem.getName(request);
 		String contextpath = request.getContextPath();
-		String arrowclass = theme == null || theme.equals("admin_3")?"fa fa-circle":"fa fa-angle-right";
+		String arrowclass = theme == null || theme.equals("admin_3")?"fa fa-angle-right":"fa fa-circle";
 		String url =  MenuHelper.getRealUrl(contextpath, "theme/admin/index.page",MenuHelper.menupath_menuid,publicitem.getId());
 				
 		datas.append(" <li>");
@@ -109,36 +110,36 @@ public class MenuPathTag extends BaseTag {
 					
 					
 				}while(menu != null && !isroot);
-				if( ms.size() == 1)
+				if(ms.size() >= 0)
 				{
 					
-					datas.append("<li><i class=\"").append(arrowclass).append("\"></i><span>").append(menu.getName(request)).append("</span></li>");
 					
-				}
-				else
-				{
-					for(int i = ms.size() - 1;  i < ms.size(); i --)
+					
+					for(int i = ms.size() - 1;  i >=0; i --)
 					{
 						menu = ms.get(i);
-						if(i == ms.size() - 1)
+						if(menu instanceof Item || i == 0)
 						{
-							
-							datas.append("<li><i class=\"").append(arrowclass).append("\"></i><span>").append(menu.getName(request)).append("</span><i class=\"").append(arrowclass).append("\"></i></li>");
-							
+							datas.append("<li><i class=\"").append(arrowclass).append("\"></i><span>").append(menu.getName(request)).append("</span></li>");
 						}
 						else
 						{
-							if(i > 0)
-							{
-								datas.append("<li><span>").append(menu.getName(request)).append("</span><i class=\"").append(arrowclass).append("\"></i></li>");
-							}
+							Module m = (Module)menu;
+							if(m.isUsesubpermission())
+								datas.append("<li><i class=\"").append(arrowclass).append("\"></i><span>").append(menu.getName(request)).append("</span></li>");
 							else
 							{
-								datas.append("<li><span>").append(menu.getName(request)).append("</span></li>");
+								url =  MenuHelper.getRealUrl(contextpath, "theme/admin/index.page",MenuHelper.menupath_menuid,m.getId());
+								datas.append("<li><i class=\"").append(arrowclass).append("\"></i><a href=\"").append(url).append("\">").append(menu.getName(request)).append("</a></span></li>");
 							}
+							
 						}
+							
+						 
+						
 						
 					}
+					
 				}
 				
 				 
