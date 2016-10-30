@@ -85,9 +85,20 @@ License: You must have a valid license purchased only from themeforest(the above
                             	<div class="col-xs-6">
                                		
                                       <select class="form-control  form-control-solid placeholder-no-fix form-group" name="theme" >
-                                          <option value="admin_3">简约</option>
-                                          <option value="admin_1">经典</option>
+                                          <option value="admin_1_default">经典-默认</option>
+                                          <option value="admin_1_light2">经典_light2</option>
+                                          <option value="admin_1_darkblue">经典_darkblue</option>                                          
+                                          <option value="admin_1_grey">经典_grey</option>
+                                          <option value="admin_1_light">经典_light</option>
+                                          <option value="admin_1_blue">经典_blue</option>
                                           
+                                          <option value="admin_3_default">简约-默认</option>
+                                          <option value="admin_3_light2">简约_light2</option>
+                                          <option value="admin_3_darkblue">简约_darkblue</option>                                          
+                                          <option value="admin_3_grey">简约_grey</option>
+                                          <option value="admin_3_light">简约_light</option>
+                                          <option value="admin_3_blue">简约_blue</option>
+                                           
                                           
                                       </select>
                                </div>

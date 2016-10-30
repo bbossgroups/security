@@ -5,7 +5,7 @@
     Date:2016.10.25
 	-->
 	<property name="/theme/admin/*.page"	
-	path:index_admin_3="/theme/admin/dashboard3.jsp"
+	path:iframe="/theme/admin/iframe.jsp" 
 	path:index_admin_1="/theme/admin/index.jsp"
 	path:content_admin_1="/theme/admin/main.jsp"
 	path:content_admin_3="/theme/admin/dashboard3_main.jsp"

@@ -51,8 +51,15 @@ License: You must have a valid license purchased only from themeforest(the above
         <!-- END THEME GLOBAL STYLES -->
         <!-- BEGIN THEME LAYOUT STYLES -->
         <link href="../assets/layouts/layout/css/layout.min.css" rel="stylesheet" type="text/css" />
-        <link href="../assets/layouts/layout/css/themes/darkblue.min.css" rel="stylesheet" type="text/css" id="style_color" />
-        <link href="../assets/layouts/layout/css/custom.min.css" rel="stylesheet" type="text/css" />
+         <pg:empty actual="${theme_style }"  evalbody="true">
+        	<pg:yes>
+        	<link href="../assets/layouts/layout/css/themes/darkblue.min.css" rel="stylesheet" type="text/css" id="style_color" />
+        	</pg:yes>
+        	<pg:no>
+        	<link href="../assets/layouts/layout/css/themes/${theme_style }.min.css" rel="stylesheet" type="text/css" id="style_color" />
+        	</pg:no>
+        </pg:empty>
+       <link href="../assets/layouts/layout/css/custom.min.css" rel="stylesheet" type="text/css" />
         <!-- END THEME LAYOUT STYLES -->
         <link rel="shortcut icon" href="favicon.ico" /> </head>
     <!-- END HEAD -->
@@ -71,6 +78,197 @@ License: You must have a valid license purchased only from themeforest(the above
                     </div>
                 </div>
                 <!-- END LOGO -->
+                <!-- BEGIN MEGA MENU -->
+                <!-- DOC: Remove "hor-menu-light" class to have a horizontal menu with theme background instead of white background -->
+                <!-- DOC: This is desktop version of the horizontal menu. The mobile version is defined(duplicated) in the responsive menu below along with sidebar menu. So the horizontal menu has 2 seperate versions -->
+                <div class="hor-menu  hidden-sm hidden-xs">
+                    <ul class="nav navbar-nav">
+                        <!-- DOC: Remove data-hover="megamenu-dropdown" and data-close-others="true" attributes below to disable the horizontal opening on mouse hover -->
+                        <li class="classic-menu-dropdown active">
+                            <a href="index.html"> Active
+                                <span class="selected"> </span>
+                            </a>
+                        </li>
+                        <li class="mega-menu-dropdown">
+                            <a href="javascript:;" class="dropdown-toggle" data-hover="megamenu-dropdown" data-close-others="true"> Mega
+                                <i class="fa fa-angle-down"></i>
+                            </a>
+                            <ul class="dropdown-menu" style="min-width: 700px;">
+                                <li>
+                                    <!-- Content container to add padding -->
+                                    <div class="mega-menu-content">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <ul class="mega-menu-submenu">
+                                                    <li>
+                                                        <h3>Section 1</h3>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#">Example Link</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#">Example Link</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#">Example Link</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#">Example Link</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#">Example Link</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#">Example Link</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#">Example Link</a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <ul class="mega-menu-submenu">
+                                                    <li>
+                                                        <h3>Section 2</h3>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#">Example Link</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#">Example Link</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#">Example Link</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#">Example Link</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#">Example Link</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#">Example Link</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#">Example Link</a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <ul class="mega-menu-submenu">
+                                                    <li>
+                                                        <h3>Section 3</h3>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#">Example Link</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#">Example Link</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#">Example Link</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#">Example Link</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#">Example Link</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#">Example Link</a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#">Example Link</a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </li>
+                         <li class="classic-menu-dropdown">
+                            <a href="javascript:;" data-hover="megamenu-dropdown" data-close-others="true"> Classic
+                                <i class="fa fa-angle-down"></i>
+                            </a>
+                            <ul class="dropdown-menu pull-left">
+                                <li>
+                                    <a href="javascript:;">
+                                        <i class="fa fa-bookmark-o"></i> Section 1 </a>
+                                </li>
+                                <li>
+                                    <a href="javascript:;">
+                                        <i class="fa fa-user"></i> Section 2 </a>
+                                </li>
+                                <li>
+                                    <a href="javascript:;">
+                                        <i class="fa fa-puzzle-piece"></i> Section 3 </a>
+                                </li>
+                                <li>
+                                    <a href="javascript:;">
+                                        <i class="fa fa-gift"></i> Section 4 </a>
+                                </li>
+                                <li>
+                                    <a href="javascript:;">
+                                        <i class="fa fa-table"></i> Section 5 </a>
+                                </li>
+                                <li class="dropdown-submenu">
+                                    <a href="javascript:;">
+                                        <i class="fa fa-envelope-o"></i> More options </a>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <a href="javascript:;"> Second level link </a>
+                                        </li>
+                                        <li class="dropdown-submenu">
+                                            <a href="javascript:;"> More options </a>
+                                            <ul class="dropdown-menu">
+                                                <li>
+                                                    <a href="index.html"> Third level link </a>
+                                                </li>
+                                                <li>
+                                                    <a href="index.html"> Third level link </a>
+                                                </li>
+                                                <li>
+                                                    <a href="index.html"> Third level link </a>
+                                                </li>
+                                                <li>
+                                                    <a href="index.html"> Third level link </a>
+                                                </li>
+                                                <li>
+                                                    <a href="index.html"> Third level link </a>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                        <li>
+                                            <a href="index.html"> Second level link </a>
+                                        </li>
+                                        <li>
+                                            <a href="index.html"> Second level link </a>
+                                        </li>
+                                        <li>
+                                            <a href="index.html"> Second level link </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <!-- END MEGA MENU -->
+                <!-- BEGIN HEADER SEARCH BOX -->
+                <!-- DOC: Apply "search-form-expanded" right after the "search-form" class to have half expanded search box -->
+                <form class="search-form" action="extra_search.html" method="GET">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search..." name="query">
+                        <span class="input-group-btn">
+                            <a href="javascript:;" class="btn submit">
+                                <i class="icon-magnifier"></i>
+                            </a>
+                        </span>
+                    </div>
+                </form>
+                <!-- END HEADER SEARCH BOX -->
+               
                 <!-- BEGIN RESPONSIVE MENU TOGGLER -->
                 <a href="javascript:;" class="menu-toggler responsive-toggler" data-toggle="collapse" data-target=".navbar-collapse">
                     <span></span>
@@ -1088,6 +1286,7 @@ License: You must have a valid license purchased only from themeforest(the above
         <script   type="text/javascript"> 
         jQuery(document).ready(function() {
         	DesktopMenus.gotoworkspace('','${workspaceurl}'); // init metronic core componets
+        	
         });</script>
         <!-- END THEME LAYOUT SCRIPTS -->
     </body>

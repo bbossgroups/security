@@ -54,7 +54,13 @@ public class UserPasswordLoginModule extends ACLLoginModule
                  buildCallback( checkCallBack,user);
                  String theme = checkCallBack.getRequest().getParameter("theme");
                  if(theme != null)
+                 {
+                	 int i = theme.lastIndexOf('_');
+                	 String theme_style = theme.substring(i+1);
+                	 theme = theme.substring(0, i);
                 	 checkCallBack.setUserAttribute("theme", theme);
+                	 checkCallBack.setUserAttribute("theme_style", theme_style);
+                 }
                  return true;
             }
             
@@ -92,7 +98,7 @@ public class UserPasswordLoginModule extends ACLLoginModule
         checkCallBack.setUserAttribute("depart", "电渠事业部技术架构部");
         checkCallBack.setUserAttribute("job", "架构师");
         
-        checkCallBack.setUserAttribute("title", "电渠事业部-技术架构部-架构师-"+user.getUserName()+"("+user.getUserAccount()+")");
+        checkCallBack.setUserAttribute("title", user.getUserName()+"("+user.getUserAccount()+")");
         checkCallBack.setUserAttribute("userAccount", user.getUserAccount());
         checkCallBack.setUserAttribute("userSex", user.getUserSex());
          

@@ -82,6 +82,16 @@
 					</workspace>
 				
 				</item> 
+				
+				<item name="百度" iframe="true"
+				i18n:en_US="pathvariable demo" id="baidu"  showleftmenu="false" menuType="type1">
+					
+					 
+					<workspace>
+						<content>http://www.baidu.com</content>
+					</workspace>
+				
+				</item> 
 		</module>
 		<module name="统一待办" 
 		             i18n:en_US="Line Information Query" 

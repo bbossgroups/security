@@ -6,14 +6,14 @@ import javax.servlet.jsp.JspException;
 
 import org.frameworkset.platform.framework.Framework;
 import org.frameworkset.platform.framework.Item;
-import org.frameworkset.platform.framework.MenuHelper; 
+import org.frameworkset.platform.framework.MenuHelper;
 import org.frameworkset.platform.framework.MenuItem;
 import org.frameworkset.platform.framework.MenuQueue;
 import org.frameworkset.platform.framework.Module;
 import org.frameworkset.platform.security.AccessControl;
 
 import com.frameworkset.common.tag.BaseTag;
-import com.frameworkset.orm.transaction.TransactionManager;
+import com.frameworkset.util.StringUtil;
 
 /**
  *
@@ -93,7 +93,17 @@ public class MenuTag extends BaseTag {
 	
 		String mname = item.getName(request);
 		String icon = item.getStringExtendAttribute("icon","icon-settings");
-		String url =  MenuHelper.getRealUrl(contextpath, Framework.getWorkspaceContent(item,control),MenuHelper.menupath_menuid,item.getId());
+		String iframe = item.getStringExtendAttribute("iframe");
+		String url =  null;
+		if(iframe == null || !iframe.equals("true"))
+		{
+			url =  MenuHelper.getRealUrl(contextpath, Framework.getWorkspaceContent(item,control),MenuHelper.menupath_menuid,item.getId());
+		}
+		else
+		{
+			url =  MenuHelper.getRealUrl(contextpath, Framework.getWorkspaceContent(item,control),MenuHelper.menupath_menuid,item.getId());
+			url =  MenuHelper.getRealUrl(contextpath, "theme/admin/iframe.page",MenuHelper.selecturl,StringUtil.urlencode(url,"UTF-8"));
+		}
 		datas.append("<li ").append(selectedclass).append(">")
 			 .append("<a href=\"javascript:void(0);\" onclick=\"DesktopMenus.gotoworkspace('','").append(url)
 			 .append("')\" class=\"nav-link \">");
@@ -138,7 +148,18 @@ public class MenuTag extends BaseTag {
 	
 		String mname = item.getName(request);
 		String icon = item.getStringExtendAttribute("icon","icon-settings");
-		String url = MenuHelper.getModuleUrl(item, contextpath,  control);
+		
+		String iframe = item.getStringExtendAttribute("iframe");
+		String url =  null;
+		if(iframe == null || !iframe.equals("true"))
+		{
+			url =  MenuHelper.getModuleUrl(item, contextpath,  control);
+		}
+		else
+		{
+			url = MenuHelper.getModuleUrl(item, contextpath,  control);
+			url =  MenuHelper.getRealUrl(contextpath, "theme/admin/iframe.page",MenuHelper.selecturl,StringUtil.urlencode(url,"UTF-8"));
+		}
 		if(url != null && !item.isUsesubpermission())
 			datas.append("<li ").append(selectedclass).append(">")
 				 .append("<a href=\"javascript:void(0);\" onclick=\"DesktopMenus.gotoworkspace('','").append(url)
@@ -162,6 +183,8 @@ public class MenuTag extends BaseTag {
 		datas.append("</a>")
 			 .append("</li>");
 	}
+	
+	 
 	
 	private void renderModule(String contextpath,AccessControl control,MenuHelper menuHelper,Module item,boolean selected,StringBuilder datas,boolean isfirst,int current_level)
 	{ 
@@ -194,7 +217,18 @@ public class MenuTag extends BaseTag {
 			datas.append("<a href=\"javascript:;\" class=\"nav-link nav-toggle\">");
 		else
 		{
-			String url = MenuHelper.getModuleUrl(item, contextpath,  control);
+//			String url = MenuHelper.getModuleUrl(item, contextpath,  control);
+			String iframe = item.getStringExtendAttribute("iframe");
+			String url =  null;
+			if(iframe == null || !iframe.equals("true"))
+			{
+				url =  MenuHelper.getModuleUrl(item, contextpath,  control);
+			}
+			else
+			{
+				url = MenuHelper.getModuleUrl(item, contextpath,  control);
+				url =  MenuHelper.getRealUrl(contextpath, "theme/admin/iframe.page",MenuHelper.selecturl,StringUtil.urlencode(url,"UTF-8"));
+			}
 			datas.append("<a href=\"javascript:void(0);\" onclick=\"DesktopMenus.gotoworkspace('','").append(url)
 			 .append("')\" class=\"nav-link nav-toggle\">");
 		}

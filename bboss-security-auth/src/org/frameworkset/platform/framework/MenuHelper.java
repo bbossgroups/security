@@ -135,7 +135,7 @@ public class MenuHelper  {
         if (externalparams == null)
             return "";
 
-        StringBuffer external_params = new StringBuffer();
+        StringBuilder external_params = new StringBuilder();
         Set keys = externalparams.keySet();
         Iterator iterator = keys.iterator();
         boolean flag = false;
@@ -168,7 +168,7 @@ public class MenuHelper  {
      * @return
      */
     public static String getRootUrl(String context, String menuPath, Map externalparams, String subsystem) {
-        StringBuffer url = new StringBuffer();
+        StringBuilder url = new StringBuilder();
         if (context != null && !"".equals(context)) {
             url.append(context).append("/");
         }
@@ -254,7 +254,7 @@ public class MenuHelper  {
      * @return
      */
     public static String getMainUrl(String context, String menuPath, Map externalparams, String subsystem) {
-        // StringBuffer url = new StringBuffer();
+        // StringBuilder url = new StringBuilder();
         // if(context != null && !"".equals(context)){
         // url.append(context).append("/");
         // }
@@ -276,7 +276,7 @@ public class MenuHelper  {
 
     public static String getMainUrl(String context, String menuPath, Map externalparams, String subsystem,
                                     String sessionid) {
-        StringBuffer url = new StringBuffer();
+        StringBuilder url = new StringBuilder();
 //        if (context != null && !"".equals(context)) {
 //            url.append(context).append("/");
 //        }
@@ -306,7 +306,7 @@ public class MenuHelper  {
      */
     public static String getPerspectiveContentUrl(String context, String menuPath, Map externalparams,
                                                   String subsystem) {
-        // StringBuffer url = new StringBuffer();
+        // StringBuilder url = new StringBuilder();
         // if(context != null && !"".equals(context)){
         // url.append(context).append("/");
         // }
@@ -331,7 +331,7 @@ public class MenuHelper  {
 
     public static String getPerspectiveContentUrl(String context, String menuPath, Map externalparams,
                                                   String subsystem, String sessionid) {
-        StringBuffer url = new StringBuffer();
+        StringBuilder url = new StringBuilder();
 //        if (context != null && !"".equals(context)) {
 //            url.append(context).append("/");
 //        }
@@ -362,7 +362,7 @@ public class MenuHelper  {
      */
     public static String getActionContainerUrl(String context, String menuPath, Map externalparams,
                                                String subsystem) {
-        // StringBuffer url = new StringBuffer();
+        // StringBuilder url = new StringBuilder();
         // if(context != null && !"".equals(context)){
         // url.append(context).append("/");
         // }
@@ -386,7 +386,7 @@ public class MenuHelper  {
 
     public static String getActionContainerUrl(String context, String menuPath, Map externalparams,
                                                String subsystem, String sessionid) {
-        StringBuffer url = new StringBuffer();
+        StringBuilder url = new StringBuilder();
 //        if (context != null && !"".equals(context)) {
 //            url.append(context).append("/");
 //        }
@@ -415,7 +415,7 @@ public class MenuHelper  {
      * @return
      */
     public static String getWorkspaceUrl(String context, String menuPath, Map externalparams, String subsystem) {
-        // StringBuffer url = new StringBuffer();
+        // StringBuilder url = new StringBuilder();
         // if(context != null && !"".equals(context)){
         // url.append(context).append("/");
         // }
@@ -439,7 +439,7 @@ public class MenuHelper  {
 
     public static String getWorkspaceUrl(String context, String menuPath, Map externalparams,
                                          String subsystem, String sessionid) {
-        StringBuffer url = new StringBuffer();
+        StringBuilder url = new StringBuilder();
 //        if (context != null && !"".equals(context)) {
 //            url.append(context).append("/");
 //        }
@@ -468,7 +468,7 @@ public class MenuHelper  {
      * @return
      */
     public static String getStatusUrl(String context, String menuPath, Map externalparams, String subsystem) {
-        // StringBuffer url = new StringBuffer();
+        // StringBuilder url = new StringBuilder();
         // if(context != null && !"".equals(context)){
         // url.append(context).append("/");
         // }
@@ -492,7 +492,7 @@ public class MenuHelper  {
 
     public static String getStatusUrl(String context, String menuPath, Map externalparams, String subsystem,
                                       String sessionid) {
-        StringBuffer url = new StringBuffer();
+        StringBuilder url = new StringBuilder();
 //        if (context != null && !"".equals(context)) {
 //            url.append(context).append("/");
 //        }
@@ -521,7 +521,7 @@ public class MenuHelper  {
      * @return
      */
     public static String getRootUrl(String context, String menuPath, String externalparams, String subsystem) {
-        StringBuffer url = new StringBuffer();
+        StringBuilder url = new StringBuilder();
         if (context != null && !"".equals(context)) {
             url.append(context).append("/");
         }
@@ -548,7 +548,7 @@ public class MenuHelper  {
      */
     public static String getMainUrl(String context, String menuPath, String externalparams, String subsystem) {
 
-        // StringBuffer url = new StringBuffer();
+        // StringBuilder url = new StringBuilder();
         // if(context != null && !"".equals(context)){
         // url.append(context).append("/");
         // }
@@ -572,7 +572,7 @@ public class MenuHelper  {
     public static String getMainUrl(String context, String menuPath, String externalparams, String subsystem,
                                     String sessionid) {
 
-        StringBuffer url = new StringBuffer();
+        StringBuilder url = new StringBuilder();
 //        if (context != null && !"".equals(context)) {
 //            url.append(context).append("/");
 //        }
@@ -601,7 +601,7 @@ public class MenuHelper  {
      */
     public static String getPerspectiveContentUrl(String context, String menuPath, String externalparams,
                                                   String subsystem, String sessionid) {
-        StringBuffer url = new StringBuffer();
+        StringBuilder url = new StringBuilder();
 //        if (context != null && !"".equals(context)) {
 //            url.append(context).append("/");
 //        }
@@ -620,7 +620,7 @@ public class MenuHelper  {
 
     public static String getPerspectiveContentUrl(String context, String menuPath, String externalparams,
                                                   String subsystem) {
-        // StringBuffer url = new StringBuffer();
+        // StringBuilder url = new StringBuilder();
         // if(context != null && !"".equals(context)){
         // url.append(context).append("/");
         // }
@@ -690,7 +690,7 @@ public class MenuHelper  {
     public static String getNavigatorContainerUrl(String context, String menuPath, String externalparams,
                                                   String subsystem) {
 
-        // StringBuffer url = new StringBuffer();
+        // StringBuilder url = new StringBuilder();
         // if(context != null && !"".equals(context)){
         // url.append(context).append("/");
         // }
@@ -716,7 +716,7 @@ public class MenuHelper  {
     public static String getNavigatorContainerUrl(String context, String menuPath, String externalparams,
                                                   String subsystem, String sessionid) {
 
-        StringBuffer url = new StringBuffer();
+        StringBuilder url = new StringBuilder();
 //        if (context != null && !"".equals(context)) {
 //            url.append(context).append("/");
 //        }
@@ -746,7 +746,7 @@ public class MenuHelper  {
      */
     public static String getActionContainerUrl(String context, String menuPath, String externalparams,
                                                String subsystem) {
-        // StringBuffer url = new StringBuffer();
+        // StringBuilder url = new StringBuilder();
         // if(context != null && !"".equals(context)){
         // url.append(context).append("/");
         // }
@@ -771,7 +771,7 @@ public class MenuHelper  {
 
     public static String getActionContainerUrl(String context, String menuPath, String externalparams,
                                                String subsystem, String sessionid) {
-        StringBuffer url = new StringBuffer();
+        StringBuilder url = new StringBuilder();
 //        if (context != null && !"".equals(context)) {
 //            url.append(context).append("/");
 //        }
@@ -801,7 +801,7 @@ public class MenuHelper  {
      */
     public static String getWorkspaceUrl(String context, String menuPath, String externalparams,
                                          String subsystem) {
-        // StringBuffer url = new StringBuffer();
+        // StringBuilder url = new StringBuilder();
         // if(context != null && !"".equals(context)){
         // url.append(context).append("/");
         // }
@@ -827,7 +827,7 @@ public class MenuHelper  {
 
     public static String getWorkspaceUrl(String context, String menuPath, String externalparams,
                                          String subsystem, String sessionid) {
-        StringBuffer url = new StringBuffer();
+        StringBuilder url = new StringBuilder();
 //        if (context != null && !"".equals(context)) {
 //            url.append(context).append("/");
 //        }
@@ -857,7 +857,7 @@ public class MenuHelper  {
      * @return
      */
     public static String getStatusUrl(String context, String menuPath, String externalparams, String subsystem) {
-        // StringBuffer url = new StringBuffer();
+        // StringBuilder url = new StringBuilder();
         // if(context != null && !"".equals(context)){
         // url.append(context).append("/");
         // }
@@ -883,7 +883,7 @@ public class MenuHelper  {
 
     public static String getStatusUrl(String context, String menuPath, String externalparams,
                                       String subsystem, String sessionid) {
-        StringBuffer url = new StringBuffer();
+        StringBuilder url = new StringBuilder();
 //        if (context != null && !"".equals(context)) {
 //            url.append(context).append("/");
 //        }
@@ -913,7 +913,7 @@ public class MenuHelper  {
      * @return
      */
     public static String getRootUrl(String context, MenuItem menu, Map externalparams, String subsystem) {
-        StringBuffer url = new StringBuffer();
+        StringBuilder url = new StringBuilder();
         if (context != null && !"".equals(context)) {
             url.append(context).append("/");
         }
@@ -955,7 +955,7 @@ public class MenuHelper  {
 	    	}
 	    	else if(params.length > 1)
 	    	{
-	    		StringBuffer data = new StringBuffer();
+	    		StringBuilder data = new StringBuilder();
 	    		if(url.indexOf("?") > 0)
 	    			data.append(url).append("&").append(params[0]).append("=").append(params[1]); 
 	    		else
@@ -987,7 +987,7 @@ public class MenuHelper  {
      */
     public static String getMainUrl(String context, MenuItem menu, Map externalparams, String subsystem) {
 
-        // StringBuffer url = new StringBuffer();
+        // StringBuilder url = new StringBuilder();
         // if(context != null && !"".equals(context)){
         // url.append(context).append("/");
         // }
@@ -1010,7 +1010,7 @@ public class MenuHelper  {
     public static String getMainUrl(String context, MenuItem menu, Map externalparams, String subsystem,
                                     String sessionid) {
 
-        StringBuffer url = new StringBuffer();
+        StringBuilder url = new StringBuilder();
         String murl = Framework.getUrl(Framework.MAIN_CONTAINER_URL, sessionid);
         murl = StringUtil.getRealPath(context, murl, true);
 //        if (context != null && !"".equals(context)) {
@@ -1045,7 +1045,7 @@ public class MenuHelper  {
     public static String getPerspectiveContentUrl(String context, MenuItem menu, Map externalparams,
                                                   String subsystem) {
 
-        // StringBuffer url = new StringBuffer();
+        // StringBuilder url = new StringBuilder();
         // if(context != null && !"".equals(context)){
         // url.append(context).append("/");
         // }
@@ -1071,7 +1071,7 @@ public class MenuHelper  {
     public static String getPerspectiveContentUrl(String context, MenuItem menu, Map externalparams,
                                                   String subsystem, String sessionid) {
 
-        StringBuffer url = new StringBuffer();
+        StringBuilder url = new StringBuilder();
 //        if (context != null && !"".equals(context)) {
 //            url.append(context).append("/");
 //        }
@@ -1103,7 +1103,7 @@ public class MenuHelper  {
      */
     public static String getActionContainerUrl(String context, MenuItem menu, Map externalparams,
                                                String subsystem) {
-        // StringBuffer url = new StringBuffer();
+        // StringBuilder url = new StringBuilder();
         // if(context != null && !"".equals(context)){
         // url.append(context).append("/");
         // }
@@ -1127,7 +1127,7 @@ public class MenuHelper  {
 
     public static String getActionContainerUrl(String context, MenuItem menu, Map externalparams,
                                                String subsystem, String sessionid) {
-        StringBuffer url = new StringBuffer();
+        StringBuilder url = new StringBuilder();
 //        if (context != null && !"".equals(context)) {
 //            url.append(context).append("/");
 //        }
@@ -1156,7 +1156,7 @@ public class MenuHelper  {
      * @return
      */
     public static String getWorkspaceUrl(String context, MenuItem menu, Map externalparams, String subsystem) {
-        // StringBuffer url = new StringBuffer();
+        // StringBuilder url = new StringBuilder();
         // if(context != null && !"".equals(context)){
         // url.append(context).append("/");
         // }
@@ -1180,7 +1180,7 @@ public class MenuHelper  {
 
     public static String getWorkspaceUrl(String context, MenuItem menu, Map externalparams, String subsystem,
                                          String sessionid) {
-        StringBuffer url = new StringBuffer();
+        StringBuilder url = new StringBuilder();
 //        if (context != null && !"".equals(context)) {
 //            url.append(context).append("/");
 //        }
@@ -1209,7 +1209,7 @@ public class MenuHelper  {
      * @return
      */
     public static String getStatusUrl(String context, MenuItem menu, Map externalparams, String subsystem) {
-        // StringBuffer url = new StringBuffer();
+        // StringBuilder url = new StringBuilder();
         // if(context != null && !"".equals(context)){
         // url.append(context).append("/");
         // }
@@ -1233,7 +1233,7 @@ public class MenuHelper  {
 
     public static String getStatusUrl(String context, MenuItem menu, Map externalparams, String subsystem,
                                       String sessionid) {
-        StringBuffer url = new StringBuffer();
+        StringBuilder url = new StringBuilder();
 //        if (context != null && !"".equals(context)) {
 //            url.append(context).append("/");
 //        }
@@ -2347,7 +2347,7 @@ public class MenuHelper  {
 		else
 		{
 			if(selecturl == null || selecturl.equals("")){
-				url = new StringBuffer().append(framepath).append("?")
+				url = new StringBuilder().append(framepath).append("?")
 						 .append(menupath)
 						 .append("=")
 						 .append(subitem.getPath()).toString();
@@ -2355,7 +2355,7 @@ public class MenuHelper  {
 			else
 			{
 				selecturl = java.net.URLEncoder.encode(selecturl);
-				url = new StringBuffer().append(framepath).append("?")
+				url = new StringBuilder().append(framepath).append("?")
 						 .append(menupath)
 						 .append("=")
 						 .append(subitem.getPath()).append("&")
