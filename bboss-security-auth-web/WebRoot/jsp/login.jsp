@@ -5,8 +5,8 @@
 
 <!DOCTYPE html>
 <!-- 
-Template Name: Metronic - Responsive Admin Dashboard Template build with Twitter Bootstrap 3.3.6
-Version: 4.5.6
+Template Name: Metronic - Responsive Admin Dashboard Template build with Twitter Bootstrap 3.3.7
+Version: 4.7.1
 Author: KeenThemes
 Website: http://www.keenthemes.com/
 Contact: support@keenthemes.com
@@ -29,7 +29,7 @@ License: You must have a valid license purchased only from themeforest(the above
         <title>${defaultmodulename }</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1" name="viewport" />
-        <meta content="" name="description" />
+        <meta content="Preview page of Metronic Admin Theme #1 for " name="description" />
         <meta content="" name="author" />
         <!-- BEGIN GLOBAL MANDATORY STYLES -->
         <link href="http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700&subset=all" rel="stylesheet" type="text/css" />
@@ -59,28 +59,26 @@ License: You must have a valid license purchased only from themeforest(the above
         <!-- BEGIN : LOGIN PAGE 5-1 -->
         <div class="user-login-5">
             <div class="row bs-reset">
-                <div class="col-md-6 bs-reset">
+                <div class="col-md-6 bs-reset mt-login-5-bsfix">
                     <div class="login-bg" style="background-image:url(theme/assets/pages/img/login/bg1.jpg)">
                         <img class="login-logo" src="theme/assets/pages/img/login/logo.png" /> </div>
                 </div>
-                <div class="col-md-6 login-container bs-reset">
+                <div class="col-md-6 login-container bs-reset mt-login-5-bsfix">
                     <div class="login-content">
                         <h1>${defaultmodulename } 用户登陆</h1>
                         <p> 亚信2.0：产业互联网时代的领航者. </p>
                         <form id="IntegralFormPanel" name="IntegralFormPanel" class="login-form" action="login.page" method="post" target="_self">
 							<input type="hidden" name="flag" value="yes" />
-                            <div class="alert alert-danger display-hide">
+                           <div class="alert alert-danger display-hide">
                                 <button class="close" data-close="alert"></button>
                                 <span class="msg">Enter any username and password. </span>
                             </div>
-                           
                             <div class="row">
                                 <div class="col-xs-6">
                                     <input class="form-control form-control-solid placeholder-no-fix form-group" type="text" autocomplete="off" placeholder="UserName" name="userName" id="userName" required/> </div>
                                 <div class="col-xs-6">
                                     <input class="form-control form-control-solid placeholder-no-fix form-group" type="password" autocomplete="off" placeholder="Password" name="password" id="password" required/> </div>
-                                
-                            </div>
+			    </div>
                             <div class="row">
                             	<div class="col-xs-6">
                                		
@@ -128,7 +126,7 @@ License: You must have a valid license purchased only from themeforest(the above
 										</pg:no>
 									</pg:notempty>
                                     
-                               </div>
+                               </div>                            
                             </div>
                             <div class="row">
                                 <div class="col-sm-4">
@@ -143,7 +141,7 @@ License: You must have a valid license purchased only from themeforest(the above
                                     <div class="forgot-password">
                                         <a href="javascript:;" id="forget-password" class="forget-password">Forgot Password?</a>
                                     </div>
-                                    <button class="btn green" type="submit" >Sign In</button>
+                                    <button class="btn green" type="submit">Sign In</button>
                                 </div>
                             </div>
                         </form>
@@ -195,12 +193,12 @@ License: You must have a valid license purchased only from themeforest(the above
         <!--[if lt IE 9]>
 <script src="theme/assets/global/plugins/respond.min.js"></script>
 <script src="theme/assets/global/plugins/excanvas.min.js"></script> 
+<script src="theme/assets/global/plugins/ie8.fix.min.js"></script> 
 <![endif]-->
         <!-- BEGIN CORE PLUGINS -->
         <script src="theme/assets/global/plugins/jquery.min.js" type="text/javascript"></script>
         <script src="theme/assets/global/plugins/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
         <script src="theme/assets/global/plugins/js.cookie.min.js" type="text/javascript"></script>
-        <script src="theme/assets/global/plugins/bootstrap-hover-dropdown/bootstrap-hover-dropdown.min.js" type="text/javascript"></script>
         <script src="theme/assets/global/plugins/jquery-slimscroll/jquery.slimscroll.min.js" type="text/javascript"></script>
         <script src="theme/assets/global/plugins/jquery.blockui.min.js" type="text/javascript"></script>
         <script src="theme/assets/global/plugins/bootstrap-switch/js/bootstrap-switch.min.js" type="text/javascript"></script>
@@ -210,7 +208,7 @@ License: You must have a valid license purchased only from themeforest(the above
         <script src="theme/assets/global/plugins/jquery-validation/js/additional-methods.min.js" type="text/javascript"></script>
         <script src="theme/assets/global/plugins/select2/js/select2.full.min.js" type="text/javascript"></script>
         <script src="theme/assets/global/plugins/backstretch/jquery.backstretch.min.js" type="text/javascript"></script>
-         <script src="theme/assets/global/plugins/bootstrap-toastr/toastr.min.js" type="text/javascript"></script>
+ 	<script src="theme/assets/global/plugins/bootstrap-toastr/toastr.min.js" type="text/javascript"></script>        
         <!-- END PAGE LEVEL PLUGINS -->
         <!-- BEGIN THEME GLOBAL SCRIPTS -->
         <script src="theme/assets/global/scripts/app.min.js" type="text/javascript"></script>
