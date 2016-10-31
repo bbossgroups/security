@@ -1,9 +1,11 @@
 package org.frameworkset.platform.config.model;
 
 import org.apache.log4j.Logger;
-
+import org.frameworkset.platform.security.PermissionModule;
 import org.frameworkset.platform.security.authorization.AuthRole;
 import org.frameworkset.platform.security.authorization.impl.BaseAuthorizationTable;
+import org.frameworkset.spi.BaseApplicationContext;
+import org.frameworkset.web.servlet.support.WebApplicationContextUtils;
 
 /**
  * <p>Title: </p>
@@ -71,19 +73,27 @@ public class AuthorTableInfo implements java.io.Serializable {
         {
 
             try {
-                authorizationTable = (BaseAuthorizationTable) Class.forName(this.
-                        authorizetableClass).newInstance();
+            	if(!authorizetableClass.startsWith("mvc:"))
+	        	{
+            		 authorizationTable = (BaseAuthorizationTable) Class.forName(this.
+                             authorizetableClass).newInstance();
+					
+	        	}
+	        	else
+	        	{
+	        		BaseApplicationContext ioc = WebApplicationContextUtils.getWebApplicationContext();
+	        		authorizationTable = ioc.getTBeanObject(authorizetableClass.substring(4), BaseAuthorizationTable.class);
+	        	}
+//                authorizationTable = (BaseAuthorizationTable) Class.forName(this.
+//                        authorizetableClass).newInstance();
                 authorizationTable.setAuthorTableInfo(this);
                 
             } catch (ClassNotFoundException ex) {
-                log.error(ex);
-                ex.printStackTrace();
+                log.error("getAuthorizationTable",ex);
             } catch (IllegalAccessException ex) {
-                log.error(ex);
-                ex.printStackTrace();
+                log.error("getAuthorizationTable",ex);
             } catch (InstantiationException ex) {
-                log.error(ex);
-                ex.printStackTrace();
+            	 log.error("getAuthorizationTable",ex);
             }
         }
         return authorizationTable;

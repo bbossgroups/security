@@ -1,6 +1,9 @@
 package org.frameworkset.platform.config.model;
 
+import org.frameworkset.platform.security.authorization.impl.BaseAuthorizationTable;
 import org.frameworkset.platform.security.authorization.impl.PermissionRoleMap;
+import org.frameworkset.spi.BaseApplicationContext;
+import org.frameworkset.web.servlet.support.WebApplicationContextUtils;
 
 /**
  * <p>Title: </p>
@@ -59,8 +62,17 @@ public class PermissionRoleMapInfo implements java.io.Serializable {
         if(permissionRoleMap == null)
         {
             try {
-                permissionRoleMap = (PermissionRoleMap) Class.forName(this.
-                        permissionRoleMapClass).newInstance();
+            	if(!permissionRoleMapClass.startsWith("mvc:"))
+	        	{
+            		 permissionRoleMap = (PermissionRoleMap) Class.forName(this.
+                             permissionRoleMapClass).newInstance();
+	        	}
+	        	else
+	        	{
+	        		BaseApplicationContext ioc = WebApplicationContextUtils.getWebApplicationContext();
+	        		permissionRoleMap = ioc.getTBeanObject(permissionRoleMapClass.substring(4), PermissionRoleMap.class);
+	        	}
+               
                 permissionRoleMap.setPermissionRoleMapInfo(this);
                 //permissionRoleMap.init();
             } catch (ClassNotFoundException ex) {

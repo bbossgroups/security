@@ -21,11 +21,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.security.auth.AuthPermission;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
-
 import org.frameworkset.platform.config.ConfigManager;
 import org.frameworkset.platform.config.LoginModuleInfoQueue;
 import org.frameworkset.platform.config.model.LoginModuleInfo;

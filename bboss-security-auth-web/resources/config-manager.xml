@@ -26,7 +26,7 @@
 			  <resourcefile src="permission/resources-sys.xml" desc="系统管理资源配置文件"/>		
 			 
 		</resources>
-		<permissionModule class="org.frameworkset.platform.security.AppPermissionModule"/>
+		<permissionModule class="mvc:security.appPermissionModule"/>
 		<logmanager class="org.frameworkset.platform.log.AppLogManager"/>
 		<globalconfig file="conf/manager-provider.xml"/>
 		<globalmenu file="menus/module.xml"/>
@@ -50,7 +50,7 @@
 			<permissionrolemap default="true" 
 						module="console" cachable="true" 
 						allowIfNoRequiredRole="false" 
-						class="org.frameworkset.platform.security.authorization.AppPermissionRoleMap" />
+						class="mvc:security.authorization.permissionRoleMap" />
 			<!--
 				权限控制表
 				cachable：可选属性，是否需要缓冲用户/角色之间的关系
@@ -64,7 +64,7 @@
 			                cachable="true"			               
 			                adminrole="administrator"
 			                everyonegrantedrole="roleofeveryone"
-			                class="org.frameworkset.platform.security.authorization.AppAuthorizationTable" />
+			                class="mvc:security.authorization.authorizationTable" />
 		</authorizable>
 		<!--
 			name:名称属性

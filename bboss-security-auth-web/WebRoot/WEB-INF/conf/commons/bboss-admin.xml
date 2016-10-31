@@ -12,4 +12,14 @@
 	
 	class="org.frameworkset.platform.desktop.action.AdminController" />
 	
+	
+	<property name="security.authorization.authorizationTable"		
+		class="org.frameworkset.platform.security.authorization.AppAuthorizationTable" />
+	<property name="security.authorization.permissionRoleMap"		
+		class="org.frameworkset.platform.security.authorization.AppPermissionRoleMap" />
+	
+	<property name="security.appPermissionModule"		
+		class="org.frameworkset.platform.security.AppPermissionModule" />	
+		
+		
 </properties>

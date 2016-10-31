@@ -50,6 +50,7 @@ import org.frameworkset.spi.DefaultApplicationContext;
 import org.frameworkset.spi.assemble.ProviderInfoQueue;
 import org.frameworkset.spi.assemble.ProviderManagerInfo;
 import org.frameworkset.spi.assemble.SecurityProviderInfo;
+import org.frameworkset.web.servlet.support.WebApplicationContextUtils;
 
 import com.frameworkset.spi.assemble.CurrentlyInCreationException;
 import com.frameworkset.util.ResourceInitial;
@@ -73,6 +74,7 @@ public class ConfigManager implements ResourceInitial {
     private boolean inited = false;
     private ResourceManagerInf resourceManager;
     private PermissionModule permissionModule;
+    private String _permissionModule;
     private LogManagerInf logManager;
     private static String defaultGloablConfigFile = "conf/manager-provider.xml";
     private String gloablConfigFile = defaultGloablConfigFile;
@@ -244,7 +246,7 @@ public class ConfigManager implements ResourceInitial {
 
     }
 
-
+   
     private void parseXML(String configFile) throws Exception {
         /* CHANGED TO USE JAXP */
        
@@ -301,12 +303,8 @@ public class ConfigManager implements ResourceInitial {
         
         if(StringUtil.isNotEmpty(_permissionModule))
         {
-        	Class cl = Class.forName(_permissionModule);
-        	try {
-				this.permissionModule = (PermissionModule) cl.newInstance();
-			} catch (Exception e) {
-				permissionModule = new DefaultPermissionModule();
-			}
+        	this._permissionModule = _permissionModule;
+        	
         }
 
 
@@ -1253,6 +1251,29 @@ public class ConfigManager implements ResourceInitial {
 
 
 	public PermissionModule getPermissionModule() {
+		if(permissionModule != null)
+			return permissionModule;
+		synchronized(this)
+		{
+			if(permissionModule != null)
+				return permissionModule;
+			try {
+	        	if(!_permissionModule.startsWith("mvc:"))
+	        	{
+		        	Class cl = Class.forName(_permissionModule);
+		        	
+						this.permissionModule = (PermissionModule) cl.newInstance();
+					
+	        	}
+	        	else
+	        	{
+	        		BaseApplicationContext ioc = WebApplicationContextUtils.getWebApplicationContext();
+	        		permissionModule = ioc.getTBeanObject(_permissionModule.substring(4), PermissionModule.class);
+	        	}
+	    	} catch (Exception e) {
+				permissionModule = new DefaultPermissionModule();
+			}
+		}
 		return permissionModule;
 	}
 
