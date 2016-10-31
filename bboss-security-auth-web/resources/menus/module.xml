@@ -70,8 +70,7 @@
 		</publicitem>
 		<module name="一级菜单" 
 		             i18n:en_US="Line Information Query" 
-		            id="veh_line_query1" used="true"
-		           option="{popup:true,width:700,height:500,maxstate:true}"
+		            id="veh_line_query1" used="true"		         
 		             url="theme/admin/content.page" menuType="type1" icon="icon-home">	
 				<item name="二级菜单"
 				i18n:en_US="pathvariable demo" id="pathvariabledemo2"  showleftmenu="false" menuType="type1">
@@ -84,7 +83,7 @@
 				</item> 
 				
 				<item name="百度" iframe="true"
-				i18n:en_US="pathvariable demo" id="baidu"  showleftmenu="false" menuType="type1">
+				i18n:en_US="pathvariable demo" id="baidu" menuType="type1">
 					
 					 
 					<workspace>
