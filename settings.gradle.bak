@@ -1,2 +1,0 @@
-rootProject.name = 'security'
-include "bboss-security", "bboss-security-web","session","sessionmonitor","bboss-security-web-inf","bboss-security-auth"
