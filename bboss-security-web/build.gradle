@@ -14,7 +14,7 @@ sourceSets {
 }
 
 
-project.tasks.compileJava.dependsOn([project(':bboss-security-web-inf').tasks.install,project(':bboss-security').tasks.install])
+project.tasks.compileJava.dependsOn([project(':bboss-security-web-inf').tasks.install,project(':bboss-security').tasks.install,project(':bboss-ticket').tasks.install])
 
 dependencies {
     compile(
@@ -23,6 +23,7 @@ dependencies {
              [group: 'com.bbossgroups', name: 'bboss-mvc', version: "${bboss_version}", transitive: false],
             [group: 'com.bbossgroups.security', name: 'bboss-security', version: "${version}", transitive: false],
             [group: 'com.bbossgroups.security', name: 'bboss-security-web-inf', version: "${version}", transitive: false],
+            [group: 'com.bbossgroups.security', name: 'bboss-ticket', version: "${version}", transitive: false],
              [group: 'com.bbossgroups', name: 'bboss-util', version: "${bboss_version}", transitive: false],
               [group: 'log4j', name: 'log4j', version: '1.2.16', transitive: false],
                [group: 'com.bbossgroups', name: 'bboss-velocity', version: "${bboss_version}", transitive: false],

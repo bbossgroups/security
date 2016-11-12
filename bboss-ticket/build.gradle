@@ -1,13 +1,14 @@
 sourceSets {
     main {
         java {
-            srcDir 'src'
             
+            srcDir 'src-encoder'
+            srcDir 'src-token'
         }
         resources{
-        	srcDir 'src' 
+        	srcDir 'src-token' 
         	include '**/*.xml'
-    		 
+    		  include '**/*.sql'
         	
         }
     }
@@ -33,7 +34,7 @@ dependencies {
               [group: 'oro', name: 'oro', version: '2.0.8', transitive: false],
               [group: 'commons-lang', name: 'commons-lang', version: '2.6', transitive: false],
               [group: 'org.ow2.asm', name: 'asm', version: '5.0.3', transitive: false],
-                [group: 'cglib', name: 'cglib-nodep', version: '3.1', transitive: false],
+                 [group: 'cglib', name: 'cglib-nodep', version: '3.1', transitive: false],
               [group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: "${jacksonversion}",transitive: false],
             [group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: "${jacksonversion}",transitive: false],
             [group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: "${jacksonversion}",transitive: false],
@@ -44,11 +45,15 @@ dependencies {
                [group: 'org.apache.commons', name: 'commons-pool2', version: '2.4.2', transitive: false],
                [group: 'redis.clients', name: 'jedis', version: '2.8.1', transitive: false],
                 [group: 'org.mongodb', name: 'mongo-java-driver', version: "${mongodbversion}", transitive: false],
-                 
+                [group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.54', transitive: false],
+                
     //[group: 'javaee', name: 'javaee-api', version: '5', transitive: false],
     )
     compileOnly(
     	 [group: 'javax.servlet', name: 'javax.servlet-api', version: "3.0.1", transitive: false],
     )
-    
+     testCompile (            
+            
+            fileTree(dir: 'lib-compile', include: '**/*.jar')
+    )
 }
