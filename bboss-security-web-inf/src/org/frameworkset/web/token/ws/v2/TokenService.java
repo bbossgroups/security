@@ -71,6 +71,15 @@ public interface TokenService {
 			@WebParam(name = "appid", partName = "partAppid") String appid,
 			@WebParam(name = "secret", partName = "partSecret") String secret)throws Exception;
 	
+	public @WebResult(name = "ticket", partName = "partTicket")  
+	TicketGetResponse getTempTicketWithEncrypt(
+			@WebParam(name = "data", partName = "partData") String data,
+			@WebParam(name = "signature", partName = "partSignature") String signature,
+			@WebParam(name = "timestamp", partName = "partTimestamp") String timestamp,
+			@WebParam(name = "nonce", partName = "partNonce") String nonce,
+			@WebParam(name = "appid", partName = "partAppid") String appid,
+			@WebParam(name = "secret", partName = "partSecret") String secret)throws Exception;
+	
 	/**
 	 * 销毁令牌票据ticket
 	 * @param token

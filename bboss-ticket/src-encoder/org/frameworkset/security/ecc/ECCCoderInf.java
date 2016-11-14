@@ -32,6 +32,9 @@ public interface ECCCoderInf {
 	public abstract PrivateKey evalECPrivateKey(String privateKey);
 
 	public abstract PublicKey evalECPublicKey(String publicKey);
+	
+	public  abstract PrivateKey _evalECPrivateKey(byte[] privateKey);
+	public  abstract PublicKey _evalECPublicKey(byte[] publicKey);
 
 	/**
 	 * 解密<br>
@@ -117,6 +120,6 @@ public interface ECCCoderInf {
 	 * @return
 	 * @throws Exception
 	 */
-	public abstract SimpleKeyPair genECKeyPair() throws Exception;
+	public abstract SimpleKeyPair genECKeyPair( ) throws Exception;
 
 }

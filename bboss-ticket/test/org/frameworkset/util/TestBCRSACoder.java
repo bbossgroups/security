@@ -49,7 +49,7 @@ public class TestBCRSACoder {
 		
 		
 		ECCCoderInf ECCCoder = ECCHelper.getECCCoder(ECCHelper.BCRSA);
-		SimpleKeyPair keyMap = ECCCoder.genECKeyPair();
+		SimpleKeyPair keyMap = ECCCoder.genECKeyPair( );
 
 		String publicKey = keyMap.getPublicKey();
 		String privateKey = keyMap.getPrivateKey();
@@ -80,14 +80,14 @@ public class TestBCRSACoder {
 	public void testGenKey() throws Exception {
 		
 		ECCCoderInf ECCCoder = ECCHelper.getECCCoder(ECCHelper.BCRSA);
-		SimpleKeyPair keyMap = ECCCoder.genECKeyPair();
+		SimpleKeyPair keyMap = ECCCoder.genECKeyPair( );
 
 		String publicKey = keyMap.getPublicKey();
 		String privateKey = keyMap.getPrivateKey();
 		System.err.println("公钥: \n" + publicKey);
 		System.err.println("私钥： \n" + privateKey);
 		
-		keyMap = ECCCoder.genECKeyPair();
+		keyMap = ECCCoder.genECKeyPair( );
 
 		String publicKey1 = keyMap.getPublicKey();
 		String privateKey1 = keyMap.getPrivateKey();

@@ -1,7 +1,12 @@
 package org.frameworkset.web.token;
 
+import java.security.PrivateKey;
+import java.security.PublicKey;
+
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
+
+import org.frameworkset.security.ecc.SimpleKeyPair;
 
 public class DummyTokenService implements TokenServiceInf {
 
@@ -151,6 +156,33 @@ public class DummyTokenService implements TokenServiceInf {
 
 	@Override
 	public Ticket genTempTicket(String account, String worknumber, String appid, String secret) throws TokenException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.frameworkset.web.token.TokenServiceInf#getPublicKey(java.lang.String)
+	 */
+	@Override
+	public PublicKey getPublicKey(String appid) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.frameworkset.web.token.TokenServiceInf#getPrivateKey(java.lang.String)
+	 */
+	@Override
+	public PrivateKey getPrivateKey(String appid) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.frameworkset.web.token.TokenServiceInf#getSimpleKeyPair(java.lang.String)
+	 */
+	@Override
+	public SimpleKeyPair getSimpleKeyPair(String appid) {
 		// TODO Auto-generated method stub
 		return null;
 	}

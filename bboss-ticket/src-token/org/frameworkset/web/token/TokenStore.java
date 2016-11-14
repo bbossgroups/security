@@ -142,4 +142,5 @@ public interface TokenStore {
 	 * @param secret
 	 */
 	public boolean refreshTicket(String ticket,String appid,String secret) throws TokenException;
+	public  SimpleKeyPair getKeyPair(String appid,String secret,boolean validateapp) throws TokenException;
 }

@@ -63,4 +63,10 @@ public class SimpleKeyPair {
 	public void setPublicKey(String publicKey) {
 		this.publicKey = publicKey;
 	}
+	public void setPubKey(PublicKey pubKey) {
+		this.pubKey = pubKey;
+	}
+	public void setPriKey(PrivateKey priKey) {
+		this.priKey = priKey;
+	}
 }

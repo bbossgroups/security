@@ -15,16 +15,12 @@
  */
 package org.frameworkset.security.ecc;
 
-import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
+import org.frameworkset.security.KeyCacheUtil;
 import org.frameworkset.util.encoder.Hex;
 
 
@@ -38,10 +34,7 @@ import org.frameworkset.util.encoder.Hex;
  * @version 3.8.0
  */
 public abstract class BaseECCCoder implements ECCCoderInf {
-	protected  Map<String,PrivateKey> PrivateKeyIndex = new HashMap<String,PrivateKey>();
-	protected  Map<String,PublicKey> ECPublicKeyIndex = new HashMap<String,PublicKey>();
-	protected  Map<String,SimpleKeyPair> PrivateKeyPairIndex = new HashMap<String,SimpleKeyPair>();
-	protected  Map<String,SimpleKeyPair> ECPublicKeyPairIndex = new HashMap<String,SimpleKeyPair>();
+	
 	protected String randomToken()
 	{
 		String token = UUID.randomUUID().toString();
@@ -50,49 +43,13 @@ public abstract class BaseECCCoder implements ECCCoderInf {
 	public  abstract PrivateKey _evalECPrivateKey(byte[] privateKey);
 	public  PrivateKey evalECPrivateKey(String privateKey)
 	{
-		PrivateKey priKey = PrivateKeyIndex.get(privateKey);
-		if(priKey != null)
-			return priKey;
-		synchronized(PrivateKeyIndex)
-		{
-			priKey = PrivateKeyIndex.get(privateKey);
-			if(priKey != null)
-				return priKey;
-			try {
-				
-				// 对密钥解密
-				byte[] keyBytes = Hex.decode(privateKey);
-				 priKey = _evalECPrivateKey( keyBytes);
-				 PrivateKeyIndex.put(privateKey, priKey);
-				return priKey;
-			} catch (Exception e) {
-				throw new java.lang.RuntimeException(e);
-			}
-		}
+		return KeyCacheUtil.getPrivateKey(privateKey);
 	}
 	public  abstract PublicKey _evalECPublicKey(byte[] publicKey);
 	public  PublicKey evalECPublicKey(String publicKey)
 	{
 		
-		PublicKey pubKey = ECPublicKeyIndex.get(publicKey);
-		if(pubKey != null)
-			return pubKey;
-		synchronized(ECPublicKeyIndex)
-		{
-			pubKey = ECPublicKeyIndex.get(publicKey);
-			if(pubKey != null)
-				return pubKey;
-			try {
-				// 对公钥解密
-				byte[] keyBytes = Hex.decode(publicKey);
-
-				pubKey = _evalECPublicKey(keyBytes);
-				ECPublicKeyIndex.put(publicKey, pubKey);
-				return pubKey;
-			} catch (Exception e) {
-				throw new java.lang.RuntimeException(e);
-			}
-		}
+		return KeyCacheUtil.getPublicKey(publicKey);
 		
 	}
 
@@ -197,21 +154,22 @@ public abstract class BaseECCCoder implements ECCCoderInf {
 	}
 
 	
-	public abstract KeyPair _genECKeyPair() throws Exception ;
-	public SimpleKeyPair genECKeyPair() throws Exception {
-			KeyPair pair = _genECKeyPair();	      
-	        PublicKey              pubKey = pair.getPublic();
-	        PrivateKey              privKey = pair.getPrivate();
-	        String sprivateKey = Hex.toHexString(privKey.getEncoded());
-	  		String spublicKey = Hex.toHexString(pubKey.getEncoded());
-	  		SimpleKeyPair ECKeyPair = new SimpleKeyPair(sprivateKey, spublicKey,
-	  				pubKey, privKey);
-	  		PrivateKeyPairIndex.put(sprivateKey, ECKeyPair);
-	  		this.PrivateKeyIndex.put(sprivateKey, privKey);
-	  		
-	  		ECPublicKeyPairIndex.put(spublicKey, ECKeyPair);
-	  		this.ECPublicKeyIndex.put(spublicKey, pubKey);
-	  		return ECKeyPair;
+	public abstract KeyPair _genECKeyPair( ) throws Exception ;
+	public SimpleKeyPair genECKeyPair( ) throws Exception {
+//			KeyPair pair = _genECKeyPair(  );	      
+//	        PublicKey              pubKey = pair.getPublic();
+//	        PrivateKey              privKey = pair.getPrivate();
+//	        String sprivateKey = Hex.toHexString(privKey.getEncoded());
+//	  		String spublicKey = Hex.toHexString(pubKey.getEncoded());
+//	  		SimpleKeyPair ECKeyPair = new SimpleKeyPair(sprivateKey, spublicKey, 
+//	  				pubKey, privKey);
+//	  		PrivateKeyPairIndex.put(sprivateKey, ECKeyPair);
+//	  		this.PrivateKeyIndex.put(sprivateKey, privKey);
+//	  		
+//	  		ECPublicKeyPairIndex.put(spublicKey, ECKeyPair);
+//	  		this.ECPublicKeyIndex.put(spublicKey, pubKey);
+//	  		return ECKeyPair;
+		return KeyCacheUtil.getECKeyPair();
 	       
 	}
 	

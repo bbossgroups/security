@@ -1,5 +1,9 @@
 package org.frameworkset.web.token;
 
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import org.frameworkset.security.ecc.ECCCoderInf;
@@ -739,12 +743,38 @@ public abstract class BaseTokenStore implements TokenStore {
 	{
 		return _getKeyPair(appid,secret,true);
 	}
-	
+	private Map<String,SimpleKeyPair> simpleKeyPairCache = new HashMap<String,SimpleKeyPair>();
+	public  SimpleKeyPair getKeyPair(String appid,String secret,boolean validateapp) throws TokenException
+	{
+		return _getKeyPair(  appid,  secret,  validateapp);
+	}
 	protected SimpleKeyPair _getKeyPair(String appid,String secret,boolean validateapp) throws TokenException
 	{
 		if(validateapp)
-			this.assertApplication(appid, secret);		
-		return _getKeyPair( appid, secret);
+			this.assertApplication(appid, secret);	
+		SimpleKeyPair kp = simpleKeyPairCache.get(appid);
+		if(kp != null)
+			return kp;
+		synchronized(simpleKeyPairCache)
+		{
+			kp = simpleKeyPairCache.get(appid);
+			if(kp != null)
+				return kp;
+			kp = _getKeyPair( appid, secret);
+			if(kp.getPriKey() == null)
+			{
+				PrivateKey priKey = this.ECCCoder.evalECPrivateKey( kp.getPrivateKey());
+				kp.setPriKey(priKey);
+				
+			}
+			
+			if(kp.getPubKey() == null) {
+				PublicKey pubKey = this.ECCCoder.evalECPublicKey( kp.getPublicKey());
+				kp.setPubKey(pubKey);
+			}
+			simpleKeyPairCache.put(appid, kp);
+		}
+		return kp;
 	}
 	
 	protected abstract SimpleKeyPair _getKeyPair(String appid,String secret) throws TokenException;

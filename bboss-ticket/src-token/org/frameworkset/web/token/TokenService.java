@@ -15,6 +15,8 @@
  */
 package org.frameworkset.web.token;
 
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -879,6 +881,34 @@ public class TokenService implements TokenServiceInf,InitializingBean {
 
 	public void setTokenLifescan(boolean tokenLifescan) {
 		this.tokenLifescan = tokenLifescan;
+	}
+
+
+
+
+	/* (non-Javadoc)
+	 * @see org.frameworkset.web.token.TokenServiceInf#getPublicKey(java.lang.String)
+	 */
+	@Override
+	public PublicKey getPublicKey(String appid) {
+		// TODO Auto-generated method stub
+		return this.tokenStore.getKeyPair(appid, null,false).getPubKey();
+	}
+
+
+
+
+	/* (non-Javadoc)
+	 * @see org.frameworkset.web.token.TokenServiceInf#getPrivateKey(java.lang.String)
+	 */
+	@Override
+	public PrivateKey getPrivateKey(String appid) {
+		return this.tokenStore.getKeyPair(appid, null,false).getPriKey();
+	}
+	
+	public SimpleKeyPair getSimpleKeyPair(String appid)
+	{
+		return this.tokenStore.getKeyPair(appid, null,false);
 	}
 
 

@@ -88,7 +88,7 @@ configure(subprojects) { subproject ->
 }
 		 
 
-configure([project(":bboss-security"),project(":bboss-security-web"),project(":bboss-security-web-inf")]) { subproject ->
+configure([project(":bboss-security"),project(":bboss-security-web"),project(":bboss-security-web-inf"),project(":bboss-ticket")]) { subproject ->
 	ext.uploadtocenter=uploadArchivesToMavenCenter.equals("true")	
 	if(uploadtocenter)
 	{

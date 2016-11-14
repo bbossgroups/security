@@ -8,9 +8,20 @@ package org.frameworkset.web.token;
 public class Application {
 	private String appid;
 	private String secret;
+	/**
+	 * ticket有效期
+	 */
 	private long ticketlivetime;
 	private long dualtokenlivetime;
 	private long temptokenlivetime;
+	/**
+	 * 签名key
+	 */
+	private String signkey ;
+	/**
+	 * 数据加密key
+	 */
+	private String encryptKey;
 	private Boolean sign = true;
 	public String getAppid() {
 		return appid;
@@ -48,5 +59,17 @@ public class Application {
 	public void setSign(Boolean sign) {
 		this.sign = sign;
 	}
-
+	public String getSignkey() {
+		return signkey;
+	}
+	public void setSignkey(String signkey) {
+		this.signkey = signkey;
+	}
+	public String getEncryptKey() {
+		return encryptKey;
+	}
+	public void setEncryptKey(String encryptKey) {
+		this.encryptKey = encryptKey;
+	}
+	 
 }

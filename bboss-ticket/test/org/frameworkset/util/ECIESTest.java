@@ -41,7 +41,7 @@ public class ECIESTest {
 		String inputStr = "尹标平";
 		byte[] data = inputStr.getBytes();
 		ECCCoderInf ECCCoder = ECCHelper.getECCCoder(ECCHelper.ECC_Flexi);
-		SimpleKeyPair keyMap = ECCCoder.genECKeyPair();
+		SimpleKeyPair keyMap = ECCCoder.genECKeyPair( );
 
 		String publicKey = keyMap.getPublicKey();
 		String privateKey = keyMap.getPrivateKey();

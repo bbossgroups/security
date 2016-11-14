@@ -338,6 +338,16 @@ public class TokenController implements TokenService {
 		return tokenGetResponse;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.frameworkset.web.token.ws.v2.TokenService#getTempTicketWithEncrypt(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 */
+	@Override
+	public TicketGetResponse getTempTicketWithEncrypt(String data, String signature, String timestamp, String nonce,
+			String appid, String secret) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	
 
 

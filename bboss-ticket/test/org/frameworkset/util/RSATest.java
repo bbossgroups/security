@@ -35,11 +35,11 @@ public class RSATest {
 	@Before
 	public void init() throws Exception
 	{
-		test();
+		//test();
 	}
 	@Test
 	public void test() throws Exception {
-		String inputStr = "尹标平";
+		String inputStr = "asdfdfffd";
 		
 		byte[] data = inputStr.getBytes();
 		String ddd = Hex.toHexString(data);
@@ -49,15 +49,20 @@ public class RSATest {
 		
 		
 		ECCCoderInf ECCCoder = ECCHelper.getECCCoder(ECCHelper.RSA);
-		SimpleKeyPair keyMap = ECCCoder.genECKeyPair();
+		SimpleKeyPair keyMap = ECCCoder.genECKeyPair( );
 
 		String publicKey = keyMap.getPublicKey();
 		String privateKey = keyMap.getPrivateKey();
 		System.err.println("公钥: \n" + publicKey);
 		System.err.println("私钥： \n" + privateKey);
 		byte[] encodedData = ECCCoder.encrypt(data, publicKey);
+		System.out.println(encodedData.length);
 		System.out.println("HEX明文:"+Hex.toHexString(encodedData));
 		System.out.println("Base64 密文:"+Base64.encode(encodedData));
+		org.apache.commons.codec.binary.Base64 b64 = new org.apache.commons.codec.binary.Base64();
+		System.out.println("Base64 apache 密文:"+new String(b64.encode(encodedData)));
+		
+		
 //		String sss = Base64.toHex(encodedData);
 //		encodedData = Base64.hexStringToBytes(sss);
 		byte[] decodedData = ECCCoder.decrypt(encodedData, privateKey);
@@ -80,14 +85,14 @@ public class RSATest {
 	public void testGenKey() throws Exception {
 		
 		ECCCoderInf ECCCoder = ECCHelper.getECCCoder(ECCHelper.RSA);
-		SimpleKeyPair keyMap = ECCCoder.genECKeyPair();
+		SimpleKeyPair keyMap = ECCCoder.genECKeyPair( );
 
 		String publicKey = keyMap.getPublicKey();
 		String privateKey = keyMap.getPrivateKey();
 		System.err.println("公钥: \n" + publicKey);
 		System.err.println("私钥： \n" + privateKey);
 		
-		keyMap = ECCCoder.genECKeyPair();
+		keyMap = ECCCoder.genECKeyPair( );
 
 		String publicKey1 = keyMap.getPublicKey();
 		String privateKey1 = keyMap.getPrivateKey();

@@ -462,7 +462,7 @@ public class MongodbTokenStore extends BaseTokenStore{
 		return token_m ;
 	}
 	
-	protected SimpleKeyPair _getKeyPair(String appid,String secret) throws TokenException
+	protected SimpleKeyPair _getKeyPair(String appid,String secret ) throws TokenException
 	{
 		DBCursor cursor = null;
 		try
@@ -477,7 +477,7 @@ public class MongodbTokenStore extends BaseTokenStore{
 			else
 			{
 				try {
-					SimpleKeyPair keypair = ECCCoder.genECKeyPair();
+					SimpleKeyPair keypair = ECCCoder.genECKeyPair( );
 					insertECKeyPair( appid, secret, keypair);
 					return keypair;
 				} catch (Exception e) {
