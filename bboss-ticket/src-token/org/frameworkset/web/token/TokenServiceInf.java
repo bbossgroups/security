@@ -7,6 +7,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
 import org.frameworkset.security.ecc.SimpleKeyPair;
+import org.frameworkset.web.auth.AuthenticatePlugin;
 
 public interface TokenServiceInf {
 
@@ -109,5 +110,7 @@ public interface TokenServiceInf {
 	public PrivateKey getPrivateKey(String appid);
 	
 	public SimpleKeyPair getSimpleKeyPair(String appid); 
+	public AuthenticatePlugin getAuthenticatePlugin();
+	public Application assertApplication(String appid,String secret) throws TokenException;
 
 }

@@ -7,6 +7,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
 import org.frameworkset.security.ecc.SimpleKeyPair;
+import org.frameworkset.web.auth.AuthenticatePlugin;
 
 public class DummyTokenService implements TokenServiceInf {
 
@@ -183,6 +184,24 @@ public class DummyTokenService implements TokenServiceInf {
 	 */
 	@Override
 	public SimpleKeyPair getSimpleKeyPair(String appid) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/** (non-Javadoc)
+	 * @see org.frameworkset.web.token.TokenServiceInf#getAuthenticatePlugin()
+	 */
+	@Override
+	public AuthenticatePlugin getAuthenticatePlugin() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/** (non-Javadoc)
+	 * @see org.frameworkset.web.token.TokenServiceInf#assertApplication(java.lang.String, java.lang.String)
+	 */
+	@Override
+	public Application assertApplication(String appid, String secret) throws TokenException {
 		// TODO Auto-generated method stub
 		return null;
 	}

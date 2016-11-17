@@ -15,6 +15,7 @@ import java.util.Map;
 
 import javax.crypto.Cipher;
 
+import org.frameworkset.security.ecc.BaseECCCoder;
 import org.frameworkset.security.ecc.SimpleKeyPair;
 import org.frameworkset.util.encoder.Hex;
 
@@ -37,8 +38,11 @@ public abstract class KeyCacheUtil {
 	public KeyCacheUtil() {
 		// TODO Auto-generated constructor stub
 	}
-	
 	public static PublicKey getPublicKey(String publicKey)
+	{
+		return getPublicKey(publicKey,null);
+	}
+	public static PublicKey getPublicKey(String publicKey,BaseECCCoder BaseECCCoder)
 	{
 		
 		PublicKey pubKey = ECPublicKeyIndex.get(publicKey);
@@ -52,8 +56,10 @@ public abstract class KeyCacheUtil {
 			try {
 				// 对公钥解密
 				byte[] keyBytes = Hex.decode(publicKey);
-
-				pubKey = _evalECPublicKey(keyBytes);
+				if(BaseECCCoder == null)
+					pubKey = _evalECPublicKey(keyBytes);
+				else
+					pubKey = BaseECCCoder._evalECPublicKey(keyBytes);
 				ECPublicKeyIndex.put(publicKey, pubKey);
 				return pubKey;
 			} catch (Exception e) {
@@ -63,6 +69,10 @@ public abstract class KeyCacheUtil {
 		
 	}
 	public static PrivateKey getPrivateKey(String privateKey)
+	{
+		return  getPrivateKey(  privateKey,null);
+	}
+	public static PrivateKey getPrivateKey(String privateKey,BaseECCCoder BaseECCCoder)
 	{
 		PrivateKey priKey = PrivateKeyIndex.get(privateKey);
 		if(priKey != null)
@@ -76,7 +86,10 @@ public abstract class KeyCacheUtil {
 				
 				// 对密钥解密
 				byte[] keyBytes = Hex.decode(privateKey);
-				 priKey = _evalECPrivateKey( keyBytes);
+				if(BaseECCCoder == null)
+					priKey = _evalECPrivateKey( keyBytes);
+				else
+					priKey = BaseECCCoder._evalECPrivateKey( keyBytes);
 				 PrivateKeyIndex.put(privateKey, priKey);
 				return priKey;
 			} catch (Exception e) {
@@ -136,9 +149,13 @@ public abstract class KeyCacheUtil {
 		return token;
 	}
 	
-	public static SimpleKeyPair getECKeyPair( ) throws Exception {
+	public static SimpleKeyPair getECKeyPair(BaseECCCoder BaseECCCoder ) throws Exception {
 //		KeyPair pair = _genECKeyPair(  );
-		KeyPair pair = KeyCacheUtil.genECKeyPair();
+		KeyPair pair = null;
+		if(BaseECCCoder == null)
+		    pair = KeyCacheUtil.genECKeyPair();
+		else
+			pair = BaseECCCoder._genECKeyPair();
         PublicKey              pubKey = pair.getPublic();
         PrivateKey              privKey = pair.getPrivate();
         String sprivateKey = Hex.toHexString(privKey.getEncoded());

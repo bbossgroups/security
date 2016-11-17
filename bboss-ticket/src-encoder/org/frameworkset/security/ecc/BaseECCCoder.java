@@ -43,13 +43,13 @@ public abstract class BaseECCCoder implements ECCCoderInf {
 	public  abstract PrivateKey _evalECPrivateKey(byte[] privateKey);
 	public  PrivateKey evalECPrivateKey(String privateKey)
 	{
-		return KeyCacheUtil.getPrivateKey(privateKey);
+		return KeyCacheUtil.getPrivateKey(privateKey,this);
 	}
 	public  abstract PublicKey _evalECPublicKey(byte[] publicKey);
 	public  PublicKey evalECPublicKey(String publicKey)
 	{
 		
-		return KeyCacheUtil.getPublicKey(publicKey);
+		return KeyCacheUtil.getPublicKey(publicKey,this);
 		
 	}
 
@@ -169,7 +169,7 @@ public abstract class BaseECCCoder implements ECCCoderInf {
 //	  		ECPublicKeyPairIndex.put(spublicKey, ECKeyPair);
 //	  		this.ECPublicKeyIndex.put(spublicKey, pubKey);
 //	  		return ECKeyPair;
-		return KeyCacheUtil.getECKeyPair();
+		return KeyCacheUtil.getECKeyPair(this);
 	       
 	}
 	

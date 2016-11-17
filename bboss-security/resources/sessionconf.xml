@@ -5,7 +5,7 @@
 	<property name="sessionManager" class="org.frameworkset.security.session.impl.SessionManager"
 		init-method="init" destroy-method="destroy">					
 			<!-- <property name="sessionIDGenerator" class="org.frameworkset.security.session.impl.UUIDSessionIDGenerator"/> -->
-			<!-- <property name="serialType" value="bboss|json"/> -->
+			<!-- <property name="serialType" value="bboss|json|jvm"/> -->
 			
 			<property name="sessionTimeout" value="3600000"/>
 			<property name="sessionstore" refid="attr:sessionstore"/> 

@@ -12,6 +12,7 @@
 			<property name="httpOnly" value="true"/>
 			<property name="secure" value="false"/>
 			<property name="lazystore" value="true"/> 
+			<property name="serialType" value="jvm"/>
 			<property name="monitorAttributes" ><![CDATA[
 			[
 				{"name":"userAccount","cname":"账号","type":"String","like":true,"enableEmptyValue":true}
@@ -25,7 +26,7 @@
 	 当启用跨域会话共享时，就必须指定appcode
 	 -->
 		
-			<property name="appcode" value="sessiondemo"/>
+			<property name="appcode" value="sessionmonitor"/>
 			<!-- 
 			domain：指定跨域共享的根域，基于该域名的子域名都可以共享session
 			shareSessionAttrs:配置需要在应用间共享的会话数据属性名称，以逗号分隔；如果没有配置shareSessionAttrs属性，则所有的属性都是共享数据 

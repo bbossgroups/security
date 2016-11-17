@@ -9,5 +9,9 @@ sourceSets {
      
 }
 
+dependencies {
+	compile project(':bboss-ticket')
+}
+
 
  

@@ -104,7 +104,7 @@ public abstract class BaseTokenStore implements TokenStore {
 //		return genDualToken(appid,ticket, secret, TokenStore.DEFAULT_DUALTOKENLIVETIME) ;
 //	}
 	
-	protected Application assertApplication(String appid,String secret) throws TokenException
+	public Application assertApplication(String appid,String secret) throws TokenException
 	{
 		try {
 			AppValidateResult result = validateApplication.validateApp(appid, secret);
@@ -169,7 +169,8 @@ public abstract class BaseTokenStore implements TokenStore {
 			if(istemp)
 				token = TokenStore.type_tempticket+token;
 			String ticket = account+"|"+worknumber +"|"+createTime;
-			if(application.isSign())
+			boolean comment = true;
+			if(application.isSign() && !comment)
 			{
 				SimpleKeyPair keyPairs = _getKeyPair(appid,secret,false);
 				byte[] data =  null;
@@ -360,7 +361,8 @@ public abstract class BaseTokenStore implements TokenStore {
 				throw new TokenException(TokenStore.ERROR_CODE_TICKETNOTEXIST);
 			}
 			String accountinfo = null;
-			if(sign)
+			boolean comment = true;			 
+			if(sign  && !comment)
 			{
 				SimpleKeyPair keyPairs = _getKeyPair(appid,secret,false);
 				byte[] data =  null;
@@ -410,7 +412,8 @@ public abstract class BaseTokenStore implements TokenStore {
 			else if(tokentype.equals(TokenStore.type_authtemptoken))
 			{	
 				String input = accountinfo[0] + "|" + accountinfo[1] + "|" + token.getToken();
-				if(sign)
+				boolean comment = true;				
+				if(sign  && !comment)
 				{
 					SimpleKeyPair keyPairs = _getKeyPair(token.getAppid(),token.getSecret(),false);
 					
@@ -441,7 +444,8 @@ public abstract class BaseTokenStore implements TokenStore {
 			else if(tokentype.equals(TokenStore.type_dualtoken))
 			{	
 				String input = accountinfo[0] + "|" + accountinfo[1] +  "|" + token.getToken();
-				if(sign)
+				boolean comment = true;				
+				if(sign  && !comment)
 				{
 					SimpleKeyPair keyPairs = _getKeyPair(token.getAppid(),token.getSecret(),false);
 					
@@ -552,8 +556,8 @@ public abstract class BaseTokenStore implements TokenStore {
 					decodetokenResult.setTokentype(tokentype);
 					signtoken = memtoken.getSigntoken();
 					String mw = signtoken;
-					
-					if(appliction.isSign())
+					boolean comment = true;
+					if(appliction.isSign()  && !comment)
 					{
 						SimpleKeyPair keyPairs = _getKeyPair(appid,secret,false);
 						

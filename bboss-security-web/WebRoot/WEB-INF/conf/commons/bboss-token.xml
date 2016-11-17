@@ -1,7 +1,7 @@
 <properties>
 	<!-- 生成令牌控制配置文件
 	author：biaoping.yin
-    CopyRight：sany
+    CopyRight：bboss
     Date:2011.4.13
 	-->
 	<property name="/token/*.freepage" ws:servicePort="tokenService" 
@@ -23,4 +23,8 @@
 	<property name="/checktoken/v2/*.freepage" ws:servicePort="v2checktokenService" 
 	hessian:servicePort="v2checktokenService"
 	class="org.frameworkset.web.token.ws.v2.CheckTokenContoller" />
+	
+	<property name="/auth/v2/*.freepage" ws:servicePort="v2authorService" 
+		hessian:servicePort="v2authorService"
+		class="org.frameworkset.web.token.ws.v2.AuthorServiceController" />
 </properties>

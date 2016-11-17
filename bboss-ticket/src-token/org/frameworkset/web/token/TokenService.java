@@ -28,10 +28,12 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
+import org.frameworkset.security.KeyCacheUtil;
 import org.frameworkset.security.ecc.ECCCoderInf;
 import org.frameworkset.security.ecc.ECCHelper;
 import org.frameworkset.security.ecc.SimpleKeyPair;
-import org.frameworkset.spi.InitializingBean;
+import org.frameworkset.web.auth.AuthenticatePlugin;
+import org.frameworkset.web.auth.WrapperAuthenticatePlugin;
 
 import com.frameworkset.util.StringUtil;
 
@@ -44,7 +46,7 @@ import com.frameworkset.util.StringUtil;
  * @author biaoping.yin
  * @version 3.8.0
  */
-public class TokenService implements TokenServiceInf,InitializingBean {
+public class TokenService implements TokenServiceInf {
 	private static Logger log = Logger.getLogger(TokenService.class);
 	private TokenStore tokenStore;
 	private boolean enableToken = false;
@@ -57,6 +59,9 @@ public class TokenService implements TokenServiceInf,InitializingBean {
 	private boolean client;
 	private String appid;
 	private String secret;
+	private String tokenServerAppName = "tokenserver";
+	
+	private String tokenServerPublicKey ;
 	/**
 	 * 是否启用token有效期检测机制
 	 * 只有在token服务器端才能开启token Life scan monitor，
@@ -71,6 +76,8 @@ public class TokenService implements TokenServiceInf,InitializingBean {
 	
 	private String ALGORITHM ="RSA";
 	private ValidateApplication validateApplication = new NullValidateApplication();
+	
+	private AuthenticatePlugin authenticatePlugin;
 	public void destroy()
 	{
 //		temptokens.clear();
@@ -199,6 +206,18 @@ public class TokenService implements TokenServiceInf,InitializingBean {
 				tokenMonitor.start();
 				
 			}
+			if(this.authenticatePlugin != null){
+				if(this.tokenServerAppName != null)
+				{
+					authenticatePlugin = new WrapperAuthenticatePlugin(authenticatePlugin,this.getPublicKey(tokenServerAppName));
+				}
+				else
+				{
+					authenticatePlugin = new WrapperAuthenticatePlugin(authenticatePlugin,KeyCacheUtil.getPublicKey(tokenServerPublicKey));
+				}
+				
+			}
+					
 		}
 	}
 	
@@ -794,7 +813,7 @@ public class TokenService implements TokenServiceInf,InitializingBean {
 
 
 
-	@Override
+	
 	public void afterPropertiesSet() throws Exception {
 		if(inited)
 			return;
@@ -909,6 +928,46 @@ public class TokenService implements TokenServiceInf,InitializingBean {
 	public SimpleKeyPair getSimpleKeyPair(String appid)
 	{
 		return this.tokenStore.getKeyPair(appid, null,false);
+	}
+
+
+
+
+	public String getTokenServerAppName() {
+		return tokenServerAppName;
+	}
+
+
+
+
+	public void setTokenServerAppName(String tokenServerAppName) {
+		this.tokenServerAppName = tokenServerAppName;
+	}
+
+
+
+
+	public AuthenticatePlugin getAuthenticatePlugin() {
+		return authenticatePlugin;
+	}
+
+
+
+
+	public void setAuthenticatePlugin(AuthenticatePlugin authenticatePlugin) {
+		this.authenticatePlugin = authenticatePlugin;
+	}
+
+
+
+
+	/** (non-Javadoc)
+	 * @see org.frameworkset.web.token.TokenServiceInf#assertApplication(java.lang.String, java.lang.String)
+	 */
+	@Override
+	public Application assertApplication(String appid, String secret) throws TokenException {
+		
+		return this.tokenStore.assertApplication(appid, secret);
 	}
 
 
