@@ -61,6 +61,7 @@ public abstract class AuthenticateMessages {
 		messages.put("40006", "应用端报错：信息被篡改或者签名错误");
 		messages.put("40007", "应用端报错：非法参数");
 		messages.put("40008", "应用端报错：系统异常");
+		messages.put("40009", "应用端报错：加载认证证书失败，请检查token.certificate证书是否有效合法");
 		
 		
 	}

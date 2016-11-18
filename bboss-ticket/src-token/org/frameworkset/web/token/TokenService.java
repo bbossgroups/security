@@ -201,7 +201,7 @@ public class TokenService implements TokenServiceInf {
 		    	}
 		    	catch(Exception e)
 		    	{
-		    		log.error("加载认证证书certificate异常",e);
+		    		log.error("加载认证证书"+certificate+"失败：",e);
 		    	}
 			}
 			AuthorService _authorService = null;

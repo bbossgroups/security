@@ -164,6 +164,10 @@ public class AuthorHelper {
 	 */
 	public static  AuthenticatedToken decodeMessageResponse(String authorization) throws AuthenticateException {
 		 AuthorHelper authorHelper = TokenHelper.getTokenService().getAuthorHelper();
+		 if(authorHelper == null)
+		 {
+			 throw new AuthenticateException("40009");
+		 }
 		String secretPublicKey = authorHelper.getSecretPublicKey();
 		return decodeMessageResponse(  authorization,   secretPublicKey);
 		
@@ -207,6 +211,7 @@ public class AuthorHelper {
 				.setHeaderParam("password", password)
 				.setClaims(extendAttributes)
 			    .setSubject(account)
+			    .setIssuedAt(new Date())
 			    .compressWith(CompressionCodecs.GZIP)
 			    .signWith(SignatureAlgorithm.RS512, privateKey_)
 			    .compact();
@@ -234,6 +239,7 @@ public class AuthorHelper {
 				.setHeaderParam("expiration", expiration)
 				.setClaims(body)
 				.setExpiration(expiration)
+				.setIssuedAt(new Date())
 			    .setSubject(account)
 			    .compressWith(CompressionCodecs.GZIP)
 			    .signWith(SignatureAlgorithm.RS512, privateKey)
