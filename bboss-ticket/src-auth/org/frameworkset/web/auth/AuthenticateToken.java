@@ -17,6 +17,7 @@ public class AuthenticateToken implements java.io.Serializable{
 	private String appsecret;
 	private String sessionid;
 	private String signature;
+	private long livetimes;
 	
 	private Map<String,Object> extendAttributes;
 	/**
@@ -78,6 +79,14 @@ public class AuthenticateToken implements java.io.Serializable{
 
 	public void setSignature(String signature) {
 		this.signature = signature;
+	}
+
+	public long getLivetimes() {
+		return livetimes;
+	}
+
+	public void setLivetimes(long livetimes) {
+		this.livetimes = livetimes;
 	}
 
 }

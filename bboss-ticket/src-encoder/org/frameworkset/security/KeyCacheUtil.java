@@ -17,7 +17,7 @@ import javax.crypto.Cipher;
 
 import org.frameworkset.security.ecc.BaseECCCoder;
 import org.frameworkset.security.ecc.SimpleKeyPair;
-import org.frameworkset.util.encoder.Hex;
+import org.frameworkset.util.encoder.Base64Commons;
 
 /**
  * @author yinbp
@@ -55,7 +55,7 @@ public abstract class KeyCacheUtil {
 				return pubKey;
 			try {
 				// 对公钥解密
-				byte[] keyBytes = Hex.decode(publicKey);
+				byte[] keyBytes = Base64Commons.decodeBase64(publicKey);
 				if(BaseECCCoder == null)
 					pubKey = _evalECPublicKey(keyBytes);
 				else
@@ -85,7 +85,7 @@ public abstract class KeyCacheUtil {
 			try {
 				
 				// 对密钥解密
-				byte[] keyBytes = Hex.decode(privateKey);
+				byte[] keyBytes = Base64Commons.decodeBase64(privateKey);
 				if(BaseECCCoder == null)
 					priKey = _evalECPrivateKey( keyBytes);
 				else
@@ -158,8 +158,8 @@ public abstract class KeyCacheUtil {
 			pair = BaseECCCoder._genECKeyPair();
         PublicKey              pubKey = pair.getPublic();
         PrivateKey              privKey = pair.getPrivate();
-        String sprivateKey = Hex.toHexString(privKey.getEncoded());
-  		String spublicKey = Hex.toHexString(pubKey.getEncoded());
+        String sprivateKey = Base64Commons.encodeBase64String(privKey.getEncoded());
+  		String spublicKey = Base64Commons.encodeBase64String(pubKey.getEncoded());
   		SimpleKeyPair ECKeyPair = new SimpleKeyPair(sprivateKey, spublicKey, 
   				pubKey, privKey);
   		PrivateKeyPairIndex.put(sprivateKey, ECKeyPair);

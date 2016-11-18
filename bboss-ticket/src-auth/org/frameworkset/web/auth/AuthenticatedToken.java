@@ -20,6 +20,14 @@ public class AuthenticatedToken implements java.io.Serializable{
 	private String sessionid;
 	private Date issuedAt;
 	private String appcode;
+	/**
+	 * 是否从记住口令登陆
+	 */
+	private boolean fromremember;
+	/**
+	 * 是否从手机登陆
+	 */
+	private boolean frommobile;
 	 
 	
 	private Map<String,Object> extendAttributes;
@@ -89,6 +97,18 @@ public class AuthenticatedToken implements java.io.Serializable{
 	}
 	public void setExtendAttributes(Map<String, Object> extendAttributes) {
 		this.extendAttributes = extendAttributes;
+	}
+	public boolean isFromremember() {
+		return fromremember;
+	}
+	public void setFromremember(boolean fromremember) {
+		this.fromremember = fromremember;
+	}
+	public boolean isFrommobile() {
+		return frommobile;
+	}
+	public void setFrommobile(boolean frommobile) {
+		this.frommobile = frommobile;
 	}
 	 
 }

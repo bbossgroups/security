@@ -9,6 +9,7 @@ import org.frameworkset.web.auth.AuthenticateMessages;
 import org.frameworkset.web.auth.AuthenticateResponse;
 import org.frameworkset.web.auth.AuthenticatedToken;
 import org.frameworkset.web.auth.AuthorHelper;
+import org.frameworkset.web.token.TokenHelper;
 import org.frameworkset.web.token.ws.CheckTokenService;
 import org.frameworkset.web.token.ws.TicketGetResponse;
 import org.frameworkset.web.token.ws.TokenCheckResponse;
@@ -232,8 +233,7 @@ public class TicketClientTest {
 	         AuthorService authorService = (AuthorService) factory.create(AuthorService.class, authurl);
 
 	         //构建一个待验证的token
-	         AuthorHelper authorHelper = new AuthorHelper();
-	         authorHelper.init("conf/sso.properties");
+	         AuthorHelper authorHelper = TokenHelper.getTokenService().getAuthorHelper();
 	         Map<String,Object> extendAttributes = new HashMap<String,Object>();
 	         String authtoken = authorHelper.encodeAuthenticateRequest("sessionid", "yinbp", "123456", authorHelper.getAppcode(), authorHelper.getAppsecret(), authorHelper.getSecretPrivateKey(), extendAttributes);
 

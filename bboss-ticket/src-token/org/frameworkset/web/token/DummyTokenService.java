@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.frameworkset.security.ecc.SimpleKeyPair;
 import org.frameworkset.web.auth.AuthenticatePlugin;
+import org.frameworkset.web.auth.AuthorHelper;
+import org.frameworkset.web.token.ws.v2.AuthorService;
 
 public class DummyTokenService implements TokenServiceInf {
 
@@ -204,6 +206,42 @@ public class DummyTokenService implements TokenServiceInf {
 	public Application assertApplication(String appid, String secret) throws TokenException {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	/** (non-Javadoc)
+	 * @see org.frameworkset.web.token.TokenServiceInf#getServerSimpleKeyPair()
+	 */
+	@Override
+	public SimpleKeyPair getServerSimpleKeyPair() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/** (non-Javadoc)
+	 * @see org.frameworkset.web.token.TokenServiceInf#getAuthorHelper()
+	 */
+	@Override
+	public AuthorHelper getAuthorHelper() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/** (non-Javadoc)
+	 * @see org.frameworkset.web.token.TokenServiceInf#getAuthorService()
+	 */
+	@Override
+	public AuthorService getAuthorService() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/** (non-Javadoc)
+	 * @see org.frameworkset.web.token.TokenServiceInf#getTicketdualtime()
+	 */
+	@Override
+	public long getTicketdualtime() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }

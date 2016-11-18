@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.frameworkset.security.ecc.SimpleKeyPair;
 import org.frameworkset.web.auth.AuthenticatePlugin;
+import org.frameworkset.web.auth.AuthorHelper;
+import org.frameworkset.web.token.ws.v2.AuthorService;
 
 public interface TokenServiceInf {
 
@@ -86,7 +88,7 @@ public interface TokenServiceInf {
 	public Ticket genTempTicket(String account,String worknumber,String appid,String secret) throws TokenException;
 	public abstract Ticket genTicket(String account, String worknumber,
 			String appid, String secret) throws TokenException;
-
+	public long getTicketdualtime() ;
 	public abstract boolean isEnableToken();
 	public String getSecret();
 	public String getAppid();
@@ -110,7 +112,9 @@ public interface TokenServiceInf {
 	public PrivateKey getPrivateKey(String appid);
 	
 	public SimpleKeyPair getSimpleKeyPair(String appid); 
+	public SimpleKeyPair getServerSimpleKeyPair();
 	public AuthenticatePlugin getAuthenticatePlugin();
 	public Application assertApplication(String appid,String secret) throws TokenException;
-
+	public AuthorHelper getAuthorHelper();
+	public AuthorService getAuthorService();
 }

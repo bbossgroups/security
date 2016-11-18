@@ -5,6 +5,8 @@ package org.frameworkset.web.auth;
 
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.util.Calendar;
+import java.util.Date;
 
 import org.frameworkset.web.auth.AuthenticateException;
 import org.frameworkset.web.auth.AuthenticateMessages;
@@ -34,7 +36,6 @@ public class WrapperAuthenticatePlugin extends BaseAuthenticatePlugin {
 	@Override
 	public AuthenticateResponse login(String authenticateToken) 
 	{
-		AuthorHelper authorHelper = new AuthorHelper();
 		AuthenticateResponse authenticateResponse = new AuthenticateResponse();
 		try {
 			if(publicKey == null)
@@ -43,9 +44,10 @@ public class WrapperAuthenticatePlugin extends BaseAuthenticatePlugin {
 				authenticateResponse.setError(AuthenticateMessages.getMessage("50010"));//认证服务器公钥加密publicKey为空
 				authenticateResponse.setValidateResult(false);
 			}
-			AuthenticateToken authenticateToken_ = authorHelper.decodeMessageRequest(authenticateToken,this.publicKey);
+			AuthenticateToken authenticateToken_ = AuthorHelper.decodeMessageRequest(authenticateToken,this.publicKey);
 			
 			Application application = TokenHelper.getTokenService().assertApplication(authenticateToken_.getAppcode(), authenticateToken_.getAppsecret());
+			authenticateToken_.setLivetimes(application.getTicketlivetime());
 			PrivateKey privateKey = TokenHelper.getTokenService().getPrivateKey(authenticateToken_.getAppcode());
 			if(privateKey == null)
 			{
@@ -57,8 +59,17 @@ public class WrapperAuthenticatePlugin extends BaseAuthenticatePlugin {
 			else
 			{
 				AuthenticatedToken authenticatedToken = login(authenticateToken_) ;
-				
-				String auhorcode = authorHelper.encodeAuthenticateResponse(authenticatedToken,privateKey);
+				if(authenticateToken_.getSessionid() == null)
+				{
+					if(authenticateToken_.getLivetimes() > 0 )
+						authenticatedToken.setExpiration(addDateSeconds(new Date(), (int)(authenticateToken_.getLivetimes() /1000)));
+					else if(authenticateToken_.getLivetimes()  == -2)
+					{
+						authenticatedToken.setExpiration(addDateSeconds(new Date(), (int)(TokenHelper.getTokenService().getTicketdualtime() /1000)));
+					}
+				}
+					
+				String auhorcode = AuthorHelper.encodeAuthenticateResponse(authenticatedToken,privateKey);
 				authenticateResponse.setAuthorization(auhorcode);
 				authenticateResponse.setResultcode("success");
 				authenticateResponse.setValidateResult(true);
@@ -90,6 +101,15 @@ public class WrapperAuthenticatePlugin extends BaseAuthenticatePlugin {
 		}
 		
 		return authenticateResponse;
+	}
+	
+	public static Date addDateSeconds(Date date,int seconds)
+	{
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+		c.add(Calendar.SECOND, seconds);
+		return c.getTime();
+		
 	}
 
 	/** (non-Javadoc)

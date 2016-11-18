@@ -32,9 +32,14 @@ import org.frameworkset.security.KeyCacheUtil;
 import org.frameworkset.security.ecc.ECCCoderInf;
 import org.frameworkset.security.ecc.ECCHelper;
 import org.frameworkset.security.ecc.SimpleKeyPair;
+import org.frameworkset.util.encoder.Base64Commons;
 import org.frameworkset.web.auth.AuthenticatePlugin;
+import org.frameworkset.web.auth.AuthorHelper;
 import org.frameworkset.web.auth.WrapperAuthenticatePlugin;
+import org.frameworkset.web.token.ws.v2.AuthorService;
 
+import com.caucho.hessian.client.HessianProxyFactory;
+import com.frameworkset.util.FileUtil;
 import com.frameworkset.util.StringUtil;
 
 /**
@@ -60,8 +65,16 @@ public class TokenService implements TokenServiceInf {
 	private String appid;
 	private String secret;
 	private String tokenServerAppName = "tokenserver";
+	/**
+	 * 客户端模式，必须指定令牌服务器地址
+	 */
+	private String tokenserver;
 	
 	private String tokenServerPublicKey ;
+	/**
+	 * 客户端证书路径，如果作为认证服务器，客户端必须指定证书
+	 */
+	private String certificate;
 	/**
 	 * 是否启用token有效期检测机制
 	 * 只有在token服务器端才能开启token Life scan monitor，
@@ -78,6 +91,8 @@ public class TokenService implements TokenServiceInf {
 	private ValidateApplication validateApplication = new NullValidateApplication();
 	
 	private AuthenticatePlugin authenticatePlugin;
+	private AuthorHelper authorHelper;
+	private AuthorService authorService;
 	public void destroy()
 	{
 //		temptokens.clear();
@@ -157,38 +172,73 @@ public class TokenService implements TokenServiceInf {
 		this. validateApplication = validateApplication;this. tokenfailpath = tokenfailpath;
 		init();
 	}
-	
-	private void init()
+	private void initAuth()
 	{
+		if(this.isClient())
+		{
+			if(certificate == null || certificate.equals(""))
+			{
+				log.warn("没有指定certificate证书地址，如需指定，请在tokenconf.xml文件配置");
+			}
+			else
+			{
+	
+		    	
+		    	try
+		    	{
+		    		String content = FileUtil.getContent(certificate, "UTF-8");
+		    		String temp = new String(Base64Commons.decodeBase64(content.getBytes()));
+		    		String[] cainfo = temp.split("\r\n");
+		    		String privateKey = cainfo[1];
+		    		String publicKey = cainfo[3];
+		    		log.debug("加载认证证书["+certificate+"]完毕.");
+		    		this.authorHelper = new AuthorHelper();
+		    		authorHelper.setAppid(appid);
+		    		authorHelper.setSecret(secret);
+		    		authorHelper.setPrivateKey(privateKey);
+		    		authorHelper.setPublicKey(publicKey);
+					
+		    	}
+		    	catch(Exception e)
+		    	{
+		    		log.error("加载认证证书certificate异常",e);
+		    	}
+			}
+			AuthorService _authorService = null;
+			String authurl = StringUtil.getNormalPath(tokenserver,  "/hessian/v2authorService");
+	    	
+	    	
+	    	 HessianProxyFactory factory = new HessianProxyFactory();
 
-		if(tokenstore instanceof String)
-		{
-			this.tokenStore = TokenStoreFactory.getTokenStore((String)tokenstore);
-			if(!this.isClient())
-			{
-				ECCCoderInf ECCCoder= ECCHelper.getECCCoder(ecctype);
-				tokenStore.setECCCoder(ECCCoder);
-				tokenStore.setValidateApplication(validateApplication);
-			}
-		}
-		else
-		{
-			this.tokenStore = (TokenStore)tokenstore;
-			if(!this.isClient())
-			{
-				if(this.tokenStore.getECCCoder() == null)
-				{
-					ECCCoderInf ECCCoder= ECCHelper.getECCCoder(ecctype);
-					tokenStore.setECCCoder(ECCCoder);
-				}
-				if(tokenStore.getValidateApplication() == null)
-				{
-					tokenStore.setValidateApplication(validateApplication);
-				}
+	         //String url = "http://localhost:8080/context/hessian?service=tokenService";
+
+	       
+	    	 try {
+				_authorService = (AuthorService) factory.create(AuthorService.class, authurl);
+				this.authorService = _authorService;
+			} catch (Exception e) {
+				log.error("初始化认证服务异常",e);
 			}
 		}
 		
 		
+		
+	}
+	 
+	private void initRemoteTokenStore()
+	{
+		HessianProxyFactory clientFactory =  new HessianProxyFactory();
+		try {
+			if(this.tokenserver == null || this.tokenserver.equals(""))
+				log.warn("没有指定tokenserver地址，如需指定，请在tokenconf.xml文件配置");
+			else
+				tokenStore = (TokenStore) clientFactory.create(TokenStore.class,StringUtil.getRealPath(this.tokenserver, "hessian?service=tokenStoreService&container=tokenconf.xml"));
+		} catch (Exception e) {
+			log.error("初始化令牌服务组件失败:"+StringUtil.getNormalPath(this.tokenserver, "hessian?service=tokenStoreService&container=tokenconf.xml"),e);
+		}
+	}
+	private void initTokeServer()
+	{
 		if(!this.isClient())
 		{
 			this.tokenStore.setTempTokendualtime(temptokenlivetime);
@@ -220,8 +270,54 @@ public class TokenService implements TokenServiceInf {
 					
 		}
 	}
+	private void initTokenStore()
+	{
+		if(this.isClient())
+		{
+			initRemoteTokenStore();
+			
+			 
+			
+		}
+		else if(tokenstore instanceof String)
+		{
+			this.tokenStore = TokenStoreFactory.getTokenStore((String)tokenstore);
+			if(!this.isClient())
+			{
+				ECCCoderInf ECCCoder= ECCHelper.getECCCoder(ecctype);
+				tokenStore.setECCCoder(ECCCoder);
+				tokenStore.setValidateApplication(validateApplication);
+			}
+		}
+		else
+		{
+			this.tokenStore = (TokenStore)tokenstore;
+			if(!this.isClient())
+			{
+				if(this.tokenStore.getECCCoder() == null)
+				{
+					ECCCoderInf ECCCoder= ECCHelper.getECCCoder(ecctype);
+					tokenStore.setECCCoder(ECCCoder);
+				}
+				if(tokenStore.getValidateApplication() == null)
+				{
+					tokenStore.setValidateApplication(validateApplication);
+				}
+			}
+		}
+	}
+	private void init()
+	{
+		initAuth();
+		initTokenStore();		
+		initTokeServer();
+		
+	}
 	
-
+	public SimpleKeyPair getServerSimpleKeyPair()
+	{
+		return this.getSimpleKeyPair(this.tokenServerAppName);
+	}
 	
 //	public Integer sessionmemhash(String token,HttpSession session)
 //	{
@@ -968,6 +1064,48 @@ public class TokenService implements TokenServiceInf {
 	public Application assertApplication(String appid, String secret) throws TokenException {
 		
 		return this.tokenStore.assertApplication(appid, secret);
+	}
+
+
+
+
+	public String getTokenserver() {
+		return tokenserver;
+	}
+
+
+
+
+	public void setTokenserver(String tokenserver) {
+		this.tokenserver = tokenserver;
+	}
+
+
+
+
+	public String getCertificate() {
+		return certificate;
+	}
+
+
+
+
+	public void setCertificate(String certificate) {
+		this.certificate = certificate;
+	}
+
+
+
+
+	public AuthorHelper getAuthorHelper() {
+		return authorHelper;
+	}
+
+
+
+
+	public AuthorService getAuthorService() {
+		return authorService;
 	}
 
 

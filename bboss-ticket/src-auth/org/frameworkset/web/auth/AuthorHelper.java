@@ -3,20 +3,22 @@
  */
 package org.frameworkset.web.auth;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Date;
 import java.util.Map;
-import java.util.Properties;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 import org.frameworkset.security.KeyCacheUtil;
-import org.frameworkset.util.io.ClassPathResource;
+import org.frameworkset.security.ecc.SimpleKeyPair;
+import org.frameworkset.util.encoder.Base64Commons;
+import org.frameworkset.web.token.TokenHelper;
 
+import com.frameworkset.util.FileUtil;
 import com.frameworkset.util.StringUtil;
 
 import io.jsonwebtoken.Claims;
@@ -35,57 +37,18 @@ import io.jsonwebtoken.UnsupportedJwtException;
  * @Date:2016-11-16 09:58:30
  */
 public class AuthorHelper {
-	private   Properties ssoproperties ;
+	
 	private static Logger log = Logger.getLogger(AuthorHelper.class);
-	public void init(String configPropertiesFile)
-	{
-		
-		if(ssoproperties != null)
-			return;
-		synchronized(this)
-		{
-			if(ssoproperties != null)
-				return;
-			ssoproperties = new Properties();
-			Properties properties = new java.util.Properties();
-			if(configPropertiesFile == null || configPropertiesFile.equals(""))
-				configPropertiesFile = "conf/sso.properties";	
-			
-	    	InputStream input = null;
-	    	try
-	    	{
-	    		
-	    		if(!configPropertiesFile.startsWith("file:"))
-	    		{
-			    	ClassPathResource  resource = new ClassPathResource(configPropertiesFile);
-			    	input = resource.getInputStream();
-			    	log.debug("load config Properties File :"+resource.getFile().getAbsolutePath());
-	    		}
-	    		else
-	    		{
-	    			String _configPropertiesFile = configPropertiesFile.substring("file:".length());
-	    			input = new FileInputStream(new File(_configPropertiesFile));
-	    			log.debug("load config Properties File :"+_configPropertiesFile);
-	    		}
-		    	properties.load(input);
-		    	ssoproperties.putAll(properties);
-		    
-	    	}
-	    	catch(Exception e)
-	    	{
-	    		log.error("load config Properties File failed:",e);
-	    	}
-	    	finally
-	    	{
-	    		if(input != null)
-					try {
-						input.close();
-					} catch (IOException e) {
-						 
-					}
-	    	}
-		}
-	}
+	private String appid;
+	private String secret;
+	/**
+	 * 客户端私钥证书内容
+	 */
+	private String privateKey;
+	/**
+	 * 客户端公钥证书内容
+	 */
+	private String publicKey;
 
 	/**
 	 * 
@@ -94,14 +57,37 @@ public class AuthorHelper {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public AuthenticateToken decodeMessageRequest(String authorization,PublicKey publicKey) throws AuthenticateException
+	public static  AuthenticateToken decodeMessageRequest(String authorization,PublicKey publicKey) throws AuthenticateException
 	{
 		
 //		PublicKey publicKey_ = KeyCacheUtil.getPublicKey( publicKey);
 		Jws<Claims> claims = null;
 		try {
 			claims = Jwts.parser().setSigningKey(publicKey).parseClaimsJws(authorization);
-		} catch (ExpiredJwtException e) {
+			AuthenticateToken authenticateToken = new AuthenticateToken();
+			String subject = claims.getBody().getSubject();
+			String password = (String)claims.getHeader().get("password");
+			String appcode = (String)claims.getHeader().get("appcode");
+			String appsecret = (String)claims.getHeader().get("appsecret");
+			String sessionid = (String)claims.getHeader().get("sessionid");
+			if(StringUtil.isEmpty(subject) || StringUtil.isEmpty(password))
+				throw new AuthenticateException("50001");//账号和口令不能为空
+			if(StringUtil.isEmpty(appcode) || StringUtil.isEmpty(appsecret))
+				throw new AuthenticateException("50002");//应用标识和应用口令不能为空
+			authenticateToken.setAccount(subject);
+			authenticateToken.setPassword(password);
+			authenticateToken.setAppcode(appcode);
+			authenticateToken.setAppsecret(appsecret);		
+			authenticateToken.setExtendAttributes(claims.getBody());
+			authenticateToken.setSignature(claims.getSignature());
+			authenticateToken.setSessionid(sessionid);
+			return authenticateToken;
+		}
+		catch(AuthenticateException e)
+		{
+			throw e;
+		}
+		catch (ExpiredJwtException e) {
 			throw new AuthenticateException("50003");
 		} catch (UnsupportedJwtException e) {
 			throw new AuthenticateException("50004");
@@ -115,24 +101,7 @@ public class AuthorHelper {
 		catch (Exception e) {
 			throw new AuthenticateException("50008");
 		}	
-		AuthenticateToken authenticateToken = new AuthenticateToken();
-		String subject = claims.getBody().getSubject();
-		String password = (String)claims.getHeader().get("password");
-		String appcode = (String)claims.getHeader().get("appcode");
-		String appsecret = (String)claims.getHeader().get("appsecret");
-		String sessionid = (String)claims.getHeader().get("sessionid");
-		if(StringUtil.isEmpty(subject) || StringUtil.isEmpty(password))
-			throw new AuthenticateException("50001");//账号和口令不能为空
-		if(StringUtil.isEmpty(appcode) || StringUtil.isEmpty(appsecret))
-			throw new AuthenticateException("50002");//应用标识和应用口令不能为空
-		authenticateToken.setAccount(subject);
-		authenticateToken.setPassword(password);
-		authenticateToken.setAppcode(appcode);
-		authenticateToken.setAppsecret(appsecret);		
-		authenticateToken.setExtendAttributes(claims.getBody());
-		authenticateToken.setSignature(claims.getSignature());
-		authenticateToken.setSessionid(sessionid);
-		return authenticateToken;
+		
 	}
 	
 	/**
@@ -140,11 +109,34 @@ public class AuthorHelper {
 	 * @param secretPublicKey
 	 * @throws AuthenticateException 
 	 */
-	public AuthenticatedToken decodeMessageResponse(String authorization, String secretPublicKey) throws AuthenticateException {
+	public static  AuthenticatedToken decodeMessageResponse(String authorization, String secretPublicKey) throws AuthenticateException {
 		PublicKey publicKey = KeyCacheUtil.getPublicKey( secretPublicKey);
 		Jws<Claims> claims = null;
 		try {
 			claims = Jwts.parser().setSigningKey(publicKey).parseClaimsJws(authorization);
+			AuthenticatedToken authenticatedToken = new AuthenticatedToken();
+			
+			String subject = claims.getBody().getSubject();
+			String issuer = (String)claims.getHeader().get("issuer");	 
+			String audience = (String)claims.getHeader().get("audience");	 
+			Long expiration_ = (Long)claims.getHeader().get("expiration");	 
+			Date expiration = null;
+			if(expiration_ != null)
+				expiration = new Date(expiration_.longValue());
+			 
+			String sessionid = (String)claims.getHeader().get("sessionid");
+			String appcode = (String)claims.getHeader().get("appcode");	 
+			
+			Map<String,Object> body = claims.getBody();		
+			authenticatedToken.setSubject(subject);
+			authenticatedToken.setAppcode(appcode);
+			authenticatedToken.setExtendAttributes(body);
+			authenticatedToken.setSessionid(sessionid);
+			
+			authenticatedToken.setIssuer(issuer);
+			authenticatedToken.setAudience(audience);
+			authenticatedToken.setExpiration(expiration);
+			return authenticatedToken;
 		} catch (ExpiredJwtException e) {
 			throw new AuthenticateException("40003");
 		} catch (UnsupportedJwtException e) {
@@ -159,51 +151,32 @@ public class AuthorHelper {
 		catch (Exception e) {
 			throw new AuthenticateException("40008");
 		}	
-		AuthenticatedToken authenticatedToken = new AuthenticatedToken();
-	
-		String subject = claims.getBody().getSubject();
-		String issuer = (String)claims.getHeader().get("issuer");	 
-		String audience = (String)claims.getHeader().get("audience");	 
-		Date expiration = (Date)claims.getHeader().get("expiration");	 
-		 
-		String sessionid = (String)claims.getHeader().get("sessionid");
-		String appcode = (String)claims.getHeader().get("appcode");	 
 		
-		Map<String,Object> body = claims.getBody();		
-		authenticatedToken.setSubject(subject);
-		authenticatedToken.setAppcode(appcode);
-		authenticatedToken.setExtendAttributes(body);
-		authenticatedToken.setSessionid(sessionid);
-		
-		authenticatedToken.setIssuer(issuer);
-		authenticatedToken.setAudience(audience);
-		authenticatedToken.setExpiration(expiration);
-		return authenticatedToken;
 	}
 	
 	public String getAppcode()
 	{
-		return this.ssoproperties.getProperty("appcode");
+		return this.appid;
 	}
 	
 	public String getAppsecret()
 	{
-		return this.ssoproperties.getProperty("appsecret");
+		return this.secret;
 	}
 	
 	public String getSecretPrivateKey()
 	{
-		return this.ssoproperties.getProperty("secret.privateKey");
+		return this.privateKey;
 	}
 	
 	public String getSecretPublicKey ()
 	{
-		return this.ssoproperties.getProperty("secret.publicKey");
+		return this.publicKey;
 	}
 	
 	
 	
-	public String encodeAuthenticateRequest(String sessionid,String account,
+	public static  String encodeAuthenticateRequest(String sessionid,String account,
 			String password,
 			String appcode,
 			String appsecret,
@@ -226,7 +199,7 @@ public class AuthorHelper {
 	}
 	
 	
-	public String encodeAuthenticateResponse(AuthenticatedToken authenticatedToken,PrivateKey privateKey)
+	public static String encodeAuthenticateResponse(AuthenticatedToken authenticatedToken,PrivateKey privateKey)
 	{
 		 
 //		PrivateKey privateKey_ = KeyCacheUtil.getPrivateKey(appPrivateKey);
@@ -251,6 +224,78 @@ public class AuthorHelper {
 			    .compact();
 		return compactJws;
 	}
+
+	public void setAppid(String appid) {
+		this.appid = appid;
+	}
+
+	public void setSecret(String secret) {
+		this.secret = secret;
+	}
+
+	public void setPrivateKey(String privateKey) {
+		this.privateKey = privateKey;
+	}
+
+	public void setPublicKey(String publicKey) {
+		this.publicKey = publicKey;
+	}
+	/**
+	 * 
+	 * @param appcode
+	 * @return
+	 */
+	public static InputStream generateCAStream(String appcode)
+    {
+    	if(appcode == null || appcode.equals(""))
+    		throw new java.lang.NullPointerException("生成证书出错:必须指定应用编码");
+    	SimpleKeyPair appkeyPair = TokenHelper.getTokenService().getSimpleKeyPair(appcode);
+    	SimpleKeyPair serverkeyPair = TokenHelper.getTokenService().getServerSimpleKeyPair();
+    	StringBuilder content = new StringBuilder();
+    	content.append("[privateKey]\r\n");
+    	content.append(serverkeyPair.getPrivateKey()).append("\r\n");
+    	content.append("[publicKey]\r\n");
+    	content.append(appkeyPair.getPublicKey());
+    	Base64 b = new Base64();
+    	
+		try {
+			byte[] data = b.encode(content.toString().getBytes("UTF-8"));
+			java.io.ByteArrayInputStream input = new ByteArrayInputStream(data);
+	        
+	        return input;
+		} catch (UnsupportedEncodingException e) {
+			throw new java.lang.RuntimeException(e);
+		}
+    	
+    }
+	
+	/**
+	 * 
+	 * @param appcode
+	 * @return
+	 */
+	public static void generateCAFile(String appcode,String filepath)
+    {
+    	if(appcode == null || appcode.equals(""))
+    		throw new java.lang.NullPointerException("生成证书出错:必须指定应用编码");
+    	SimpleKeyPair appkeyPair = TokenHelper.getTokenService().getSimpleKeyPair(appcode);
+    	SimpleKeyPair serverkeyPair = TokenHelper.getTokenService().getServerSimpleKeyPair();
+    	StringBuilder content = new StringBuilder();
+    	content.append("[privateKey]\r\n");
+    	content.append(serverkeyPair.getPrivateKey()).append("\r\n");
+    	content.append("[publicKey]\r\n");
+    	content.append(appkeyPair.getPublicKey());
+    	Base64Commons b = new Base64Commons();
+    	
+		try {
+			String data = b.encodeAsString(content.toString().getBytes("UTF-8"));
+	        
+	       	FileUtil.writeFile(filepath, data, "UTF-8");
+		} catch (Exception e) {
+			throw new java.lang.RuntimeException(e);
+		}
+    	
+    }
 
 	
 
