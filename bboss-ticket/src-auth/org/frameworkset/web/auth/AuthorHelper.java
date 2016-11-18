@@ -233,6 +233,7 @@ public class AuthorHelper {
 				.setHeaderParam("audience", audience)
 				.setHeaderParam("expiration", expiration)
 				.setClaims(body)
+				.setExpiration(expiration)
 			    .setSubject(account)
 			    .compressWith(CompressionCodecs.GZIP)
 			    .signWith(SignatureAlgorithm.RS512, privateKey)

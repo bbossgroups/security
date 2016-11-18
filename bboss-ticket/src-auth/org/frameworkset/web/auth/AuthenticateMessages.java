@@ -6,11 +6,6 @@ package org.frameworkset.web.auth;
 import java.util.HashMap;
 import java.util.Map;
 
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureException;
-import io.jsonwebtoken.UnsupportedJwtException;
-
 /**
  * @author yinbp
  *catch (ExpiredJwtException e) {
