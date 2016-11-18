@@ -5,31 +5,38 @@ package org.frameworkset.web.auth;
 
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.frameworkset.web.token.TokenHelper;
 import org.frameworkset.web.token.ws.v2.AuthorService;
 
 /**
+ * 应用后端登陆系统
  * @author yinbp
  *
- * @Date:2016-11-18 17:19:26
+ * @Date:2016-11-18 17:56:43
  */
-public class WebAutheticate {
-	private HttpServletRequest request;
-	private String account;
-	private String password;
-	private Map<String,Object> extendAttributes;
+public class AppAuthenticate {
+
+	/**
+	 * 
+	 */
+	public AppAuthenticate() {
+		// TODO Auto-generated constructor stub
+	}
+	protected String sessionid = null;
+	protected String account;
+	protected String password;
+	protected Map<String,Object> extendAttributes;
 	
 	/**
 	 * 
 	 */
-	public WebAutheticate(HttpServletRequest request,String account,String password,Map<String,Object> extendAttributes) {
-		this.request = request;
+	public AppAuthenticate(String sessionid , String account,String password,Map<String,Object> extendAttributes) {
 		this.account = account;
 		this.password = password;
 		this.extendAttributes = extendAttributes;
+		this.sessionid = sessionid;
 	}
 	
 	public AuthenticatedToken login() throws AuthenticateException
@@ -38,8 +45,8 @@ public class WebAutheticate {
 
          //构建一个待验证的token
          AuthorHelper authorHelper = TokenHelper.getTokenService().getAuthorHelper();
-         HttpSession session = request.getSession(false);	
-         String sessionid = session != null ?session.getId():null;
+         
+        
          String authtoken = AuthorHelper.encodeAuthenticateRequest(sessionid,account,password, authorHelper.getAppcode(), authorHelper.getAppsecret(), authorHelper.getSecretPrivateKey(), extendAttributes);
 
          
@@ -57,6 +64,20 @@ public class WebAutheticate {
          {        	 
         	 throw new AuthenticateException(authorResponse.getError());
          }
+	}
+	
+	public AuthenticateResponse ssologin() throws AuthenticateException
+	{
+		 AuthorService authorService = TokenHelper.getTokenService().getAuthorService();
+
+         //构建一个待验证的token
+         AuthorHelper authorHelper = TokenHelper.getTokenService().getAuthorHelper();
+         
+         String authtoken = AuthorHelper.encodeAuthenticateRequest(sessionid,account,password, authorHelper.getAppcode(), authorHelper.getAppsecret(), authorHelper.getSecretPrivateKey(), extendAttributes);
+
+         
+         AuthenticateResponse authorResponse = authorService.auth(authtoken);
+         return authorResponse;
 	}
 
 }

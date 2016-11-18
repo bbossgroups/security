@@ -11,7 +11,6 @@ import java.security.PublicKey;
 import java.util.Date;
 import java.util.Map;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 import org.frameworkset.security.KeyCacheUtil;
 import org.frameworkset.security.ecc.SimpleKeyPair;
@@ -136,6 +135,10 @@ public class AuthorHelper {
 			authenticatedToken.setIssuer(issuer);
 			authenticatedToken.setAudience(audience);
 			authenticatedToken.setExpiration(expiration);
+			Boolean frommobile = (Boolean)body.get("frommobile");
+			authenticatedToken.setFrommobile(frommobile);
+			Boolean fromremember = (Boolean)body.get("fromremember");
+			authenticatedToken.setFromremember(fromremember);
 			return authenticatedToken;
 		} catch (ExpiredJwtException e) {
 			throw new AuthenticateException("40003");
@@ -151,6 +154,18 @@ public class AuthorHelper {
 		catch (Exception e) {
 			throw new AuthenticateException("40008");
 		}	
+		
+	}
+	
+	/**
+	 * @param authorization
+	 * @param secretPublicKey
+	 * @throws AuthenticateException 
+	 */
+	public static  AuthenticatedToken decodeMessageResponse(String authorization) throws AuthenticateException {
+		 AuthorHelper authorHelper = TokenHelper.getTokenService().getAuthorHelper();
+		String secretPublicKey = authorHelper.getSecretPublicKey();
+		return decodeMessageResponse(  authorization,   secretPublicKey);
 		
 	}
 	
@@ -256,7 +271,7 @@ public class AuthorHelper {
     	content.append(serverkeyPair.getPrivateKey()).append("\r\n");
     	content.append("[publicKey]\r\n");
     	content.append(appkeyPair.getPublicKey());
-    	Base64 b = new Base64();
+    	Base64Commons b = new Base64Commons();
     	
 		try {
 			byte[] data = b.encode(content.toString().getBytes("UTF-8"));
