@@ -140,6 +140,7 @@ public class AuthorHelper {
 			authenticatedToken.setFrommobile(frommobile);
 			Boolean fromremember = (Boolean)body.get("fromremember");
 			authenticatedToken.setFromremember(fromremember);
+			authenticatedToken.setAuthenticatecode(authorization);
 			return authenticatedToken;
 		} 
 		catch(AuthenticateException e)

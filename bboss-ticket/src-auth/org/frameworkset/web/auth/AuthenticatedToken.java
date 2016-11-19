@@ -21,6 +21,7 @@ public class AuthenticatedToken implements java.io.Serializable{
 	private String sessionid;
 	private Date issuedAt;
 	private String appcode;
+	private String authenticatecode;
 	/**
 	 * 是否从记住口令登陆
 	 */
@@ -116,6 +117,12 @@ public class AuthenticatedToken implements java.io.Serializable{
 	}
 	public void setCnname(String cnname) {
 		this.cnname = cnname;
+	}
+	public String getAuthenticatecode() {
+		return authenticatecode;
+	}
+	public void setAuthenticatecode(String authenticatecode) {
+		this.authenticatecode = authenticatecode;
 	}
 	 
 }
