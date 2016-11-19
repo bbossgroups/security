@@ -116,22 +116,23 @@ public class AuthorHelper {
 			AuthenticatedToken authenticatedToken = new AuthenticatedToken();
 			
 			String subject = claims.getBody().getSubject();
-			String issuer = (String)claims.getHeader().get("issuer");	 
-			String audience = (String)claims.getHeader().get("audience");	 
-			Long expiration_ = (Long)claims.getHeader().get("expiration");	 
-			Date expiration = null;
-			if(expiration_ != null)
-				expiration = new Date(expiration_.longValue());
+			String issuer = claims.getBody().getIssuer();	 
+			String audience = claims.getBody().getAudience();	 
+			Date expiration = claims.getBody().getExpiration() ;
+			
 			 
 			String sessionid = (String)claims.getHeader().get("sessionid");
 			String appcode = (String)claims.getHeader().get("appcode");	 
+			String localappcode = TokenHelper.getTokenService().getAppid();
+			if(appcode == null || !appcode.equals(localappcode))
+				throw new AuthenticateException("40010");
 			
 			Map<String,Object> body = claims.getBody();		
 			authenticatedToken.setSubject(subject);
 			authenticatedToken.setAppcode(appcode);
 			authenticatedToken.setExtendAttributes(body);
 			authenticatedToken.setSessionid(sessionid);
-			
+			authenticatedToken.setCnname(audience);
 			authenticatedToken.setIssuer(issuer);
 			authenticatedToken.setAudience(audience);
 			authenticatedToken.setExpiration(expiration);
@@ -140,7 +141,12 @@ public class AuthorHelper {
 			Boolean fromremember = (Boolean)body.get("fromremember");
 			authenticatedToken.setFromremember(fromremember);
 			return authenticatedToken;
-		} catch (ExpiredJwtException e) {
+		} 
+		catch(AuthenticateException e)
+		{
+			throw e;
+		}
+		catch (ExpiredJwtException e) {
 			throw new AuthenticateException("40003");
 		} catch (UnsupportedJwtException e) {
 			throw new AuthenticateException("40004");
@@ -227,17 +233,23 @@ public class AuthorHelper {
 		String sessionid = authenticatedToken.getSessionid();
 		String appcode = authenticatedToken.getAppcode();
 		String issuer = authenticatedToken.getIssuer();
-		String audience = authenticatedToken.getAudience();
+		String audience = authenticatedToken.getCnname();
 		Date expiration = authenticatedToken.getExpiration();
 		 
 		Map<String,Object> body = authenticatedToken.getExtendAttributes();
+//		if(body == null)
+//			body = new HashMap<String,Object>();
+		
+		
 		String compactJws =  Jwts.builder()
 				.setHeaderParam("appcode", appcode)
 				.setHeaderParam("sessionid", sessionid)
-				.setHeaderParam("issuer", issuer)
-				.setHeaderParam("audience", audience)
-				.setHeaderParam("expiration", expiration)
+//				.setHeaderParam("issuer", issuer)
+//				.setHeaderParam("audience", audience)
+//				.setHeaderParam("expiration", expiration)
 				.setClaims(body)
+				.setIssuer(issuer)
+				.setAudience(audience)
 				.setExpiration(expiration)
 				.setIssuedAt(new Date())
 			    .setSubject(account)

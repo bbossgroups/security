@@ -13,6 +13,7 @@ import java.util.Map;
  */
 public class AuthenticatedToken implements java.io.Serializable{
 	private String subject;
+	private String cnname;
 	private String issuer;
 	private String audience;
 	private Date expiration;
@@ -109,6 +110,12 @@ public class AuthenticatedToken implements java.io.Serializable{
 	}
 	public void setFrommobile(boolean frommobile) {
 		this.frommobile = frommobile;
+	}
+	public String getCnname() {
+		return cnname;
+	}
+	public void setCnname(String cnname) {
+		this.cnname = cnname;
 	}
 	 
 }
