@@ -8,7 +8,7 @@ package org.frameworkset.web.auth;
  *
  * @Date:2016-11-16 15:45:06
  */
-public class AuthenticateException extends Exception {
+public class AuthenticateException extends RuntimeException {
 
 	/**
 	 * 

@@ -7,9 +7,11 @@ import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.frameworkset.security.session.domain.App;
 import org.frameworkset.security.session.domain.CrossDomain;
 import org.frameworkset.security.session.impl.HttpSessionImpl;
 import org.frameworkset.security.session.impl.SessionEventImpl;
@@ -214,6 +216,83 @@ public class SessionUtil {
 	public static Session getSession(String appkey,String contextPath, String sessionid) {
 		// TODO Auto-generated method stub
 		return sessionManager.getSessionStore().getSession(appkey,contextPath, sessionid);
+	}
+	private static Object dummy = new Object();
+	
+	public  static  void writeCookies(HttpServletRequest request,HttpServletResponse response,String cookieName,String sessionid  )
+	{
+		int cookielivetime = -1;
+		CrossDomain crossDomain = SessionUtil.getSessionManager().getCrossDomain() ;
+		if(crossDomain == null)
+		{
+			boolean secure = SessionUtil.getSessionManager().isSecure();
+			if(!request.isSecure())
+				secure = false;
+			StringUtil.addCookieValue(request, response, cookieName, sessionid, cookielivetime,SessionUtil.getSessionManager().isHttpOnly(),
+					secure,SessionUtil.getSessionManager().getDomain());
+		}
+		else
+		{
+			String currentDomain = request.getServerName();
+			if(!currentDomain.equals(crossDomain.getRootDomain()) && !currentDomain.endsWith("."+crossDomain.getRootDomain()))//非跨域访问，则直接写应用的session cookieid,解决通过非共享域方式无法访问系统的问题
+			{
+				boolean secure = SessionUtil.getSessionManager().isSecure();
+				if(!request.isSecure())
+					secure = false;
+				StringUtil.addCookieValue(request, response, cookieName, sessionid, cookielivetime,SessionUtil.getSessionManager().isHttpOnly(),
+						secure,SessionUtil.getSessionManager().getDomain());
+				return;
+			}
+			List<App> apps = crossDomain.getDomainApps();
+			if(crossDomain.get_paths() != null)
+			{
+				boolean secure = SessionUtil.getSessionManager().isSecure();
+				if(!request.isSecure())
+					secure = false;
+				for(String path:crossDomain.get_paths())
+				{
+					StringUtil.addCookieValue(request, path,
+												response, 
+												cookieName, 
+												sessionid, cookielivetime,
+												SessionUtil.getSessionManager().isHttpOnly(),								
+												secure,
+												crossDomain.getRootDomain());
+				}
+			}
+			else
+			{
+				boolean secure = SessionUtil.getSessionManager().isSecure();
+				if(!request.isSecure())
+					secure = false;
+				Map<String,Object> setted = new HashMap<String,Object>();
+				for(App app:apps)
+				{
+					if(app.getPath() == null)
+					{
+						StringUtil.addCookieValue(request, response, cookieName, sessionid, cookielivetime,SessionUtil.getSessionManager().isHttpOnly(),
+								secure,crossDomain.getRootDomain());
+					}
+					else
+					{
+						if(!setted.containsKey(app.getPath()))
+						{
+							StringUtil.addCookieValue(request, app.getPath(),response, cookieName, sessionid, cookielivetime,SessionUtil.getSessionManager().isHttpOnly(),								
+									secure,crossDomain.getRootDomain());
+							setted.put(app.getPath(), dummy);
+						}
+						else
+						{
+							
+						}
+						
+						
+					}
+				}
+				setted = null;
+			}
+			
+		}
 	}
 	
 

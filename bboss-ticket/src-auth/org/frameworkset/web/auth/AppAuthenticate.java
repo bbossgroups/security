@@ -28,6 +28,7 @@ public class AppAuthenticate {
 	protected String account;
 	protected String password;
 	protected Map<String,Object> extendAttributes;
+	protected AuthenticatedToken token; 
 	
 	/**
 	 * 
@@ -38,7 +39,10 @@ public class AppAuthenticate {
 		this.extendAttributes = extendAttributes;
 		this.sessionid = sessionid;
 	}
-	
+	protected void afterSuccessLogin()
+	{
+		
+	}
 	public AuthenticatedToken login() throws AuthenticateException
 	{
 		 AuthorService authorService = TokenHelper.getTokenService().getAuthorService();
@@ -54,7 +58,8 @@ public class AppAuthenticate {
           if(authorResponse.isValidateResult())
          {
         	 try {
-        		 AuthenticatedToken token = AuthorHelper.decodeMessageResponse(authorResponse.getAuthorization(), authorHelper.getSecretPublicKey());
+        		 token = AuthorHelper.decodeMessageResponse(authorResponse.getAuthorization(), authorHelper.getSecretPublicKey());
+        		 afterSuccessLogin();
         		 return token;
 			} catch (AuthenticateException e) {
 				throw e;

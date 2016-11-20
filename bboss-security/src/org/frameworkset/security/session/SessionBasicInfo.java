@@ -5,6 +5,7 @@ public class SessionBasicInfo {
     private String referip;
     private String requesturi;
     private String lastAccessedHostIP;
+    private String sessionid;
 	public SessionBasicInfo() {
 		// TODO Auto-generated constructor stub
 	}
@@ -31,6 +32,12 @@ public class SessionBasicInfo {
 	}
 	public void setLastAccessedHostIP(String lastAccessedHostIP) {
 		this.lastAccessedHostIP = lastAccessedHostIP;
+	}
+	public String getSessionid() {
+		return sessionid;
+	}
+	public void setSessionid(String sessionid) {
+		this.sessionid = sessionid;
 	}
 
 }

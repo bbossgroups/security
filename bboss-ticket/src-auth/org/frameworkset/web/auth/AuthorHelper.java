@@ -40,6 +40,7 @@ public class AuthorHelper {
 	private static Logger log = Logger.getLogger(AuthorHelper.class);
 	private String appid;
 	private String secret;
+	
 	/**
 	 * 客户端私钥证书内容
 	 */

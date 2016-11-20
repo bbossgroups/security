@@ -6,7 +6,10 @@ package org.frameworkset.web.auth;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import org.frameworkset.security.session.SessionUtil;
 
 /**
  * @author yinbp
@@ -14,16 +17,27 @@ import javax.servlet.http.HttpSession;
  * @Date:2016-11-18 17:19:26
  */
 public class WebAuthenticate extends AppAuthenticate {
-	private HttpServletRequest request;
-	 
+	protected HttpServletRequest request;
+	protected HttpServletResponse response;
+	protected HttpSession session;
 	
 	/**
 	 * 
 	 */
-	public WebAuthenticate(HttpServletRequest request,String account,String password,Map<String,Object> extendAttributes) {
+	public WebAuthenticate(HttpServletRequest request,HttpServletResponse response,String account,String password,Map<String,Object> extendAttributes) {
 		super(null,account,  password, extendAttributes);
-		HttpSession session = request.getSession(false);	
+		
+		this.request = request;
+		this.response = response;
+		session = request.getSession(true);	
 		sessionid = session != null ?session.getId():null;
+		
+	}
+	
+	protected void afterSuccessLogin()
+	{
+		session.setAttribute(TicketConsts.ticket_session_token_key, token);
+		SessionUtil.writeCookies(request, response, sessionid,this.token.getAuthenticatecode());
 	}
 	
 	

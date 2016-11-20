@@ -39,7 +39,7 @@ public class SimpleSessionImpl implements Session{
 		attributes = new HashMap<String,Object>();
 		
 	}
-	private void assertSession(SimpleHttpSession session,String contextpath) 
+	public void assertSession(SimpleHttpSession session,String contextpath) 
 	{
 		
 		if(assertValidate != null)

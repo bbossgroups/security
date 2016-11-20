@@ -23,7 +23,9 @@ sourceSets {
     }
     
 }
+
 dependencies {
+compile project(':bboss-security')
 	 compile 'io.jsonwebtoken:jjwt:0.7.0'
     compile (
             [group: 'log4j', name: 'log4j', version: '1.2.16', transitive: false],
@@ -33,6 +35,8 @@ dependencies {
             [group: 'com.bbossgroups', name: 'bboss-persistent', version: "${bboss_version}", transitive: false],
             [group: 'com.bbossgroups', name: 'bboss-mvc', version: "${bboss_version}", transitive: false],
             [group: 'com.bbossgroups', name: 'bboss-velocity', version: "${bboss_version}", transitive: false],
+              [group: 'com.bbossgroups', name: 'bboss-hession', version: "${bboss_version}", transitive: true],
+               
             [group: 'oro', name: 'oro', version: '2.0.8', transitive: false],
               [group: 'commons-lang', name: 'commons-lang', version: '2.6', transitive: false],
               [group: 'org.ow2.asm', name: 'asm', version: '5.0.3', transitive: false],
@@ -49,8 +53,7 @@ dependencies {
                [group: 'redis.clients', name: 'jedis', version: '2.8.1', transitive: false],
                 [group: 'org.mongodb', name: 'mongo-java-driver', version: "${mongodbversion}", transitive: false],
                 [group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.54', transitive: false],
-                [group: 'com.bbossgroups', name: 'bboss-hession', version: "${bboss_version}", transitive: true],
-                
+               
     //[group: 'javaee', name: 'javaee-api', version: '5', transitive: false],
     )
     compileOnly(

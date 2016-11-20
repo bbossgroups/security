@@ -15,10 +15,6 @@
  */
 package org.frameworkset.security.session.impl;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
@@ -30,8 +26,6 @@ import org.frameworkset.security.session.InvalidateCallback;
 import org.frameworkset.security.session.Session;
 import org.frameworkset.security.session.SessionBasicInfo;
 import org.frameworkset.security.session.SessionUtil;
-import org.frameworkset.security.session.domain.App;
-import org.frameworkset.security.session.domain.CrossDomain;
 
 import com.frameworkset.util.StringUtil;
 
@@ -46,12 +40,12 @@ import com.frameworkset.util.StringUtil;
  */
 public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper implements InvalidateCallback {
 	private static Logger log = Logger.getLogger(SessionHttpServletRequestWrapper.class);
-	private String sessionid;
-	private HttpSessionImpl session;
-	private HttpServletResponse response;
-	private ServletContext servletContext;	
-	private String appkey ;
-	private boolean usewebsession = true;
+	protected String sessionid;
+	protected HttpSessionImpl session;
+	protected HttpServletResponse response;
+	protected ServletContext servletContext;	
+	protected String appkey ;
+	protected boolean usewebsession = true;
 	public SessionHttpServletRequestWrapper(HttpServletRequest request,HttpServletResponse response,ServletContext servletContext) {
 		super(request);
 		try
@@ -59,10 +53,13 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 			SessionUtil.init(SessionUtil.getAppKeyFromRequest(this));
 			if(SessionUtil.getSessionManager() != null)
 			{
-				sessionid = StringUtil.getCookieValue((HttpServletRequest)request, SessionUtil.getSessionManager().getCookiename());
+				
 				usewebsession = SessionUtil.getSessionManager().usewebsession();
 				if( !usewebsession)
+				{
+					sessionid = StringUtil.getCookieValue((HttpServletRequest)request, SessionUtil.getSessionManager().getCookiename());
 					appkey = SessionUtil.getAppKey(this);
+				}
 			}
 		}
 		catch(Throwable e)
@@ -102,7 +99,7 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 	}
 
 	
-	private String getRequestUrl()
+	protected String getRequestUrl()
 	{
 		StringBuilder basePath = new StringBuilder().append(getScheme()).append("://").append(getServerName());
 		if(getServerPort() != 80)
@@ -113,6 +110,23 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 		if(this.getQueryString() != null)
 			basePath.append("?").append(this.getQueryString());
 		return basePath.toString();
+	}
+	protected void createSession(String sessionid)
+	{
+		SessionBasicInfo sessionBasicInfo = new SessionBasicInfo();
+		sessionBasicInfo.setAppKey(appkey);
+		sessionBasicInfo.setSessionid(sessionid);
+		sessionBasicInfo.setReferip(StringUtil.getClientIP(this));
+		sessionBasicInfo.setRequesturi(this.getRequestUrl());				
+		this.session = (HttpSessionImpl) SessionUtil.createSession(servletContext,sessionBasicInfo,this.getContextPath(),this);				
+//		sessionid = session.getId();
+		SessionUtil.writeCookies(this, response,SessionUtil.getSessionManager().getCookiename(),sessionid);
+	}
+	protected String randomToken()
+	{
+//		String token = UUID.randomUUID().toString();
+//		return token;
+		return SessionUtil.getSessionManager().getSessionIDGenerator().generateID();
 	}
 	@Override
 	public HttpSession getSession(boolean create) {
@@ -127,16 +141,7 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 			{
 
 //				String appkey = SessionUtil.getAppKey(this);
-				SessionBasicInfo sessionBasicInfo = new SessionBasicInfo();
-				sessionBasicInfo.setAppKey(appkey);
-				sessionBasicInfo.setReferip(StringUtil.getClientIP(this));
-				sessionBasicInfo.setRequesturi(this.getRequestUrl());
-				
-				this.session = (HttpSessionImpl) SessionUtil.createSession(servletContext,sessionBasicInfo,this.getContextPath(),this);				
-				sessionid = session.getId();
-				 
-
-				writeCookies( );
+				createSession(this.randomToken());
 				return this.session;
 			}
 			else
@@ -157,24 +162,12 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 			{				
 				if(create)
 				{
-
-				
-					
-					SessionBasicInfo sessionBasicInfo = new SessionBasicInfo();
-					sessionBasicInfo.setAppKey(appkey);
-					sessionBasicInfo.setReferip(StringUtil.getClientIP(this));
-					sessionBasicInfo.setRequesturi(this.getRequestUrl());
-					
-					this.session = (HttpSessionImpl) SessionUtil.createSession(servletContext,sessionBasicInfo,this.getContextPath(),this);
-					sessionid = session.getId();
-					
-
-					writeCookies( );
+					createSession(this.randomToken());
 				}
 			}
 			else
 			{
-				this.session =  new HttpSessionImpl(session,servletContext,this.getContextPath(),this);
+				this.session =  buildHttpSessionImpl(  session);
 			}
 			return this.session;
 		}
@@ -182,8 +175,13 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 		
 	}
 	
+	public HttpSessionImpl buildHttpSessionImpl(Session session)
+	{
+		return new HttpSessionImpl(session,servletContext,this.getContextPath(),this);
+	}
 	
-	private HttpSession _getSession(String sessionid) {
+	
+	protected HttpSession _getSession(String sessionid) {
 		if( usewebsession)
 		{
 			return null;
@@ -228,7 +226,7 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 					this.sessionid = null;
 					return;
 				}
-				this.session =  new HttpSessionImpl(session_,servletContext,this.getContextPath(),this);
+				this.session =  buildHttpSessionImpl(  session_);
 			}
 			if(session != null && !session.isNew() )
 			{
@@ -237,82 +235,7 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 		}
 		
 	}
-	private static Object dummy = new Object();
-	private void writeCookies( )
-	{
-		int cookielivetime = -1;
-		CrossDomain crossDomain = SessionUtil.getSessionManager().getCrossDomain() ;
-		if(crossDomain == null)
-		{
-			boolean secure = SessionUtil.getSessionManager().isSecure();
-			if(!this.isSecure())
-				secure = false;
-			StringUtil.addCookieValue(this, response, SessionUtil.getSessionManager().getCookiename(), sessionid, cookielivetime,SessionUtil.getSessionManager().isHttpOnly(),
-					secure,SessionUtil.getSessionManager().getDomain());
-		}
-		else
-		{
-			String currentDomain = this.getServerName();
-			if(!currentDomain.equals(crossDomain.getRootDomain()) && !currentDomain.endsWith("."+crossDomain.getRootDomain()))//非跨域访问，则直接写应用的session cookieid,解决通过非共享域方式无法访问系统的问题
-			{
-				boolean secure = SessionUtil.getSessionManager().isSecure();
-				if(!this.isSecure())
-					secure = false;
-				StringUtil.addCookieValue(this, response, SessionUtil.getSessionManager().getCookiename(), sessionid, cookielivetime,SessionUtil.getSessionManager().isHttpOnly(),
-						secure,SessionUtil.getSessionManager().getDomain());
-				return;
-			}
-			List<App> apps = crossDomain.getDomainApps();
-			if(crossDomain.get_paths() != null)
-			{
-				boolean secure = SessionUtil.getSessionManager().isSecure();
-				if(!this.isSecure())
-					secure = false;
-				for(String path:crossDomain.get_paths())
-				{
-					StringUtil.addCookieValue(this, path,
-												response, 
-												SessionUtil.getSessionManager().getCookiename(), 
-												sessionid, cookielivetime,
-												SessionUtil.getSessionManager().isHttpOnly(),								
-												secure,
-												crossDomain.getRootDomain());
-				}
-			}
-			else
-			{
-				boolean secure = SessionUtil.getSessionManager().isSecure();
-				if(!this.isSecure())
-					secure = false;
-				Map<String,Object> setted = new HashMap<String,Object>();
-				for(App app:apps)
-				{
-					if(app.getPath() == null)
-					{
-						StringUtil.addCookieValue(this, response, SessionUtil.getSessionManager().getCookiename(), sessionid, cookielivetime,SessionUtil.getSessionManager().isHttpOnly(),
-								secure,crossDomain.getRootDomain());
-					}
-					else
-					{
-						if(!setted.containsKey(app.getPath()))
-						{
-							StringUtil.addCookieValue(this, app.getPath(),response, SessionUtil.getSessionManager().getCookiename(), sessionid, cookielivetime,SessionUtil.getSessionManager().isHttpOnly(),								
-									secure,crossDomain.getRootDomain());
-							setted.put(app.getPath(), dummy);
-						}
-						else
-						{
-							
-						}
-						
-						
-					}
-				}
-				setted = null;
-			}
-			
-		}
-	}
+	
 
 	@Override
 	public String getRequestedSessionId() {

@@ -122,12 +122,7 @@ public abstract class BaseSessionStore implements SessionStore {
 		}
 		return temp;
 	}
-	protected String randomToken()
-	{
-//		String token = UUID.randomUUID().toString();
-//		return token;
-		return sessionManager.getSessionIDGenerator().generateID();
-	}
+	
 	@Override
 	public void setSessionManager(SessionManager sessionManager) {
 		this.sessionManager = sessionManager;

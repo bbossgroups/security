@@ -40,12 +40,18 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class SessionFilter implements Filter{
 	protected boolean dosessionfilter = true;
-	private ServletContext servletContext;
+	protected ServletContext servletContext;
 	@Override
 	public void destroy() {
 		
 		servletContext = null;
 		dosessionfilter = true;
+	}
+	
+	protected SessionHttpServletRequestWrapper buildSessionHttpServletRequestWrapper(ServletRequest request, ServletResponse response)
+	{
+		SessionHttpServletRequestWrapper mrequestw = new SessionHttpServletRequestWrapper((HttpServletRequest)request,(HttpServletResponse)response,this.servletContext);
+		return mrequestw;
 	}
 
 	@Override
@@ -55,7 +61,7 @@ public class SessionFilter implements Filter{
 		
 		if(dosessionfilter)
 		{
-			SessionHttpServletRequestWrapper mrequestw = new	SessionHttpServletRequestWrapper((HttpServletRequest)request,(HttpServletResponse)response,this.servletContext);
+			SessionHttpServletRequestWrapper mrequestw = buildSessionHttpServletRequestWrapper(  request,   response);
 			try
 			{
 				mrequestw.touch();

@@ -6,7 +6,7 @@ import java.util.Map;
 import org.frameworkset.security.session.impl.ModifyValue;
 
 public interface Session {
-
+	public void assertSession(SimpleHttpSession session,String contextpath) ;
 	public void initInvalidateCallback(InvalidateCallback invalidateCallback);
 	public Object getAttribute(SimpleHttpSession session,String attribute,String contextpath) ;
 

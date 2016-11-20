@@ -34,17 +34,17 @@ import org.frameworkset.security.session.SimpleHttpSession;
  * @version 3.8.0
  */
 public class HttpSessionImpl implements SimpleHttpSession {
-	private Session session = null;
-	private ServletContext servletContext;
-	private String contextpath;
-	private InvalidateCallback invalidateCallback;
+	protected Session session = null;
+	protected ServletContext servletContext;
+	protected String contextpath;
+//	protected InvalidateCallback invalidateCallback;
 	public HttpSessionImpl(Session session,ServletContext servletContext,String contextpath,InvalidateCallback invalidateCallback)
 	{
 		this.session = session;
 		this.session.initInvalidateCallback(invalidateCallback);
 		this.servletContext = servletContext;
 		this.contextpath = contextpath;
-		this.invalidateCallback = invalidateCallback;
+//		this.invalidateCallback = invalidateCallback;
 	}
 	@Override
 	public Object getAttribute(String attribute) {

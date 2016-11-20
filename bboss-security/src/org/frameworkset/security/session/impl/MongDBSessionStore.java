@@ -152,7 +152,7 @@ public class MongDBSessionStore extends BaseSessionStore{
 	
 	@Override
 	public Session createSession(SessionBasicInfo sessionBasicInfo) {
-		String sessionid = this.randomToken();
+		String sessionid = sessionBasicInfo.getSessionid();
 		long creationTime = System.currentTimeMillis();
 		long maxInactiveInterval = this.getSessionTimeout();
 		long lastAccessedTime = creationTime;
