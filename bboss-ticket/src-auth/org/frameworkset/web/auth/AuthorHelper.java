@@ -137,9 +137,11 @@ public class AuthorHelper {
 			authenticatedToken.setAudience(audience);
 			authenticatedToken.setExpiration(expiration);
 			Boolean frommobile = (Boolean)body.get("frommobile");
-			authenticatedToken.setFrommobile(frommobile);
+			if(frommobile != null)
+				authenticatedToken.setFrommobile(frommobile);
 			Boolean fromremember = (Boolean)body.get("fromremember");
-			authenticatedToken.setFromremember(fromremember);
+			if(fromremember != null)
+				authenticatedToken.setFromremember(fromremember);
 			authenticatedToken.setAuthenticatecode(authorization);
 			return authenticatedToken;
 		} 
