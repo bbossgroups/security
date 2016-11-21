@@ -6,6 +6,8 @@ package org.frameworkset.web.auth;
 import java.util.Date;
 import java.util.Map;
 
+import org.frameworkset.web.token.TokenHelper;
+
 /**
  * @author yinbp
  *
@@ -32,6 +34,10 @@ public class AuthenticatedToken implements java.io.Serializable{
 	 
 	
 	private Map<String,Object> extendAttributes;
+	/**
+	 * 凭证存活时间，单位：毫秒，从最近访问的时间开始计时，如果空闲时间超过给定的时间，则凭证失效，与websession的生命周期管理机制一致
+	 */
+	private int ticketdualtime;
 	/**
 	 * 
 	 */
@@ -99,6 +105,12 @@ public class AuthenticatedToken implements java.io.Serializable{
 	}
 	public void setCnname(String cnname) {
 		this.cnname = cnname;
+	}
+	public int getTicketdualtime() {
+		return ticketdualtime;
+	}
+	public void setTicketdualtime(int ticketdualtime) {
+		this.ticketdualtime = ticketdualtime;
 	}
 	 
 	 

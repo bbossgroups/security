@@ -106,6 +106,7 @@ public class TicketSessionHttpServletRequestWrapper extends SessionHttpServletRe
 		gensessionfromauthsessionid = false;
 		tokenfromlocalcookie = false;
 		authenticateCode = null;
+		
 		super.invalidateCallback();
 		
 	}

@@ -264,8 +264,15 @@ public class RedisSessionStore extends BaseSessionStore{
 			values.put("lastAccessedHostIP", SimpleStringUtil.getHostIP());			
 			redisHelper.hmset(sessionKey, values);
 			if(MaxInactiveInterval > 0)
+			{
 				MaxInactiveInterval = MaxInactiveInterval / 1000;
-			redisHelper.expire(sessionKey, MaxInactiveInterval);
+			
+				redisHelper.expire(sessionKey, MaxInactiveInterval);
+			}
+			else // 持久化key
+			{
+				redisHelper.persist(sessionKey);
+			}
 			 
 		}
 		 catch (Exception e) {
@@ -627,8 +634,16 @@ public class RedisSessionStore extends BaseSessionStore{
 			redisHelper = RedisFactory.getRedisHelper();
 			String sessionKey = this.getAPPSessionKey(appKey, session.getId());
 			
-				redisHelper.hset(sessionKey, "maxInactiveInterval", String.valueOf(maxInactiveInterval));			
-				redisHelper.expire(sessionKey, (int)maxInactiveInterval);
+				redisHelper.hset(sessionKey, "maxInactiveInterval", String.valueOf(maxInactiveInterval));	
+				if(maxInactiveInterval > 0)
+				{
+					maxInactiveInterval = maxInactiveInterval /1000;
+					redisHelper.expire(sessionKey, (int)maxInactiveInterval);
+				}
+				else
+				{
+					redisHelper.persist(sessionKey);
+				}
 		}
 		 catch (Exception e) {
 				log.error("",e);
@@ -983,8 +998,14 @@ public class RedisSessionStore extends BaseSessionStore{
 			redisHelper = RedisFactory.getRedisHelper();
 			String sessionkey = this.getAPPSessionKey(appkey,sessionid);
 			if(timeout > 0)
+			{
 				timeout = timeout/1000;
-			return redisHelper.expire(sessionkey, timeout);
+				return redisHelper.expire(sessionkey, timeout);
+			}
+			else
+			{
+				return redisHelper.persist(sessionkey);
+			}
 			 
 			
 		} catch (Exception e) {

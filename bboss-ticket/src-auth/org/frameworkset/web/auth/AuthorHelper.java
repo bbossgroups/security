@@ -119,11 +119,16 @@ public class AuthorHelper {
 			String subject = claims.getBody().getSubject();
 			String issuer = claims.getBody().getIssuer();	 
 			String audience = claims.getBody().getAudience();	 
-			Date expiration = claims.getBody().getExpiration() ;
+//			Date expiration = claims.getBody().getExpiration() ;
 			
 			 
 			String sessionid = (String)claims.getHeader().get("sessionid");
 			String appcode = (String)claims.getHeader().get("appcode");	 
+			Integer ticketlivetimes = (Integer)claims.getHeader().get("ticketlivetimes");	 
+			if(ticketlivetimes != null)
+			{
+				authenticatedToken.setTicketdualtime(ticketlivetimes.intValue());
+			}
 			String localappcode = TokenHelper.getTokenService().getAppid();
 			if(appcode == null || !appcode.equals(localappcode))
 				throw new AuthenticateException("40010");
@@ -228,8 +233,15 @@ public class AuthorHelper {
 		return compactJws;
 	}
 	
-	
-	public static String encodeAuthenticateResponse(AuthenticatedToken authenticatedToken,PrivateKey privateKey,Date expiration)
+	/**
+	 * 
+	 * @param authenticatedToken
+	 * @param privateKey
+	 * @param expiration
+	 * @param ticketlivetimes 毫秒，凭证最大空闲时间，从凭证的最近访问时间开始计算
+	 * @return
+	 */
+	public static String encodeAuthenticateResponse(AuthenticatedToken authenticatedToken,PrivateKey privateKey,Date expiration,int ticketlivetimes)
 	{
 		 
 //		PrivateKey privateKey_ = KeyCacheUtil.getPrivateKey(appPrivateKey);
@@ -248,6 +260,7 @@ public class AuthorHelper {
 		String compactJws =  Jwts.builder()
 				.setHeaderParam("appcode", appcode)
 				.setHeaderParam("sessionid", sessionid)
+				.setHeaderParam("ticketlivetimes", ticketlivetimes)
 //				.setHeaderParam("issuer", issuer)
 //				.setHeaderParam("audience", audience)
 //				.setHeaderParam("expiration", expiration)

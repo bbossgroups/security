@@ -38,6 +38,7 @@ public class WebAuthenticate extends AppAuthenticate {
 	{
 		session.setAttribute(TicketConsts.ticket_session_token_key, token);
 		session.setAttribute(TicketConsts.ticket_session_authenticatecode_key, authenticatecode);
+		
 		SessionUtil.writeCookies(request, response, sessionid,authenticatecode);
 	}
 	

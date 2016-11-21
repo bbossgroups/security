@@ -123,7 +123,7 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 		this.sessionid = session.getId();
 		if(!sessionidcookiewrited)
 		{
-			SessionUtil.writeCookies(this, response,SessionUtil.getSessionManager().getCookiename(),sessionid);
+			SessionUtil.writeCookies(this, response,SessionUtil.getSessionManager().getCookiename(),this.sessionid);
 			sessionidcookiewrited = true;
 		}
 		
@@ -302,7 +302,7 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 	public void invalidateCallback() {
 		this.session = null;
 		this.sessionid = null;
-		
+		sessionidcookiewrited = false;
 	}
 	
 	public void submit()

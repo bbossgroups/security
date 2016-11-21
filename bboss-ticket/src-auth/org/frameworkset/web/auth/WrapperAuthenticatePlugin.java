@@ -60,17 +60,30 @@ public class WrapperAuthenticatePlugin extends BaseAuthenticatePlugin {
 			{
 				AuthenticatedToken authenticatedToken = login(authenticateToken_) ;
 				Date expiration = null;
+				int ticketlivetimes = 0;
+				if(authenticateToken_.getLivetimes() > 0 )
+				{
+					ticketlivetimes = (int)authenticateToken_.getLivetimes();
+				}
+				else if(authenticateToken_.getLivetimes()  == -2)
+				{
+					ticketlivetimes =  (int)TokenHelper.getTokenService().getTicketdualtime() ;
+				}
 				if(authenticateToken_.getSessionid() == null)
 				{
-					if(authenticateToken_.getLivetimes() > 0 )
-						expiration = addDateSeconds(new Date(), (int)(authenticateToken_.getLivetimes() /1000));
-					else if(authenticateToken_.getLivetimes()  == -2)
+					if(ticketlivetimes > 0 )
 					{
-						expiration = addDateSeconds(new Date(), (int)(TokenHelper.getTokenService().getTicketdualtime() /1000));
+						expiration = addDateSeconds(new Date(), (int)(authenticateToken_.getLivetimes() /1000));
+					}
+					else if(ticketlivetimes  == -2)
+					{
+						expiration = addDateSeconds(new Date(), (ticketlivetimes /1000));
 					}
 				}
+				
+			 
 					
-				String auhorcode = AuthorHelper.encodeAuthenticateResponse(authenticatedToken,privateKey,expiration);
+				String auhorcode = AuthorHelper.encodeAuthenticateResponse(authenticatedToken,privateKey,expiration,ticketlivetimes);
 				authenticateResponse.setAuthorization(auhorcode);
 				authenticateResponse.setResultcode("success");
 				authenticateResponse.setValidateResult(true);
