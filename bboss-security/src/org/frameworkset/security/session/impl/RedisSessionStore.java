@@ -265,6 +265,8 @@ public class RedisSessionStore extends BaseSessionStore{
 			values.put("lastAccessedUrl", lastAccessedUrl);
 			values.put("lastAccessedHostIP", SimpleStringUtil.getHostIP());			
 			redisHelper.hmset(sessionKey, values);
+			if(MaxInactiveInterval > 0)
+				MaxInactiveInterval = MaxInactiveInterval / 1000;
 			redisHelper.expire(sessionKey, MaxInactiveInterval);
 			 
 		}
@@ -982,7 +984,8 @@ public class RedisSessionStore extends BaseSessionStore{
 		{
 			redisHelper = RedisFactory.getRedisHelper();
 			String sessionkey = this.getAPPSessionKey(appkey,sessionid);
-		
+			if(timeout > 0)
+				timeout = timeout / 1000;
 			return redisHelper.expire(sessionkey, timeout);
 			 
 			
