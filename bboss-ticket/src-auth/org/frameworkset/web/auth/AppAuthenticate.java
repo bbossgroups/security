@@ -5,8 +5,6 @@ package org.frameworkset.web.auth;
 
 import java.util.Map;
 
-import javax.servlet.http.HttpSession;
-
 import org.frameworkset.web.token.TokenHelper;
 import org.frameworkset.web.token.ws.v2.AuthorService;
 
@@ -29,6 +27,7 @@ public class AppAuthenticate {
 	protected String password;
 	protected Map<String,Object> extendAttributes;
 	protected AuthenticatedToken token; 
+	protected String authenticatecode;
 	
 	/**
 	 * 
@@ -58,6 +57,7 @@ public class AppAuthenticate {
           if(authorResponse.isValidateResult())
          {
         	 try {
+        		 authenticatecode = authorResponse.getAuthorization();
         		 token = AuthorHelper.decodeMessageResponse(authorResponse.getAuthorization(), authorHelper.getSecretPublicKey());
         		 afterSuccessLogin();
         		 return token;
@@ -83,6 +83,9 @@ public class AppAuthenticate {
          
          AuthenticateResponse authorResponse = authorService.auth(authtoken);
          return authorResponse;
+	}
+	public String getAuthenticatecode() {
+		return authenticatecode;
 	}
 
 }

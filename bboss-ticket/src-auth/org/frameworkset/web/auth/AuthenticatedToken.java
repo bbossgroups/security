@@ -16,12 +16,11 @@ public class AuthenticatedToken implements java.io.Serializable{
 	private String cnname;
 	private String issuer;
 	private String audience;
-	private Date expiration;
-	private Date notBefore;
+	 
 	private String sessionid;
-	private Date issuedAt;
+	 
 	private String appcode;
-	private String authenticatecode;
+	 
 	/**
 	 * 是否从记住口令登陆
 	 */
@@ -57,24 +56,7 @@ public class AuthenticatedToken implements java.io.Serializable{
 	public void setAudience(String audience) {
 		this.audience = audience;
 	}
-	public Date getExpiration() {
-		return expiration;
-	}
-	public void setExpiration(Date expiration) {
-		this.expiration = expiration;
-	}
-	public Date getNotBefore() {
-		return notBefore;
-	}
-	public void setNotBefore(Date notBefore) {
-		this.notBefore = notBefore;
-	}
-	public Date getIssuedAt() {
-		return issuedAt;
-	}
-	public void setIssuedAt(Date issuedAt) {
-		this.issuedAt = issuedAt;
-	}
+	 
 	public Object getAttribute(String attributeName)
 	{
 		if(extendAttributes == null)
@@ -118,11 +100,6 @@ public class AuthenticatedToken implements java.io.Serializable{
 	public void setCnname(String cnname) {
 		this.cnname = cnname;
 	}
-	public String getAuthenticatecode() {
-		return authenticatecode;
-	}
-	public void setAuthenticatecode(String authenticatecode) {
-		this.authenticatecode = authenticatecode;
-	}
+	 
 	 
 }

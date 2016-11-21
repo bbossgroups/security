@@ -136,14 +136,14 @@ public class AuthorHelper {
 			authenticatedToken.setCnname(audience);
 			authenticatedToken.setIssuer(issuer);
 			authenticatedToken.setAudience(audience);
-			authenticatedToken.setExpiration(expiration);
+			 
 			Boolean frommobile = (Boolean)body.get("frommobile");
 			if(frommobile != null)
 				authenticatedToken.setFrommobile(frommobile);
 			Boolean fromremember = (Boolean)body.get("fromremember");
 			if(fromremember != null)
 				authenticatedToken.setFromremember(fromremember);
-			authenticatedToken.setAuthenticatecode(authorization);
+			 
 			return authenticatedToken;
 		} 
 		catch(AuthenticateException e)
@@ -229,7 +229,7 @@ public class AuthorHelper {
 	}
 	
 	
-	public static String encodeAuthenticateResponse(AuthenticatedToken authenticatedToken,PrivateKey privateKey)
+	public static String encodeAuthenticateResponse(AuthenticatedToken authenticatedToken,PrivateKey privateKey,Date expiration)
 	{
 		 
 //		PrivateKey privateKey_ = KeyCacheUtil.getPrivateKey(appPrivateKey);
@@ -238,7 +238,7 @@ public class AuthorHelper {
 		String appcode = authenticatedToken.getAppcode();
 		String issuer = authenticatedToken.getIssuer();
 		String audience = authenticatedToken.getCnname();
-		Date expiration = authenticatedToken.getExpiration();
+		 
 		 
 		Map<String,Object> body = authenticatedToken.getExtendAttributes();
 //		if(body == null)

@@ -18,6 +18,7 @@ import org.frameworkset.web.auth.TicketConsts;
  */
 public class TicketHttpSessionImpl extends HttpSessionImpl {
 	protected AuthenticatedToken token;
+	protected String authenticatecode;
 
 	/**
 	 * @param session
@@ -25,10 +26,11 @@ public class TicketHttpSessionImpl extends HttpSessionImpl {
 	 * @param contextpath
 	 * @param invalidateCallback
 	 */
-	public TicketHttpSessionImpl(AuthenticatedToken token, Session session, ServletContext servletContext,
+	public TicketHttpSessionImpl(AuthenticatedToken token,String authenticatecode, Session session, ServletContext servletContext,
 			String contextpath, InvalidateCallback invalidateCallback) {
 		super(session, servletContext, contextpath, invalidateCallback);
 		this.token = token;
+		this.authenticatecode =  authenticatecode;
 		// TODO Auto-generated constructor stub
 	}
 
@@ -42,7 +44,12 @@ public class TicketHttpSessionImpl extends HttpSessionImpl {
 		if (attribute.equals(TicketConsts.ticket_session_token_key)) {
 			assertSession(attribute);
 			return this.token;
-		} else
+		} 
+		else if (attribute.equals(TicketConsts.ticket_session_authenticatecode_key)) {
+			assertSession(attribute);
+			return this.authenticatecode;
+		}
+		else
 			return super.getAttribute(attribute);
 	}
 
@@ -51,7 +58,12 @@ public class TicketHttpSessionImpl extends HttpSessionImpl {
 		if (attribute.equals(TicketConsts.ticket_session_token_key)) {
 			assertSession(attribute);
 			return this.token;
-		} else
+		} 
+		else if (attribute.equals(TicketConsts.ticket_session_authenticatecode_key)) {
+			assertSession(attribute);
+			return this.authenticatecode;
+		}
+		 else
 			return super.getValue(attribute);
 	}
 
@@ -60,7 +72,12 @@ public class TicketHttpSessionImpl extends HttpSessionImpl {
 		if (attribute.equals(TicketConsts.ticket_session_token_key)) {
 			assertSession(attribute);
 			this.token = (AuthenticatedToken) value;
-		} else
+		} 
+		else if (attribute.equals(TicketConsts.ticket_session_authenticatecode_key)) {
+			assertSession(attribute);
+			 this.authenticatecode = (String) value;
+		}
+		 else
 			super.putValue(attribute, value);
 	}
 
@@ -70,7 +87,11 @@ public class TicketHttpSessionImpl extends HttpSessionImpl {
 			assertSession(attribute);
 			this.token = null;
 		}
-		else
+		else if (attribute.equals(TicketConsts.ticket_session_authenticatecode_key)) {
+			assertSession(attribute);
+			 this.authenticatecode = null;
+		}
+		 else
 			super.removeAttribute(attribute);
 	}
 
@@ -80,7 +101,12 @@ public class TicketHttpSessionImpl extends HttpSessionImpl {
 			assertSession(attribute);
 			this.token = null;
 		}
-		else
+		 
+		else if (attribute.equals(TicketConsts.ticket_session_authenticatecode_key)) {
+			assertSession(attribute);
+			 this.authenticatecode = null;
+		}
+		 else
 			super.removeValue(attribute);
 	}
 
@@ -89,8 +115,13 @@ public class TicketHttpSessionImpl extends HttpSessionImpl {
 		if (attribute.equals(TicketConsts.ticket_session_token_key)){
 			assertSession(attribute);
 			this.token = (AuthenticatedToken) value;
+		}		 
+		else if (attribute.equals(TicketConsts.ticket_session_authenticatecode_key)) {
+			assertSession(attribute);
+			 this.authenticatecode = (String) value;
 		}
-		super.setAttribute(attribute, value);
+		 else
+			super.setAttribute(attribute, value);
 	}
 
 }

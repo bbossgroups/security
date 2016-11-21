@@ -10,16 +10,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.servlet.ServletContext;
-
 import org.apache.log4j.Logger;
 import org.frameworkset.nosql.mongodb.MongoDB;
 import org.frameworkset.nosql.mongodb.MongoDBHelper;
 import org.frameworkset.security.session.AttributeNamesEnumeration;
-import org.frameworkset.security.session.InvalidateCallback;
 import org.frameworkset.security.session.MongoDBUtil;
 import org.frameworkset.security.session.Session;
 import org.frameworkset.security.session.SessionBasicInfo;
+import org.frameworkset.security.session.SessionBuilder;
 import org.frameworkset.security.session.SessionUtil;
 import org.frameworkset.security.session.SimpleHttpSession;
 import org.frameworkset.security.session.domain.CrossDomain;
@@ -683,8 +681,8 @@ public class MongDBSessionStore extends BaseSessionStore{
 		}
 	}
 	@Override
-	public SimpleHttpSession createHttpSession(ServletContext servletContext,
-			SessionBasicInfo sessionBasicInfo, String contextpath,InvalidateCallback invalidateCallback) {
+	public SimpleHttpSession createHttpSession(
+			SessionBasicInfo sessionBasicInfo, SessionBuilder sessionBuilder) {
 		// TODO Auto-generated method stub
 		return null;
 	}

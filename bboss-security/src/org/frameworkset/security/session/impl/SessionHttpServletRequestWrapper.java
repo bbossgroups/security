@@ -22,9 +22,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
-import org.frameworkset.security.session.InvalidateCallback;
 import org.frameworkset.security.session.Session;
 import org.frameworkset.security.session.SessionBasicInfo;
+import org.frameworkset.security.session.SessionBuilder;
 import org.frameworkset.security.session.SessionUtil;
 
 import com.frameworkset.util.StringUtil;
@@ -38,7 +38,7 @@ import com.frameworkset.util.StringUtil;
  * @author biaoping.yin
  * @version 3.8.0
  */
-public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper implements InvalidateCallback {
+public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper implements SessionBuilder {
 	private static Logger log = Logger.getLogger(SessionHttpServletRequestWrapper.class);
 	protected String sessionid;
 	protected HttpSessionImpl session;
@@ -46,6 +46,7 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 	protected ServletContext servletContext;	
 	protected String appkey ;
 	protected boolean usewebsession = true;
+	protected boolean sessionidcookiewrited = false;
 	public SessionHttpServletRequestWrapper(HttpServletRequest request,HttpServletResponse response,ServletContext servletContext) {
 		super(request);
 		try
@@ -118,9 +119,14 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 		sessionBasicInfo.setSessionid(sessionid);
 		sessionBasicInfo.setReferip(StringUtil.getClientIP(this));
 		sessionBasicInfo.setRequesturi(this.getRequestUrl());				
-		this.session = (HttpSessionImpl) SessionUtil.createSession(servletContext,sessionBasicInfo,this.getContextPath(),this);				
-//		sessionid = session.getId();
-		SessionUtil.writeCookies(this, response,SessionUtil.getSessionManager().getCookiename(),sessionid);
+		this.session = (HttpSessionImpl) SessionUtil.createSession(sessionBasicInfo,this);				
+		this.sessionid = session.getId();
+		if(!sessionidcookiewrited)
+		{
+			SessionUtil.writeCookies(this, response,SessionUtil.getSessionManager().getCookiename(),sessionid);
+			sessionidcookiewrited = true;
+		}
+		
 	}
 	protected String randomToken()
 	{

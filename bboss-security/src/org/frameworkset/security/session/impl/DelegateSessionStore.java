@@ -18,11 +18,9 @@ package org.frameworkset.security.session.impl;
 import java.util.Enumeration;
 import java.util.Map;
 
-import javax.servlet.ServletContext;
-
-import org.frameworkset.security.session.InvalidateCallback;
 import org.frameworkset.security.session.Session;
 import org.frameworkset.security.session.SessionBasicInfo;
+import org.frameworkset.security.session.SessionBuilder;
 import org.frameworkset.security.session.SessionEvent;
 import org.frameworkset.security.session.SessionStore;
 import org.frameworkset.security.session.SessionUtil;
@@ -57,10 +55,10 @@ public class DelegateSessionStore implements SessionStore {
 		sessionStore.livecheck();
 
 	}
-	public SimpleHttpSession createHttpSession(ServletContext servletContext,SessionBasicInfo sessionBasicInfo,String contextpath,InvalidateCallback invalidateCallback)
+	public SimpleHttpSession createHttpSession(SessionBasicInfo sessionBasicInfo,SessionBuilder sessionBuilder)
 	{
 		Session session = createSession(sessionBasicInfo);
-		SimpleHttpSession httpsession = new HttpSessionImpl(session,servletContext,contextpath,invalidateCallback);
+		SimpleHttpSession httpsession =sessionBuilder.buildHttpSessionImpl(session); //new HttpSessionImpl(session,servletContext,contextpath,sessionBuilder);
 		if(SessionUtil.haveSessionListener())
 		{
 			SessionUtil.dispatchEvent(new SessionEventImpl(httpsession,SessionEvent.EventType_create));

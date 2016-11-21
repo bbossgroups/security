@@ -11,6 +11,9 @@ package org.frameworkset.web.auth;
 public class TicketConsts {
 	public static final String ticket_authenticatecode_parameter_name = "_tt_authc_pname";
 	public static final String ticket_session_token_key = "_ticket_session_token_key_";
+	public static final String ticket_session_authenticatecode_key = "_ticket_session_authenticatecode_key_";
+	
+	
 	/**
 	 * 
 	 */

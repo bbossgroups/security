@@ -89,10 +89,25 @@ public class TicketSessionHttpServletRequestWrapper extends SessionHttpServletRe
 	public HttpSessionImpl buildHttpSessionImpl(Session session)
 	{
 		if(this.gensessionfromauthsessionid)
-			SessionUtil.writeCookies(this, response, sessionid,this.token.getAuthenticatecode());
-		return new TicketHttpSessionImpl(token,session,servletContext,this.getContextPath(),this);
+		{
+			SessionUtil.writeCookies(this, response, sessionid,authenticateCode);
+			if(!sessionidcookiewrited )
+			{
+				SessionUtil.writeCookies(this, response,SessionUtil.getSessionManager().getCookiename(),sessionid);
+				sessionidcookiewrited = true; 
+			}
+		}
+		return new TicketHttpSessionImpl(token,authenticateCode,session,servletContext,this.getContextPath(),this);
 	}
 	
-	
+	@Override
+	public void invalidateCallback() {
+		token = null;
+		gensessionfromauthsessionid = false;
+		tokenfromlocalcookie = false;
+		authenticateCode = null;
+		super.invalidateCallback();
+		
+	}
 
 }

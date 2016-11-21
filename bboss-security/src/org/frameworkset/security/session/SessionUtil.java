@@ -570,9 +570,9 @@ public class SessionUtil {
 		return sessionStaticManager;
 	}
 	
-	public static HttpSession createSession(ServletContext servletContext,SessionBasicInfo sessionBasicInfo,String contextpath,InvalidateCallback invalidateCallback)
+	public static HttpSession createSession(SessionBasicInfo sessionBasicInfo,SessionBuilder invalidateCallback)
 	{
-		HttpSession session = sessionManager.getSessionStore().createHttpSession(   servletContext,  sessionBasicInfo,  contextpath,  invalidateCallback);
+		HttpSession session = sessionManager.getSessionStore().createHttpSession(   sessionBasicInfo,   invalidateCallback);
 		
 		return session;
 	}
