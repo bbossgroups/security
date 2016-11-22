@@ -4,12 +4,13 @@ package org.frameworkset.security.session.impl;
 
 import org.frameworkset.security.session.SessionIDGenerator;
 
+import com.frameworkset.util.SimpleStringUtil;
+
 public class UUIDSessionIDGenerator implements SessionIDGenerator {
 
 	@Override
 	public String generateID() {
-		String token = UUID.randomUUID().toString();
-		return token;
+		 return SimpleStringUtil.getUUID();
 	}
 
 }
