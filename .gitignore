@@ -49,3 +49,4 @@ Temporary Items
 /build/
 /build.gradle.bak
 /gradle.properties.bak
+/settings.gradle.bak
