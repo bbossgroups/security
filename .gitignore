@@ -50,3 +50,5 @@ Temporary Items
 /build.gradle.bak
 /gradle.properties.bak
 /settings.gradle.bak
+
+*.bak
