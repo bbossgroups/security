@@ -52,7 +52,11 @@ http://yin-bp.iteye.com/category/327553
 
 ## |--bboss-security
 
-  bboss会话共享和令牌管理核心工程
+  bboss会话共享核心工程
+  
+## |--bboss-ticket
+
+  bboss令牌统一认证核心工程  
 
 ## |--bboss-security-web和bboss-security-web-inf
 

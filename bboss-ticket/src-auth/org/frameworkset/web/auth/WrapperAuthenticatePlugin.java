@@ -73,14 +73,10 @@ public class WrapperAuthenticatePlugin extends BaseAuthenticatePlugin {
 				{
 					if(ticketlivetimes > 0 )
 					{
-						expiration = addDateSeconds(new Date(), (int)(authenticateToken_.getLivetimes() /1000));
+						expiration = addDateSeconds(new Date(), (int)(ticketlivetimes /1000));
 					}
-					else if(ticketlivetimes  == -2)
-					{
-						expiration = addDateSeconds(new Date(), (ticketlivetimes /1000));
-					}
-				}
-				
+					
+				}		
 			 
 					
 				String auhorcode = AuthorHelper.encodeAuthenticateResponse(authenticatedToken,privateKey,expiration,ticketlivetimes);
