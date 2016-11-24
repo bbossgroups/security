@@ -91,10 +91,10 @@ public abstract class BaseCharsetEncodingFilter extends SessionFilter{
         String filterEnabled = request.getParameter("filterEnabled");
 
         HttpServletResponse response = (HttpServletResponse)res;
-//        response.setHeader("Cache-Control", "no-cache"); 
-//        response.setHeader("Pragma", "no-cache"); 
-//        response.setDateHeader("Expires", -1);  
-//        response.setDateHeader("max-age", 0);
+        response.setHeader("Cache-Control", "no-cache"); 
+        response.setHeader("Pragma", "no-cache"); 
+        response.setDateHeader("Expires", -1);  
+        response.setDateHeader("max-age", 0);
         /**
          *  向所有会话cookie 添加“HttpOnly”属性,  解决方案，过滤器中
          */

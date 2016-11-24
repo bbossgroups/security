@@ -10,12 +10,12 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.frameworkset.security.session.impl.SessionFilter;
 import org.frameworkset.util.ReferHelper;
+import org.frameworkset.web.session.TicketSessionFilter;
 
 import com.frameworkset.util.StringUtil;
 
-public abstract class BaseCharsetEncodingFilter extends SessionFilter{
+public abstract class TicketBaseCharsetEncodingFilter extends TicketSessionFilter{
 
 	private FilterConfig config = null;
     private String RequestEncoding = null;
