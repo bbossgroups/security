@@ -28,7 +28,7 @@ public class SimpleCharsetEncodingFilter  implements Filter{
 
     private ReferHelper referHelper;
    
-  
+    private boolean ignoreParameterDecoding;
     
     public void init(FilterConfig arg0) throws ServletException {
     	
@@ -37,6 +37,8 @@ public class SimpleCharsetEncodingFilter  implements Filter{
         this.ResponseEncoding = config.getInitParameter("ResponseEncoding");
         String refererDefender_ =  config.getInitParameter("refererDefender");
         boolean refererDefender = StringUtil.getBoolean(refererDefender_, false);
+        String ignoreParameterDecoding_ =  config.getInitParameter("ignoreParameterDecoding");
+        ignoreParameterDecoding = StringUtil.getBoolean(ignoreParameterDecoding_, true);
         referHelper = new ReferHelper();
         referHelper.setRefererDefender(refererDefender);
         String wallfilterrules_ = config.getInitParameter("wallfilterrules");
@@ -124,7 +126,7 @@ public class SimpleCharsetEncodingFilter  implements Filter{
         {
 
             CharacterEncodingHttpServletRequestWrapper mrequestw = new
-                CharacterEncodingHttpServletRequestWrapper(request, RequestEncoding,checkiemodeldialog,referHelper);
+                CharacterEncodingHttpServletRequestWrapper(request, RequestEncoding,checkiemodeldialog,referHelper,ignoreParameterDecoding);
             CharacterEncodingHttpServletResponseWrapper wresponsew = new
                 CharacterEncodingHttpServletResponseWrapper(response, ResponseEncoding);
             fc.doFilter(mrequestw, wresponsew);
@@ -135,7 +137,7 @@ public class SimpleCharsetEncodingFilter  implements Filter{
         else if(mode.equals("1"))
         {
         	 CharacterEncodingHttpServletRequestWrapper mrequestw = new
-                     CharacterEncodingHttpServletRequestWrapper(request, RequestEncoding,checkiemodeldialog,referHelper);
+                     CharacterEncodingHttpServletRequestWrapper(request, RequestEncoding,checkiemodeldialog,referHelper,ignoreParameterDecoding);
             fc.doFilter(request,response);
 //            super.doFilter(request, response, fc);
         }
@@ -143,7 +145,7 @@ public class SimpleCharsetEncodingFilter  implements Filter{
         else
         {
             CharacterEncodingHttpServletRequestWrapper mrequestw = new
-                CharacterEncodingHttpServletRequestWrapper(request, this.RequestEncoding,checkiemodeldialog,referHelper);
+                CharacterEncodingHttpServletRequestWrapper(request, this.RequestEncoding,checkiemodeldialog,referHelper,ignoreParameterDecoding);
             CharacterEncodingHttpServletResponseWrapper wresponsew = new
                 CharacterEncodingHttpServletResponseWrapper(response, ResponseEncoding);
             fc.doFilter(mrequestw, wresponsew);

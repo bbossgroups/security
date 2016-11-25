@@ -15,6 +15,7 @@ import bboss.org.mozilla.intl.chardet.UTF8Convertor;
 
 public class CharacterEncodingHttpServletRequestWrapper
     extends HttpServletRequestWrapper{
+	private boolean ignoreParameterDecoding = true;
 	private Map<String,String[]> parameters = null;
 	private static Logger logger = Logger.getLogger(CharacterEncodingHttpServletRequestWrapper.class); 
 //	private Object lock = new Object();
@@ -30,7 +31,7 @@ public class CharacterEncodingHttpServletRequestWrapper
     public static final String USE_MVC_DENCODE_KEY = "org.frameworkset.web.servlet.handler.HandlerUtils.USE_MVC_DENCODE_KEY";
     private ReferHelper referHelper;
 
-    public CharacterEncodingHttpServletRequestWrapper(HttpServletRequest request, String encoding,boolean checkiemodeldialog,ReferHelper referHelper) {
+    public CharacterEncodingHttpServletRequestWrapper(HttpServletRequest request, String encoding,boolean checkiemodeldialog,ReferHelper referHelper,boolean ignoreParameterDecoding) {
         super(request);
 //        this.wallfilterrules = wallfilterrules;
 //        this.wallwhilelist = wallwhilelist;
@@ -47,6 +48,7 @@ public class CharacterEncodingHttpServletRequestWrapper
 //        String _checkiemodeldialog = request.getParameter("_checkiemodeldialog");
 //        if(_checkiemodeldialog != null && _checkiemodeldialog.equals("true"));
         	this.checkiemodeldialog = checkiemodeldialog; 
+        this.ignoreParameterDecoding = ignoreParameterDecoding;
     }
 
     public String getParameter(String name) {
@@ -95,7 +97,7 @@ public class CharacterEncodingHttpServletRequestWrapper
                 return tempArray;
             }
             
-            if ( (oldEncoding == null || isIOS88591(oldEncoding)) )
+            if ( !ignoreParameterDecoding && (oldEncoding == null || isIOS88591(oldEncoding)) )
             {
             	String[] clone = new String[tempArray.length];
             	

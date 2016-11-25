@@ -22,6 +22,7 @@ public abstract class BaseCharsetEncodingFilter extends SessionFilter{
     private String ResponseEncoding = null;
     private String mode = "0";
     private boolean checkiemodeldialog;
+    private boolean ignoreParameterDecoding;
 //    private static String[] wallfilterrules;
 //    private String[] wallwhilelist;
     private ReferHelper referHelper;
@@ -36,6 +37,8 @@ public abstract class BaseCharsetEncodingFilter extends SessionFilter{
         this.ResponseEncoding = config.getInitParameter("ResponseEncoding");
         String refererDefender_ =  config.getInitParameter("refererDefender");
         boolean refererDefender = StringUtil.getBoolean(refererDefender_, false);
+        String ignoreParameterDecoding_ =  config.getInitParameter("ignoreParameterDecoding");
+        ignoreParameterDecoding = StringUtil.getBoolean(ignoreParameterDecoding_, true);
         referHelper = new ReferHelper();
         referHelper.setRefererDefender(refererDefender);
         String wallfilterrules_ = config.getInitParameter("wallfilterrules");
@@ -126,7 +129,7 @@ public abstract class BaseCharsetEncodingFilter extends SessionFilter{
         {
 
             CharacterEncodingHttpServletRequestWrapper mrequestw = new
-                CharacterEncodingHttpServletRequestWrapper(request, RequestEncoding,checkiemodeldialog,referHelper);
+                CharacterEncodingHttpServletRequestWrapper(request, RequestEncoding,checkiemodeldialog,referHelper,ignoreParameterDecoding);
             CharacterEncodingHttpServletResponseWrapper wresponsew = new
                 CharacterEncodingHttpServletResponseWrapper(response, ResponseEncoding);
 //            fc.doFilter(mrequestw, wresponsew);
@@ -137,7 +140,7 @@ public abstract class BaseCharsetEncodingFilter extends SessionFilter{
         else if(mode.equals("1"))
         {
         	 CharacterEncodingHttpServletRequestWrapper mrequestw = new
-                     CharacterEncodingHttpServletRequestWrapper(request, RequestEncoding,checkiemodeldialog,referHelper);
+                     CharacterEncodingHttpServletRequestWrapper(request, RequestEncoding,checkiemodeldialog,referHelper,ignoreParameterDecoding);
             request.setCharacterEncoding(RequestEncoding);
 //            fc.doFilter(request,response);
             super.doFilter(request, response, fc);
@@ -146,7 +149,7 @@ public abstract class BaseCharsetEncodingFilter extends SessionFilter{
         else
         {
             CharacterEncodingHttpServletRequestWrapper mrequestw = new
-                CharacterEncodingHttpServletRequestWrapper(request, this.RequestEncoding,checkiemodeldialog,referHelper);
+                CharacterEncodingHttpServletRequestWrapper(request, this.RequestEncoding,checkiemodeldialog,referHelper,ignoreParameterDecoding);
             CharacterEncodingHttpServletResponseWrapper wresponsew = new
                 CharacterEncodingHttpServletResponseWrapper(response, ResponseEncoding);
 //            fc.doFilter(mrequestw, wresponsew);
