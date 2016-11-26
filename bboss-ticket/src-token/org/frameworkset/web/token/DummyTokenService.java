@@ -244,4 +244,13 @@ public class DummyTokenService implements TokenServiceInf {
 		return 0;
 	}
 
+	/** (non-Javadoc)
+	 * @see org.frameworkset.web.token.TokenServiceInf#validateApplication(java.lang.String, java.lang.String)
+	 */
+	@Override
+	public AppValidateResult validateApplication(String appid, String secret) throws TokenException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

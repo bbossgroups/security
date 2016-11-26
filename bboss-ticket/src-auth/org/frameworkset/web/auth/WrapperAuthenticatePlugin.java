@@ -16,6 +16,7 @@ import org.frameworkset.web.auth.AuthenticateToken;
 import org.frameworkset.web.auth.AuthenticatedToken;
 import org.frameworkset.web.auth.AuthorHelper;
 import org.frameworkset.web.auth.BaseAuthenticatePlugin;
+import org.frameworkset.web.token.AppValidateResult;
 import org.frameworkset.web.token.Application;
 import org.frameworkset.web.token.TokenException;
 import org.frameworkset.web.token.TokenHelper;
@@ -43,10 +44,19 @@ public class WrapperAuthenticatePlugin extends BaseAuthenticatePlugin {
 				authenticateResponse.setResultcode("failed");
 				authenticateResponse.setError(AuthenticateMessages.getMessage("50010"));//认证服务器公钥加密publicKey为空
 				authenticateResponse.setValidateResult(false);
+				return authenticateResponse;
 			}
 			AuthenticateToken authenticateToken_ = AuthorHelper.decodeMessageRequest(authenticateToken,this.publicKey);
 			
-			Application application = TokenHelper.getTokenService().assertApplication(authenticateToken_.getAppcode(), authenticateToken_.getAppsecret());
+			AppValidateResult validateResult = TokenHelper.getTokenService().validateApplication(authenticateToken_.getAppcode(), authenticateToken_.getAppsecret());
+			if(!validateResult.getResult())
+			{
+				authenticateResponse.setResultcode("failed");
+				authenticateResponse.setError(validateResult.getError());//认证服务器公钥加密publicKey为空
+				authenticateResponse.setValidateResult(false);
+				return authenticateResponse;
+			}
+			Application application = validateResult.getApplication();
 			authenticateToken_.setLivetimes(application.getTicketlivetime());
 			PrivateKey privateKey = TokenHelper.getTokenService().getPrivateKey(authenticateToken_.getAppcode());
 			if(privateKey == null)

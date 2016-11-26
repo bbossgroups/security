@@ -34,7 +34,7 @@ public interface ValidateApplication {
 	 * @Deprecated use Application validateApp(String appid,String secret) throws TokenException;
 	 */
 	@Deprecated
-	public boolean checkApp(String appid,String secret) throws TokenException;
+	public boolean checkApp(String appid,String secret) throws ValidateApplicationException;
 	/**
 	 * 通过appid和secret校验应用是否有效,成功返回校验的Application对象，否则返回null
 	 * @param appid
@@ -43,5 +43,5 @@ public interface ValidateApplication {
 	 * @throws TokenException
 	 */
 	
-	public AppValidateResult validateApp(String appid,String secret) throws TokenException;
+	public AppValidateResult validateApp(String appid,String secret) throws ValidateApplicationException;
 }

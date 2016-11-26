@@ -120,6 +120,20 @@ public abstract class BaseTokenStore implements TokenStore {
 		}
 			
 	}
+	
+	public AppValidateResult validateApplication(String appid,String secret) throws TokenException
+	{
+		try {
+			AppValidateResult result = validateApplication.validateApp(appid, secret);
+			 
+			return result;
+		} catch (TokenException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new TokenException(TokenStore.ERROR_CODE_APPVALIDATERROR,e);
+		}
+			
+	}
 	/**
 	 * 零时ticket一次性有效，在有效期了只能用一次，用过即删除掉，超过指定时间即为无效ticket，要删除
 	 * @param account

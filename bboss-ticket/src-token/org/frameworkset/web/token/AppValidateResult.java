@@ -1,6 +1,7 @@
 package org.frameworkset.web.token;
 
 public class AppValidateResult {
+	private String error;
 	private boolean result;
 	private Application application;
 	public boolean getResult() {
@@ -14,6 +15,12 @@ public class AppValidateResult {
 	}
 	public void setApplication(Application application) {
 		this.application = application;
+	}
+	public String getError() {
+		return error;
+	}
+	public void setError(String error) {
+		this.error = error;
 	}
 
 }

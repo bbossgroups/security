@@ -115,6 +115,8 @@ public interface TokenServiceInf {
 	public SimpleKeyPair getServerSimpleKeyPair();
 	public AuthenticatePlugin getAuthenticatePlugin();
 	public Application assertApplication(String appid,String secret) throws TokenException;
+	public AppValidateResult validateApplication(String appid,String secret) throws TokenException;
+	
 	public AuthorHelper getAuthorHelper();
 	public AuthorService getAuthorService();
 }

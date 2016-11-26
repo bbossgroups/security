@@ -88,7 +88,7 @@ public interface TokenStore {
 	
 	
 	public abstract void destory();
-
+	public AppValidateResult validateApplication(String appid,String secret) throws TokenException;
 	public abstract void livecheck();
 	public abstract TokenResult checkTicket(String appid,String secret,String ticket)  throws TokenException;
 	public abstract TokenResult checkToken(String appid,String secret,String tokeninfo)  throws TokenException;

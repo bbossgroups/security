@@ -27,7 +27,7 @@ package org.frameworkset.web.token;
 public class NullValidateApplication implements ValidateApplication {
 
 	@Override
-	public boolean checkApp(String appid, String secret) throws TokenException {		
+	public boolean checkApp(String appid, String secret) throws ValidateApplicationException {		
 		 AppValidateResult result = validateApp(appid, secret);
 		 if(result == null )
 			 return true;
@@ -35,7 +35,7 @@ public class NullValidateApplication implements ValidateApplication {
 	}
 	
 	@Override
-	public AppValidateResult validateApp(String appid, String secret) throws TokenException {
+	public AppValidateResult validateApp(String appid, String secret) throws ValidateApplicationException {
 		AppValidateResult result = new AppValidateResult();
 		Application app = new Application();
 		app.setAppid(appid);
