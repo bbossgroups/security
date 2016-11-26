@@ -42,7 +42,7 @@ public class TokenHelper {
 	private static final Logger log = Logger.getLogger(TokenHelper.class);
 	static void setTokenFilter(TokenFilter tokenFilter)
 	{
-		init();
+		
 		TokenHelper.tokenFilter = tokenFilter;
 	}
 	static boolean inited;
