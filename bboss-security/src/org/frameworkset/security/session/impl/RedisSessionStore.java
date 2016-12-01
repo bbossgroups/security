@@ -602,11 +602,13 @@ public class RedisSessionStore extends BaseSessionStore{
 		try
 		{
 			redisHelper = RedisFactory.getRedisHelper();
-			String sessionKey = this.getAPPSessionKey(appKey, session.getId());
+			String sessionKey = getAPPSessionKey(appKey, session.getId());
 			if(value != null)
 				redisHelper.hset(sessionKey, attribute, String.valueOf(value));
 			else
-				redisHelper.hset(sessionKey, attribute, null);
+			{
+				redisHelper.hdel(sessionKey, attribute);
+			}
 		}
 		 catch (Exception e) {
 				log.error("",e);
