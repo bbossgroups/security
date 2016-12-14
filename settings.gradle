@@ -1,2 +1,1 @@
-rootProject.name = 'security'
 include "bboss-security", "bboss-security-web","bboss-security-web-inf","bboss-ticket"
