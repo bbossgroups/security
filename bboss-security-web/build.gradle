@@ -43,7 +43,7 @@ compile project(':bboss-ticket')
                 [group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: "${jacksonversion}",transitive: false],
             [group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: "${jacksonversion}",transitive: false],
             [group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: "${jacksonversion}",transitive: false],
-            [group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: "${jacksonversion}",transitive: false],
+            //[group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: "${jacksonversion}",transitive: false],
              [group: 'com.bbossgroups', name: 'bboss-soa', version: "${bboss_version}", transitive: false],
             // [group: 'javax.servlet', name: 'javax.servlet-api', version: "3.0.1", transitive: false],
     //[group: 'javaee', name: 'javaee-api', version: '5', transitive: false],
