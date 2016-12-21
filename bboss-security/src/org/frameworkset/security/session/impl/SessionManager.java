@@ -48,6 +48,7 @@ public class SessionManager extends org.frameworkset.spi.BaseApplicationContextA
 	public static final String default_cookiename = "B_SESSIONID";
 	public static final boolean default_httpOnly = true;
 	public static final long default_cookieLiveTime = -1l;
+	private boolean enableSessionIDFromParameter = false;
 	private long sessionTimeout;
 	private String cookiename;
 	private Object sessionstore;
@@ -137,6 +138,10 @@ public class SessionManager extends org.frameworkset.spi.BaseApplicationContextA
 			sessionMonitor.start();
 		}
 	}
+	public boolean enableSessionIDFromParameter(){
+		return enableSessionIDFromParameter;
+	}
+	
 	public void initSessionConfig(String appcode,String monitorScope)
 	{
 		if(this.appcode == null)
@@ -169,6 +174,7 @@ public class SessionManager extends org.frameworkset.spi.BaseApplicationContextA
 		sessionConfig.setSerialType(serialType);
 		sessionConfig.setSessionidGeneratorPlugin(this.sessionIDGenerator.getClass().getCanonicalName());
 		sessionConfig.setStoreReadAttributes(this.storeReadAttributes);
+		sessionConfig.setEnableSessionIDFromParameter(enableSessionIDFromParameter);
 		this.sessionStore.saveSessionConfig(sessionConfig);
 	}
 	
@@ -500,5 +506,8 @@ public class SessionManager extends org.frameworkset.spi.BaseApplicationContextA
 	}
 	public void setStoreReadAttributes(boolean storeReadAttributes) {
 		this.storeReadAttributes = storeReadAttributes;
+	}
+	public void setEnableSessionIDFromParameter(boolean enableSessionIDFromParameter) {
+		this.enableSessionIDFromParameter = enableSessionIDFromParameter;
 	}
 }

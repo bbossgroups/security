@@ -10,7 +10,14 @@
 			<property name="sessionTimeout" value="3600000"/>
 			<property name="sessionstore" refid="attr:sessionstore"/> 
 			<!-- <property name="sessionstore" value="session"/>-->
-			<property name="cookiename" value="b_sessionid"/>			
+			<property name="cookiename" value="b_sessionid"/>
+			<!-- 
+			enableSessionIDFromParameter:支持以参数方式 传递sessionid控制开关
+			true 启用,使用cookiename属性对应的值作为传递sessionid的参数名称
+			false 关闭 默认值
+			优先从cookie中获取sessionid，如果没有获取才需要从参数中获取sessionid		
+			-->	
+			<property name="enableSessionIDFromParameter" value="false"/>		
 			<property name="httpOnly" value="true"/>
 			<property name="secure" value="false"/>
 			<property name="lazystore" value="true"/>

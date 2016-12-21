@@ -59,6 +59,12 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 				if( !usewebsession)
 				{
 					sessionid = StringUtil.getCookieValue((HttpServletRequest)request, SessionUtil.getSessionManager().getCookiename());
+					if(sessionid == null && SessionUtil.getSessionManager().enableSessionIDFromParameter())
+					{
+						sessionid = request.getParameter(SessionUtil.getSessionManager().getCookiename());
+						if(sessionid != null)
+							SessionUtil.writeCookies(this, response,SessionUtil.getSessionManager().getCookiename(),this.sessionid);
+					}
 					appkey = SessionUtil.getAppKey(this);
 				}
 			}

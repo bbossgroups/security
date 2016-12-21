@@ -15,7 +15,7 @@ public class SessionConfig implements Serializable {
 	private Date scanStartTime;
 	private Date createTime;
 	private Date updateTime;
- 
+	private boolean enableSessionIDFromParameter = false;
 	private boolean httpOnly;
 	private boolean secure;
 	private String domain;
@@ -187,6 +187,12 @@ public class SessionConfig implements Serializable {
 	}
 	public void setSessionidGeneratorPlugin(String sessionidGeneratorPlugin) {
 		this.sessionidGeneratorPlugin = sessionidGeneratorPlugin;
+	}
+	public boolean isEnableSessionIDFromParameter() {
+		return enableSessionIDFromParameter;
+	}
+	public void setEnableSessionIDFromParameter(boolean enableSessionIDFromParameter) {
+		this.enableSessionIDFromParameter = enableSessionIDFromParameter;
 	}
 
 }

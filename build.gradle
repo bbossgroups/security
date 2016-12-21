@@ -140,5 +140,27 @@ configure([project(":bboss-security"),project(":bboss-security-web"),project(":b
 		     
 		}//repositories
 	}//uploadArchives
+	publishing {
+			
+		publications {
+			mavenJava(MavenPublication) {
+				from components.java				
+				artifact sourcesJar
+				artifact javaDocJar
+				
+			}
+		}
+		repositories {
+	        /**maven {
+	            url "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+	            credentials {
+	                username ""
+	                password ""
+	            }
+	        }*/
+	        mavenLocal()    
+	    }
+		
+	}
 }//configure
 
