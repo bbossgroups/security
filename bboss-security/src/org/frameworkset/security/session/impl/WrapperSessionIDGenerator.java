@@ -3,6 +3,7 @@
  */
 package org.frameworkset.security.session.impl;
 
+import org.frameworkset.security.AESCoder;
 import org.frameworkset.security.DESCipher;
 import org.frameworkset.security.session.SessionIDGenerator;
 import org.frameworkset.security.session.SignSessionIDException;
@@ -18,6 +19,7 @@ public class WrapperSessionIDGenerator implements SignSessionIDGenerator{
 	private SessionIDGenerator sessionIDGenerator;
 	private boolean signSessionID;
 	private String signKey;
+	private String parameterSingKey;
 	/**
 	 * 
 	 */
@@ -25,6 +27,7 @@ public class WrapperSessionIDGenerator implements SignSessionIDGenerator{
 		this.sessionIDGenerator = sessionIDGenerator;
 		this.signSessionID = signSessionID;
 		this.signKey = signKey;
+		parameterSingKey = "pmt_"+this.signKey ;
 	}
 
 	/** (non-Javadoc)
@@ -45,7 +48,7 @@ public class WrapperSessionIDGenerator implements SignSessionIDGenerator{
 	 
 	public String sign(String sessionid,boolean paramenterSessionID) {
 		if(signSessionID || paramenterSessionID)
-			return _sign(sessionid);
+			return _aessign(sessionid,  paramenterSessionID);
 		else
 			return sessionid;
 	}
@@ -56,27 +59,44 @@ public class WrapperSessionIDGenerator implements SignSessionIDGenerator{
 	 
 	public String design(String signedSessionid,boolean paramenterSessionID) {
 		if(signSessionID || paramenterSessionID)
-			return _design(signedSessionid);
+			return _aesdesign(signedSessionid,  paramenterSessionID);
 		else
 			return signedSessionid;
 	}
 	
-	
-	 
-	public String _sign(String sessionid) {
+	public String _dessign(String sessionid,boolean paramenterSessionID) {
 		try {
-			DESCipher desCipher = new DESCipher(signKey,DESCipher.type_encode);
+			DESCipher desCipher = new DESCipher(paramenterSessionID?this.parameterSingKey:signKey,DESCipher.type_encode);
 			return desCipher.encrypt(sessionid);
+		} catch (Exception e) {
+			throw new SignSessionIDException(e);
+		}
+	}
+	 
+	public String _aessign(String sessionid,boolean paramenterSessionID) {
+		try {
+			AESCoder aes = new AESCoder(paramenterSessionID?this.parameterSingKey:signKey);
+			return aes.encrypt(sessionid);
 		} catch (Exception e) {
 			throw new SignSessionIDException(e);
 		}
 	}
 
 	 
-	public String _design(String signedSessionid) {
+	public String _desdesign(String signedSessionid,boolean paramenterSessionID) {
 		try {
-			DESCipher desCipher = new DESCipher(signKey,DESCipher.type_decode);
+			DESCipher desCipher = new DESCipher(paramenterSessionID?this.parameterSingKey:signKey,DESCipher.type_decode);
 			return desCipher.decrypt(signedSessionid);
+		} catch (Exception e) {
+			throw new SignSessionIDException(e);
+		}
+
+	}
+	
+	public String _aesdesign(String signedSessionid,boolean paramenterSessionID) {
+		try {
+			AESCoder aes = new AESCoder(paramenterSessionID?this.parameterSingKey:signKey);
+			return aes.decrypt(signedSessionid);
 		} catch (Exception e) {
 			throw new SignSessionIDException(e);
 		}

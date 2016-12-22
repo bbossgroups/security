@@ -585,6 +585,14 @@ public class SessionUtil {
 		sessionManager.dispatchEvent(sessionEvent);
 	}
 	
-	
+	/**
+	 * 对sessionid进行签名
+	 * paramenterSessionID 标识sessionID是否从参数传递过来，如果从参数传递过来则必须调用本方法，并且通过指定paramenterSessionID=true对sessionid进行加密签名，否则sessionid不起作用
+	 * 如果显示指定sessionID必须加密签名或者paramenterSessionID为true，则会对sessionid进行加密签名
+	 * @return
+	 */
+	public static String sign(String sessionid,boolean paramenterSessionID)  throws SignSessionIDException{
+		return getSessionManager().getSignSessionIDGenerator().sign(sessionid, paramenterSessionID);
+	}
 
 }
