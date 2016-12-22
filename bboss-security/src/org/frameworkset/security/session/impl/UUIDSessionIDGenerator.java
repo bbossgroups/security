@@ -2,15 +2,16 @@ package org.frameworkset.security.session.impl;
 
 
 
-import org.frameworkset.security.session.SessionIDGenerator;
-
 import com.frameworkset.util.SimpleStringUtil;
 
-public class UUIDSessionIDGenerator implements SessionIDGenerator {
+public class UUIDSessionIDGenerator   extends AbstractSessionIDGenerator {
 
 	@Override
-	public String generateID() {
-		 return SimpleStringUtil.getUUID();
+	public SessionID generateID() {
+		SessionID sessionid = new SessionID();
+		sessionid.setSessionId(SimpleStringUtil.getUUID());
+		 return sessionid;
 	}
+	
 
 }

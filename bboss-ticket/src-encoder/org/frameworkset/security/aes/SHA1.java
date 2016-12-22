@@ -16,7 +16,7 @@ import org.frameworkset.security.AesException;
 /**
  * SHA1 class
  *
- * 计算公众平台的消息签名接口.
+ * 计算消息签名接口.
  */
 public class SHA1 {
 
@@ -24,7 +24,7 @@ public class SHA1 {
 	public static String getSHA1(String token,String data, String timestamp, String nonce) throws AesException {
 		try {
 			String[] array = new String[] { token, timestamp, nonce ,data};
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			// 字符串排序
 			Arrays.sort(array);
 			for (int i = 0; i < array.length; i++) {
@@ -36,7 +36,7 @@ public class SHA1 {
 			md.update(str.getBytes());
 			byte[] digest = md.digest();
 
-			StringBuffer hexstr = new StringBuffer();
+			StringBuilder hexstr = new StringBuilder();
 			String shaHex = "";
 			for (int i = 0; i < digest.length; i++) {
 				shaHex = Integer.toHexString(digest[i] & 0xFF);

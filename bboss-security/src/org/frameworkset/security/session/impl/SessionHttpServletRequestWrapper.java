@@ -40,7 +40,7 @@ import com.frameworkset.util.StringUtil;
  */
 public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper implements SessionBuilder {
 	private static Logger log = Logger.getLogger(SessionHttpServletRequestWrapper.class);
-	protected String sessionid;
+	protected SessionID sessionid;
 	protected HttpSessionImpl session;
 	protected HttpServletResponse response;
 	protected ServletContext servletContext;	
@@ -58,20 +58,45 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 				usewebsession = SessionUtil.getSessionManager().usewebsession();
 				if( !usewebsession)
 				{
-					sessionid = StringUtil.getCookieValue((HttpServletRequest)request, SessionUtil.getSessionManager().getCookiename());
-					if(sessionid == null && SessionUtil.getSessionManager().enableSessionIDFromParameter())
+					String sessionid = StringUtil.getCookieValue((HttpServletRequest)request, SessionUtil.getSessionManager().getCookiename());
+					if(sessionid == null )
 					{
-						sessionid = request.getParameter(SessionUtil.getSessionManager().getCookiename());
-						if(sessionid != null)
-							SessionUtil.writeCookies(this, response,SessionUtil.getSessionManager().getCookiename(),this.sessionid);
+						if( SessionUtil.getSessionManager().enableSessionIDFromParameter()){							
+							sessionid = request.getParameter(SessionUtil.getSessionManager().getCookiename());
+							if(sessionid != null ){
+								String signSessionid = sessionid;
+								sessionid = SessionUtil.getSessionManager().getSignSessionIDGenerator().design(signSessionid,true);
+								this.sessionid = new SessionID();
+								if(SessionUtil.getSessionManager().isSignSessionID())//只有在启用签名的情况下，才需要往cookie中存放加密的sessionid
+									this.sessionid.setSignSessionId(signSessionid);
+								else
+									this.sessionid.setSignSessionId(sessionid);
+								this.sessionid.setSessionId(sessionid);
+								if(SessionUtil.getSessionManager().rewriteSessionCookie())
+									SessionUtil.writeSessionIDCookies(this, response,SessionUtil.getSessionManager().getCookiename(),this.sessionid);
+							}
+						}
+							
+					}
+					else
+					{
+						String signSessionid = sessionid;
+						sessionid = SessionUtil.getSessionManager().getSignSessionIDGenerator().design(signSessionid,false);
+						this.sessionid = new SessionID();
+						this.sessionid.setSignSessionId(signSessionid);
+						this.sessionid.setSessionId(sessionid);
 					}
 					appkey = SessionUtil.getAppKey(this);
 				}
 			}
 		}
+		catch(SessionException e){
+			throw e;
+		}
 		catch(Throwable e)
 		{
-			log.debug("Init bboss session failed:",e);
+			//log.debug("Init bboss SessionHttpServletRequestWrapper failed:",e);
+			throw new SessionException("Init bboss SessionHttpServletRequestWrapper failed:",e);
 		}
 		this.servletContext = servletContext;
 		this.response = response;
@@ -118,27 +143,27 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 			basePath.append("?").append(this.getQueryString());
 		return basePath.toString();
 	}
-	protected void createSession(String sessionid)
+	protected void createSession(SessionID sessionid)
 	{
 		SessionBasicInfo sessionBasicInfo = new SessionBasicInfo();
 		sessionBasicInfo.setAppKey(appkey);
-		sessionBasicInfo.setSessionid(sessionid);
+		sessionBasicInfo.setSessionid(sessionid.getSessionId());
 		sessionBasicInfo.setReferip(StringUtil.getClientIP(this));
 		sessionBasicInfo.setRequesturi(this.getRequestUrl());				
 		this.session = (HttpSessionImpl) SessionUtil.createSession(sessionBasicInfo,this);				
-		this.sessionid = session.getId();
+		this.sessionid = sessionid;
 		if(!sessionidcookiewrited)
 		{
-			SessionUtil.writeCookies(this, response,SessionUtil.getSessionManager().getCookiename(),this.sessionid);
+			SessionUtil.writeSessionIDCookies(this, response,SessionUtil.getSessionManager().getCookiename(),sessionid);
 			sessionidcookiewrited = true;
 		}
 		
 	}
-	protected String randomToken()
+	protected SessionID randomToken()
 	{
 //		String token = UUID.randomUUID().toString();
 //		return token;
-		return SessionUtil.getSessionManager().getSessionIDGenerator().generateID();
+		return SessionUtil.getSessionManager().getSignSessionIDGenerator().generateID();
 	}
 	@Override
 	public HttpSession getSession(boolean create) {
@@ -169,7 +194,7 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 		{
 //			String appkey =  SessionUtil.getAppKey(this);
 
-			Session session = SessionUtil.getSession(appkey,this.getContextPath(),sessionid);
+			Session session = SessionUtil.getSession(appkey,this.getContextPath(),sessionid.getSessionId());
 			if(session == null)//session不存在，创建新的session
 			{				
 				if(create)
@@ -232,7 +257,7 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 			if(session == null)
 			{
 //				String appkey =  SessionUtil.getAppKey(this);
-				Session session_ = SessionUtil.getSession(appkey,this.getContextPath(), sessionid);
+				Session session_ = SessionUtil.getSession(appkey,this.getContextPath(), sessionid.getSessionId());
 				if(session_ == null || !session_.isValidate())
 				{
 					this.sessionid = null;
@@ -256,7 +281,7 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 			return super.getRequestedSessionId();
 		}
 		if(this.sessionid != null)
-			return sessionid;
+			return sessionid.getSessionId();
 		HttpSession session = this.getSession(false);
 		if(session == null)
 			return null;

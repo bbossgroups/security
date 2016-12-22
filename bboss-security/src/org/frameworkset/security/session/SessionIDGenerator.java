@@ -1,6 +1,13 @@
 package org.frameworkset.security.session;
 
+import org.frameworkset.security.session.impl.SessionID;
+
 public interface SessionIDGenerator {
-	String generateID();
+	/**
+	 * 生成sessionid
+	 * @return
+	 */
+	SessionID generateID();
+	
 
 }

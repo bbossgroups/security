@@ -10,14 +10,13 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.apache.log4j.Logger;
-import org.frameworkset.security.session.SessionIDGenerator;
 
 /**
  * @author yinbp
  *
  * @Date:2016-11-21 16:26:34
  */
-public abstract class SessionIdGeneratorBase implements SessionIDGenerator {
+public abstract class SessionIdGeneratorBase extends AbstractSessionIDGenerator {
 
 	 
 
@@ -157,7 +156,7 @@ public abstract class SessionIdGeneratorBase implements SessionIDGenerator {
 		     * Generate and return a new session identifier.
 		     */
 		   
-		    public abstract String generateID();
+		    public abstract SessionID generateID();
 
 
 		    protected void getRandomBytes(byte bytes[]) {
@@ -230,7 +229,6 @@ public abstract class SessionIdGeneratorBase implements SessionIDGenerator {
 		            log.info("sessionIdGeneratorBase.createRandom:"+result.getAlgorithm()+"="+ Long.valueOf(t2-t1));
 		        return result;
 		    }
-
- 
+		  
 
 }

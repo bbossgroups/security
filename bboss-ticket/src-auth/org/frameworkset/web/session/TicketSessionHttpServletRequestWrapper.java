@@ -11,6 +11,7 @@ import org.frameworkset.security.session.Session;
 import org.frameworkset.security.session.SessionUtil;
 import org.frameworkset.security.session.impl.HttpSessionImpl;
 import org.frameworkset.security.session.impl.SessionHttpServletRequestWrapper;
+import org.frameworkset.security.session.impl.SessionID;
 import org.frameworkset.web.auth.AuthenticateException;
 import org.frameworkset.web.auth.AuthenticatedToken;
 import org.frameworkset.web.auth.AuthorHelper;
@@ -53,12 +54,16 @@ public class TicketSessionHttpServletRequestWrapper extends SessionHttpServletRe
 					{
 						if(sessionid == null)
 						{
-							this.sessionid = token_sessionid;
+							this.sessionid = new SessionID();
+							sessionid.setSessionId( token_sessionid);
+							sessionid.setSignSessionId(SessionUtil.getSessionManager().getSignSessionIDGenerator().sign(token_sessionid,false));
 							gensessionfromauthsessionid = true;
 						}
-						else if(!sessionid.equals(token_sessionid))
+						else if(!sessionid.getSessionId().equals(token_sessionid))
 						{
-							this.sessionid = token_sessionid;
+							this.sessionid = new SessionID();
+							sessionid.setSessionId( token_sessionid);
+							sessionid.setSignSessionId(SessionUtil.getSessionManager().getSignSessionIDGenerator().sign(token_sessionid,false));
 							gensessionfromauthsessionid = true;
 						}
 					}
@@ -69,7 +74,7 @@ public class TicketSessionHttpServletRequestWrapper extends SessionHttpServletRe
 			}
 			else if(this.sessionid != null)
 			{
-				authenticateCode = StringUtil.getCookieValue((HttpServletRequest)request, sessionid);
+				authenticateCode = StringUtil.getCookieValue((HttpServletRequest)request, sessionid.getSessionId());
 				if(authenticateCode != null)
 				{
 					try {
@@ -90,10 +95,10 @@ public class TicketSessionHttpServletRequestWrapper extends SessionHttpServletRe
 	{
 		if(this.gensessionfromauthsessionid)
 		{
-			SessionUtil.writeCookies(this, response, sessionid,authenticateCode);
+			SessionUtil.writeCookies_(this, response, sessionid.getSessionId(),authenticateCode);
 			if(!sessionidcookiewrited )
 			{
-				SessionUtil.writeCookies(this, response,SessionUtil.getSessionManager().getCookiename(),sessionid);
+				SessionUtil.writeSessionIDCookies(this, response,SessionUtil.getSessionManager().getCookiename(),sessionid);
 				sessionidcookiewrited = true; 
 			}
 		}

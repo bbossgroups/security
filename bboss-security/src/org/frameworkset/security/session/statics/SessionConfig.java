@@ -15,7 +15,32 @@ public class SessionConfig implements Serializable {
 	private Date scanStartTime;
 	private Date createTime;
 	private Date updateTime;
+	/**
+	 * enableSessionIDFromParameter:支持以参数方式 传递sessionid控制开关
+			true 启用,使用cookiename属性对应的值作为传递sessionid的参数名称
+			false 关闭 默认值
+			优先从cookie中获取sessionid，如果从cookie中没有获取sessionid到才需要从参数中获取sessionid	
+			从参数传递的sessionid，必须采用以下方式对sessionid进行加密，才能传递：
+			String sid = SessionUtil.getSessionManager().getSignSessionIDGenerator().sign("d4d6d67bb1e64bb39ee81434add36b59", true);
+	 */
 	private boolean enableSessionIDFromParameter = false;
+	/**
+	 * 将从请求参数中获取sessionid写回cookie控制开关，当enableSessionIDFromParameter为true时起作用<br>
+			true 启用,使用cookiename属性将对应的值作为sessionid写回cookie<br>
+			false 关闭 默认值<br>
+		bboss采用增强的sessionid签名校验机制，避免客户端篡改sessionid，为了避免bboss内置的sessionid的签名算法被暴露，请修改默认的signKey
+	 */
+	private boolean rewriteSessionCookie;
+	/**
+	 * 是否对sessionid进行加密存入cookie
+	 * true 加密
+	 * false 不加密，默认值
+	 */
+	private boolean signSessionID = false;
+	/**
+	 * sessionid 签名key
+	 */
+	private String signKey = null;
 	private boolean httpOnly;
 	private boolean secure;
 	private String domain;
@@ -193,6 +218,24 @@ public class SessionConfig implements Serializable {
 	}
 	public void setEnableSessionIDFromParameter(boolean enableSessionIDFromParameter) {
 		this.enableSessionIDFromParameter = enableSessionIDFromParameter;
+	}
+	public boolean isRewriteSessionCookie() {
+		return rewriteSessionCookie;
+	}
+	public void setRewriteSessionCookie(boolean rewriteSessionCookie) {
+		this.rewriteSessionCookie = rewriteSessionCookie;
+	}
+	public boolean isSignSessionID() {
+		return signSessionID;
+	}
+	public void setSignSessionID(boolean signSessionID) {
+		this.signSessionID = signSessionID;
+	}
+	public String getSignKey() {
+		return signKey;
+	}
+	public void setSignKey(String signKey) {
+		this.signKey = signKey;
 	}
 
 }

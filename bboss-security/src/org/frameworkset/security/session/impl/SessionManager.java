@@ -26,6 +26,7 @@ import org.frameworkset.security.session.SessionListener;
 import org.frameworkset.security.session.SessionSerial;
 import org.frameworkset.security.session.SessionStore;
 import org.frameworkset.security.session.SessionUtil;
+import org.frameworkset.security.session.SignSessionIDGenerator;
 import org.frameworkset.security.session.domain.CrossDomain;
 import org.frameworkset.security.session.statics.AttributeInfo;
 import org.frameworkset.security.session.statics.SessionConfig;
@@ -48,7 +49,32 @@ public class SessionManager extends org.frameworkset.spi.BaseApplicationContextA
 	public static final String default_cookiename = "B_SESSIONID";
 	public static final boolean default_httpOnly = true;
 	public static final long default_cookieLiveTime = -1l;
+	/**
+	 * enableSessionIDFromParameter:支持以参数方式 传递sessionid控制开关
+			true 启用,使用cookiename属性对应的值作为传递sessionid的参数名称
+			false 关闭 默认值
+			优先从cookie中获取sessionid，如果从cookie中没有获取sessionid到才需要从参数中获取sessionid	
+			从参数传递的sessionid，必须采用以下方式对sessionid进行加密，才能传递：
+			String sid = SessionUtil.getSessionManager().getSignSessionIDGenerator().sign("d4d6d67bb1e64bb39ee81434add36b59", true);
+	 */
 	private boolean enableSessionIDFromParameter = false;
+	/**
+	 * 将从请求参数中获取sessionid写回cookie控制开关，当enableSessionIDFromParameter为true时起作用<br>
+			true 启用,使用cookiename属性将对应的值作为sessionid写回cookie<br>
+			false 关闭 默认值<br>
+		bboss采用增强的sessionid签名校验机制，避免客户端篡改sessionid，为了避免bboss内置的sessionid的签名算法被暴露，请修改默认的signKey
+	 */
+	private boolean rewriteSessionCookie;
+	/**
+	 * 是否对sessionid进行加密存入cookie
+	 * true 加密
+	 * false 不加密，默认值
+	 */
+	private boolean signSessionID = false;
+	/**
+	 * sessionid 签名key
+	 */
+	private String signKey = "bboss_session";
 	private long sessionTimeout;
 	private String cookiename;
 	private Object sessionstore;
@@ -58,10 +84,15 @@ public class SessionManager extends org.frameworkset.spi.BaseApplicationContextA
 	/**if(lazystore == true && storeReadAttributes) then store allReaded attributes when submit session modify operations.*/
 	private boolean storeReadAttributes = false;
 	private SessionIDGenerator sessionIDGenerator;
+	private SignSessionIDGenerator signSessionIDGenerator;
 	private String serialType = SessionSerial.SERIAL_TYPE_BBOSS;
 	private SessionSerial sessionSerial;
-	public SessionIDGenerator getSessionIDGenerator() {
-		return sessionIDGenerator;
+//	public SessionIDGenerator getSessionIDGenerator() {
+//		return sessionIDGenerator;
+//	}
+	
+	public SignSessionIDGenerator getSignSessionIDGenerator(){
+		return signSessionIDGenerator;
 	}
 	public void setSessionIDGenerator(SessionIDGenerator sessionIDGenerator) {
 		this.sessionIDGenerator = sessionIDGenerator;
@@ -88,6 +119,9 @@ public class SessionManager extends org.frameworkset.spi.BaseApplicationContextA
 	 * 用于监控查询用户自定义存储在session对象中的属性值，如果跨域的session共享，则只能指定为共享的会议属性，属性值必须只能是基本数据类型属性
 	 */
 	private AttributeInfo[] monitorAttributeArray;
+	public boolean rewriteSessionCookie(){
+		return rewriteSessionCookie;
+	}
 	public AttributeInfo[] getMonitorAttributeArray() {
 		// TODO Auto-generated method stub
 		return monitorAttributeArray;
@@ -175,6 +209,9 @@ public class SessionManager extends org.frameworkset.spi.BaseApplicationContextA
 		sessionConfig.setSessionidGeneratorPlugin(this.sessionIDGenerator.getClass().getCanonicalName());
 		sessionConfig.setStoreReadAttributes(this.storeReadAttributes);
 		sessionConfig.setEnableSessionIDFromParameter(enableSessionIDFromParameter);
+		sessionConfig.setRewriteSessionCookie(rewriteSessionCookie);
+		sessionConfig.setSignSessionID(signSessionID);
+		sessionConfig.setSignKey(signKey);
 		this.sessionStore.saveSessionConfig(sessionConfig);
 	}
 	
@@ -219,8 +256,22 @@ public class SessionManager extends org.frameworkset.spi.BaseApplicationContextA
 		if(this.monitorAttributes != null)
 			this.monitorAttributes = this.monitorAttributes.trim(); 
 		initExtendFields();
-		if(this.sessionIDGenerator == null)
+		
+		if(this.sessionIDGenerator == null)		
+		{
 			sessionIDGenerator = new  UUIDSessionIDGenerator();
+			
+		}
+//		if(this.enableSessionIDFromParameter )
+//		{
+//			if(this.rewriteSessionCookie)
+//			{
+//				this.signSessionID = rewriteSessionCookie;					
+//			}
+//			
+//		}
+		signSessionIDGenerator = new WrapperSessionIDGenerator(sessionIDGenerator,signSessionID,signKey);
+		
 		if(serialType == null || serialType.equals(""))
 		{
 			sessionSerial = new BBossSessionSerial();
@@ -509,5 +560,20 @@ public class SessionManager extends org.frameworkset.spi.BaseApplicationContextA
 	}
 	public void setEnableSessionIDFromParameter(boolean enableSessionIDFromParameter) {
 		this.enableSessionIDFromParameter = enableSessionIDFromParameter;
+	}
+	public void setRewriteSessionCookie(boolean rewriteSessionCookie) {
+		this.rewriteSessionCookie = rewriteSessionCookie;
+	}
+	public boolean isSignSessionID() {
+		return signSessionID;
+	}
+	public void setSignSessionID(boolean signSessionID) {
+		this.signSessionID = signSessionID;
+	}
+	public String getSignKey() {
+		return signKey;
+	}
+	public void setSignKey(String signKey) {
+		this.signKey = signKey;
 	}
 }

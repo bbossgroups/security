@@ -16,6 +16,7 @@ import org.frameworkset.security.session.domain.CrossDomain;
 import org.frameworkset.security.session.impl.HttpSessionImpl;
 import org.frameworkset.security.session.impl.SessionEventImpl;
 import org.frameworkset.security.session.impl.SessionHttpServletRequestWrapper;
+import org.frameworkset.security.session.impl.SessionID;
 import org.frameworkset.security.session.impl.SessionManager;
 import org.frameworkset.security.session.statics.AttributeInfo;
 import org.frameworkset.security.session.statics.NullSessionStaticManagerImpl;
@@ -218,10 +219,13 @@ public class SessionUtil {
 		return sessionManager.getSessionStore().getSession(appkey,contextPath, sessionid);
 	}
 	private static Object dummy = new Object();
-	
-	public  static  void writeCookies(HttpServletRequest request,HttpServletResponse response,String cookieName,String sessionid  )
+	public  static  void writeSessionIDCookies(HttpServletRequest request,HttpServletResponse response,String cookieName,SessionID sessionid ){
+		writeCookies_(  request,  response,  cookieName,  sessionid.getSignSessionId() );
+	}
+	public  static  void writeCookies_(HttpServletRequest request,HttpServletResponse response,String cookieName,String sessionid )
 	{
 		int cookielivetime = -1;
+		
 		CrossDomain crossDomain = SessionUtil.getSessionManager().getCrossDomain() ;
 		if(crossDomain == null)
 		{

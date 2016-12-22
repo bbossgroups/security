@@ -11,7 +11,7 @@ package org.frameworkset.security.session.impl;
 public class StandardSessionIdGenerator  extends SessionIdGeneratorBase {
 
     @Override
-    public String generateID() {
+    public SessionID generateID() {
 
         byte random[] = new byte[16];
         int sessionIdLength = getSessionIdLength();
@@ -42,8 +42,11 @@ public class StandardSessionIdGenerator  extends SessionIdGeneratorBase {
         }
 
         
-
-        return buffer.toString();
+        SessionID sessionid = new SessionID();
+        sessionid.setSessionId(buffer.toString());
+        return sessionid;
     }
+
+	
 
 }
