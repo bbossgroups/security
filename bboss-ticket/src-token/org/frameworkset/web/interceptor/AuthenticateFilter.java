@@ -166,7 +166,7 @@ public abstract class AuthenticateFilter extends TokenFilter{
 	protected boolean needCheck(String path,List<String> patternsExclude,List<String> patternsInclude)
 	{
 		boolean needcheck = false;
-		if(patternsExclude == null && patternsExclude == null)
+		if(patternsExclude == null && patternsInclude == null)
 			return true;
 		if(patternsInclude != null)
 		{
@@ -713,13 +713,13 @@ public abstract class AuthenticateFilter extends TokenFilter{
 		String permissionInclude = arg0.getInitParameter("permissionInclude");
 		if(permissionInclude != null && !permissionInclude.trim().equals(""))
 		{
-			String[] ips = patternsInclude.split(",");
+			String[] ips = permissionInclude.split(",");
 			setPermissionInclude(convertArrayToList(ips));
 		}
 		String permissionExclude = arg0.getInitParameter("permissionExclude");
 		if(permissionExclude != null && !permissionExclude.trim().equals(""))
 		{
-			String[] ips = patternsExclude.split(",");
+			String[] ips = permissionExclude.split(",");
 			setPermissionExclude(convertArrayToList(ips));
 		}
 		

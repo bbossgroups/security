@@ -29,5 +29,24 @@ public class SessionID {
 	public void setSignSessionId(String signSessionId) {
 		this.signSessionId = signSessionId;
 	}
+	@Override
+	public int hashCode() {
+		// TODO Auto-generated method stub
+		return sessionId.hashCode();
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if(obj == null)
+			return false;
+		if(obj instanceof SessionID)
+		{
+			return this.sessionId.equals(((SessionID)obj).getSessionId());
+		}
+		else
+		{
+			return this.sessionId.equals((String)obj);
+		}
+		 
+	}
 
 }
