@@ -547,7 +547,8 @@ public class SessionUtil {
 				try {
 					attrvalue = attributeInfo.clone();
 					String value = data.get(j +offset);
-					attrvalue.setValue(unserial(  value,serialType));
+//					attrvalue.setValue(unserial(  value,serialType));
+					attrvalue.setValue(value);
 					extendAttrs.add(attrvalue);
 				} catch (CloneNotSupportedException e) {
 					// TODO Auto-generated catch block

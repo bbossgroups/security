@@ -127,7 +127,8 @@ public class SessionHelper {
 				try {
 					attrvalue = attributeInfo.clone();
 					String value = (String)dbobject.get(attrvalue.getName());
-					attrvalue.setValue(SessionUtil.unserial(  value,serialType));
+//					attrvalue.setValue(SessionUtil.unserial(  value,serialType));
+					attrvalue.setValue(value);
 					extendAttrs.add(attrvalue);
 				} catch (CloneNotSupportedException e) {
 					// TODO Auto-generated catch block
