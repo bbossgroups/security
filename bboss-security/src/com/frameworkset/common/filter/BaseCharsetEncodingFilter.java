@@ -38,7 +38,7 @@ public abstract class BaseCharsetEncodingFilter extends SessionFilter{
         String refererDefender_ =  config.getInitParameter("refererDefender");
         boolean refererDefender = StringUtil.getBoolean(refererDefender_, false);
         String ignoreParameterDecoding_ =  config.getInitParameter("ignoreParameterDecoding");
-        ignoreParameterDecoding = StringUtil.getBoolean(ignoreParameterDecoding_, true);
+        ignoreParameterDecoding = StringUtil.getBoolean(ignoreParameterDecoding_, false);
         referHelper = new ReferHelper();
         referHelper.setRefererDefender(refererDefender);
         String wallfilterrules_ = config.getInitParameter("wallfilterrules");

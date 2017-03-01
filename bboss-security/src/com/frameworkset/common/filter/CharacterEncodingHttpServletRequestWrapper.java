@@ -15,7 +15,7 @@ import bboss.org.mozilla.intl.chardet.UTF8Convertor;
 
 public class CharacterEncodingHttpServletRequestWrapper
     extends HttpServletRequestWrapper{
-	private boolean ignoreParameterDecoding = true;
+	private boolean ignoreParameterDecoding = false;
 	private Map<String,String[]> parameters = null;
 	private static Logger logger = Logger.getLogger(CharacterEncodingHttpServletRequestWrapper.class); 
 //	private Object lock = new Object();
