@@ -239,12 +239,11 @@ public class MemTokenStore extends BaseTokenStore{
 		return token_m ;
 		
 	}
-
 	@Override
-	protected SimpleKeyPair _getKeyPair(String appid, String secret)
-			throws TokenException {
+	protected SimpleKeyPair _getSimpleKey(String appid, String secret, String certAlgorithm) throws TokenException {
 		try {
-			SimpleKeyPair ECKeyPair = keypairs.get(appid);//			cursor = eckeypairs.find(new BasicDBObject("appid", appid));
+			String id = appid+":"+certAlgorithm;
+			SimpleKeyPair ECKeyPair = keypairs.get(id);//			cursor = eckeypairs.find(new BasicDBObject("appid", appid));
 			if(ECKeyPair != null)
 			{
 //				DBObject value = cursor.next();
@@ -254,8 +253,8 @@ public class MemTokenStore extends BaseTokenStore{
 			}
 			else
 			{
-				ECKeyPair = ECCCoder.genECKeyPair();
-				this.keypairs.put(appid, ECKeyPair);
+				ECKeyPair = ECCCoder.genECKeyPair(certAlgorithm);
+				this.keypairs.put(id, ECKeyPair);
 				return ECKeyPair;
 			}
 		}catch (TokenException e) {
@@ -265,6 +264,32 @@ public class MemTokenStore extends BaseTokenStore{
 			throw new TokenException(TokenStore.ERROR_CODE_GETKEYPAIRFAILED,e);
 		}
 	}
+	
+//	@Override
+//	protected SimpleKeyPair _getKeyPair(String appid, String secret)
+//			throws TokenException {
+//		try {
+//			SimpleKeyPair ECKeyPair = keypairs.get(appid);//			cursor = eckeypairs.find(new BasicDBObject("appid", appid));
+//			if(ECKeyPair != null)
+//			{
+////				DBObject value = cursor.next();
+////				return toECKeyPair(value);
+//				return ECKeyPair;
+//				
+//			}
+//			else
+//			{
+//				ECKeyPair = ECCCoder.genECKeyPair();
+//				this.keypairs.put(appid, ECKeyPair);
+//				return ECKeyPair;
+//			}
+//		}catch (TokenException e) {
+//			throw (e);
+//		} 
+//		catch (Exception e) {
+//			throw new TokenException(TokenStore.ERROR_CODE_GETKEYPAIRFAILED,e);
+//		}
+//	}
 
 	@Override
 	protected void persisteTicket(Ticket ticket) {
@@ -314,6 +339,7 @@ public class MemTokenStore extends BaseTokenStore{
 			throw new TokenException("destroy ticket["+token+"] of app["+appid+"] failed:",e);
 		}
 	}
+
 	
 	
 	

@@ -47,18 +47,17 @@ public class AppAuthenticate {
 		 AuthorService authorService = TokenHelper.getTokenService().getAuthorService();
 
          //构建一个待验证的token
-         AuthorHelper authorHelper = TokenHelper.getTokenService().getAuthorHelper();
-         
+         String authtoken = null;
+        authtoken = AuthorHelper.encodeAuthenticateRequest(sessionid,account,password, extendAttributes);
         
-         String authtoken = AuthorHelper.encodeAuthenticateRequest(sessionid,account,password, authorHelper.getAppcode(), authorHelper.getAppsecret(), authorHelper.getSecretPrivateKey(), extendAttributes);
-
          
          AuthenticateResponse authorResponse = authorService.auth(authtoken);
           if(authorResponse.isValidateResult())
          {
         	 try {
         		 authenticatecode = authorResponse.getAuthorization();
-        		 token = AuthorHelper.decodeMessageResponse(authorResponse.getAuthorization(), authorHelper.getSecretPublicKey());
+        		 token = AuthorHelper.decodeMessageResponse(authorResponse.getAuthorization());
+        		
         		 afterSuccessLogin();
         		 return token;
 			} catch (AuthenticateException e) {
@@ -78,7 +77,7 @@ public class AppAuthenticate {
          //构建一个待验证的token
          AuthorHelper authorHelper = TokenHelper.getTokenService().getAuthorHelper();
          
-         String authtoken = AuthorHelper.encodeAuthenticateRequest(sessionid,account,password, authorHelper.getAppcode(), authorHelper.getAppsecret(), authorHelper.getSecretPrivateKey(), extendAttributes);
+         String authtoken = AuthorHelper.encodeAuthenticateRequest(sessionid,account,password, extendAttributes);
 
          
          AuthenticateResponse authorResponse = authorService.auth(authtoken);

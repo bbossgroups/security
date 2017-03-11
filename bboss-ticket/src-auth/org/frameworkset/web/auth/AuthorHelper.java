@@ -6,6 +6,7 @@ package org.frameworkset.web.auth;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.security.Key;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Date;
@@ -40,6 +41,29 @@ public class AuthorHelper {
 	private static Logger log = Logger.getLogger(AuthorHelper.class);
 	private String appid;
 	private String secret;
+	/**
+	 * 服务端证书算法
+	 */
+	private String privateCertAlgorithm;
+	public String getPrivateCertAlgorithm() {
+		return privateCertAlgorithm;
+	}
+
+	public void setPrivateCertAlgorithm(String privateCertAlgorithm) {
+		this.privateCertAlgorithm = privateCertAlgorithm;
+	}
+
+	public String getPublicCertAlgorithm() {
+		return publicCertAlgorithm;
+	}
+
+	public void setPublicCertAlgorithm(String publicCertAlgorithm) {
+		this.publicCertAlgorithm = publicCertAlgorithm;
+	}
+	/**
+	 * 客户端证书算法
+	 */
+	private String publicCertAlgorithm;
 	
 	/**
 	 * 客户端私钥证书内容
@@ -57,7 +81,14 @@ public class AuthorHelper {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public static  AuthenticateToken decodeMessageRequest(String authorization,PublicKey publicKey) throws AuthenticateException
+	public static  AuthenticateToken decodeMessageRequest(String authorization,Key publicKey) throws AuthenticateException
+	{
+		
+		return _decodeMessageRequest( authorization, publicKey);
+		
+	}
+	
+	private static  AuthenticateToken _decodeMessageRequest(String authorization,Key publicKey) throws AuthenticateException
 	{
 		
 //		PublicKey publicKey_ = KeyCacheUtil.getPublicKey( publicKey);
@@ -104,14 +135,12 @@ public class AuthorHelper {
 		
 	}
 	
-	/**
-	 * @param authorization
-	 * @param secretPublicKey
-	 * @throws AuthenticateException 
-	 */
-	public static  AuthenticatedToken decodeMessageResponse(String authorization, String secretPublicKey) throws AuthenticateException {
-		PublicKey publicKey = KeyCacheUtil.getPublicKey( secretPublicKey);
-		Jws<Claims> claims = null;
+
+	
+
+	
+	private static  AuthenticatedToken _decodeMessageResponse(String authorization,Key publicKey) throws AuthenticateException {
+	 	Jws<Claims> claims = null;
 		try {
 			claims = Jwts.parser().setSigningKey(publicKey).parseClaimsJws(authorization);
 			AuthenticatedToken authenticatedToken = new AuthenticatedToken();
@@ -171,6 +200,30 @@ public class AuthorHelper {
 		}	
 		
 	}
+	/**
+	 * @param authorization
+	 * @param secretPublicKey
+	 * @throws AuthenticateException 
+	 */
+	public static  AuthenticatedToken decodeMessageResponse(String authorization, String secretPublicKey) throws AuthenticateException {
+		 AuthorHelper authorHelper = TokenHelper.getTokenService().getAuthorHelper();
+		 if(authorHelper == null)
+		 {
+			 throw new AuthenticateException("40009");
+		 }
+		 if(authorHelper.getPublicCertAlgorithm() == null || authorHelper.getPublicCertAlgorithm().equals(KeyCacheUtil.ALGORITHM_RSA)){
+			 Key publicKey = KeyCacheUtil.getPublicKey( secretPublicKey);
+			return  _decodeMessageResponse(authorization,publicKey);
+		 }
+		else
+		{
+			Key publicKey = KeyCacheUtil.getKey(secretPublicKey, authorHelper.getPublicCertAlgorithm());
+			return  _decodeMessageResponse(authorization,publicKey);
+		}
+		
+		
+		
+	}
 	
 	/**
 	 * @param authorization
@@ -183,10 +236,17 @@ public class AuthorHelper {
 		 {
 			 throw new AuthenticateException("40009");
 		 }
+		 
 		String secretPublicKey = authorHelper.getSecretPublicKey();
-		return decodeMessageResponse(  authorization,   secretPublicKey);
-		
+		return decodeMessageResponse( authorization,secretPublicKey);
+//		if(authorHelper.getCertAlgorithm() == null)
+//			return decodeMessageResponse(  authorization,   secretPublicKey);
+//		else
+//			return decodeMessageResponseWithCertAlgorithm(  authorization,authorHelper.getCertAlgorithm(),   secretPublicKey);
+//		
 	}
+	
+	
 	
 	public String getAppcode()
 	{
@@ -212,13 +272,25 @@ public class AuthorHelper {
 	
 	public static  String encodeAuthenticateRequest(String sessionid,String account,
 			String password,
-			String appcode,
-			String appsecret,
-			String privateKey,Map<String,Object> extendAttributes)
+			Map<String,Object> extendAttributes)
 	{
-		 
-		PrivateKey privateKey_ = KeyCacheUtil.getPrivateKey(privateKey);
-		
+		AuthorHelper authorHelper = TokenHelper.getTokenService().getAuthorHelper(); 
+		String appcode = authorHelper.getAppcode(); 
+		String appsecret = authorHelper.getAppsecret(); 
+		Key privateKey_ = null;
+		SignatureAlgorithm signatureAlgorithm = null;
+		if(authorHelper.getPrivateCertAlgorithm() == null  || authorHelper.getPrivateCertAlgorithm().equals(KeyCacheUtil.ALGORITHM_RSA)){
+			String privateKey = authorHelper.getSecretPrivateKey(); 
+			privateKey_ = KeyCacheUtil.getPrivateKey(privateKey);
+			signatureAlgorithm = SignatureAlgorithm.RS512;
+			
+		}
+		else
+		{			
+			 privateKey_ = KeyCacheUtil.getKey(authorHelper.getSecretPrivateKey(),  authorHelper.getPrivateCertAlgorithm());
+			 signatureAlgorithm = SignatureAlgorithm.forName(authorHelper.getPrivateCertAlgorithm());
+			
+		}
 		String compactJws =  Jwts.builder()
 				.setHeaderParam("sessionid", sessionid)
 				.setHeaderParam("appcode", appcode)
@@ -228,10 +300,12 @@ public class AuthorHelper {
 			    .setSubject(account)
 			    .setIssuedAt(new Date())
 			    .compressWith(CompressionCodecs.GZIP)
-			    .signWith(SignatureAlgorithm.RS512, privateKey_)
+			    .signWith(signatureAlgorithm, privateKey_)
 			    .compact();
 		return compactJws;
 	}
+	
+	
 	
 	/**
 	 * 
@@ -242,6 +316,12 @@ public class AuthorHelper {
 	 * @return
 	 */
 	public static String encodeAuthenticateResponse(AuthenticatedToken authenticatedToken,PrivateKey privateKey,Date expiration,int ticketlivetimes)
+	{
+		return encodeAuthenticateResponse(  authenticatedToken,SignatureAlgorithm.RS512,  privateKey,  expiration,  ticketlivetimes);
+
+	}
+	
+	public static String encodeAuthenticateResponse(AuthenticatedToken authenticatedToken,SignatureAlgorithm signatureAlgorithm,Key privateKey,Date expiration,int ticketlivetimes)
 	{
 		 
 //		PrivateKey privateKey_ = KeyCacheUtil.getPrivateKey(appPrivateKey);
@@ -271,10 +351,24 @@ public class AuthorHelper {
 				.setIssuedAt(new Date())
 			    .setSubject(account)
 			    .compressWith(CompressionCodecs.GZIP)
-			    .signWith(SignatureAlgorithm.RS512, privateKey)
+			    .signWith(signatureAlgorithm, privateKey)
 			    .compact();
 		return compactJws;
 	}
+	
+//	/**
+//	 * 
+//	 * @param authenticatedToken
+//	 * @param privateKey
+//	 * @param expiration
+//	 * @param ticketlivetimes 毫秒，凭证最大空闲时间，从凭证的最近访问时间开始计算
+//	 * @return
+//	 */
+//	public static String encodeAuthenticateResponseWithCertAlgorithm(AuthenticatedToken authenticatedToken,String certAlgorithm,Key privateKey,Date expiration,int ticketlivetimes)
+//	{
+//		SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.forName(certAlgorithm);
+//		return encodeAuthenticateResponse(  authenticatedToken,signatureAlgorithm,  privateKey,  expiration,  ticketlivetimes);
+//	}
 
 	public void setAppid(String appid) {
 		this.appid = appid;
@@ -291,22 +385,58 @@ public class AuthorHelper {
 	public void setPublicKey(String publicKey) {
 		this.publicKey = publicKey;
 	}
+//	/**
+//	 * 
+//	 * @param appcode
+//	 * @return
+//	 */
+//	public static InputStream generateCAStream(String appcode)
+//    {
+//    	if(appcode == null || appcode.equals(""))
+//    		throw new java.lang.NullPointerException("生成证书出错:必须指定应用编码");
+//    	SimpleKeyPair appkeyPair = TokenHelper.getTokenService().getSimpleKeyPair(appcode);
+//	SimpleKeyPair serverkeyPair = TokenHelper.getTokenService().getServerSimpleKeyPair();
+//    	StringBuilder content = new StringBuilder();
+//    	content.append("[privateKey]\r\n");
+//    	content.append(serverkeyPair.getPrivateKey()).append("\r\n");
+//    	content.append("[publicKey]\r\n");
+//    	content.append(appkeyPair.getPublicKey());
+//    	Base64Commons b = new Base64Commons();
+//    	
+//		try {
+//			byte[] data = b.encode(content.toString().getBytes("UTF-8"));
+//			java.io.ByteArrayInputStream input = new ByteArrayInputStream(data);
+//	        
+//	        return input;
+//		} catch (UnsupportedEncodingException e) {
+//			throw new java.lang.RuntimeException(e);
+//		}
+//    	
+//    }
+	
 	/**
 	 * 
 	 * @param appcode
 	 * @return
 	 */
-	public static InputStream generateCAStream(String appcode)
+	public static InputStream generateCAStream(String appcode,String certAlgorithm,String serverCertAlgorithm)
     {
     	if(appcode == null || appcode.equals(""))
     		throw new java.lang.NullPointerException("生成证书出错:必须指定应用编码");
-    	SimpleKeyPair appkeyPair = TokenHelper.getTokenService().getSimpleKeyPair(appcode);
-    	SimpleKeyPair serverkeyPair = TokenHelper.getTokenService().getServerSimpleKeyPair();
+    	
+    	SimpleKeyPair appkeyPair = TokenHelper.getTokenService().getSimpleKey(appcode,certAlgorithm);
+    	SimpleKeyPair serverkeyPair = TokenHelper.getTokenService().getServerSimpleKey(serverCertAlgorithm);
     	StringBuilder content = new StringBuilder();
+    	
+    	
     	content.append("[privateKey]\r\n");
     	content.append(serverkeyPair.getPrivateKey()).append("\r\n");
-    	content.append("[publicKey]\r\n");
-    	content.append(appkeyPair.getPublicKey());
+    	content.append("[publicKey]\r\n");    	
+    	content.append(appkeyPair.getPublicKey()).append("\r\n");
+    	content.append("[privateCertAlgorithm]\r\n");
+    	content.append(serverCertAlgorithm).append("\r\n");
+    	content.append("[publicCertAlgorithm]\r\n");
+    	content.append(certAlgorithm);
     	Base64Commons b = new Base64Commons();
     	
 		try {
@@ -319,23 +449,26 @@ public class AuthorHelper {
 		}
     	
     }
-	
 	/**
 	 * 
 	 * @param appcode
 	 * @return
 	 */
-	public static void generateCAFile(String appcode,String filepath)
+	public static void generateCAFile(String appcode,String filepath,String certAlgorithm,String serverCertAlgorithm)
     {
     	if(appcode == null || appcode.equals(""))
     		throw new java.lang.NullPointerException("生成证书出错:必须指定应用编码");
-    	SimpleKeyPair appkeyPair = TokenHelper.getTokenService().getSimpleKeyPair(appcode);
-    	SimpleKeyPair serverkeyPair = TokenHelper.getTokenService().getServerSimpleKeyPair();
+    	SimpleKeyPair appkeyPair = TokenHelper.getTokenService().getSimpleKey(appcode,certAlgorithm);
+    	SimpleKeyPair serverkeyPair = TokenHelper.getTokenService().getServerSimpleKey( serverCertAlgorithm);
     	StringBuilder content = new StringBuilder();
     	content.append("[privateKey]\r\n");
     	content.append(serverkeyPair.getPrivateKey()).append("\r\n");
-    	content.append("[publicKey]\r\n");
-    	content.append(appkeyPair.getPublicKey());
+    	content.append("[publicKey]\r\n");    	
+    	content.append(appkeyPair.getPublicKey()).append("\r\n");
+    	content.append("[privateCertAlgorithm]\r\n");
+    	content.append(serverCertAlgorithm).append("\r\n");
+    	content.append("[publicCertAlgorithm]\r\n");
+    	content.append(certAlgorithm);
     	Base64Commons b = new Base64Commons();
     	
 		try {
@@ -347,6 +480,33 @@ public class AuthorHelper {
 		}
     	
     }
+//	/**
+//	 * 
+//	 * @param appcode
+//	 * @return
+//	 */
+//	public static void generateCAFile(String appcode,String filepath)
+//    {
+//    	if(appcode == null || appcode.equals(""))
+//    		throw new java.lang.NullPointerException("生成证书出错:必须指定应用编码");
+//    	SimpleKeyPair appkeyPair = TokenHelper.getTokenService().getSimpleKeyPair(appcode);
+//    	SimpleKeyPair serverkeyPair = TokenHelper.getTokenService().getServerSimpleKeyPair();
+//    	StringBuilder content = new StringBuilder();
+//    	content.append("[privateKey]\r\n");
+//    	content.append(serverkeyPair.getPrivateKey()).append("\r\n");
+//    	content.append("[publicKey]\r\n");
+//    	content.append(appkeyPair.getPublicKey());
+//    	Base64Commons b = new Base64Commons();
+//    	
+//		try {
+//			String data = b.encodeAsString(content.toString().getBytes("UTF-8"));
+//	        
+//	       	FileUtil.writeFile(filepath, data, "UTF-8");
+//		} catch (Exception e) {
+//			throw new java.lang.RuntimeException(e);
+//		}
+//    	
+//    }
 
 	
 

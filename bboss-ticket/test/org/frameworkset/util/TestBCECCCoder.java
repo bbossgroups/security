@@ -49,7 +49,7 @@ public class TestBCECCCoder {
 		
 		
 		ECCCoderInf ECCCoder = ECCHelper.getECCCoder(ECCHelper.ECC_BC);
-		SimpleKeyPair keyMap = ECCCoder.genECKeyPair( );
+		SimpleKeyPair keyMap = ECCCoder.genECKeyPair(ECCHelper.ECC_BC );
 
 		String publicKey = keyMap.getPublicKey();
 		String privateKey = keyMap.getPrivateKey();
@@ -64,12 +64,12 @@ public class TestBCECCCoder {
 		
 		data = inputStr.getBytes();
 		long start = System.currentTimeMillis();
-		encodedData = ECCCoder.encrypt(data, ECCCoder.evalECPublicKey(publicKey));
+		encodedData = ECCCoder.encrypt(data, ECCCoder.evalPublicKey(publicKey,ECCHelper.ECC_BC));
 		long end = System.currentTimeMillis();
 		System.out.println("加密耗时:"+(end-start));
 		
 		start = System.currentTimeMillis();
-		decodedData = ECCCoder.decrypt(encodedData, ECCCoder.evalECPrivateKey(privateKey));
+		decodedData = ECCCoder.decrypt(encodedData, ECCCoder.evalPrivateKey(privateKey,ECCHelper.ECC_BC));
 		end = System.currentTimeMillis();
 		System.out.println("解密耗时:"+(end-start));
 		String outputStr = new String(decodedData);
@@ -80,14 +80,14 @@ public class TestBCECCCoder {
 	public void testGenKey() throws Exception {
 		
 		ECCCoderInf ECCCoder = ECCHelper.getECCCoder(ECCHelper.ECC_BC);
-		SimpleKeyPair keyMap = ECCCoder.genECKeyPair( );
+		SimpleKeyPair keyMap = ECCCoder.genECKeyPair( ECCHelper.ECC_BC);
 
 		String publicKey = keyMap.getPublicKey();
 		String privateKey = keyMap.getPrivateKey();
 		System.err.println("公钥: \n" + publicKey);
 		System.err.println("私钥： \n" + privateKey);
 		
-		keyMap = ECCCoder.genECKeyPair( );
+		keyMap = ECCCoder.genECKeyPair( ECCHelper.ECC_BC);
 
 		String publicKey1 = keyMap.getPublicKey();
 		String privateKey1 = keyMap.getPrivateKey();

@@ -39,10 +39,14 @@ public class TicketSessionHttpServletRequestWrapper extends SessionHttpServletRe
 		super(request, response, servletContext);
 		if( !usewebsession)
 		{
-			 authenticateCode = request.getParameter(TicketConsts.ticket_authenticatecode_parameter_name);
+			 authenticateCode = request.getParameter(TicketConsts.ticket_authenticatecode_parameter_name);//首先从请求参数中获取authenticateCode
 			if(authenticateCode == null)
 			{
-				authenticateCode = request.getHeader(TicketConsts.ticket_authenticatecode_parameter_name);
+				authenticateCode = request.getHeader(TicketConsts.ticket_authenticatecode_parameter_name);//如果从请求参数中获取authenticateCode为空，则从请求头中获取
+			}
+			if(authenticateCode == null)
+			{
+				authenticateCode = StringUtil.getCookieValue(request,TicketConsts.ticket_authenticatecode_parameter_name);//如果从请求头中获取authenticateCode为空，则从cookie中获取
 			}
 			
 			if(authenticateCode != null)

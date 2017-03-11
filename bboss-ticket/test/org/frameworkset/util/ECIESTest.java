@@ -41,7 +41,7 @@ public class ECIESTest {
 		String inputStr = "尹标平";
 		byte[] data = inputStr.getBytes();
 		ECCCoderInf ECCCoder = ECCHelper.getECCCoder(ECCHelper.ECC_Flexi);
-		SimpleKeyPair keyMap = ECCCoder.genECKeyPair( );
+		SimpleKeyPair keyMap = ECCCoder.genECKeyPair( ECCHelper.ECC_Flexi);
 
 		String publicKey = keyMap.getPublicKey();
 		String privateKey = keyMap.getPrivateKey();
@@ -54,12 +54,12 @@ public class ECIESTest {
 		inputStr = "解密局解密局";
 		data = inputStr.getBytes();
 		long start = System.currentTimeMillis();
-		encodedData = ECCCoder.encrypt(data, ECCCoder.evalECPublicKey(publicKey));
+		encodedData = ECCCoder.encrypt(data, ECCCoder.evalPublicKey(publicKey,ECCHelper.ECC_Flexi));
 		long end = System.currentTimeMillis();
 		System.out.println("加密耗时:"+(end-start));
 		
 		start = System.currentTimeMillis();
-		decodedData = ECCCoder.decrypt(encodedData, ECCCoder.evalECPrivateKey(privateKey));
+		decodedData = ECCCoder.decrypt(encodedData, ECCCoder.evalPrivateKey(privateKey,ECCHelper.ECC_Flexi));
 		end = System.currentTimeMillis();
 		System.out.println("解密耗时:"+(end-start));
 		String outputStr = new String(decodedData);

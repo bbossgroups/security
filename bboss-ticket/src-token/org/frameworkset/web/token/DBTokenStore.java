@@ -387,24 +387,23 @@ public class DBTokenStore extends BaseTokenStore {
 		
 		return token_m ;
 	}
-	
-	protected SimpleKeyPair _getKeyPair(String appid,String secret) throws TokenException
-	{
-		
-		
+	@Override
+	protected SimpleKeyPair _getSimpleKey(String appid, String secret, final String certAlgorithm) throws TokenException {
 		try {
+			String id = appid+":"+certAlgorithm;
 			SimpleKeyPair ECKeyPair =this.executor.queryObjectByRowHandler(new RowHandler<SimpleKeyPair>(){
 
 				@Override
 				public void handleRow(SimpleKeyPair rowValue, Record record)
 						throws Exception {
-					rowValue.setPrivateKey(record.getString("privateKey"));
+					rowValue.setCertAlgorithm(certAlgorithm);
 					rowValue.setPublicKey(record.getString("publicKey"));
+					rowValue.setPrivateKey(record.getString("privateKey"));
 //					ECKeyPair ECKeyPair = new ECKeyPair((String)value.get("privateKey"),(String)value.get("publicKey"),null,null);
 					
 				}
 				
-			},SimpleKeyPair.class, "getKeyPairs", appid);
+			},SimpleKeyPair.class, "getKeyPairs", id);
 //			cursor = eckeypairs.find(new BasicDBObject("appid", appid));
 			if(ECKeyPair != null)
 			{
@@ -415,8 +414,8 @@ public class DBTokenStore extends BaseTokenStore {
 			}
 			else
 			{
-				SimpleKeyPair keypair = ECCCoder.genECKeyPair();
-				insertECKeyPair( appid, secret, keypair);
+				SimpleKeyPair keypair = ECCCoder.genECKeyPair(certAlgorithm);
+				insertECKeyPair( id, secret, keypair);
 				return keypair;
 			}
 		}catch (TokenException e) {
@@ -425,8 +424,46 @@ public class DBTokenStore extends BaseTokenStore {
 		catch (Exception e) {
 			throw new TokenException(TokenStore.ERROR_CODE_GETKEYPAIRFAILED,e);
 		}
-		
 	}
+//	protected SimpleKeyPair _getKeyPair(String appid,String secret) throws TokenException
+//	{
+//		
+//		
+//		try {
+//			SimpleKeyPair ECKeyPair =this.executor.queryObjectByRowHandler(new RowHandler<SimpleKeyPair>(){
+//
+//				@Override
+//				public void handleRow(SimpleKeyPair rowValue, Record record)
+//						throws Exception {
+//					rowValue.setPrivateKey(record.getString("privateKey"));
+//					rowValue.setPublicKey(record.getString("publicKey"));
+////					ECKeyPair ECKeyPair = new ECKeyPair((String)value.get("privateKey"),(String)value.get("publicKey"),null,null);
+//					
+//				}
+//				
+//			},SimpleKeyPair.class, "getKeyPairs", appid);
+////			cursor = eckeypairs.find(new BasicDBObject("appid", appid));
+//			if(ECKeyPair != null)
+//			{
+////				DBObject value = cursor.next();
+////				return toECKeyPair(value);
+//				return ECKeyPair;
+//				
+//			}
+//			else
+//			{
+//				SimpleKeyPair keypair = ECCCoder.genECKeyPair();
+//				insertECKeyPair( appid, secret, keypair);
+//				return keypair;
+//			}
+//		}catch (TokenException e) {
+//			throw (e);
+//		} 
+//		catch (Exception e) {
+//			throw new TokenException(TokenStore.ERROR_CODE_GETKEYPAIRFAILED,e);
+//		}
+//		
+//	}
 	private void insertECKeyPair(String appid,String secret,SimpleKeyPair keypair) throws TokenException
 	{
 //		this.eckeypairs.insert(new BasicDBObject("appid",appid)		
@@ -434,7 +471,7 @@ public class DBTokenStore extends BaseTokenStore {
 //		.append("createTime", System.currentTimeMillis())
 //		.append("publicKey", keypair.getPublicKey()) );
 		try {
-			this.executor.insert("insertECKeyPair", appid, keypair.getPrivateKey(),System.currentTimeMillis(),keypair.getPublicKey());
+			this.executor.insert("insertECKeyPair", appid, keypair.getPrivateKey() == null?"":keypair.getPrivateKey(),System.currentTimeMillis(),keypair.getPublicKey());
 		} catch (SQLException e) {
 			throw new TokenException(TokenStore.ERROR_CODE_STOREKEYPAIRFAILED,e);
 		}
@@ -529,5 +566,6 @@ public class DBTokenStore extends BaseTokenStore {
 			tm.release();
 		}
 	}
+
 
 }

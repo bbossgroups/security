@@ -15,6 +15,7 @@
  */
 package org.frameworkset.security.ecc;
 
+import java.security.Key;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -40,18 +41,30 @@ public abstract class BaseECCCoder implements ECCCoderInf {
 		String token = UUID.randomUUID().toString();
 		return token;
 	}
-	public  abstract PrivateKey _evalECPrivateKey(byte[] privateKey);
-	public  PrivateKey evalECPrivateKey(String privateKey)
-	{
-		return KeyCacheUtil.getPrivateKey(privateKey,this);
+	public  abstract Key _evalECPrivateKey(byte[] privateKey);
+//	public  Key evalECPrivateKey(String privateKey)
+//	{
+//		return KeyCacheUtil.getPrivateKey(privateKey,this);
+//	}
+	public  Key evalPrivateKey(String privateKey,String certAlgorithm){
+		if(certAlgorithm == null || certAlgorithm.equals(KeyCacheUtil.ALGORITHM_RSA))
+			return KeyCacheUtil.getPrivateKey(privateKey,this);
+		else
+			return KeyCacheUtil.getKey(privateKey,certAlgorithm);
 	}
-	public  abstract PublicKey _evalECPublicKey(byte[] publicKey);
-	public  PublicKey evalECPublicKey(String publicKey)
-	{
-		
-		return KeyCacheUtil.getPublicKey(publicKey,this);
-		
+	public  Key evalPublicKey(String publicKey,String certAlgorithm){
+		if(certAlgorithm == null || certAlgorithm.equals(KeyCacheUtil.ALGORITHM_RSA))
+			return KeyCacheUtil.getPublicKey(publicKey,this);
+		else
+			return KeyCacheUtil.getKey(publicKey,certAlgorithm);
 	}
+	public  abstract Key _evalECPublicKey(byte[] publicKey);
+//	public  Key evalECPublicKey(String publicKey)
+//	{
+//		
+//		return KeyCacheUtil.getPublicKey(publicKey,this);
+//		
+//	}
 
 	/**
 	 * 解密<br>
@@ -63,7 +76,7 @@ public abstract class BaseECCCoder implements ECCCoderInf {
 	 * @throws Exception
 	 */
 	public  byte[] decrypt(byte[] data, String privatekey) throws Exception {
-		PrivateKey priKey = evalECPrivateKey(privatekey);
+		Key priKey = evalPrivateKey(privatekey,KeyCacheUtil.ALGORITHM_RSA);
 		return decrypt( data,  priKey) ;
 	}
 	
@@ -90,7 +103,7 @@ public abstract class BaseECCCoder implements ECCCoderInf {
 	 * @return
 	 * @throws Exception
 	 */
-	public  byte[] decrypt(String database64, PrivateKey priKey) throws Exception {
+	public  byte[] decrypt(String database64, Key priKey) throws Exception {
 		
 		
 		return decrypt(Hex.decode(database64),  priKey) ;
@@ -112,7 +125,7 @@ public abstract class BaseECCCoder implements ECCCoderInf {
 		
 		
 		
-		PublicKey pubKey = evalECPublicKey(publicKey);
+		Key pubKey = evalPublicKey(publicKey,KeyCacheUtil.ALGORITHM_RSA);
 		return encrypt( data,  pubKey);
 	}
 	
@@ -130,7 +143,7 @@ public abstract class BaseECCCoder implements ECCCoderInf {
 		
 		
 		
-		PublicKey pubKey = evalECPublicKey(publicKey);
+		Key pubKey = evalPublicKey(publicKey,KeyCacheUtil.ALGORITHM_RSA);
 		return encrypt( data,  pubKey);
 	}
 	
@@ -146,7 +159,7 @@ public abstract class BaseECCCoder implements ECCCoderInf {
 	 * @return
 	 * @throws Exception
 	 */
-	public  byte[] encrypt(String data, PublicKey pubKey)
+	public  byte[] encrypt(String data, Key pubKey)
 			throws Exception {
 		
 
@@ -155,22 +168,26 @@ public abstract class BaseECCCoder implements ECCCoderInf {
 
 	
 	public abstract KeyPair _genECKeyPair( ) throws Exception ;
-	public SimpleKeyPair genECKeyPair( ) throws Exception {
-//			KeyPair pair = _genECKeyPair(  );	      
-//	        PublicKey              pubKey = pair.getPublic();
-//	        PrivateKey              privKey = pair.getPrivate();
-//	        String sprivateKey = Hex.toHexString(privKey.getEncoded());
-//	  		String spublicKey = Hex.toHexString(pubKey.getEncoded());
-//	  		SimpleKeyPair ECKeyPair = new SimpleKeyPair(sprivateKey, spublicKey, 
-//	  				pubKey, privKey);
-//	  		PrivateKeyPairIndex.put(sprivateKey, ECKeyPair);
-//	  		this.PrivateKeyIndex.put(sprivateKey, privKey);
-//	  		
-//	  		ECPublicKeyPairIndex.put(spublicKey, ECKeyPair);
-//	  		this.ECPublicKeyIndex.put(spublicKey, pubKey);
-//	  		return ECKeyPair;
-		return KeyCacheUtil.getECKeyPair(this);
-	       
+//	public SimpleKeyPair genECKeyPair( ) throws Exception {
+////			KeyPair pair = _genECKeyPair(  );	      
+////	        PublicKey              pubKey = pair.getPublic();
+////	        PrivateKey              privKey = pair.getPrivate();
+////	        String sprivateKey = Hex.toHexString(privKey.getEncoded());
+////	  		String spublicKey = Hex.toHexString(pubKey.getEncoded());
+////	  		SimpleKeyPair ECKeyPair = new SimpleKeyPair(sprivateKey, spublicKey, 
+////	  				pubKey, privKey);
+////	  		PrivateKeyPairIndex.put(sprivateKey, ECKeyPair);
+////	  		this.PrivateKeyIndex.put(sprivateKey, privKey);
+////	  		
+////	  		ECPublicKeyPairIndex.put(spublicKey, ECKeyPair);
+////	  		this.ECPublicKeyIndex.put(spublicKey, pubKey);
+////	  		return ECKeyPair;
+//		return KeyCacheUtil.getECKeyPair(this);
+//	       
+//	}
+	
+	public SimpleKeyPair genECKeyPair(String certAlgorithm ) throws Exception { 
+		return KeyCacheUtil.genECKeyPair(certAlgorithm);	       
 	}
 	
 

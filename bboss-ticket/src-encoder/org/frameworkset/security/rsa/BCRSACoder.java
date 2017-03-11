@@ -15,6 +15,7 @@
  */
 package org.frameworkset.security.rsa;
 
+import java.security.Key;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -87,7 +88,7 @@ public class BCRSACoder extends BaseECCCoder {
 		
 	}
 	@Override
-	public byte[] decrypt(byte[] data, PrivateKey priKey_) throws Exception {
+	public byte[] decrypt(byte[] data, Key priKey_) throws Exception {
 		 Cipher	         cipher = Cipher.getInstance("RSA/NONE/PKCS1Padding", "BC");
 		  cipher.init(Cipher.DECRYPT_MODE, priKey_);
 
@@ -96,7 +97,7 @@ public class BCRSACoder extends BaseECCCoder {
 	}
 
 	@Override
-	public byte[] encrypt(byte[] data, PublicKey pubKey_) throws Exception {
+	public byte[] encrypt(byte[] data, Key pubKey_) throws Exception {
 		Cipher	         cipher = Cipher.getInstance("RSA/NONE/PKCS1Padding", "BC");
 		  cipher.init(Cipher.ENCRYPT_MODE, pubKey_);
 

@@ -7,6 +7,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.frameworkset.nosql.redis.RedisFactory;
 import org.frameworkset.nosql.redis.RedisHelper;
+import org.frameworkset.security.KeyCacheUtil;
 import org.frameworkset.security.ecc.SimpleKeyPair;
 
 
@@ -335,24 +336,29 @@ public class RedisTokenStore extends BaseTokenStore{
 	}
 	private String buildKeyPaireKey(String appid)
 	{
-		return this.token_eckeypair_prefix+appid;
+		return token_eckeypair_prefix+appid;
 	}
-	protected SimpleKeyPair _getKeyPair(String appid,String secret) throws TokenException
+	
+	private String buildKeyPaireKey(String appid,String certAlgorithm)
 	{
+		return new StringBuilder().append(token_eckeypair_prefix).append(appid).append(":").append(certAlgorithm).toString();
+	}
+	
+	protected   SimpleKeyPair _getSimpleKey(String appid,String secret,String certAlgorithm) throws TokenException{
 		RedisHelper redisHelper = null;
 		try
 		{
 			redisHelper = RedisFactory.getTXRedisHelper();
-			String KeyPaireKey = buildKeyPaireKey(  appid);
+			String KeyPaireKey = buildKeyPaireKey(  appid,certAlgorithm);
 			Map<String,String> keypairInfo = redisHelper.hgetAll(KeyPaireKey);
 			if(keypairInfo != null && keypairInfo.size() > 0)
 			{
-				return toECKeyPair(keypairInfo);
+				return toECKeyPair(keypairInfo,certAlgorithm);
 			}
 			else
 			{
 				try {
-					SimpleKeyPair keypair = ECCCoder.genECKeyPair();
+					SimpleKeyPair keypair = ECCCoder.genECKeyPair(certAlgorithm);
 					insertECKeyPair(   KeyPaireKey, redisHelper, appid, secret, keypair);
 					return keypair;
 				} catch (Exception e) {
@@ -365,22 +371,57 @@ public class RedisTokenStore extends BaseTokenStore{
 		{
 			RedisFactory.releaseTX();
 		}
-		 
 	}
+//	protected SimpleKeyPair _getKeyPair(String appid,String secret) throws TokenException
+//	{
+//		RedisHelper redisHelper = null;
+//		try
+//		{
+//			redisHelper = RedisFactory.getTXRedisHelper();
+//			String KeyPaireKey = buildKeyPaireKey(  appid);
+//			Map<String,String> keypairInfo = redisHelper.hgetAll(KeyPaireKey);
+//			if(keypairInfo != null && keypairInfo.size() > 0)
+//			{
+//				return toECKeyPair(keypairInfo);
+//			}
+//			else
+//			{
+//				try {
+//					SimpleKeyPair keypair = ECCCoder.genECKeyPair();
+//					insertECKeyPair(   KeyPaireKey, redisHelper, appid, secret, keypair);
+//					return keypair;
+//				} catch (Exception e) {
+//					throw new TokenException(TokenStore.ERROR_CODE_GETKEYPAIRFAILED,e);
+//				}
+//			}
+//			 
+//		}
+//		finally
+//		{
+//			RedisFactory.releaseTX();
+//		}
+//		 
+//	}
 	private void insertECKeyPair(String KeyPaireKey,RedisHelper redisHelper,String appid,String secret,SimpleKeyPair keypair)
 	{
 		Map<String,String> datas = new HashMap<String,String>();
 		 
 		datas.put("appid",appid);		
-		datas.put("privateKey", keypair.getPrivateKey());		
+		if(keypair.getPrivateKey() != null)
+			datas.put("privateKey", keypair.getPrivateKey());		
 		datas.put("createTime", String.valueOf(System.currentTimeMillis()));		
 		datas.put("publicKey", keypair.getPublicKey()) ;
 		redisHelper.hmset(KeyPaireKey, datas);
 	}
 	
+	protected SimpleKeyPair toECKeyPair(Map<String,String> value,String certAlgorithm)
+	{
+		SimpleKeyPair ECKeyPair = new SimpleKeyPair(value.get("privateKey"),value.get("publicKey"),null,null,certAlgorithm == null ?KeyCacheUtil.ALGORITHM_RSA:certAlgorithm);
+		return ECKeyPair;
+	}
 	protected SimpleKeyPair toECKeyPair(Map<String,String> value)
 	{
-		SimpleKeyPair ECKeyPair = new SimpleKeyPair( value.get("privateKey"), value.get("publicKey"),null,null);
+		SimpleKeyPair ECKeyPair = new SimpleKeyPair( value.get("privateKey"), value.get("publicKey"),null,null,KeyCacheUtil.ALGORITHM_RSA);
 		return ECKeyPair;
 	}
 	@Override
@@ -507,6 +548,7 @@ public class RedisTokenStore extends BaseTokenStore{
 		}
 		 
 	}
+	
 	
 
 }

@@ -1,11 +1,13 @@
 package org.frameworkset.web.token;
 
+import java.security.Key;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import org.frameworkset.security.KeyCacheUtil;
 import org.frameworkset.security.ecc.ECCCoderInf;
 import org.frameworkset.security.ecc.SimpleKeyPair;
 import org.frameworkset.util.encoder.Hex;
@@ -186,7 +188,7 @@ public abstract class BaseTokenStore implements TokenStore {
 			boolean comment = true;
 			if(application.isSign() && !comment)
 			{
-				SimpleKeyPair keyPairs = _getKeyPair(appid,secret,false);
+				SimpleKeyPair keyPairs = _getSimpleKey(appid,secret,false, KeyCacheUtil.ALGORITHM_RSA);
 				byte[] data =  null;
 				if(keyPairs.getPubKey() != null)
 				{
@@ -378,7 +380,7 @@ public abstract class BaseTokenStore implements TokenStore {
 			boolean comment = true;			 
 			if(sign  && !comment)
 			{
-				SimpleKeyPair keyPairs = _getKeyPair(appid,secret,false);
+				SimpleKeyPair keyPairs = _getSimpleKey(appid,secret,false, KeyCacheUtil.ALGORITHM_RSA);
 				byte[] data =  null;
 				
 				if(keyPairs.getPriKey() != null)
@@ -429,7 +431,8 @@ public abstract class BaseTokenStore implements TokenStore {
 				boolean comment = true;				
 				if(sign  && !comment)
 				{
-					SimpleKeyPair keyPairs = _getKeyPair(token.getAppid(),token.getSecret(),false);
+					//_getSimpleKey(appid,secret,false, KeyCacheUtil.ALGORITHM_RSA);
+					SimpleKeyPair keyPairs = _getSimpleKey(token.getAppid(),token.getSecret(),false, KeyCacheUtil.ALGORITHM_RSA);
 					
 					byte[] data =  null;
 					if(keyPairs.getPubKey() != null)
@@ -461,7 +464,8 @@ public abstract class BaseTokenStore implements TokenStore {
 				boolean comment = true;				
 				if(sign  && !comment)
 				{
-					SimpleKeyPair keyPairs = _getKeyPair(token.getAppid(),token.getSecret(),false);
+					//_getSimpleKey(appid,secret,false, KeyCacheUtil.ALGORITHM_RSA);
+					SimpleKeyPair keyPairs = _getSimpleKey(token.getAppid(),token.getSecret(),false, KeyCacheUtil.ALGORITHM_RSA);
 					
 					byte[] data =  null;
 					if(keyPairs.getPubKey() != null)
@@ -573,7 +577,8 @@ public abstract class BaseTokenStore implements TokenStore {
 					boolean comment = true;
 					if(appliction.isSign()  && !comment)
 					{
-						SimpleKeyPair keyPairs = _getKeyPair(appid,secret,false);
+						//_getSimpleKey(appid,secret,false, KeyCacheUtil.ALGORITHM_RSA);
+						SimpleKeyPair keyPairs = _getSimpleKey(appid,secret,false, KeyCacheUtil.ALGORITHM_RSA);
 						
 						decodetokenResult.setAppid(appid);
 						mw = new String(ECCCoder.decrypt(Hex.decode(signtoken), keyPairs.getPrivateKey()));
@@ -759,46 +764,83 @@ public abstract class BaseTokenStore implements TokenStore {
 	
 	public SimpleKeyPair getKeyPair(String appid,String secret) throws TokenException
 	{
-		return _getKeyPair(appid,secret,true);
+		//_getSimpleKey(appid,secret,false, KeyCacheUtil.ALGORITHM_RSA);
+		return _getSimpleKey(appid,secret,true, KeyCacheUtil.ALGORITHM_RSA);
 	}
 	private Map<String,SimpleKeyPair> simpleKeyPairCache = new HashMap<String,SimpleKeyPair>();
 	public  SimpleKeyPair getKeyPair(String appid,String secret,boolean validateapp) throws TokenException
 	{
-		return _getKeyPair(  appid,  secret,  validateapp);
+		//_getSimpleKey(appid,secret,false, KeyCacheUtil.ALGORITHM_RSA);
+		return _getSimpleKey(  appid,  secret,  validateapp, KeyCacheUtil.ALGORITHM_RSA);
 	}
-	protected SimpleKeyPair _getKeyPair(String appid,String secret,boolean validateapp) throws TokenException
-	{
+	public SimpleKeyPair getSimpleKey(String appid, String secret,String certAlgorithm) {
+		// TODO Auto-generated method stub
+		return _getSimpleKey(  appid,   secret, true,  certAlgorithm);
+	}
+	@Override
+	public SimpleKeyPair getSimpleKey(String appid, String secret, boolean validateapp,String certAlgorithm) {
+		// TODO Auto-generated method stub
+		return _getSimpleKey(  appid,   secret, validateapp,  certAlgorithm);
+	}
+	protected SimpleKeyPair _getSimpleKey(String appid, String secret, boolean validateapp,String certAlgorithm) {
 		if(validateapp)
 			this.assertApplication(appid, secret);	
-		SimpleKeyPair kp = simpleKeyPairCache.get(appid);
+		String cacheKey = appid+":"+certAlgorithm;
+		SimpleKeyPair kp = simpleKeyPairCache.get(cacheKey);
+		 
 		if(kp != null)
 			return kp;
 		synchronized(simpleKeyPairCache)
 		{
-			kp = simpleKeyPairCache.get(appid);
+			kp = simpleKeyPairCache.get(cacheKey);
 			if(kp != null)
 				return kp;
-			kp = _getKeyPair( appid, secret);
-			if(kp.getPriKey() == null)
-			{
-				PrivateKey priKey = this.ECCCoder.evalECPrivateKey( kp.getPrivateKey());
-				kp.setPriKey(priKey);
+			kp = _getSimpleKey( appid, secret,certAlgorithm);
+			if(kp.getPriKey() == null){
+				Key prikey = this.ECCCoder.evalPrivateKey(kp.getPrivateKey(), certAlgorithm);
 				
+				kp.setPriKey(prikey);
+				Key pubkey = this.ECCCoder.evalPublicKey(kp.getPublicKey(), certAlgorithm);
+				 
+				kp.setPubKey(pubkey);
 			}
-			
-			if(kp.getPubKey() == null) {
-				PublicKey pubKey = this.ECCCoder.evalECPublicKey( kp.getPublicKey());
-				kp.setPubKey(pubKey);
-			}
-			simpleKeyPairCache.put(appid, kp);
+			simpleKeyPairCache.put(cacheKey, kp);
 		}
 		return kp;
 	}
+//	protected SimpleKeyPair _getKeyPair(String appid,String secret,boolean validateapp) throws TokenException
+//	{
+//		if(validateapp)
+//			this.assertApplication(appid, secret);	
+//		SimpleKeyPair kp = simpleKeyPairCache.get(appid);
+//		if(kp != null)
+//			return kp;
+//		synchronized(simpleKeyPairCache)
+//		{
+//			kp = simpleKeyPairCache.get(appid);
+//			if(kp != null)
+//				return kp;
+//			kp = _getSimpleKey( appid, secret, KeyCacheUtil.ALGORITHM_RSA);
+//			if(kp.getPriKey() == null)
+//			{
+//				Key priKey = this.ECCCoder.evalECPrivateKey( kp.getPrivateKey());
+//				kp.setPriKey(priKey);
+//				
+//			}
+//			
+//			if(kp.getPubKey() == null) {
+//				Key pubKey = this.ECCCoder.evalECPublicKey( kp.getPublicKey());
+//				kp.setPubKey(pubKey);
+//			}
+//			simpleKeyPairCache.put(appid, kp);
+//		}
+//		return kp;
+//	}
 	
-	protected abstract SimpleKeyPair _getKeyPair(String appid,String secret) throws TokenException;
-	
-	
-
+//	protected abstract SimpleKeyPair _getKeyPair(String appid,String secret) throws TokenException;
+//	
+	protected abstract SimpleKeyPair _getSimpleKey(String appid,String secret,String certAlgorithm) throws TokenException;
+	 
 	public void setTicketdualtime(long ticketdualtime) {
 		this.ticketdualtime = ticketdualtime;
 	}

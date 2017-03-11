@@ -1,7 +1,6 @@
 package org.frameworkset.web.token;
 
-import java.security.PrivateKey;
-import java.security.PublicKey;
+import java.security.Key;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
@@ -12,7 +11,7 @@ import org.frameworkset.web.auth.AuthorHelper;
 import org.frameworkset.web.token.ws.v2.AuthorService;
 
 public interface TokenServiceInf {
-
+	public String getTokenServerAppName();
 	public abstract String genToken(ServletRequest request, String fid,
 			boolean cache ) throws TokenException;
 
@@ -107,12 +106,17 @@ public interface TokenServiceInf {
 	 */
 	public boolean refreshTicket(String ticket,String appid,String secret) throws TokenException;
 	
-	public PublicKey getPublicKey( String appid);
+	public Key getPublicKey( String appid);
 	
-	public PrivateKey getPrivateKey(String appid);
+	public Key getPrivateKey(String appid);
 	
-	public SimpleKeyPair getSimpleKeyPair(String appid); 
-	public SimpleKeyPair getServerSimpleKeyPair();
+//	public SimpleKeyPair getSimpleKeyPair(String appid); 
+	
+	public SimpleKeyPair getSimpleKey(String appid,String certAlgorithm);
+	public SimpleKeyPair getServerSimpleKey(String certAlgorithm);
+	public SimpleKeyPair getServerSimpleKey(String appid,String certAlgorithm);
+//	public SimpleKeyPair getServerSimpleKeyPair();
+//	public SimpleKeyPair getServerSimpleKey();
 	public AuthenticatePlugin getAuthenticatePlugin();
 	public Application assertApplication(String appid,String secret) throws TokenException;
 	public AppValidateResult validateApplication(String appid,String secret) throws TokenException;

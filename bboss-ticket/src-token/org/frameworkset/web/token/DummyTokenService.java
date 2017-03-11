@@ -181,14 +181,14 @@ public class DummyTokenService implements TokenServiceInf {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.frameworkset.web.token.TokenServiceInf#getSimpleKeyPair(java.lang.String)
-	 */
-	@Override
-	public SimpleKeyPair getSimpleKeyPair(String appid) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+//	/* (non-Javadoc)
+//	 * @see org.frameworkset.web.token.TokenServiceInf#getSimpleKeyPair(java.lang.String)
+//	 */
+//	@Override
+//	public SimpleKeyPair getSimpleKeyPair(String appid) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
 
 	/** (non-Javadoc)
 	 * @see org.frameworkset.web.token.TokenServiceInf#getAuthenticatePlugin()
@@ -208,14 +208,14 @@ public class DummyTokenService implements TokenServiceInf {
 		return null;
 	}
 
-	/** (non-Javadoc)
-	 * @see org.frameworkset.web.token.TokenServiceInf#getServerSimpleKeyPair()
-	 */
-	@Override
-	public SimpleKeyPair getServerSimpleKeyPair() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+//	/** (non-Javadoc)
+//	 * @see org.frameworkset.web.token.TokenServiceInf#getServerSimpleKeyPair()
+//	 */
+//	@Override
+//	public SimpleKeyPair getServerSimpleKeyPair() {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
 
 	/** (non-Javadoc)
 	 * @see org.frameworkset.web.token.TokenServiceInf#getAuthorHelper()
@@ -252,5 +252,32 @@ public class DummyTokenService implements TokenServiceInf {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public SimpleKeyPair getSimpleKey(String appid, String certAlgorithm) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public SimpleKeyPair getServerSimpleKey(String certAlgorithm) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public SimpleKeyPair getServerSimpleKey(String appid, String certAlgorithm) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getTokenServerAppName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+
 
 }

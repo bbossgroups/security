@@ -8,6 +8,13 @@ package org.frameworkset.web.token;
 public class Application {
 	private String appid;
 	private String secret;
+	private String certAlgorithm;
+	public String getCertAlgorithm() {
+		return certAlgorithm;
+	}
+	public void setCertAlgorithm(String certAlgorithm) {
+		this.certAlgorithm = certAlgorithm;
+	}
 	/**
 	 * ticket有效期
 	 */

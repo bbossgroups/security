@@ -3,6 +3,7 @@ package org.frameworkset.web.token;
 import org.apache.log4j.Logger;
 import org.frameworkset.nosql.mongodb.MongoDB;
 import org.frameworkset.nosql.mongodb.MongoDBHelper;
+import org.frameworkset.security.KeyCacheUtil;
 import org.frameworkset.security.ecc.SimpleKeyPair;
 
 import com.mongodb.BasicDBObject;
@@ -461,24 +462,24 @@ public class MongodbTokenStore extends BaseTokenStore{
 		
 		return token_m ;
 	}
-	
-	protected SimpleKeyPair _getKeyPair(String appid,String secret ) throws TokenException
-	{
+	@Override
+	protected SimpleKeyPair _getSimpleKey(String appid, String secret, String certAlgorithm) throws TokenException {
 		DBCursor cursor = null;
 		try
 		{
-			cursor = eckeypairs.find(new BasicDBObject("appid", appid));
+			String id = appid+":"+certAlgorithm;
+			cursor = eckeypairs.find(new BasicDBObject("appid", id));
 			if(cursor.hasNext())
 			{
 				DBObject value = cursor.next();
-				return toECKeyPair(value);
+				return toECKeyPair(value,certAlgorithm);
 				
 			}
 			else
 			{
 				try {
-					SimpleKeyPair keypair = ECCCoder.genECKeyPair( );
-					insertECKeyPair( appid, secret, keypair);
+					SimpleKeyPair keypair = ECCCoder.genECKeyPair( certAlgorithm);
+					insertECKeyPair( id, secret, keypair);
 					return keypair;
 				} catch (Exception e) {
 					throw new TokenException(TokenStore.ERROR_CODE_GETKEYPAIRFAILED,e);
@@ -493,19 +494,63 @@ public class MongodbTokenStore extends BaseTokenStore{
 			}
 		}
 	}
+//	protected SimpleKeyPair _getKeyPair(String appid,String secret ) throws TokenException
+//	{
+//		DBCursor cursor = null;
+//		try
+//		{
+//			cursor = eckeypairs.find(new BasicDBObject("appid", appid));
+//			if(cursor.hasNext())
+//			{
+//				DBObject value = cursor.next();
+//				return toECKeyPair(value);
+//				
+//			}
+//			else
+//			{
+//				try {
+//					SimpleKeyPair keypair = ECCCoder.genECKeyPair( );
+//					insertECKeyPair( appid, secret, keypair);
+//					return keypair;
+//				} catch (Exception e) {
+//					throw new TokenException(TokenStore.ERROR_CODE_GETKEYPAIRFAILED,e);
+//				}
+//			}
+//		}
+//		finally
+//		{
+//			if(cursor != null)
+//			{
+//				cursor.close();
+//			}
+//		}
+//	}
 	private void insertECKeyPair(String appid,String secret,SimpleKeyPair keypair)
 	{
-		MongoDB.insert(this.eckeypairs,new BasicDBObject("appid",appid)		
-		.append("privateKey", keypair.getPrivateKey())
-		.append("createTime", System.currentTimeMillis())
-		.append("publicKey", keypair.getPublicKey()) );
+		if(keypair.getPrivateKey()  != null){
+			MongoDB.insert(this.eckeypairs,new BasicDBObject("appid",appid)		
+			.append("privateKey", keypair.getPrivateKey())
+			.append("createTime", System.currentTimeMillis())
+			.append("publicKey", keypair.getPublicKey()) );
+		}
+		else
+		{
+			MongoDB.insert(this.eckeypairs,new BasicDBObject("appid",appid)		
+					
+					.append("createTime", System.currentTimeMillis())
+					.append("publicKey", keypair.getPublicKey()) );
+		}
 	}
-	
-	protected SimpleKeyPair toECKeyPair(DBObject value)
+	protected SimpleKeyPair toECKeyPair(DBObject value,String certAlgorithm)
 	{
-		SimpleKeyPair ECKeyPair = new SimpleKeyPair((String)value.get("privateKey"),(String)value.get("publicKey"),null,null);
+		SimpleKeyPair ECKeyPair = new SimpleKeyPair((String)value.get("privateKey"),(String)value.get("publicKey"),null,null,certAlgorithm == null?KeyCacheUtil.ALGORITHM_RSA:certAlgorithm);
 		return ECKeyPair;
 	}
+//	protected SimpleKeyPair toECKeyPair(DBObject value)
+//	{
+//		SimpleKeyPair ECKeyPair = new SimpleKeyPair((String)value.get("privateKey"),(String)value.get("publicKey"),null,null,KeyCacheUtil.ALGORITHM_RSA);
+//		return ECKeyPair;
+//	}
 	@Override
 	protected void persisteTicket(Ticket ticket) {
 		/**
@@ -614,6 +659,7 @@ public class MongodbTokenStore extends BaseTokenStore{
 			}
 		}
 	}
+	
 	
 
 }

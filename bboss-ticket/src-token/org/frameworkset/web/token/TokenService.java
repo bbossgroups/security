@@ -15,8 +15,7 @@
  */
 package org.frameworkset.web.token;
 
-import java.security.PrivateKey;
-import java.security.PublicKey;
+import java.security.Key;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -189,14 +188,29 @@ public class TokenService implements TokenServiceInf {
 		    		String content = FileUtil.getContent(certificate, "UTF-8");
 		    		String temp = new String(Base64Commons.decodeBase64(content.getBytes()));
 		    		String[] cainfo = temp.split("\r\n");
-		    		String privateKey = cainfo[1];
-		    		String publicKey = cainfo[3];
-		    		log.debug("加载认证证书["+certificate+"]完毕.");
-		    		this.authorHelper = new AuthorHelper();
-		    		authorHelper.setAppid(appid);
-		    		authorHelper.setSecret(secret);
-		    		authorHelper.setPrivateKey(privateKey);
-		    		authorHelper.setPublicKey(publicKey);
+//		    		if(cainfo[0].equals("[certAlgorithm]"))
+//		    		{
+//		    			String certAlgorithm = cainfo[1];
+//			    		String publicKey = cainfo[3];
+//			    		log.debug("加载认证证书["+certificate+"]完毕.");
+//			    		this.authorHelper = new AuthorHelper();
+//			    		authorHelper.setAppid(appid);
+//			    		authorHelper.setSecret(secret);
+//			    		authorHelper.setCertAlgorithm(certAlgorithm);
+//			    		authorHelper.setPublicKey(publicKey);
+//		    		}
+//		    		else
+		    		{
+		    			String privateKey = cainfo[1];
+			    		String publicKey = cainfo[3];
+			    		log.debug("加载认证证书["+certificate+"]完毕.");
+			    		this.authorHelper = new AuthorHelper();
+			    		authorHelper.setAppid(appid);
+			    		authorHelper.setSecret(secret);
+			    		authorHelper.setPrivateKey(privateKey);
+			    		authorHelper.setPublicKey(publicKey);
+		    		}
+		    		
 					
 		    	}
 		    	catch(Exception e)
@@ -313,10 +327,16 @@ public class TokenService implements TokenServiceInf {
 		initTokeServer();
 		
 	}
-	
-	public SimpleKeyPair getServerSimpleKeyPair()
+//	public SimpleKeyPair getServerSimpleKeyPair()
+//	{
+//		return this.getSimpleKeyPair(this.tokenServerAppName);
+//	}
+	public SimpleKeyPair getServerSimpleKey(String certAlgorithm){
+		return getServerSimpleKey(tokenServerAppName, certAlgorithm);
+	}
+	public SimpleKeyPair getServerSimpleKey(String appid,String certAlgorithm)
 	{
-		return this.getSimpleKeyPair(this.tokenServerAppName);
+		return this.getSimpleKey(appid,  certAlgorithm);
 	}
 	
 //	public Integer sessionmemhash(String token,HttpSession session)
@@ -1005,7 +1025,7 @@ public class TokenService implements TokenServiceInf {
 	 * @see org.frameworkset.web.token.TokenServiceInf#getPublicKey(java.lang.String)
 	 */
 	@Override
-	public PublicKey getPublicKey(String appid) {
+	public Key getPublicKey(String appid) {
 		// TODO Auto-generated method stub
 		return this.tokenStore.getKeyPair(appid, null,false).getPubKey();
 	}
@@ -1017,13 +1037,18 @@ public class TokenService implements TokenServiceInf {
 	 * @see org.frameworkset.web.token.TokenServiceInf#getPrivateKey(java.lang.String)
 	 */
 	@Override
-	public PrivateKey getPrivateKey(String appid) {
+	public Key getPrivateKey(String appid) {
 		return this.tokenStore.getKeyPair(appid, null,false).getPriKey();
 	}
 	
-	public SimpleKeyPair getSimpleKeyPair(String appid)
-	{
-		return this.tokenStore.getKeyPair(appid, null,false);
+//	public SimpleKeyPair getSimpleKeyPair(String appid)
+//	{
+//		return this.tokenStore.getKeyPair(appid, null,false);
+//	}
+	
+	
+	public SimpleKeyPair getSimpleKey(String appid,String certAlgorithm){
+		return this.tokenStore.getSimpleKey(appid, (String)null,false,certAlgorithm);
 	}
 
 

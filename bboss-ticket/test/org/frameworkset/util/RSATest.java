@@ -49,7 +49,7 @@ public class RSATest {
 		
 		
 		ECCCoderInf ECCCoder = ECCHelper.getECCCoder(ECCHelper.RSA);
-		SimpleKeyPair keyMap = ECCCoder.genECKeyPair( );
+		SimpleKeyPair keyMap = ECCCoder.genECKeyPair(ECCHelper.RSA );
 
 		String publicKey = keyMap.getPublicKey();
 		String privateKey = keyMap.getPrivateKey();
@@ -69,12 +69,12 @@ public class RSATest {
 		inputStr = "解密局解密局";
 		data = inputStr.getBytes();
 		long start = System.currentTimeMillis();
-		encodedData = ECCCoder.encrypt(data, ECCCoder.evalECPublicKey(publicKey));
+		encodedData = ECCCoder.encrypt(data, ECCCoder.evalPublicKey(publicKey,null));
 		long end = System.currentTimeMillis();
 		System.out.println("加密耗时:"+(end-start));
 		
 		start = System.currentTimeMillis();
-		decodedData = ECCCoder.decrypt(encodedData, ECCCoder.evalECPrivateKey(privateKey));
+		decodedData = ECCCoder.decrypt(encodedData, ECCCoder.evalPrivateKey(privateKey,null));
 		end = System.currentTimeMillis();
 		System.out.println("解密耗时:"+(end-start));
 		String outputStr = new String(decodedData);
@@ -85,14 +85,14 @@ public class RSATest {
 	public void testGenKey() throws Exception {
 		
 		ECCCoderInf ECCCoder = ECCHelper.getECCCoder(ECCHelper.RSA);
-		SimpleKeyPair keyMap = ECCCoder.genECKeyPair( );
+		SimpleKeyPair keyMap = ECCCoder.genECKeyPair(ECCHelper.RSA );
 
 		String publicKey = keyMap.getPublicKey();
 		String privateKey = keyMap.getPrivateKey();
 		System.err.println("公钥: \n" + publicKey);
 		System.err.println("私钥： \n" + privateKey);
 		
-		keyMap = ECCCoder.genECKeyPair( );
+		keyMap = ECCCoder.genECKeyPair(ECCHelper.RSA );
 
 		String publicKey1 = keyMap.getPublicKey();
 		String privateKey1 = keyMap.getPrivateKey();

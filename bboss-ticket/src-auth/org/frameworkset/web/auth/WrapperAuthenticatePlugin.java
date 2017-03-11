@@ -3,23 +3,18 @@
  */
 package org.frameworkset.web.auth;
 
+import java.security.Key;
 import java.security.PrivateKey;
-import java.security.PublicKey;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.frameworkset.web.auth.AuthenticateException;
-import org.frameworkset.web.auth.AuthenticateMessages;
-import org.frameworkset.web.auth.AuthenticatePlugin;
-import org.frameworkset.web.auth.AuthenticateResponse;
-import org.frameworkset.web.auth.AuthenticateToken;
-import org.frameworkset.web.auth.AuthenticatedToken;
-import org.frameworkset.web.auth.AuthorHelper;
-import org.frameworkset.web.auth.BaseAuthenticatePlugin;
+import org.frameworkset.security.KeyCacheUtil;
 import org.frameworkset.web.token.AppValidateResult;
 import org.frameworkset.web.token.Application;
 import org.frameworkset.web.token.TokenException;
 import org.frameworkset.web.token.TokenHelper;
+
+import io.jsonwebtoken.SignatureAlgorithm;
 
 /**
  * @author yinbp
@@ -28,9 +23,9 @@ import org.frameworkset.web.token.TokenHelper;
  */
 public class WrapperAuthenticatePlugin extends BaseAuthenticatePlugin {
 	private AuthenticatePlugin authenticatePlugin;
-	private PublicKey publicKey;
+	private Key publicKey;
 	
-	public WrapperAuthenticatePlugin(AuthenticatePlugin authenticatePlugin,PublicKey publicKey) {
+	public WrapperAuthenticatePlugin(AuthenticatePlugin authenticatePlugin,Key publicKey) {
 		this.authenticatePlugin = authenticatePlugin;
 		this.publicKey = publicKey;
 	}
@@ -58,7 +53,19 @@ public class WrapperAuthenticatePlugin extends BaseAuthenticatePlugin {
 			}
 			Application application = validateResult.getApplication();
 			authenticateToken_.setLivetimes(application.getTicketlivetime());
-			PrivateKey privateKey = TokenHelper.getTokenService().getPrivateKey(authenticateToken_.getAppcode());
+			Key privateKey = null;
+//			SignatureAlgorithm.RS512
+			SignatureAlgorithm signatureAlgorithm = null;
+			if(application.getCertAlgorithm() == null  || application.getCertAlgorithm().equals(KeyCacheUtil.ALGORITHM_RSA)){
+				privateKey = TokenHelper.getTokenService().getPrivateKey(authenticateToken_.getAppcode());
+				signatureAlgorithm = SignatureAlgorithm.RS512;
+			}
+			else
+			{
+				privateKey = TokenHelper.getTokenService().getSimpleKey(authenticateToken_.getAppcode(),application.getCertAlgorithm()).getPriKey();
+				signatureAlgorithm = SignatureAlgorithm.forName(application.getCertAlgorithm());
+			}
+			
 			if(privateKey == null)
 			{
 				authenticateResponse.setResultcode("failed");
@@ -89,7 +96,7 @@ public class WrapperAuthenticatePlugin extends BaseAuthenticatePlugin {
 				}		
 			 
 					
-				String auhorcode = AuthorHelper.encodeAuthenticateResponse(authenticatedToken,privateKey,expiration,ticketlivetimes);
+				String auhorcode = AuthorHelper.encodeAuthenticateResponse(authenticatedToken,signatureAlgorithm,privateKey,expiration,ticketlivetimes);
 				authenticateResponse.setAuthorization(auhorcode);
 				authenticateResponse.setResultcode("success");
 				authenticateResponse.setValidateResult(true);
@@ -149,11 +156,11 @@ public class WrapperAuthenticatePlugin extends BaseAuthenticatePlugin {
 		this.authenticatePlugin = authenticatePlugin;
 	}
 
-	public PublicKey getPublicKey() {
+	public Key getPublicKey() {
 		return publicKey;
 	}
 
-	public void setPublicKey(PublicKey publicKey) {
+	public void setPublicKey(Key publicKey) {
 		this.publicKey = publicKey;
 	}
 

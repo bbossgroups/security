@@ -235,7 +235,7 @@ public class TicketClientTest {
 	         //构建一个待验证的token
 	         AuthorHelper authorHelper = TokenHelper.getTokenService().getAuthorHelper();
 	         Map<String,Object> extendAttributes = new HashMap<String,Object>();
-	         String authtoken = authorHelper.encodeAuthenticateRequest("sessionid", "yinbp", "123456", authorHelper.getAppcode(), authorHelper.getAppsecret(), authorHelper.getSecretPrivateKey(), extendAttributes);
+	         String authtoken = authorHelper.encodeAuthenticateRequest("sessionid", "yinbp", "123456",  extendAttributes);
 
 	         
 	         AuthenticateResponse authorResponse = authorService.auth(authtoken);

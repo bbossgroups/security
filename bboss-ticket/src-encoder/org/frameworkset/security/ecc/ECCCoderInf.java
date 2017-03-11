@@ -15,6 +15,7 @@
  */
 package org.frameworkset.security.ecc;
 
+import java.security.Key;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 
@@ -29,12 +30,13 @@ import java.security.PublicKey;
  */
 public interface ECCCoderInf {
 
-	public abstract PrivateKey evalECPrivateKey(String privateKey);
-
-	public abstract PublicKey evalECPublicKey(String publicKey);
+//	public abstract Key evalECPrivateKey(String privateKey);
+	public  Key evalPrivateKey(String privatekey,String certAlgorithm);
+	public  Key evalPublicKey(String publickey,String certAlgorithm);
+//	public abstract Key evalECPublicKey(String publicKey);
 	
-	public  abstract PrivateKey _evalECPrivateKey(byte[] privateKey);
-	public  abstract PublicKey _evalECPublicKey(byte[] publicKey);
+	public  abstract Key _evalECPrivateKey(byte[] privateKey);
+	public  abstract Key _evalECPublicKey(byte[] publicKey);
 
 	/**
 	 * 解密<br>
@@ -69,7 +71,7 @@ public interface ECCCoderInf {
 	 * @return
 	 * @throws Exception
 	 */
-	public abstract byte[] decrypt(String database64, PrivateKey priKey)
+	public abstract byte[] decrypt(String database64, Key priKey)
 			throws Exception;
 
 	/**
@@ -81,7 +83,7 @@ public interface ECCCoderInf {
 	 * @return
 	 * @throws Exception
 	 */
-	public abstract byte[] decrypt(byte[] data, PrivateKey priKey_)
+	public abstract byte[] decrypt(byte[] data, Key priKey_)
 			throws Exception;
 
 	/**
@@ -108,10 +110,10 @@ public interface ECCCoderInf {
 	 * @return
 	 * @throws Exception
 	 */
-	public abstract byte[] encrypt(byte[] data, PublicKey pubKey_)
+	public abstract byte[] encrypt(byte[] data, Key pubKey_)
 			throws Exception;
 
-	public abstract byte[] encrypt(String data, PublicKey pubKey_)
+	public abstract byte[] encrypt(String data, Key pubKey_)
 			throws Exception;
 
 	/**
@@ -120,6 +122,7 @@ public interface ECCCoderInf {
 	 * @return
 	 * @throws Exception
 	 */
-	public abstract SimpleKeyPair genECKeyPair( ) throws Exception;
+//	public abstract SimpleKeyPair genECKeyPair( ) throws Exception;
+	public SimpleKeyPair genECKeyPair(String certAlgorithm ) throws Exception ;
 
 }

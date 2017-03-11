@@ -144,4 +144,6 @@ public interface TokenStore {
 	public boolean refreshTicket(String ticket,String appid,String secret) throws TokenException;
 	public  SimpleKeyPair getKeyPair(String appid,String secret,boolean validateapp) throws TokenException;
 	public Application assertApplication(String appid,String secret) throws TokenException;
+	public  SimpleKeyPair getSimpleKey(String appid, String secret, boolean validateapp,String certAlgorithm);
+	public  SimpleKeyPair getSimpleKey(String appid, String secret, String certAlgorithm);
 }

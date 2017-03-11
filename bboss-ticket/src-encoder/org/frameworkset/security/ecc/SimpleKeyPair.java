@@ -15,10 +15,9 @@
  */
 package org.frameworkset.security.ecc;
 
+import java.security.Key;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.interfaces.ECPrivateKey;
-import java.security.interfaces.ECPublicKey;
 
 /**
  * <p>Title: KeyPairs.java</p> 
@@ -32,29 +31,68 @@ import java.security.interfaces.ECPublicKey;
 public class SimpleKeyPair {
 	private String privateKey;
 	private String publicKey;
-	private transient PublicKey pubKey;
-	private transient PrivateKey priKey;
+	private transient Key pubKey;
+	private transient Key priKey;
+//	private transient Key key;
+	private transient String certAlgorithm;
+//	public Key getKey() {
+//		return key;
+//	}
+//	public void setKey(Key key) {
+//		this.key = key;
+//	}
+	public String getCertAlgorithm() {
+		return certAlgorithm;
+	}
+	public void setCertAlgorithm(String certAlgorithm) {
+		this.certAlgorithm = certAlgorithm;
+	}
 	public SimpleKeyPair(){
 		
 	}
+//	public SimpleKeyPair(String privateKey, String publicKey,
+//			Key pubKey, Key priKey) {
+//		super();
+//		this.privateKey = privateKey;
+//		this.publicKey = publicKey;
+//		this.pubKey = pubKey;
+//		this.priKey = priKey;
+//	}
+	
 	public SimpleKeyPair(String privateKey, String publicKey,
-			PublicKey pubKey, PrivateKey priKey) {
+			Key pubKey, Key priKey,String certAlgorithm) {
 		super();
 		this.privateKey = privateKey;
 		this.publicKey = publicKey;
 		this.pubKey = pubKey;
 		this.priKey = priKey;
+		this.certAlgorithm =  certAlgorithm;
 	}
+//	public SimpleKeyPair(  String publicKey,
+//			Key key) {
+//		super();
+//		 
+//		this.publicKey = publicKey;
+//		this.key = key;
+//	}
+	
+//	public SimpleKeyPair(  String publicKey,
+//			String certAlgorithm) {
+//		super();
+//		 
+//		this.publicKey = publicKey;
+//		this.certAlgorithm = certAlgorithm;
+//	}
 	public String getPrivateKey() {
 		return privateKey;
 	}
 	public String getPublicKey() {
 		return publicKey;
 	}
-	public PublicKey getPubKey() {
+	public  Key getPubKey() {
 		return pubKey;
 	}
-	public PrivateKey getPriKey() {
+	public  Key getPriKey() {
 		return priKey;
 	}
 	public void setPrivateKey(String privateKey) {
@@ -63,10 +101,10 @@ public class SimpleKeyPair {
 	public void setPublicKey(String publicKey) {
 		this.publicKey = publicKey;
 	}
-	public void setPubKey(PublicKey pubKey) {
+	public void setPubKey(Key pubKey) {
 		this.pubKey = pubKey;
 	}
-	public void setPriKey(PrivateKey priKey) {
+	public void setPriKey(Key priKey) {
 		this.priKey = priKey;
 	}
 }

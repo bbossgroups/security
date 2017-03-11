@@ -15,6 +15,7 @@
  */
 package org.frameworkset.security.rsa;
 
+import java.security.Key;
 import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -62,7 +63,7 @@ public class RsaCoder extends BaseECCCoder {
 	 * @return
 	 * @throws Exception
 	 */
-	public  byte[] decrypt(byte[] data, PrivateKey priKey) throws Exception {
+	public  byte[] decrypt(byte[] data, Key priKey) throws Exception {
 		return KeyCacheUtil.decrypt(data, priKey);
 	}
 
@@ -77,7 +78,7 @@ public class RsaCoder extends BaseECCCoder {
 	 * @return
 	 * @throws Exception
 	 */
-	public  byte[] encrypt(byte[] data, PublicKey pubKey)
+	public  byte[] encrypt(byte[] data, Key pubKey)
 			throws Exception {
 		
 
