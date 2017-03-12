@@ -44,4 +44,12 @@ public interface ValidateApplication {
 	 */
 	
 	public AppValidateResult validateApp(String appid,String secret) throws ValidateApplicationException;
+	/**
+	 * 获取应用信息
+	 * @param appid
+	 * @return
+	 */
+	public Application getApplication(String appid) throws ValidateApplicationException;
+	
+	
 }

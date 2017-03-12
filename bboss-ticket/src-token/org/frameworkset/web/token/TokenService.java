@@ -15,7 +15,8 @@
  */
 package org.frameworkset.web.token;
 
-import java.security.Key;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -39,7 +40,7 @@ import org.frameworkset.web.token.ws.v2.AuthorService;
 
 import com.caucho.hessian.client.HessianProxyFactory;
 import com.frameworkset.util.FileUtil;
-import com.frameworkset.util.StringUtil;
+import com.frameworkset.util.SimpleStringUtil;
 
 /**
  * <p>Title: TokenService.java</p> 
@@ -64,10 +65,13 @@ public class TokenService implements TokenServiceInf {
 	private String appid;
 	private String secret;
 	private String tokenServerAppName = "tokenserver";
+	private String tokenServercertAlgorithm = "RSA";
 	/**
 	 * 客户端模式，必须指定令牌服务器地址
 	 */
 	private String tokenserver;
+	
+	
 	
 	private String tokenServerPublicKey ;
 	/**
@@ -88,6 +92,18 @@ public class TokenService implements TokenServiceInf {
 	
 	private String ALGORITHM ="RSA";
 	private ValidateApplication validateApplication = new NullValidateApplication();
+	private static Method getApplication = null;
+	static{
+		try {
+			getApplication = ValidateApplication.class.getDeclaredMethod("getApplication", String.class);
+		} catch (NoSuchMethodException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+		} catch (SecurityException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+		}
+	}
 	
 	private AuthenticatePlugin authenticatePlugin;
 	private AuthorHelper authorHelper;
@@ -200,16 +216,30 @@ public class TokenService implements TokenServiceInf {
 //			    		authorHelper.setPublicKey(publicKey);
 //		    		}
 //		    		else
-		    		{
+//		    		{
+		    			this.authorHelper = new AuthorHelper();
 		    			String privateKey = cainfo[1];
 			    		String publicKey = cainfo[3];
-			    		log.debug("加载认证证书["+certificate+"]完毕.");
-			    		this.authorHelper = new AuthorHelper();
+			    		if(cainfo.length > 4)
+			    		{
+			    			String privateCertAlgorithm = cainfo[5];
+			    			String publicCertAlgorithm = cainfo[7];
+			    			authorHelper.setPrivateCertAlgorithm(privateCertAlgorithm);
+			    			authorHelper.setPublicCertAlgorithm(publicCertAlgorithm);
+			    		}
+			    		else
+			    		{
+			    			authorHelper.setPrivateCertAlgorithm(KeyCacheUtil.ALGORITHM_RSA);
+			    			authorHelper.setPublicCertAlgorithm(KeyCacheUtil.ALGORITHM_RSA);
+			    		}
+			    		
+			    		
 			    		authorHelper.setAppid(appid);
 			    		authorHelper.setSecret(secret);
 			    		authorHelper.setPrivateKey(privateKey);
 			    		authorHelper.setPublicKey(publicKey);
-		    		}
+			    		log.debug("加载认证证书["+certificate+"]完毕.");
+//		    		}
 		    		
 					
 		    	}
@@ -219,7 +249,7 @@ public class TokenService implements TokenServiceInf {
 		    	}
 			}
 			AuthorService _authorService = null;
-			String authurl = StringUtil.getNormalPath(tokenserver,  "/hessian/v2authorService");
+			String authurl = SimpleStringUtil.getNormalPath(tokenserver,  "/hessian/v2authorService");
 	    	
 	    	
 	    	 HessianProxyFactory factory = new HessianProxyFactory();
@@ -237,6 +267,7 @@ public class TokenService implements TokenServiceInf {
 		
 		
 		
+		
 	}
 	 
 	private void initRemoteTokenStore()
@@ -246,9 +277,9 @@ public class TokenService implements TokenServiceInf {
 			if(this.tokenserver == null || this.tokenserver.equals(""))
 				log.warn("没有指定tokenserver地址，如需指定，请在tokenconf.xml文件配置");
 			else
-				tokenStore = (TokenStore) clientFactory.create(TokenStore.class,StringUtil.getRealPath(this.tokenserver, "hessian?service=tokenStoreService&container=tokenconf.xml"));
+				tokenStore = (TokenStore) clientFactory.create(TokenStore.class,SimpleStringUtil.getRealPath(this.tokenserver, "hessian?service=tokenStoreService&container=tokenconf.xml"));
 		} catch (Exception e) {
-			log.error("初始化令牌服务组件失败:"+StringUtil.getNormalPath(this.tokenserver, "hessian?service=tokenStoreService&container=tokenconf.xml"),e);
+			log.error("初始化令牌服务组件失败:"+SimpleStringUtil.getNormalPath(this.tokenserver, "hessian?service=tokenStoreService&container=tokenconf.xml"),e);
 		}
 	}
 	private void initTokeServer()
@@ -273,9 +304,9 @@ public class TokenService implements TokenServiceInf {
 			if(this.authenticatePlugin != null){
 				if(this.tokenServerAppName != null)
 				{
-					authenticatePlugin = new WrapperAuthenticatePlugin(authenticatePlugin,this.getPublicKey(tokenServerAppName));
+					authenticatePlugin = new WrapperAuthenticatePlugin(authenticatePlugin,this.getServerSimpleKey(tokenServerAppName,this.tokenServercertAlgorithm).getPubKey());
 				}
-				else
+				else if(tokenServerPublicKey != null)
 				{
 					authenticatePlugin = new WrapperAuthenticatePlugin(authenticatePlugin,KeyCacheUtil.getPublicKey(tokenServerPublicKey));
 				}
@@ -301,6 +332,22 @@ public class TokenService implements TokenServiceInf {
 				ECCCoderInf ECCCoder= ECCHelper.getECCCoder(ecctype);
 				tokenStore.setECCCoder(ECCCoder);
 				tokenStore.setValidateApplication(validateApplication);
+				if(validateApplication != null && getApplication != null){
+					try {
+						Application app = (Application) getApplication.invoke(validateApplication,this.getTokenServerAppName());
+						if(app != null)
+							this.tokenServercertAlgorithm = app.getCertAlgorithm();
+					} catch (IllegalAccessException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IllegalArgumentException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (InvocationTargetException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
 			}
 		}
 		else
@@ -317,13 +364,36 @@ public class TokenService implements TokenServiceInf {
 				{
 					tokenStore.setValidateApplication(validateApplication);
 				}
+				else
+				{
+					validateApplication = tokenStore.getValidateApplication();
+				}
+				if(validateApplication != null && getApplication != null){
+					try {
+						Application app = (Application) getApplication.invoke(validateApplication,this.getTokenServerAppName());
+						if(app != null)
+							this.tokenServercertAlgorithm = app.getCertAlgorithm();
+					} catch (IllegalAccessException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (IllegalArgumentException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					} catch (InvocationTargetException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				
 			}
 		}
+		
 	}
 	private void init()
 	{
+		
+		initTokenStore();	
 		initAuth();
-		initTokenStore();		
 		initTokeServer();
 		
 	}
@@ -604,7 +674,7 @@ public class TokenService implements TokenServiceInf {
 	{
 //		if(!this.enableTokStringBuilderturn "";
 		StringBuilder buffer = new StringBuilder();
-		if(StringUtil.isEmpty(elementType) || elementType.equals("input"))
+		if(SimpleStringUtil.isEmpty(elementType) || elementType.equals("input"))
 		{
 			buffer.append("<input type=\"hidden\" name=\"").append(TokenStore.temptoken_param_name).append("\" value=\"").append(this.genToken(request,fid, cache)).append("\">");
 		}
@@ -1021,25 +1091,25 @@ public class TokenService implements TokenServiceInf {
 
 
 
-	/* (non-Javadoc)
-	 * @see org.frameworkset.web.token.TokenServiceInf#getPublicKey(java.lang.String)
-	 */
-	@Override
-	public Key getPublicKey(String appid) {
-		// TODO Auto-generated method stub
-		return this.tokenStore.getKeyPair(appid, null,false).getPubKey();
-	}
-
-
-
-
-	/* (non-Javadoc)
-	 * @see org.frameworkset.web.token.TokenServiceInf#getPrivateKey(java.lang.String)
-	 */
-	@Override
-	public Key getPrivateKey(String appid) {
-		return this.tokenStore.getKeyPair(appid, null,false).getPriKey();
-	}
+//	/* (non-Javadoc)
+//	 * @see org.frameworkset.web.token.TokenServiceInf#getPublicKey(java.lang.String)
+//	 */
+//	@Override
+//	public Key getPublicKey(String appid) {
+//		// TODO Auto-generated method stub
+//		return this.tokenStore.getKeyPair(appid, null,false).getPubKey();
+//	}
+//
+//
+//
+//
+//	/* (non-Javadoc)
+//	 * @see org.frameworkset.web.token.TokenServiceInf#getPrivateKey(java.lang.String)
+//	 */
+//	@Override
+//	public Key getPrivateKey(String appid) {
+//		return this.tokenStore.getKeyPair(appid, null,false).getPriKey();
+//	}
 	
 //	public SimpleKeyPair getSimpleKeyPair(String appid)
 //	{
@@ -1140,6 +1210,29 @@ public class TokenService implements TokenServiceInf {
 
 	public AuthorService getAuthorService() {
 		return authorService;
+	}
+
+
+
+
+	public String getTokenServercertAlgorithm() {
+		return tokenServercertAlgorithm;
+	}
+
+
+
+
+	public void setTokenServercertAlgorithm(String tokenServercertAlgorithm) {
+		this.tokenServercertAlgorithm = tokenServercertAlgorithm;
+	}
+
+
+
+
+	@Override
+	public SimpleKeyPair getSimpleKeyPair(String appid) {
+		// TODO Auto-generated method stub
+		return getSimpleKey( appid,KeyCacheUtil.ALGORITHM_RSA);
 	}
 
 

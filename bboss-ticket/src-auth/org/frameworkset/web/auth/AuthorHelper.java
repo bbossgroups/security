@@ -87,7 +87,9 @@ public class AuthorHelper {
 		return _decodeMessageRequest( authorization, publicKey);
 		
 	}
-	
+	public static InputStream generateCAStream(String appcode){
+		return generateCAStream( appcode,KeyCacheUtil.ALGORITHM_RSA,KeyCacheUtil.ALGORITHM_RSA);
+	}
 	private static  AuthenticateToken _decodeMessageRequest(String authorization,Key publicKey) throws AuthenticateException
 	{
 		

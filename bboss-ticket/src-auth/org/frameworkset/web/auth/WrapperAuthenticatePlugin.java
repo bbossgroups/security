@@ -57,14 +57,15 @@ public class WrapperAuthenticatePlugin extends BaseAuthenticatePlugin {
 //			SignatureAlgorithm.RS512
 			SignatureAlgorithm signatureAlgorithm = null;
 			if(application.getCertAlgorithm() == null  || application.getCertAlgorithm().equals(KeyCacheUtil.ALGORITHM_RSA)){
-				privateKey = TokenHelper.getTokenService().getPrivateKey(authenticateToken_.getAppcode());
+//				privateKey = TokenHelper.getTokenService().getPrivateKey(authenticateToken_.getAppcode());
 				signatureAlgorithm = SignatureAlgorithm.RS512;
 			}
 			else
 			{
-				privateKey = TokenHelper.getTokenService().getSimpleKey(authenticateToken_.getAppcode(),application.getCertAlgorithm()).getPriKey();
+				
 				signatureAlgorithm = SignatureAlgorithm.forName(application.getCertAlgorithm());
 			}
+			privateKey = TokenHelper.getTokenService().getSimpleKey(authenticateToken_.getAppcode(),application.getCertAlgorithm()).getPriKey();
 			
 			if(privateKey == null)
 			{

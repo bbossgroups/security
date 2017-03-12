@@ -163,23 +163,23 @@ public class DummyTokenService implements TokenServiceInf {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.frameworkset.web.token.TokenServiceInf#getPublicKey(java.lang.String)
-	 */
-	@Override
-	public PublicKey getPublicKey(String appid) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.frameworkset.web.token.TokenServiceInf#getPrivateKey(java.lang.String)
-	 */
-	@Override
-	public PrivateKey getPrivateKey(String appid) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+//	/* (non-Javadoc)
+//	 * @see org.frameworkset.web.token.TokenServiceInf#getPublicKey(java.lang.String)
+//	 */
+//	@Override
+//	public PublicKey getPublicKey(String appid) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
+//
+//	/* (non-Javadoc)
+//	 * @see org.frameworkset.web.token.TokenServiceInf#getPrivateKey(java.lang.String)
+//	 */
+//	@Override
+//	public PrivateKey getPrivateKey(String appid) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
 
 //	/* (non-Javadoc)
 //	 * @see org.frameworkset.web.token.TokenServiceInf#getSimpleKeyPair(java.lang.String)
@@ -273,6 +273,12 @@ public class DummyTokenService implements TokenServiceInf {
 
 	@Override
 	public String getTokenServerAppName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public SimpleKeyPair getSimpleKeyPair(String appid) {
 		// TODO Auto-generated method stub
 		return null;
 	}

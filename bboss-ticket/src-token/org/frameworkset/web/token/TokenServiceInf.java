@@ -1,7 +1,5 @@
 package org.frameworkset.web.token;
 
-import java.security.Key;
-
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
@@ -106,11 +104,11 @@ public interface TokenServiceInf {
 	 */
 	public boolean refreshTicket(String ticket,String appid,String secret) throws TokenException;
 	
-	public Key getPublicKey( String appid);
+//	public Key getPublicKey( String appid);
+//	
+//	public Key getPrivateKey(String appid);
 	
-	public Key getPrivateKey(String appid);
-	
-//	public SimpleKeyPair getSimpleKeyPair(String appid); 
+	public SimpleKeyPair getSimpleKeyPair(String appid); 
 	
 	public SimpleKeyPair getSimpleKey(String appid,String certAlgorithm);
 	public SimpleKeyPair getServerSimpleKey(String certAlgorithm);

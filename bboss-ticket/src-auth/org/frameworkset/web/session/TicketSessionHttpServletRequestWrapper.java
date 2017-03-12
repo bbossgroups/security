@@ -13,6 +13,7 @@ import org.frameworkset.security.session.impl.HttpSessionImpl;
 import org.frameworkset.security.session.impl.SessionHttpServletRequestWrapper;
 import org.frameworkset.security.session.impl.SessionID;
 import org.frameworkset.web.auth.AuthenticateException;
+import org.frameworkset.web.auth.AuthenticateMessages;
 import org.frameworkset.web.auth.AuthenticatedToken;
 import org.frameworkset.web.auth.AuthorHelper;
 import org.frameworkset.web.auth.TicketConsts;
@@ -73,7 +74,7 @@ public class TicketSessionHttpServletRequestWrapper extends SessionHttpServletRe
 					}
 				} catch (AuthenticateException e) {
 					
-					throw e;
+					throw new AuthenticateException(AuthenticateMessages.getMessage(e.getMessage()),e);
 				}
 			}
 			else if(this.sessionid != null)
@@ -86,7 +87,7 @@ public class TicketSessionHttpServletRequestWrapper extends SessionHttpServletRe
 						tokenfromlocalcookie = true;  
 					} catch (AuthenticateException e) {
 						
-						throw e;
+						throw new AuthenticateException(AuthenticateMessages.getMessage(e.getMessage()),e);
 					}
 				}
 			}

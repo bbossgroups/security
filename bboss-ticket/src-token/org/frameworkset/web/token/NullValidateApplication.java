@@ -37,14 +37,22 @@ public class NullValidateApplication implements ValidateApplication {
 	@Override
 	public AppValidateResult validateApp(String appid, String secret) throws ValidateApplicationException {
 		AppValidateResult result = new AppValidateResult();
-		Application app = new Application();
-		app.setAppid(appid);
-		app.setSecret(secret);
-		app.setSign(false);
-		app.setTicketlivetime(-2);
+		Application app =  getApplication(  appid) ;		 
+		app.setSecret(secret);		 
 		result.setApplication(app);
 		result.setResult(true);
 		return result;
+	}
+
+	@Override
+	public Application getApplication(String appid) throws ValidateApplicationException {
+		Application app = new Application();
+		app.setAppid(appid);
+//		app.setSecret(secret);
+		app.setSign(false);
+		app.setTicketlivetime(-2);
+		app.setCertAlgorithm("RSA");
+		return app;
 	}
 
 }
