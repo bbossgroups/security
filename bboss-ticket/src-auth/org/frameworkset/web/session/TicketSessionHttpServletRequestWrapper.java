@@ -73,8 +73,8 @@ public class TicketSessionHttpServletRequestWrapper extends SessionHttpServletRe
 						}
 					}
 				} catch (AuthenticateException e) {
-					
-					throw new AuthenticateException(AuthenticateMessages.getMessage(e.getMessage()),e);
+					request.setAttribute(TicketConsts.ticket_validate_failedmessage, AuthenticateMessages.getMessage(e.getMessage()));
+					//throw new AuthenticateException(AuthenticateMessages.getMessage(e.getMessage()),e);
 				}
 			}
 			else if(this.sessionid != null)
@@ -86,8 +86,8 @@ public class TicketSessionHttpServletRequestWrapper extends SessionHttpServletRe
 						token = AuthorHelper.decodeMessageResponse(authenticateCode);						
 						tokenfromlocalcookie = true;  
 					} catch (AuthenticateException e) {
-						
-						throw new AuthenticateException(AuthenticateMessages.getMessage(e.getMessage()),e);
+						request.setAttribute(TicketConsts.ticket_validate_failedmessage, AuthenticateMessages.getMessage(e.getMessage()));
+//						throw new AuthenticateException(AuthenticateMessages.getMessage(e.getMessage()),e);
 					}
 				}
 			}
