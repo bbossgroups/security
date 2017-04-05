@@ -238,6 +238,14 @@ public class SessionUtil {
 		else
 		{
 			String currentDomain = request.getServerName();
+			if(crossDomain.getRootDomain() == null || crossDomain.getRootDomain().equals("")){
+				boolean secure = SessionUtil.getSessionManager().isSecure();
+				if(!request.isSecure())
+					secure = false;
+				StringUtil.addCookieValue(request, response, cookieName, sessionid, cookielivetime,SessionUtil.getSessionManager().isHttpOnly(),
+						secure,SessionUtil.getSessionManager().getDomain());
+				return;
+			}
 			if(!currentDomain.equals(crossDomain.getRootDomain()) && !currentDomain.endsWith("."+crossDomain.getRootDomain()))//非跨域访问，则直接写应用的session cookieid,解决通过非共享域方式无法访问系统的问题
 			{
 				boolean secure = SessionUtil.getSessionManager().isSecure();
