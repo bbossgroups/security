@@ -48,6 +48,8 @@ public class SessionFilter implements Filter{
 	protected boolean dosessionfilter = true;
 	protected ServletContext servletContext;
 	protected List<String> excludePatterns;
+	protected List<String> includePatterns;
+	
 	protected UrlPathHelper urlPathHelper = new UrlPathHelper();
 	protected PathMatcher pathMatcher = new AntPathMatcher();
 	@Override
@@ -56,6 +58,7 @@ public class SessionFilter implements Filter{
 		servletContext = null;
 		dosessionfilter = true;
 		excludePatterns = null;
+		includePatterns = null;
 	}
 	
 	protected SessionHttpServletRequestWrapper buildSessionHttpServletRequestWrapper(ServletRequest request, ServletResponse response)
@@ -68,6 +71,17 @@ public class SessionFilter implements Filter{
 		if(this.excludePatterns == null || this.excludePatterns.size() == 0)
 			return false;
 		String uri = urlPathHelper.getRequestUri((HttpServletRequest)request);
+		if(includePatterns != null && includePatterns.size() > 0){
+			boolean include = false;
+			for(int i = 0;  i < this.includePatterns.size(); i ++){
+				String pattern = this.includePatterns.get(i);
+				include = this.pathMatcher.match(pattern, uri);
+				if(include )
+					break;
+			}
+			if(include)
+				return false;
+		}
 		boolean exclude = false;
 		for(int i = 0;  i < this.excludePatterns.size(); i ++){
 			String pattern = this.excludePatterns.get(i);
@@ -121,6 +135,19 @@ public class SessionFilter implements Filter{
 					excludePatterns.add(p);
 			}
 		}
+		
+		
+		String includePatterns_ =  fc.getInitParameter("includePatterns");
+		if(includePatterns_ != null && !includePatterns_.equals("")){
+			includePatterns = new ArrayList<String>();
+			String[] patterns = includePatterns_.split(",");
+			for(int i = 0;  i < patterns.length; i ++){
+				String p = patterns[i].trim() ;
+				if(!p.equals(""))
+					includePatterns.add(p);
+			}
+		}
+		
 	}
 
 }
