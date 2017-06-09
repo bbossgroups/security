@@ -16,6 +16,8 @@
 package org.frameworkset.security.session.impl;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -26,6 +28,10 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.frameworkset.util.AntPathMatcher;
+import org.frameworkset.util.PathMatcher;
+import org.frameworkset.web.util.UrlPathHelper;
 
 
 
@@ -41,11 +47,15 @@ import javax.servlet.http.HttpServletResponse;
 public class SessionFilter implements Filter{
 	protected boolean dosessionfilter = true;
 	protected ServletContext servletContext;
+	protected List<String> excludePatterns;
+	protected UrlPathHelper urlPathHelper = new UrlPathHelper();
+	protected PathMatcher pathMatcher = new AntPathMatcher();
 	@Override
 	public void destroy() {
 		
 		servletContext = null;
 		dosessionfilter = true;
+		excludePatterns = null;
 	}
 	
 	protected SessionHttpServletRequestWrapper buildSessionHttpServletRequestWrapper(ServletRequest request, ServletResponse response)
@@ -54,11 +64,29 @@ public class SessionFilter implements Filter{
 		return mrequestw;
 	}
 
+	private boolean excludeRequest(ServletRequest request){
+		if(this.excludePatterns == null || this.excludePatterns.size() == 0)
+			return false;
+		String uri = urlPathHelper.getRequestUri((HttpServletRequest)request);
+		boolean exclude = false;
+		for(int i = 0;  i < this.excludePatterns.size(); i ++){
+			String pattern = this.excludePatterns.get(i);
+			exclude = this.pathMatcher.match(pattern, uri);
+			if(exclude )
+				break;
+		}
+		return exclude;
+		
+	}
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response,
 			FilterChain fc) throws IOException, ServletException {
 		
-		
+		boolean exclude = excludeRequest(request);
+		if(exclude){
+			fc.doFilter(request, response);
+			return;
+		}
 		if(dosessionfilter)
 		{
 			SessionHttpServletRequestWrapper mrequestw = buildSessionHttpServletRequestWrapper(  request,   response);
@@ -80,9 +108,19 @@ public class SessionFilter implements Filter{
 	}
 
 	@Override
-	public void init(FilterConfig arg0) throws ServletException {
+	public void init(FilterConfig fc) throws ServletException {
 	
-		servletContext = arg0.getServletContext();
+		servletContext = fc.getServletContext();
+		String excludePatterns_ =  fc.getInitParameter("excludePatterns");
+		if(excludePatterns_ != null && !excludePatterns_.equals("")){
+			excludePatterns = new ArrayList<String>();
+			String[] patterns = excludePatterns_.split(",");
+			for(int i = 0;  i < patterns.length; i ++){
+				String p = patterns[i].trim() ;
+				if(!p.equals(""))
+					excludePatterns.add(p);
+			}
+		}
 	}
 
 }
