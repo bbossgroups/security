@@ -3,12 +3,13 @@ package org.frameworkset.web.token.ws;
 import javax.jws.WebService;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
 import org.frameworkset.util.annotations.ResponseBody;
 import org.frameworkset.web.token.Ticket;
 import org.frameworkset.web.token.TokenException;
 import org.frameworkset.web.token.TokenHelper;
 import org.frameworkset.web.token.TokenStore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <p>
@@ -33,7 +34,7 @@ import org.frameworkset.web.token.TokenStore;
  */
 @WebService(name="TokenService",targetNamespace="org.frameworkset.web.token.ws.TokenService")
 public class TokenController implements TokenService {
-	private static final Logger log = Logger.getLogger(TokenController.class);
+	private static final Logger log = LoggerFactory.getLogger(TokenController.class);
 	/**
 	 * 获取令牌请求
 	 * @param request

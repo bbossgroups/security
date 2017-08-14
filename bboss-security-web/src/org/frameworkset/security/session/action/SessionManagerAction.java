@@ -5,7 +5,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
 import org.frameworkset.security.session.SessionUtil;
 import org.frameworkset.security.session.entity.Apps;
 import org.frameworkset.security.session.entity.SessionCondition;
@@ -17,6 +16,8 @@ import org.frameworkset.security.session.statics.SessionConfig;
 import org.frameworkset.util.annotations.PagerParam;
 import org.frameworkset.util.annotations.ResponseBody;
 import org.frameworkset.web.servlet.ModelMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.frameworkset.util.ListInfo;
 import com.frameworkset.util.StringUtil;
@@ -24,7 +25,7 @@ import com.frameworkset.util.StringUtil;
 public class SessionManagerAction {
 
 	private SessionManagerService sessionService;
-	private static Logger log = Logger.getLogger(SessionManagerAction.class);
+	private static Logger log = LoggerFactory.getLogger(SessionManagerAction.class);
 	public String sessionManager(String appkey,ModelMap model) {
 		if(!StringUtil.isEmpty(appkey))
 		{

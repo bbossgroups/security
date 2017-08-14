@@ -17,13 +17,14 @@ package org.frameworkset.web.token.ws.v2;
 
 import javax.jws.WebService;
 
-import org.apache.log4j.Logger;
 import org.frameworkset.util.annotations.ResponseBody;
 import org.frameworkset.web.token.TokenException;
 import org.frameworkset.web.token.TokenHelper;
 import org.frameworkset.web.token.TokenResult;
 import org.frameworkset.web.token.TokenService;
 import org.frameworkset.web.token.TokenStore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.frameworkset.util.StringUtil;
 
@@ -38,7 +39,7 @@ import com.frameworkset.util.StringUtil;
  */
 @WebService(name="CheckTokenService",targetNamespace="org.frameworkset.web.token.ws.v2.CheckTokenService")
 public class CheckTokenContoller implements CheckTokenService{
-	private static final Logger log = Logger.getLogger(TokenController.class);
+	private static final Logger log = LoggerFactory.getLogger(TokenController.class);
 	
 	public @ResponseBody(datatype="json") TokenCheckResponse checkToken(String appid,String secret,String token) 
 	{
