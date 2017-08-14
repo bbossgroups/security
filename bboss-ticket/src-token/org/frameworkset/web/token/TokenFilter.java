@@ -11,8 +11,9 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
 import org.frameworkset.util.annotations.MethodData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.frameworkset.util.StringUtil;
 
@@ -38,7 +39,7 @@ import com.frameworkset.util.StringUtil;
  *
  */
 public class TokenFilter implements Filter{
-	private static Logger log = Logger.getLogger(TokenFilter.class);
+	private static Logger log = LoggerFactory.getLogger(TokenFilter.class);
 	
 	protected String redirectpath = "/login.jsp";
 	private TokenServiceInf tokenService = null;

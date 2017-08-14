@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.frameworkset.nosql.mongodb.MongoDB;
 import org.frameworkset.nosql.mongodb.MongoDBHelper;
 import org.frameworkset.security.session.AttributeNamesEnumeration;
@@ -23,6 +22,8 @@ import org.frameworkset.security.session.SimpleHttpSession;
 import org.frameworkset.security.session.domain.CrossDomain;
 import org.frameworkset.security.session.statics.SessionConfig;
 import org.frameworkset.soa.ObjectSerializable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.frameworkset.util.SimpleStringUtil;
 import com.frameworkset.util.StringUtil;
@@ -33,7 +34,7 @@ import com.mongodb.WriteConcern;
 
 public class MongDBSessionStore extends BaseSessionStore{
 	
-	private static Logger log = Logger.getLogger(MongDBSessionStore.class);
+	private static Logger log = LoggerFactory.getLogger(MongDBSessionStore.class);
 	public MongDBSessionStore()
 	{
 		MongoDBUtil.initSessionDB();

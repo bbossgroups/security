@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.frameworkset.nosql.redis.RedisFactory;
 import org.frameworkset.nosql.redis.RedisHelper;
 import org.frameworkset.security.session.AttributeNamesEnumeration;
@@ -21,13 +20,15 @@ import org.frameworkset.security.session.SessionUtil;
 import org.frameworkset.security.session.SimpleHttpSession;
 import org.frameworkset.security.session.statics.SessionConfig;
 import org.frameworkset.soa.ObjectSerializable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.frameworkset.util.SimpleStringUtil;
 import com.frameworkset.util.StringUtil;
 
 public class RedisSessionStore extends BaseSessionStore{
 	
-	private static Logger log = Logger.getLogger(RedisSessionStore.class);
+	private static Logger log = LoggerFactory.getLogger(RedisSessionStore.class);
 	public RedisSessionStore()
 	{
 		

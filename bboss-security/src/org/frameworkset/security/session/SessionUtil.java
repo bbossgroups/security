@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
 import org.frameworkset.security.session.domain.App;
 import org.frameworkset.security.session.domain.CrossDomain;
 import org.frameworkset.security.session.impl.HttpSessionImpl;
@@ -25,12 +24,14 @@ import org.frameworkset.security.session.statics.SessionStaticManager;
 import org.frameworkset.spi.BaseApplicationContext;
 import org.frameworkset.spi.DefaultApplicationContext;
 import org.frameworkset.spi.SPIException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.frameworkset.util.SimpleStringUtil;
 import com.frameworkset.util.StringUtil;
 
 public class SessionUtil {
-	private static Logger log = Logger.getLogger(SessionUtil.class);
+	private static Logger log = LoggerFactory.getLogger(SessionUtil.class);
 	private static SessionManager sessionManager;
 	private static SessionStaticManager sessionStaticManager;
  

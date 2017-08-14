@@ -2,8 +2,9 @@ package org.frameworkset.web.token;
 
 import java.sql.SQLException;
 
-import org.apache.log4j.Logger;
 import org.frameworkset.security.ecc.SimpleKeyPair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.frameworkset.common.poolman.ConfigSQLExecutor;
 import com.frameworkset.common.poolman.Record;
@@ -14,7 +15,7 @@ import com.frameworkset.orm.transaction.TransactionManager;
 public class DBTokenStore extends BaseTokenStore {
 	private ConfigSQLExecutor executor;
 
-	private static Logger log = Logger.getLogger(DBTokenStore.class);
+	private static Logger log = LoggerFactory.getLogger(DBTokenStore.class);
 
 	
 	

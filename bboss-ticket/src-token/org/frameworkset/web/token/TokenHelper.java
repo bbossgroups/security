@@ -22,10 +22,11 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
 import org.frameworkset.spi.BaseApplicationContext;
 import org.frameworkset.spi.DefaultApplicationContext;
 import org.frameworkset.spi.assemble.Pro;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <p>Title: TokenHelper.java</p> 
@@ -39,7 +40,7 @@ import org.frameworkset.spi.assemble.Pro;
 public class TokenHelper {
 	private static TokenFilter tokenFilter;
 	private static TokenServiceInf tokenService;
-	private static final Logger log = Logger.getLogger(TokenHelper.class);
+	private static final Logger log = LoggerFactory.getLogger(TokenHelper.class);
 	static void setTokenFilter(TokenFilter tokenFilter)
 	{
 		

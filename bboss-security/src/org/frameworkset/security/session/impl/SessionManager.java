@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.frameworkset.security.session.SessionEvent;
 import org.frameworkset.security.session.SessionIDGenerator;
 import org.frameworkset.security.session.SessionListener;
@@ -30,6 +29,8 @@ import org.frameworkset.security.session.SignSessionIDGenerator;
 import org.frameworkset.security.session.domain.CrossDomain;
 import org.frameworkset.security.session.statics.AttributeInfo;
 import org.frameworkset.security.session.statics.SessionConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.frameworkset.util.SimpleStringUtil;
 import com.frameworkset.util.StringUtil;
@@ -45,7 +46,7 @@ import com.frameworkset.util.StringUtil;
  * @version 3.8.0
  */
 public class SessionManager extends org.frameworkset.spi.BaseApplicationContextAware{
-	private static Logger log = Logger.getLogger(SessionManager.class);
+	private static Logger log = LoggerFactory.getLogger(SessionManager.class);
 	public static final String default_cookiename = "B_SESSIONID";
 	public static final boolean default_httpOnly = true;
 	public static final long default_cookieLiveTime = -1l;

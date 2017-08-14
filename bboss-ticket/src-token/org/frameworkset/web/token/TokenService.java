@@ -27,7 +27,6 @@ import java.util.UUID;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.log4j.Logger;
 import org.frameworkset.security.KeyCacheUtil;
 import org.frameworkset.security.ecc.ECCCoderInf;
 import org.frameworkset.security.ecc.ECCHelper;
@@ -37,6 +36,8 @@ import org.frameworkset.web.auth.AuthenticatePlugin;
 import org.frameworkset.web.auth.AuthorHelper;
 import org.frameworkset.web.auth.WrapperAuthenticatePlugin;
 import org.frameworkset.web.token.ws.v2.AuthorService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.caucho.hessian.client.HessianProxyFactory;
 import com.frameworkset.util.FileUtil;
@@ -52,7 +53,7 @@ import com.frameworkset.util.SimpleStringUtil;
  * @version 3.8.0
  */
 public class TokenService implements TokenServiceInf {
-	private static Logger log = Logger.getLogger(TokenService.class);
+	private static Logger log = LoggerFactory.getLogger(TokenService.class);
 	private TokenStore tokenStore;
 	private boolean enableToken = false;
 	private long ticketdualtime = 172800000;

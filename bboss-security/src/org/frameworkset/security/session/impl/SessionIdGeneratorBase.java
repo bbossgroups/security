@@ -9,7 +9,8 @@ import java.security.SecureRandom;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author yinbp
@@ -20,7 +21,7 @@ public abstract class SessionIdGeneratorBase extends AbstractSessionIDGenerator 
 
 	 
 
-		    private static final Logger log = Logger.getLogger(SessionIdGeneratorBase.class);
+		    private static final Logger log = LoggerFactory.getLogger(SessionIdGeneratorBase.class);
 
 
 		    

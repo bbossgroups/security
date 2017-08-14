@@ -4,15 +4,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.frameworkset.nosql.redis.RedisFactory;
 import org.frameworkset.nosql.redis.RedisHelper;
 import org.frameworkset.security.KeyCacheUtil;
 import org.frameworkset.security.ecc.SimpleKeyPair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class RedisTokenStore extends BaseTokenStore{
-	private static Logger log = Logger.getLogger(RedisTokenStore.class);
+	private static Logger log = LoggerFactory.getLogger(RedisTokenStore.class);
 //	private  Map<String,MemToken> temptokens = new HashMap<String,MemToken>();
 //	private  Map<String,MemToken> dualtokens = new HashMap<String,MemToken>();
 //	private final Object checkLock = new Object();

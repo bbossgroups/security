@@ -6,8 +6,9 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 
-import org.apache.log4j.Logger;
 import org.frameworkset.security.session.SessionUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 独立的token生命周期管理服务，在启用统一的mongodb存储token和ticket情况下有用
@@ -15,7 +16,7 @@ import org.frameworkset.security.session.SessionUtil;
  *
  */
 public class SecurityMonitorServlet extends HttpServlet {
-	private static Logger log = Logger.getLogger(SecurityMonitorServlet.class);
+	private static Logger log = LoggerFactory.getLogger(SecurityMonitorServlet.class);
 	private static Method getTokenService;
 	static 
 	{

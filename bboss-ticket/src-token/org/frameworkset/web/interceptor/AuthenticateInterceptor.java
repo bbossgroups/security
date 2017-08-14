@@ -28,7 +28,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
 import org.frameworkset.util.ObjectUtils;
 import org.frameworkset.web.servlet.HandlerInterceptor;
 import org.frameworkset.web.servlet.ModelAndView;
@@ -36,6 +35,8 @@ import org.frameworkset.web.servlet.handler.HandlerMeta;
 import org.frameworkset.web.servlet.mvc.RequestMap;
 import org.frameworkset.web.util.UrlPathHelper;
 import org.frameworkset.web.util.WebUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.frameworkset.util.BeanUtils;
 
@@ -59,7 +60,7 @@ import com.frameworkset.util.BeanUtils;
  * @version 1.0
  */
 public abstract class AuthenticateInterceptor extends AuthenticateFilter implements HandlerInterceptor {
-	private static Logger logger = Logger.getLogger(AuthenticateInterceptor.class);
+	private static Logger logger = LoggerFactory.getLogger(AuthenticateInterceptor.class);
 
 	public void afterCompletion(HttpServletRequest request,
 			HttpServletResponse response, HandlerMeta handlerMeta, Exception ex)

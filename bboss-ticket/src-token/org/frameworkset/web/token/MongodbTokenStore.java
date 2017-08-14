@@ -1,10 +1,11 @@
 package org.frameworkset.web.token;
 
-import org.apache.log4j.Logger;
 import org.frameworkset.nosql.mongodb.MongoDB;
 import org.frameworkset.nosql.mongodb.MongoDBHelper;
 import org.frameworkset.security.KeyCacheUtil;
 import org.frameworkset.security.ecc.SimpleKeyPair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -15,7 +16,7 @@ import com.mongodb.WriteConcern;
 
 
 public class MongodbTokenStore extends BaseTokenStore{
-	private static Logger log = Logger.getLogger(MongodbTokenStore.class);
+	private static Logger log = LoggerFactory.getLogger(MongodbTokenStore.class);
 //	private  Map<String,MemToken> temptokens = new HashMap<String,MemToken>();
 //	private  Map<String,MemToken> dualtokens = new HashMap<String,MemToken>();
 //	private final Object checkLock = new Object();

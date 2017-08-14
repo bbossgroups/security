@@ -6,10 +6,9 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
-import org.apache.log4j.Logger;
-
-
 import org.frameworkset.util.ReferHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import bboss.org.mozilla.intl.chardet.UTF8Convertor;
 
@@ -17,7 +16,7 @@ public class CharacterEncodingHttpServletRequestWrapper
     extends HttpServletRequestWrapper{
 	private boolean ignoreParameterDecoding = false;
 	private Map<String,String[]> parameters = null;
-	private static Logger logger = Logger.getLogger(CharacterEncodingHttpServletRequestWrapper.class); 
+	private static Logger logger = LoggerFactory.getLogger(CharacterEncodingHttpServletRequestWrapper.class); 
 //	private Object lock = new Object();
     private String newecoding = null;
     private String oldEncoding = null;

@@ -14,13 +14,14 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
 import org.frameworkset.util.AntPathMatcher;
 import org.frameworkset.util.PathMatcher;
 import org.frameworkset.web.servlet.handler.HandlerMeta;
 import org.frameworkset.web.token.TokenFilter;
 import org.frameworkset.web.token.TokenStore;
 import org.frameworkset.web.util.UrlPathHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.frameworkset.util.StringUtil;
 
@@ -113,7 +114,7 @@ public abstract class AuthenticateFilter extends TokenFilter{
 	protected PathMatcher pathMatcher = new AntPathMatcher();
 
 	protected String encodingScheme;
-	private static Logger logger = Logger.getLogger(AuthenticateFilter.class);
+	private static Logger logger = LoggerFactory.getLogger(AuthenticateFilter.class);
 	
 	protected boolean needCheck(String path)
 	{

@@ -8,15 +8,15 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.Key;
 import java.security.PrivateKey;
-import java.security.PublicKey;
 import java.util.Date;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.frameworkset.security.KeyCacheUtil;
 import org.frameworkset.security.ecc.SimpleKeyPair;
 import org.frameworkset.util.encoder.Base64Commons;
 import org.frameworkset.web.token.TokenHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.frameworkset.util.FileUtil;
 import com.frameworkset.util.StringUtil;
@@ -38,7 +38,7 @@ import io.jsonwebtoken.UnsupportedJwtException;
  */
 public class AuthorHelper {
 	
-	private static Logger log = Logger.getLogger(AuthorHelper.class);
+	private static Logger log = LoggerFactory.getLogger(AuthorHelper.class);
 	private String appid;
 	private String secret;
 	/**

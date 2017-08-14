@@ -5,11 +5,12 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.frameworkset.nosql.mongodb.MongoDB;
 import org.frameworkset.nosql.mongodb.MongoDBHelper;
 import org.frameworkset.spi.BaseApplicationContext;
 import org.frameworkset.spi.DefaultApplicationContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.frameworkset.util.StringUtil;
 import com.mongodb.BasicDBObject;
@@ -30,7 +31,7 @@ public class MongoDBUtil {
 	 private static  Map<String, Object> dbcollectionCache = null;
 	 private static DB sessiondb = null;
 	 private static  boolean closeDB;
-	private static Logger log = Logger.getLogger(MongoDBUtil.class);
+	private static Logger log = LoggerFactory.getLogger(MongoDBUtil.class);
 	private static BaseApplicationContext context = DefaultApplicationContext.getApplicationContext("mongodb.xml");
 	public static  void initSessionDB()
 	{

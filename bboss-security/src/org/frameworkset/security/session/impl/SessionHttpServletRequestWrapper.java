@@ -21,11 +21,12 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
 import org.frameworkset.security.session.Session;
 import org.frameworkset.security.session.SessionBasicInfo;
 import org.frameworkset.security.session.SessionBuilder;
 import org.frameworkset.security.session.SessionUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.frameworkset.util.StringUtil;
 
@@ -39,7 +40,7 @@ import com.frameworkset.util.StringUtil;
  * @version 3.8.0
  */
 public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper implements SessionBuilder {
-	private static Logger log = Logger.getLogger(SessionHttpServletRequestWrapper.class);
+	private static Logger log = LoggerFactory.getLogger(SessionHttpServletRequestWrapper.class);
 	protected SessionID sessionid;
 	protected HttpSessionImpl session;
 	protected HttpServletResponse response;
