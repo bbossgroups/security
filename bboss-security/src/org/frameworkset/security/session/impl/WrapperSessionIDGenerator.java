@@ -8,6 +8,8 @@ import org.frameworkset.security.DESCipher;
 import org.frameworkset.security.session.SessionIDGenerator;
 import org.frameworkset.security.session.SignSessionIDException;
 import org.frameworkset.security.session.SignSessionIDGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author yinbp
@@ -15,7 +17,7 @@ import org.frameworkset.security.session.SignSessionIDGenerator;
  * @Date:2016-12-22 10:48:20
  */
 public class WrapperSessionIDGenerator implements SignSessionIDGenerator{
-	
+	private static Logger logger = LoggerFactory.getLogger(WrapperSessionIDGenerator.class);
 	private SessionIDGenerator sessionIDGenerator;
 	private boolean signSessionID;
 	private String signKey;
@@ -98,7 +100,12 @@ public class WrapperSessionIDGenerator implements SignSessionIDGenerator{
 			AESCoder aes = new AESCoder(paramenterSessionID?this.parameterSingKey:signKey);
 			return aes.decrypt(signedSessionid);
 		} catch (Exception e) {
-			throw new SignSessionIDException(e);
+			if(logger.isDebugEnabled()){
+				logger.debug(new StringBuilder().append("aes design sessionid failed:paramenterSessionID=").append( paramenterSessionID).append(", signedSessionid=").append(signedSessionid
+						).append(",parameterSingKey=").append(parameterSingKey
+								).append(",signKey=").append(signKey).toString(),e);
+			}
+			throw new SignSessionIDException(new StringBuilder().append("Design sessionid failed:paramenterSessionID=").append( paramenterSessionID).append(", signedSessionid=").append(signedSessionid).toString(),e);
 		}
 
 	}

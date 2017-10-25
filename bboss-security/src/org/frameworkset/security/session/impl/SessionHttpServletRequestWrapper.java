@@ -59,34 +59,69 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 				usewebsession = SessionUtil.getSessionManager().usewebsession();
 				if( !usewebsession)
 				{
-					String sessionid = StringUtil.getCookieValue((HttpServletRequest)request, SessionUtil.getSessionManager().getCookiename());
-					if(sessionid == null )
-					{
-						if( SessionUtil.getSessionManager().enableSessionIDFromParameter()){							
-							sessionid = request.getParameter(SessionUtil.getSessionManager().getCookiename());
-							if(sessionid != null ){
-								String signSessionid = sessionid;
-								sessionid = SessionUtil.getSessionManager().getSignSessionIDGenerator().design(signSessionid,true);
-								this.sessionid = new SessionID();
-								if(SessionUtil.getSessionManager().isSignSessionID())//只有在启用签名的情况下，才需要往cookie中存放加密的sessionid
-									this.sessionid.setSignSessionId(signSessionid);
-								else
-									this.sessionid.setSignSessionId(sessionid);
-								this.sessionid.setSessionId(sessionid);
-								if(SessionUtil.getSessionManager().rewriteSessionCookie())
-									SessionUtil.writeSessionIDCookies(this, response,SessionUtil.getSessionManager().getCookiename(),this.sessionid);
-							}
+					boolean enableSessionIDFromParameter = SessionUtil.getSessionManager().enableSessionIDFromParameter();
+					String cookieName = SessionUtil.getSessionManager().getCookiename();
+					String sessionid = null;
+					if( enableSessionIDFromParameter){							
+						sessionid = request.getParameter(cookieName);
+						if(sessionid != null ){
+							String signSessionid = sessionid;
+							sessionid = SessionUtil.getSessionManager().getSignSessionIDGenerator().design(signSessionid,true);
+							this.sessionid = new SessionID();
+							if(SessionUtil.getSessionManager().isSignSessionID())//只有在启用签名的情况下，才需要往cookie中存放加密的sessionid
+								this.sessionid.setSignSessionId(signSessionid);
+							else
+								this.sessionid.setSignSessionId(sessionid);
+							this.sessionid.setSessionId(sessionid);
+							if(SessionUtil.getSessionManager().rewriteSessionCookie())
+								SessionUtil.writeSessionIDCookies(this, response,cookieName,this.sessionid);
 						}
-							
+						else
+						{
+							sessionid = StringUtil.getCookieValue((HttpServletRequest)request, cookieName);
+							String signSessionid = sessionid;
+							sessionid = SessionUtil.getSessionManager().getSignSessionIDGenerator().design(signSessionid,false);
+							this.sessionid = new SessionID();
+							this.sessionid.setSignSessionId(signSessionid);
+							this.sessionid.setSessionId(sessionid);
+						}
 					}
 					else
 					{
+						sessionid = StringUtil.getCookieValue((HttpServletRequest)request, cookieName);
 						String signSessionid = sessionid;
 						sessionid = SessionUtil.getSessionManager().getSignSessionIDGenerator().design(signSessionid,false);
 						this.sessionid = new SessionID();
 						this.sessionid.setSignSessionId(signSessionid);
 						this.sessionid.setSessionId(sessionid);
 					}
+//					if(sessionid == null )
+//					{
+//						if( enableSessionIDFromParameter){							
+//							sessionid = request.getParameter(cookieName);
+//							if(sessionid != null ){
+//								String signSessionid = sessionid;
+//								sessionid = SessionUtil.getSessionManager().getSignSessionIDGenerator().design(signSessionid,true);
+//								this.sessionid = new SessionID();
+//								if(SessionUtil.getSessionManager().isSignSessionID())//只有在启用签名的情况下，才需要往cookie中存放加密的sessionid
+//									this.sessionid.setSignSessionId(signSessionid);
+//								else
+//									this.sessionid.setSignSessionId(sessionid);
+//								this.sessionid.setSessionId(sessionid);
+//								if(SessionUtil.getSessionManager().rewriteSessionCookie())
+//									SessionUtil.writeSessionIDCookies(this, response,cookieName,this.sessionid);
+//							}
+//						}
+//							
+//					}
+//					else
+//					{
+//						String signSessionid = sessionid;
+//						sessionid = SessionUtil.getSessionManager().getSignSessionIDGenerator().design(signSessionid,false);
+//						this.sessionid = new SessionID();
+//						this.sessionid.setSignSessionId(signSessionid);
+//						this.sessionid.setSessionId(sessionid);
+//					}
 					appkey = SessionUtil.getAppKey(this);
 				}
 			}
