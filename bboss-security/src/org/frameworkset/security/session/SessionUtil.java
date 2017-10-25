@@ -601,8 +601,36 @@ public class SessionUtil {
 	 * 如果显示指定sessionID必须加密签名或者paramenterSessionID为true，则会对sessionid进行加密签名
 	 * @return
 	 */
+	public static String signParameterSessionID(String sessionid)  throws SignSessionIDException{
+		return getSessionManager().getSignSessionIDGenerator().sign(sessionid, true);
+	}
+	
+	/**
+	 * 对sessionid进行签名
+	 * paramenterSessionID 标识sessionID是否从参数传递过来，如果从参数传递过来则必须调用本方法，并且通过指定paramenterSessionID=true对sessionid进行加密签名，否则sessionid不起作用
+	 * 如果显示指定sessionID必须加密签名或者paramenterSessionID为true，则会对sessionid进行加密签名
+	 * @return
+	 */
 	public static String sign(String sessionid,boolean paramenterSessionID)  throws SignSessionIDException{
 		return getSessionManager().getSignSessionIDGenerator().sign(sessionid, paramenterSessionID);
+	}
+	
+	/**
+	 * 生成签名的sessionID,session对象不存在时创建新的session
+	 * @param sessionId
+	 * @return
+	 */
+	public static String signParameterSessionID(HttpServletRequest request){
+		return getSessionManager().signParameterSessionID(request);
+	}
+	
+	/**
+	 * 生成签名的sessionID,session对象不存在时创建新的session
+	 * @param sessionId
+	 * @return
+	 */
+	public static String signParameterSessionID(HttpServletRequest request,boolean createSessionIfNotExist){
+		return getSessionManager().signParameterSessionID(request,  createSessionIfNotExist);
 	}
 
 }

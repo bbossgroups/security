@@ -19,6 +19,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.frameworkset.security.session.SessionEvent;
 import org.frameworkset.security.session.SessionIDGenerator;
 import org.frameworkset.security.session.SessionListener;
@@ -576,5 +579,36 @@ public class SessionManager extends org.frameworkset.spi.BaseApplicationContextA
 	}
 	public void setSignKey(String signKey) {
 		this.signKey = signKey;
+	}
+	/**
+	 * 生成签名的sessionID
+	 * @param sessionId
+	 * @return
+	 */
+	public String signParameterSessionID(String sessionId){
+		return getSignSessionIDGenerator().sign(sessionId, true);
+	}
+	
+	/**
+	 * 生成签名的sessionID,session对象不存在时创建新的session
+	 * @param sessionId
+	 * @return
+	 */
+	public String signParameterSessionID(HttpServletRequest request){
+		return signParameterSessionID(  request,true);
+	}
+	
+	/**
+	 * 生成签名的sessionID
+	 * @param sessionId
+	 * @param createSessionIfNotExist true 如果session不存在创建新的session，反之不创建
+	 * @return
+	 */
+	public String signParameterSessionID(HttpServletRequest request,boolean createSessionIfNotExist){
+		if(request instanceof SessionHttpServletRequestWrapper){
+			SessionHttpServletRequestWrapper temp = (SessionHttpServletRequestWrapper)request;
+			return temp.signParameterSessionID(this, createSessionIfNotExist);
+		}
+		return null;
 	}
 }

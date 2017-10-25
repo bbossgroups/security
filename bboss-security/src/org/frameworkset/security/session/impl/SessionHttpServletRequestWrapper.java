@@ -48,6 +48,8 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 	protected String appkey ;
 	protected boolean usewebsession = true;
 	protected boolean sessionidcookiewrited = false;
+	protected boolean requestedSessionIdFromURL;
+	protected String signParameterSessionID;
 	public SessionHttpServletRequestWrapper(HttpServletRequest request,HttpServletResponse response,ServletContext servletContext) {
 		super(request);
 		try
@@ -65,9 +67,11 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 					if( enableSessionIDFromParameter){							
 						sessionid = request.getParameter(cookieName);
 						if(sessionid != null ){
+							requestedSessionIdFromURL = true;
 							String signSessionid = sessionid;
 							sessionid = SessionUtil.getSessionManager().getSignSessionIDGenerator().design(signSessionid,true);
 							this.sessionid = new SessionID();
+							this.signParameterSessionID = signSessionid;
 							if(SessionUtil.getSessionManager().isSignSessionID())//只有在启用签名的情况下，才需要往cookie中存放加密的sessionid
 								this.sessionid.setSignSessionId(signSessionid);
 							else
@@ -138,6 +142,17 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 		this.response = response;
 		
 	}
+	
+	public String signParameterSessionID(SessionManager sessionManager,boolean createSessionIfNotExist){
+		if(this.signParameterSessionID != null){
+			return signParameterSessionID;
+		}
+		
+		HttpSession session = getSession(createSessionIfNotExist);
+		if(session != null)
+			return signParameterSessionID = sessionManager.signParameterSessionID(session.getId());		
+		return null;
+	}
 
 	@Override
 	public HttpSession getSession() {
@@ -155,6 +170,7 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 		{
 			 
 			HttpSession session  = getSession(false);
+			signParameterSessionID = null;
 			if(session != null)
 				session.invalidate();
 		}
@@ -297,6 +313,7 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 				if(session_ == null || !session_.isValidate())
 				{
 					this.sessionid = null;
+					this.signParameterSessionID = null;
 					return;
 				}
 				this.session =  buildHttpSessionImpl(  session_);
@@ -331,7 +348,7 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 		{
 			return super.isRequestedSessionIdFromCookie();
 		}
-		return true;
+		return !requestedSessionIdFromURL ;
 	}
 
 	@Override
@@ -340,7 +357,7 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 		{
 			return super.isRequestedSessionIdFromURL();
 		}
-		return false;
+		return requestedSessionIdFromURL;
 	}
 
 	@Override
@@ -349,7 +366,7 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 		{
 			return super.isRequestedSessionIdFromUrl();
 		}
-		return false;
+		return requestedSessionIdFromURL;
 	}
 
 	@Override
@@ -370,6 +387,8 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 		this.session = null;
 		this.sessionid = null;
 		sessionidcookiewrited = false;
+		this.signParameterSessionID = null;
+		requestedSessionIdFromURL = false;
 	}
 	
 	public void submit()
