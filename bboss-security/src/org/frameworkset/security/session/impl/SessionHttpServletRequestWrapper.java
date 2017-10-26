@@ -67,37 +67,16 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 					if( enableSessionIDFromParameter){							
 						sessionid = request.getParameter(cookieName);
 						if(sessionid != null ){
-							requestedSessionIdFromURL = true;
-							String signSessionid = sessionid;
-							sessionid = SessionUtil.getSessionManager().getSignSessionIDGenerator().design(signSessionid,true);
-							this.sessionid = new SessionID();
-							this.signParameterSessionID = signSessionid;
-							if(SessionUtil.getSessionManager().isSignSessionID())//只有在启用签名的情况下，才需要往cookie中存放加密的sessionid
-								this.sessionid.setSignSessionId(signSessionid);
-							else
-								this.sessionid.setSignSessionId(sessionid);
-							this.sessionid.setSessionId(sessionid);
-							if(SessionUtil.getSessionManager().rewriteSessionCookie())
-								SessionUtil.writeSessionIDCookies(this, response,cookieName,this.sessionid);
+							initSessionIDFromParameter(sessionid,  cookieName,  request);
 						}
 						else
 						{
-							sessionid = StringUtil.getCookieValue((HttpServletRequest)request, cookieName);
-							String signSessionid = sessionid;
-							sessionid = SessionUtil.getSessionManager().getSignSessionIDGenerator().design(signSessionid,false);
-							this.sessionid = new SessionID();
-							this.sessionid.setSignSessionId(signSessionid);
-							this.sessionid.setSessionId(sessionid);
+							initSessionIDFromCookie( cookieName, request);
 						}
 					}
 					else
 					{
-						sessionid = StringUtil.getCookieValue((HttpServletRequest)request, cookieName);
-						String signSessionid = sessionid;
-						sessionid = SessionUtil.getSessionManager().getSignSessionIDGenerator().design(signSessionid,false);
-						this.sessionid = new SessionID();
-						this.sessionid.setSignSessionId(signSessionid);
-						this.sessionid.setSessionId(sessionid);
+						initSessionIDFromCookie( cookieName, request);
 					}
 //					if(sessionid == null )
 //					{
@@ -141,6 +120,34 @@ public class SessionHttpServletRequestWrapper extends HttpServletRequestWrapper 
 		this.servletContext = servletContext;
 		this.response = response;
 		
+	}
+	
+	protected void initSessionIDFromParameter(String sessionid,String cookieName,HttpServletRequest request){
+		
+			requestedSessionIdFromURL = true;
+			String signSessionid = sessionid;
+			sessionid = SessionUtil.getSessionManager().getSignSessionIDGenerator().design(signSessionid,true);
+			this.sessionid = new SessionID();
+			this.signParameterSessionID = signSessionid;
+			if(SessionUtil.getSessionManager().isSignSessionID())//只有在启用签名的情况下，才需要往cookie中存放加密的sessionid
+				this.sessionid.setSignSessionId(signSessionid);
+			else
+				this.sessionid.setSignSessionId(sessionid);
+			this.sessionid.setSessionId(sessionid);
+			if(SessionUtil.getSessionManager().rewriteSessionCookie())
+				SessionUtil.writeSessionIDCookies(this, response,cookieName,this.sessionid);
+		
+	}
+	
+	protected void initSessionIDFromCookie(String cookieName,HttpServletRequest request){
+		String sessionid = StringUtil.getCookieValue((HttpServletRequest)request, cookieName);
+		if(sessionid != null){
+			String signSessionid = sessionid;
+			sessionid = SessionUtil.getSessionManager().getSignSessionIDGenerator().design(signSessionid,false);
+			this.sessionid = new SessionID();
+			this.sessionid.setSignSessionId(signSessionid);
+			this.sessionid.setSessionId(sessionid);
+		}
 	}
 	
 	public String signParameterSessionID(SessionManager sessionManager,boolean createSessionIfNotExist){
