@@ -609,6 +609,12 @@ public class SessionManager extends org.frameworkset.spi.BaseApplicationContextA
 			SessionHttpServletRequestWrapper temp = (SessionHttpServletRequestWrapper)request;
 			return temp.signParameterSessionID(this, createSessionIfNotExist);
 		}
+		else{
+			HttpSession session = request.getSession(createSessionIfNotExist);
+			if(session != null){
+				return this.signParameterSessionID(session.getId());
+			}
+		}
 		return null;
 	}
 }
