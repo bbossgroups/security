@@ -1,16 +1,14 @@
 package org.frameworkset.web.token;
 
-import java.security.Key;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
 import org.frameworkset.security.KeyCacheUtil;
 import org.frameworkset.security.ecc.ECCCoderInf;
 import org.frameworkset.security.ecc.SimpleKeyPair;
 import org.frameworkset.util.encoder.Hex;
+
+import java.security.Key;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 
 //import com.mongodb.DBObject;
@@ -403,8 +401,15 @@ public abstract class BaseTokenStore implements TokenStore {
 				accountinfo = _ticket.getTicket();
 			}
 			String infs[] = accountinfo.split("\\|");
-			long createTime = Long.parseLong(infs[2]);
-			if(createTime + this.ticketdualtime < System.currentTimeMillis())
+//			long createTime = Long.parseLong(infs[2]);
+//			if(createTime + this.ticketdualtime < System.currentTimeMillis())
+//			{
+//				throw new TokenException(TokenStore.ERROR_CODE_TICKETEXPIRED);
+//			}
+			//持久性的ticket有效期以最后访问的时间为基准进行计算及
+			long lastVistTime = _ticket.getLastVistTime();
+
+			if(lastVistTime + this.ticketdualtime < System.currentTimeMillis())
 			{
 				throw new TokenException(TokenStore.ERROR_CODE_TICKETEXPIRED);
 			}
