@@ -9,6 +9,22 @@ public class Application {
 	private String appid;
 	private String secret;
 	private String certAlgorithm;
+
+	public Integer getRefreshTicket() {
+		return refreshTicket;
+	}
+
+	public void setRefreshTicket(Integer refreshTicket) {
+		this.refreshTicket = refreshTicket;
+	}
+
+	/**
+	 * 每次校验持久性ticket时是否刷新ticket访问时间
+	 * null:不刷新
+	 * 0: 不刷新
+	 * 1: 刷新
+	 */
+	private Integer refreshTicket;
 	public String getCertAlgorithm() {
 		return certAlgorithm;
 	}

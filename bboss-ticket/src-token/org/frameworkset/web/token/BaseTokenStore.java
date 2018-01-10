@@ -406,13 +406,12 @@ public abstract class BaseTokenStore implements TokenStore {
 //			{
 //				throw new TokenException(TokenStore.ERROR_CODE_TICKETEXPIRED);
 //			}
+			/**
 			//持久性的ticket有效期以最后访问的时间为基准进行计算及
-			long lastVistTime = _ticket.getLastVistTime();
-
-			if(lastVistTime + this.ticketdualtime < System.currentTimeMillis())
-			{
+			if (isoldticket(_ticket, System.currentTimeMillis())) {
 				throw new TokenException(TokenStore.ERROR_CODE_TICKETEXPIRED);
-			}
+			}*/
+
 			return infs;
 		} catch (TokenException e) {
 			throw e;
