@@ -40,4 +40,14 @@ public class SessionBasicInfo {
 		this.sessionid = sessionid;
 	}
 
+	public String toString(){
+//		super.toString();
+		StringBuilder ret = new StringBuilder();
+		ret.append("[appKey:").append(appKey).append(",referip:").append(referip)
+				.append(",requesturi:").append(requesturi)
+				.append(",lastAccessedHostIP:").append(lastAccessedHostIP)
+				.append(",sessionid:").append(sessionid);
+		return ret.toString();
+	}
+
 }

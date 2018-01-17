@@ -13,6 +13,9 @@ svn下载地址
 
 https://github.com/bbossgroups/security/trunk 
 
+# bboss session集成权威指南
+https://my.oschina.net/bboss/blog/758871
+
 # session操作使用样列(遵循servlet标准规范)：
 
 ```

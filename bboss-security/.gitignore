@@ -12,3 +12,5 @@
 /.project
 /.settings/
 /bin/
+/out/
+/redis install/

@@ -1,30 +1,17 @@
 package org.frameworkset.security.session.impl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
+import com.frameworkset.util.SimpleStringUtil;
+import com.frameworkset.util.StringUtil;
 import org.frameworkset.nosql.redis.RedisFactory;
 import org.frameworkset.nosql.redis.RedisHelper;
-import org.frameworkset.security.session.AttributeNamesEnumeration;
-import org.frameworkset.security.session.Session;
-import org.frameworkset.security.session.SessionBasicInfo;
-import org.frameworkset.security.session.SessionBuilder;
-import org.frameworkset.security.session.SessionUtil;
-import org.frameworkset.security.session.SimpleHttpSession;
+import org.frameworkset.security.session.*;
 import org.frameworkset.security.session.statics.SessionConfig;
 import org.frameworkset.soa.ObjectSerializable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.frameworkset.util.SimpleStringUtil;
-import com.frameworkset.util.StringUtil;
+import java.util.*;
+import java.util.Map.Entry;
 
 public class RedisSessionStore extends BaseSessionStore{
 	
@@ -190,7 +177,8 @@ public class RedisSessionStore extends BaseSessionStore{
 			return session;
 		}
 		 catch (Exception e) {
-				log.error("",e);
+			 //log.error("",e);
+			 throw new SessionManagerException("create Session"+sessionBasicInfo.toString()+" failed:",e);
 		}
 		finally
 		{
@@ -198,7 +186,7 @@ public class RedisSessionStore extends BaseSessionStore{
 				redisHelper.release();
 		}
 		 
-		return null;
+
 		
 	}
 	
