@@ -206,7 +206,15 @@ public class RedisSessionStore extends BaseSessionStore{
 			return SessionUtil.unserial(value);
 		}
 		 catch (Exception e) {
-				log.error("",e);
+			 //log.error("",e);
+			 StringBuilder error = new StringBuilder();
+			 error.append("Get Session Attribute[appKey:")
+					 .append(appKey)
+					 .append(",contextpath:").append(contextpath)
+					 .append(",sessionID:").append(sessionID)
+					 .append(",attribute:").append(attribute)
+					 .append("] failed:");
+			 throw new SessionManagerException(error.toString(),e);
 		}
 		finally
 		{
@@ -214,7 +222,7 @@ public class RedisSessionStore extends BaseSessionStore{
 				redisHelper.release();
 		}
 		 
-			return null;
+
 		
 //		return null;
 	}
@@ -265,7 +273,16 @@ public class RedisSessionStore extends BaseSessionStore{
 			 
 		}
 		 catch (Exception e) {
-				log.error("",e);
+//				log.error("",e);
+			 StringBuilder error = new StringBuilder();
+			 error.append("Update session LastAccessedTime [appKey:")
+					 .append(appKey)
+					 .append(",sessionID:").append(sessionID)
+					 .append(",lastAccessedTime:").append(lastAccessedTime)
+					 .append(",lastAccessedUrl:").append(lastAccessedUrl)
+					 .append(",MaxInactiveInterval:").append(MaxInactiveInterval)
+					 .append("] failed:");
+			 throw new SessionManagerException(error.toString(),e);
 		}
 		finally
 		{
@@ -303,7 +320,13 @@ public class RedisSessionStore extends BaseSessionStore{
 			 
 		}
 		 catch (Exception e) {
-				log.error("",e);
+//				log.error("",e);
+			 StringBuilder error = new StringBuilder();
+			 error.append("Get session LastAccessedTime [appKey:")
+					 .append(appKey)
+					 .append(",sessionID:").append(sessionID)
+					 .append("] failed:");
+			 throw new SessionManagerException(error.toString(),e);
 		}
 		finally
 		{
@@ -333,7 +356,14 @@ public class RedisSessionStore extends BaseSessionStore{
 			 }
 		}
 		 catch (Exception e) {
-				log.error("",e);
+//				log.error("",e);
+			 StringBuilder error = new StringBuilder();
+			 error.append("Get session ValueNames [appKey:")
+					 .append(appKey)
+					 .append(",contextpath:").append(contextpath)
+					 .append(",sessionID:").append(sessionID)
+					 .append("] failed:");
+			 throw new SessionManagerException(error.toString(),e);
 		}
 		finally
 		{
@@ -365,7 +395,14 @@ public class RedisSessionStore extends BaseSessionStore{
 			 }
 		}
 		 catch (Exception e) {
-				log.error("",e);
+//				log.error("",e);
+			 StringBuilder error = new StringBuilder();
+			 error.append("Get session AttributeNames [appKey:")
+					 .append(appKey)
+					 .append(",contextpath:").append(contextpath)
+					 .append(",sessionID:").append(sessionID)
+					 .append("] failed:");
+			 throw new SessionManagerException(error.toString(),e);
 		}
 		finally
 		{
@@ -389,7 +426,14 @@ public class RedisSessionStore extends BaseSessionStore{
 			 
 		}
 		 catch (Exception e) {
-				log.error("",e);
+//				log.error("",e);
+			 StringBuilder error = new StringBuilder();
+			 error.append("invalidate session   [appKey:")
+					 .append(appKey)
+					 .append(",contextpath:").append(contextpath)
+					 .append(",sessionID:").append(sessionID)
+					 .append("] failed:");
+			 throw new SessionManagerException(error.toString(),e);
 		}
 		finally
 		{
@@ -417,14 +461,20 @@ public class RedisSessionStore extends BaseSessionStore{
 			
 		}
 		 catch (Exception e) {
-				log.error("",e);
+//				log.error("",e);
+			 StringBuilder error = new StringBuilder();
+			 error.append("Get session IsNew [appKey:")
+					 .append(appKey)
+					 .append(",sessionID:").append(sessionID)
+					 .append("] failed:");
+			 throw new SessionManagerException(error.toString(),e);
 		}
 		finally
 		{
 			if(redisHelper != null)
 				redisHelper.release();
 		} 
-		return false;
+//		return false;
 //		DBCollection sessions =getAppSessionDBCollection( appKey);
 //		BasicDBObject keys = new BasicDBObject();
 //		keys.put("lastAccessedTime", 1);
@@ -448,7 +498,15 @@ public class RedisSessionStore extends BaseSessionStore{
 			redisHelper.hdel(sessionKey, attribute);
 		}
 		 catch (Exception e) {
-				log.error("",e);
+//				log.error("",e);
+			 StringBuilder error = new StringBuilder();
+			 error.append("Remove session attribute [appKey:")
+					 .append(appKey)
+					 .append(",contextpath:").append(contextpath)
+					 .append(",sessionID:").append(sessionID)
+					 .append(",attribute:").append(attribute)
+					 .append("] failed:");
+			 throw new SessionManagerException(error.toString(),e);
 		}
 		finally
 		{
@@ -572,7 +630,14 @@ public class RedisSessionStore extends BaseSessionStore{
 				}
 			}
 			 catch (Exception e) {
-					log.error("",e);
+//					log.error("",e);
+				 StringBuilder error = new StringBuilder();
+				 error.append("submit session attributes [appKey:")
+						 .append(appkey)
+						 .append(",sessionID:").append(session.getId())
+
+						 .append("] failed:");
+				 throw new SessionManagerException(error.toString(),e);
 			}
 			finally
 			{
@@ -600,7 +665,16 @@ public class RedisSessionStore extends BaseSessionStore{
 			}
 		}
 		 catch (Exception e) {
-				log.error("",e);
+//				log.error("",e);
+			 StringBuilder error = new StringBuilder();
+			 error.append("add session attribute [appKey:")
+					 .append(appKey)
+					 .append(",contextpath:").append(contextpath)
+					 .append(",sessionID:").append(session.getId())
+					 .append(",attribute:").append(attribute)
+
+					 .append("] failed:");
+			 throw new SessionManagerException(error.toString(),e);
 		}
 		finally
 		{
@@ -637,7 +711,16 @@ public class RedisSessionStore extends BaseSessionStore{
 				}
 		}
 		 catch (Exception e) {
-				log.error("",e);
+//				log.error("",e);
+			 StringBuilder error = new StringBuilder();
+			 error.append("set session MaxInactiveInterval   [appKey:")
+					 .append(appKey)
+					 .append(",contextpath:").append(contextpath)
+					 .append(",sessionID:").append(session.getId())
+					 .append(",maxInactiveInterval:").append(maxInactiveInterval)
+
+					 .append("] failed:");
+			 throw new SessionManagerException(error.toString(),e);
 		}
 		finally
 		{
@@ -729,14 +812,22 @@ public class RedisSessionStore extends BaseSessionStore{
 			}
 		}
 		 catch (Exception e) {
-				log.error("",e);
+//				log.error("",e);
+			 StringBuilder error = new StringBuilder();
+			 error.append("get session[appKey:")
+					 .append(appKey)
+					 .append(",contextpath:").append(contextpath)
+					 .append(",sessionID:").append(sessionid)
+
+					 .append("] failed:");
+			 throw new SessionManagerException(error.toString(),e);
 		}
 		finally
 		{
 			if(redisHelper != null)
 				redisHelper.release();
 		} 
-		return null;
+//		return null;
 //		DBCollection sessions =getAppSessionDBCollection( appKey);
 //		BasicDBObject keys = new BasicDBObject();
 //		keys.put("creationTime", 1);
@@ -831,14 +922,20 @@ public class RedisSessionStore extends BaseSessionStore{
 			 SessionConfig config = ObjectSerializable.toBean(configxml, SessionConfig.class);
 			return config;
 		} catch (Exception e) {
-			log.error("",e);
+//			log.error("",e);
+			StringBuilder error = new StringBuilder();
+			error.append("getSessionConfig[appKey:")
+					.append(appkey)
+
+					.append("] failed:");
+			throw new SessionManagerException(error.toString(),e);
 		}
 		finally
 		{
 			if(redisHelper != null)
 				redisHelper.release();
 		}
-		 return null;
+//		 return null;
 		 
 	}
 	@Override
@@ -908,14 +1005,22 @@ public class RedisSessionStore extends BaseSessionStore{
 			}
 		}
 		 catch (Exception e) {
-				log.error("",e);
+//				log.error("",e);
+			 StringBuilder error = new StringBuilder();
+			 error.append("get session[appKey:")
+					 .append(appKey)
+					 .append(",contextpath:").append(contextpath)
+					 .append(",sessionID:").append(sessionid)
+
+					 .append("] failed:");
+			 throw new SessionManagerException(error.toString(),e);
 		}
 		finally
 		{
 			if(redisHelper != null)
 				redisHelper.release();
 		} 
-		return null;
+//		return null;
 //		DBCollection sessions =getAppSessionDBCollection( appKey);
 //		BasicDBObject keys = new BasicDBObject();
 //		keys.put("creationTime", 1);
@@ -1000,14 +1105,22 @@ public class RedisSessionStore extends BaseSessionStore{
 			 
 			
 		} catch (Exception e) {
-			log.error("",e);
+//			log.error("",e);
+			StringBuilder error = new StringBuilder();
+			error.append("expired session[appKey:")
+					.append(appkey)
+
+					.append(",sessionID:").append(sessionid)
+					.append(",timeout:").append(timeout)
+					.append("] failed:");
+			throw new SessionManagerException(error.toString(),e);
 		}
 		finally
 		{
 			if(redisHelper != null)
 				redisHelper.release();
 		}
-		 return null;
+//		 return null;
 	}
 
 	
