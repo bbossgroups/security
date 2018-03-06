@@ -53,10 +53,10 @@ compile project(':bboss-security')
                [group: 'redis.clients', name: 'jedis', version: "${jedisversion}", transitive: false],
                 [group: 'org.mongodb', name: 'mongo-java-driver', version: "${mongodbversion}", transitive: false],
                 [group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.54', transitive: false],
-               
+			[group: 'javax.transaction', name: 'jta', version: '1.1', transitive: false]
     //[group: 'javaee', name: 'javaee-api', version: '5', transitive: false],
     )
-    
+
      compile( [group: 'com.bbossgroups', name: 'bboss-hession', version: "${bboss_version}", transitive: true] )
      //{
    	//exclude group: 'log4j', module: 'log4j'
