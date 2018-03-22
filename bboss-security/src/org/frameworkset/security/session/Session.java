@@ -1,9 +1,9 @@
 package org.frameworkset.security.session;
 
+import org.frameworkset.security.session.impl.ModifyValue;
+
 import java.util.Enumeration;
 import java.util.Map;
-
-import org.frameworkset.security.session.impl.ModifyValue;
 
 public interface Session {
 	public void assertSession(SimpleHttpSession session,String contextpath) ;
@@ -49,6 +49,14 @@ public interface Session {
 	public void removeValue(SimpleHttpSession session,String attribute,String contextpath) ;
 	public void setAttribute(SimpleHttpSession session,String attribute, Object value,String contextpath) ;
 	public void setMaxInactiveInterval(SimpleHttpSession session,long maxInactiveInterval,String contextpath) ;
+
+	/**
+	 * 设置会话有效期
+	 * @param session
+	 * @param maxInactiveInterval 以毫秒为单位
+	 * @param refreshstore
+	 * @param contextpath
+	 */
 	public void setMaxInactiveInterval(SimpleHttpSession session,long maxInactiveInterval,boolean refreshstore,String contextpath) ;
 	public String getReferip();
 	public boolean isValidate();

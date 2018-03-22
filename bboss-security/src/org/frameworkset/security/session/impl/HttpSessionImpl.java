@@ -15,14 +15,13 @@
  */
 package org.frameworkset.security.session.impl;
 
-import java.util.Enumeration;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSessionContext;
-
 import org.frameworkset.security.session.InvalidateCallback;
 import org.frameworkset.security.session.Session;
 import org.frameworkset.security.session.SimpleHttpSession;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSessionContext;
+import java.util.Enumeration;
 
 /**
  * <p>Title: HttpSessionImpl.java</p> 
@@ -156,9 +155,15 @@ public class HttpSessionImpl implements SimpleHttpSession {
 		return new SimpleHttpSessionContext();
 	}
 
+	/**
+	 * 设置会话有效期
+	 * @param maxInactiveInterval 以秒为单位
+	 */
 	@Override
 	public void setMaxInactiveInterval(int maxInactiveInterval) {
-		this.session.setMaxInactiveInterval(this,maxInactiveInterval,true,  contextpath);
+		this.session.setMaxInactiveInterval(this,
+				maxInactiveInterval*1000l,//转换为毫秒
+				true,  contextpath);
 		
 	}
 	
