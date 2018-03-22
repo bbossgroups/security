@@ -21,7 +21,7 @@ https://my.oschina.net/bboss/blog/758871
 ```
 HttpSession session = request.getSession();//request.getSession(true)
 
-session.setMaxInactiveInterval(180000);//修改session有效期
+session.setMaxInactiveInterval(180);//修改session有效期,单位：秒
 
 TestVO testVO = new TestVO();
 
