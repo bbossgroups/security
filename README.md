@@ -3,6 +3,12 @@ http://www.bbossgroups.com
 
 # bboss group project blog:
 http://yin-bp.iteye.com/
+# 技术交流
+bboss session技术交流群：166471103
+
+bboss session微信公众号：bbossgroups
+![bbossgroups](https://static.oschina.net/uploads/space/2017/0617/094201_QhWs_94045.jpg)
+
 
 # bboss 会话共享源码
 github托管地址： 
