@@ -27,7 +27,7 @@ dependencies {
             [group: 'com.bbossgroups', name: 'bboss-util', version: "${bboss_version}", transitive: false],
             [group: 'com.bbossgroups', name: 'bboss-data', version: "${bboss_version}", transitive: false],
             [group: 'com.bbossgroups', name: 'bboss-core', version: "${bboss_version}", transitive: false],
-            [group: 'com.bbossgroups', name: 'bboss-persistent', version: "${bboss_version}", transitive: false],
+            [group: 'com.bbossgroups', name: 'bboss-persistent', version: "${bboss_version}", transitive: true],
             [group: 'com.bbossgroups', name: 'bboss-mvc', version: "${bboss_version}", transitive: false],
              [group: 'com.bbossgroups', name: 'bboss-velocity', version: "${bboss_version}", transitive: false],
               [group: 'oro', name: 'oro', version: '2.0.8', transitive: false],
