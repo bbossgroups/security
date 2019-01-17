@@ -15,23 +15,16 @@
  */
 package org.frameworkset.security.session.impl;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.frameworkset.util.AntPathMatcher;
 import org.frameworkset.util.PathMatcher;
 import org.frameworkset.web.util.UrlPathHelper;
+
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 
@@ -44,7 +37,7 @@ import org.frameworkset.web.util.UrlPathHelper;
  * @author biaoping.yin
  * @version 3.8.0
  */
-public class SessionFilter implements Filter{
+public class SessionFilter implements Filter {
 	protected boolean dosessionfilter = true;
 	protected ServletContext servletContext;
 	protected List<String> excludePatterns;
@@ -95,7 +88,6 @@ public class SessionFilter implements Filter{
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response,
 			FilterChain fc) throws IOException, ServletException {
-		
 		boolean exclude = excludeRequest(request);
 		if(exclude){
 			fc.doFilter(request, response);
