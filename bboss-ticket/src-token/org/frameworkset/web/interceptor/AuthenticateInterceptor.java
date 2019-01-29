@@ -15,19 +15,9 @@
  */
 package org.frameworkset.web.interceptor;
 
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Array;
-import java.net.URLEncoder;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.frameworkset.util.BeanUtils;
+import org.frameworkset.http.HttpHeaders;
+import org.frameworkset.http.RequestHeaderUtil;
 import org.frameworkset.util.ObjectUtils;
 import org.frameworkset.web.servlet.HandlerInterceptor;
 import org.frameworkset.web.servlet.ModelAndView;
@@ -38,7 +28,12 @@ import org.frameworkset.web.util.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.frameworkset.util.BeanUtils;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Array;
+import java.net.URLEncoder;
+import java.util.*;
 
 
 /**
@@ -92,24 +87,32 @@ public abstract class AuthenticateInterceptor extends AuthenticateFilter impleme
 				request.setAttribute(accesscontrol_check_result, accesscontrol_check_result_fail);
 				if(!response.isCommitted())
 				{
-					String dispatcherPath = prepareForRendering(request, response,requesturipath);
-					StringBuffer targetUrl = new StringBuffer();
-					if (!this.isforward() && !this.isinclude && this.contextRelative && dispatcherPath.startsWith("/")) {
-						targetUrl.append(request.getContextPath());
-					}
-					targetUrl.append(dispatcherPath);
-					if (this.exposeModelAttributes) {
-						String enc = this.encodingScheme;
-						if (enc == null) {
-							enc = request.getCharacterEncoding();
+					HttpHeaders headers = RequestHeaderUtil.getHeaders(request);
+					boolean isjsonType = headers.isJsonRequest();
+					if(!isjsonType) {
+						String dispatcherPath = prepareForRendering(request, response, requesturipath);
+						StringBuffer targetUrl = new StringBuffer();
+						if (!this.isforward() && !this.isinclude && this.contextRelative && dispatcherPath.startsWith("/")) {
+							targetUrl.append(request.getContextPath());
 						}
-						if (enc == null) {
-							enc = WebUtils.DEFAULT_CHARACTER_ENCODING;
+						targetUrl.append(dispatcherPath);
+						if (this.exposeModelAttributes) {
+							String enc = this.encodingScheme;
+							if (enc == null) {
+								enc = request.getCharacterEncoding();
+							}
+							if (enc == null) {
+								enc = WebUtils.DEFAULT_CHARACTER_ENCODING;
+							}
+							appendQueryProperties(targetUrl, request, new RequestMap(request),
+									enc);
 						}
-						appendQueryProperties(targetUrl, request, new RequestMap(request),
-								enc);
+						sendRedirect(request, response, targetUrl.toString(), http10Compatible, this.isforward(), this.isinclude);
 					}
-					sendRedirect(request, response, targetUrl.toString(), http10Compatible,this.isforward(),this.isinclude);
+					else {
+						sendFailedJson(  request,
+								response,headers,"Authenticate check failed:Not login.");
+					}
 				}
 				return false;
 			}

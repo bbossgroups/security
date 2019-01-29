@@ -1,19 +1,8 @@
 package org.frameworkset.web.interceptor;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.frameworkset.util.StringUtil;
+import org.frameworkset.http.HttpHeaders;
+import org.frameworkset.http.RequestHeaderUtil;
 import org.frameworkset.util.AntPathMatcher;
 import org.frameworkset.util.PathMatcher;
 import org.frameworkset.web.servlet.handler.HandlerMeta;
@@ -23,7 +12,14 @@ import org.frameworkset.web.util.UrlPathHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.frameworkset.util.StringUtil;
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
 
 /**
  * <p>
@@ -374,14 +370,22 @@ public abstract class AuthenticateFilter extends TokenFilter{
 				request.setAttribute(accesscontrol_check_result, accesscontrol_check_result_fail);
 				if(!response.isCommitted())
 				{
-					String dispatcherPath = prepareForRendering(request, response,requesturipath);
-					StringBuffer targetUrl = new StringBuffer();
-					if (!this.isforward() && !this.isinclude && this.contextRelative && dispatcherPath.startsWith("/")) {
-						targetUrl.append(request.getContextPath());
+					HttpHeaders headers = RequestHeaderUtil.getHeaders(request);
+					boolean isjsonType = headers.isJsonRequest();
+					if(!isjsonType) {
+						String dispatcherPath = prepareForRendering(request, response, requesturipath);
+						StringBuffer targetUrl = new StringBuffer();
+						if (!this.isforward() && !this.isinclude && this.contextRelative && dispatcherPath.startsWith("/")) {
+							targetUrl.append(request.getContextPath());
+						}
+						targetUrl.append(dispatcherPath);
+						this.appendReferBackPath(request, targetUrl, dispatcherPath != null ? dispatcherPath.indexOf("?") >= 0 : false, failedback);
+						sendRedirect(request, response, targetUrl.toString(), http10Compatible, this.isforward(), this.isinclude);
 					}
-					targetUrl.append(dispatcherPath);
-					 this.appendReferBackPath(request, targetUrl, dispatcherPath != null?dispatcherPath.indexOf("?")>=0:false,failedback);
-					sendRedirect(request, response, targetUrl.toString(), http10Compatible,this.isforward(),this.isinclude);
+					else {
+						sendFailedJson(  request,
+								response,headers,"Authenticate check failed:Not login.");
+					}
 				}
 				return false;
 			}
@@ -417,14 +421,22 @@ public abstract class AuthenticateFilter extends TokenFilter{
 				request.setAttribute(accesscontrol_permissioncheck_result, accesscontrol_permissioncheck_result_fail);
 				if(!response.isCommitted())
 				{
-					String dispatcherPath = this.preparePermissionForRendering(request, response,requesturipath);
-					StringBuffer targetUrl = new StringBuffer();
-					if (!this.isforward() && !this.isinclude && this.contextRelative && dispatcherPath.startsWith("/")) {
-						targetUrl.append(request.getContextPath());
+					HttpHeaders headers = RequestHeaderUtil.getHeaders(request);
+					boolean isjsonType = headers.isJsonRequest();
+					if(!isjsonType) {
+						String dispatcherPath = this.preparePermissionForRendering(request, response, requesturipath);
+						StringBuffer targetUrl = new StringBuffer();
+						if (!this.isforward() && !this.isinclude && this.contextRelative && dispatcherPath.startsWith("/")) {
+							targetUrl.append(request.getContextPath());
+						}
+						targetUrl.append(dispatcherPath);
+
+						sendRedirect(request, response, targetUrl.toString(), http10Compatible, this.isforward(), this.isinclude);
 					}
-					targetUrl.append(dispatcherPath);
-					
-					sendRedirect(request, response, targetUrl.toString(), http10Compatible,this.isforward(),this.isinclude);
+					else{
+						sendFailedJson(  request,
+								response,headers,"URL Permission check failed:No permission");
+					}
 				}
 				return false;
 			}

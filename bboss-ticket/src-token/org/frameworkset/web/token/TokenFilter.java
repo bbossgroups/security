@@ -1,21 +1,22 @@
 package org.frameworkset.web.token;
 
-import java.io.IOException;
-
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.fasterxml.jackson.core.JsonEncoding;
+import com.frameworkset.util.SimpleStringUtil;
+import com.frameworkset.util.StringUtil;
+import org.frameworkset.http.HttpHeaders;
+import org.frameworkset.http.MediaType;
+import org.frameworkset.http.RequestHeaderUtil;
 import org.frameworkset.util.annotations.MethodData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.frameworkset.util.StringUtil;
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
 
 
 /**
@@ -38,11 +39,12 @@ import com.frameworkset.util.StringUtil;
  * @author biaoping.yin
  *
  */
-public class TokenFilter implements Filter{
+public class TokenFilter implements Filter {
 	private static Logger log = LoggerFactory.getLogger(TokenFilter.class);
 	
 	protected String redirectpath = "/login.jsp";
 	private TokenServiceInf tokenService = null;
+	private String timingAllowOrigin;
 	private boolean inited =false;
 	private void _inited()
 	{
@@ -81,7 +83,8 @@ public class TokenFilter implements Filter{
 		
 		
 		String redirectpath_ =  arg0.getInitParameter("redirecturl");
-		
+		timingAllowOrigin = arg0.getInitParameter("Timing-Allow-Origin");
+
 //		String tokenstore_ = arg0.getInitParameter("tokenstore");
 //		if(!StringUtil.isEmpty(tokenstore_))
 //		{
@@ -120,22 +123,23 @@ public class TokenFilter implements Filter{
 	
 	@Override
 	public void destroy() {
+
 		TokenHelper.destroy();
 		tokenService = null;
-		
+
 	}
 	@Override
-	public void doFilter(ServletRequest arg0, ServletResponse arg1,
+	public void doFilter(ServletRequest request, ServletResponse response,
 			FilterChain arg2) throws IOException, ServletException {
 		_inited();
 		try {
-			if(!checkTokenExist((HttpServletRequest )arg0,(HttpServletResponse )arg1))//令牌检查，如果当前令牌已经失效则直接跳转到登录页，否则继续进行后去安全认证检查
+			if(!checkTokenExist((HttpServletRequest )request,(HttpServletResponse )response))//令牌检查，如果当前令牌已经失效则直接跳转到登录页，否则继续进行后去安全认证检查
 			{
 				return ;
 			}
 			else
 			{				
-				arg2.doFilter(arg0, arg1);
+				arg2.doFilter(request, response);
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -174,21 +178,45 @@ public class TokenFilter implements Filter{
 		_inited();
 		if(!response.isCommitted())
 		{
-			if(this.tokenService.getTokenfailpath() != null)
-			{
-				StringBuffer targetUrl = new StringBuffer();
-				if ( this.tokenService.getTokenfailpath().startsWith("/")) {
-					targetUrl.append(request.getContextPath());
+			HttpHeaders headers = RequestHeaderUtil.getHeaders(request);
+			boolean isjsonType = headers.isJsonRequest();
+			if(!isjsonType) {
+				if (this.tokenService.getTokenfailpath() != null) {
+					StringBuffer targetUrl = new StringBuffer();
+					if (this.tokenService.getTokenfailpath().startsWith("/")) {
+						targetUrl.append(request.getContextPath());
+					}
+					targetUrl.append(this.tokenService.getTokenfailpath());
+
+					sendRedirect(request, response, targetUrl.toString(), true, false, false);
+				} else {
+					sendRedirect403(request, response);
 				}
-				targetUrl.append(this.tokenService.getTokenfailpath());
-				
-				sendRedirect(request, response,targetUrl.toString(),  true,false,false);
 			}
-			else
-			{
-				sendRedirect403(request,response);
+			else {
+				sendFailedJson(  request,
+						  response,headers,"Token check failed");
 			}
 		}
+	}
+
+	/**
+	 * Determine the JSON encoding to use for the given content type.
+	 *
+	 * @param contentType
+	 *            the media type as requested by the caller
+	 * @return the JSON encoding to use (never {@code null})
+	 */
+	protected JsonEncoding getJsonEncoding(MediaType contentType) {
+		if (contentType != null && contentType.getCharSet() != null) {
+			Charset charset = contentType.getCharSet();
+			for (JsonEncoding encoding : JsonEncoding.values()) {
+				if (charset.name().equals(encoding.getJavaName())) {
+					return encoding;
+				}
+			}
+		}
+		return JsonEncoding.UTF8;
 	}
 	
 	public void sendRedirect403(HttpServletRequest request,
@@ -226,6 +254,33 @@ public class TokenFilter implements Filter{
 		if(fromurl.equals(comp))
 			return true;
 		return false;
+	}
+	protected void sendFailedJson(HttpServletRequest request,
+								  HttpServletResponse response,HttpHeaders headers,String message) throws IOException {
+		AuthResponse authResponse = new AuthResponse();
+		authResponse.setCode(AuthResponse.code_403);
+		authResponse.setMessage(message);
+		HttpSession session = request.getSession(false);
+		if(session != null)
+			authResponse.setSessionId(session.getId());
+		java.io.OutputStreamWriter writer = null;
+		try {
+			writer = new OutputStreamWriter(response.getOutputStream(),
+					this.getJsonEncoding(headers.getContentType()).getJavaName());
+			SimpleStringUtil.object2json(authResponse, writer);
+			writer.flush();
+		}
+		finally {
+			if(writer != null){
+				try {
+					writer.close();
+				}
+				catch (Exception e){
+					log.error("",e);
+				}
+			}
+		}
+
 	}
 	protected void sendRedirect(HttpServletRequest request,
 			HttpServletResponse response, String targetUrl,
