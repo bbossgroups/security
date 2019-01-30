@@ -15,6 +15,8 @@ package com.frameworkset.common.filter;
  * limitations under the License.
  */
 
+import com.frameworkset.util.StringUtil;
+import org.frameworkset.util.ReferHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,6 +39,9 @@ import java.util.*;
 public class HeaderFilter  implements Filter {
 	private static Logger log = LoggerFactory.getLogger(HeaderFilter.class);
 	private String timingAllowOrigin;
+	private ReferHelper referHelper = null;
+
+
 	private static final StringManager sm = StringManager.getManager(HeaderFilter.class);
 //	@Override
 //	public void init(FilterConfig filterConfig) throws ServletException {
@@ -117,9 +122,11 @@ public class HeaderFilter  implements Filter {
 			throw new ServletException(sm.getString("HeaderFilter.onlyHttp"));
 		}
 
+
 		// Safe to downcast at this point.
 		HttpServletRequest request = (HttpServletRequest) servletRequest;
 		HttpServletResponse response = (HttpServletResponse) servletResponse;
+
 		if(timingAllowOrigin != null)
 		{
 			response.setHeader("Timing-Allow-Origin",this.timingAllowOrigin);
@@ -165,6 +172,16 @@ public class HeaderFilter  implements Filter {
 				DEFAULT_DECORATE_REQUEST);
 
 		if (filterConfig != null) {
+			String refererDefender_ =  filterConfig.getInitParameter("refererDefender");
+			boolean refererDefender = StringUtil.getBoolean(refererDefender_, false);
+			referHelper = new ReferHelper();
+			referHelper.setRefererDefender(refererDefender);
+			String refererwallwhilelist_ = filterConfig.getInitParameter("refererwallwhilelist");
+			if(StringUtil.isNotEmpty(refererwallwhilelist_))
+			{
+				String[] refererwallwhilelist = refererwallwhilelist_.split(",");
+				referHelper.setRefererwallwhilelist(refererwallwhilelist);
+			}
 			timingAllowOrigin = filterConfig.getInitParameter("Timing-Allow-Origin");
 			String configAllowedOrigins = filterConfig
 					.getInitParameter(PARAM_CORS_ALLOWED_ORIGINS);
@@ -202,7 +219,10 @@ public class HeaderFilter  implements Filter {
 	protected void handleSimpleCORS(final HttpServletRequest request,
 									final HttpServletResponse response, final FilterChain filterChain)
 			throws IOException, ServletException {
-
+		if(referHelper.dorefer(request, response))
+		{
+			return;
+		}
 		HeaderFilter.CORSRequestType requestType = checkRequestType(request);
 		if (!(requestType == HeaderFilter.CORSRequestType.SIMPLE ||
 				requestType == HeaderFilter.CORSRequestType.ACTUAL)) {
@@ -282,7 +302,10 @@ public class HeaderFilter  implements Filter {
 	protected void handlePreflightCORS(final HttpServletRequest request,
 									   final HttpServletResponse response, final FilterChain filterChain)
 			throws IOException, ServletException {
-
+		if(referHelper.dorefer(request, response))
+		{
+			return;
+		}
 		CORSRequestType requestType = checkRequestType(request);
 		if (requestType != CORSRequestType.PRE_FLIGHT) {
 			throw new IllegalArgumentException(sm.getString("HeaderFilter.wrongType1",
@@ -394,6 +417,7 @@ public class HeaderFilter  implements Filter {
 							   final HttpServletResponse response, final FilterChain filterChain)
 			throws IOException, ServletException {
 		// Let request pass.
+		referHelper.recordNoCros(request,response);
 		filterChain.doFilter(request, response);
 	}
 
@@ -407,28 +431,29 @@ public class HeaderFilter  implements Filter {
 	 */
 	private void handleInvalidCORS(final HttpServletRequest request,
 								   final HttpServletResponse response, final FilterChain filterChain) {
-		String origin = request.getHeader(HeaderFilter.REQUEST_HEADER_ORIGIN);
-		String method = request.getMethod();
-		String accessControlRequestHeaders = request.getHeader(
-				REQUEST_HEADER_ACCESS_CONTROL_REQUEST_HEADERS);
-
-		response.setContentType("text/plain");
-		response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-		response.resetBuffer();
-
-		if (log.isDebugEnabled()) {
-			// Debug so no need for i18n
-			StringBuilder message =
-					new StringBuilder("Invalid CORS request; Origin=");
-			message.append(origin);
-			message.append(";Method=");
-			message.append(method);
-			if (accessControlRequestHeaders != null) {
-				message.append(";Access-Control-Request-Headers=");
-				message.append(accessControlRequestHeaders);
-			}
-			log.debug(message.toString());
-		}
+//		String origin = request.getHeader(HeaderFilter.REQUEST_HEADER_ORIGIN);
+//		String method = request.getMethod();
+//		String accessControlRequestHeaders = request.getHeader(
+//				REQUEST_HEADER_ACCESS_CONTROL_REQUEST_HEADERS);
+//
+//		response.setContentType("text/plain");
+//		response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+//		response.resetBuffer();
+//
+//		if (log.isDebugEnabled()) {
+//			// Debug so no need for i18n
+//			StringBuilder message =
+//					new StringBuilder("Invalid CORS request; Origin=");
+//			message.append(origin);
+//			message.append(";Method=");
+//			message.append(method);
+//			if (accessControlRequestHeaders != null) {
+//				message.append(";Access-Control-Request-Headers=");
+//				message.append(accessControlRequestHeaders);
+//			}
+//			log.debug(message.toString());
+//		}
+		this.referHelper.sendInvalidCORS(request,response);
 	}
 
 
