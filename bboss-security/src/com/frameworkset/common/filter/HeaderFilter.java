@@ -112,6 +112,10 @@ public class HeaderFilter  implements Filter {
 	 */
 	private boolean decorateRequest;
 
+	/**
+	 * 是否启用跨站防御，true 启用（默认值） false关闭
+	 */
+	private boolean enableCrossFirewall = true;
 
 	@Override
 	public void doFilter(final ServletRequest servletRequest,
@@ -121,11 +125,21 @@ public class HeaderFilter  implements Filter {
 				!(servletResponse instanceof HttpServletResponse)) {
 			throw new ServletException(sm.getString("HeaderFilter.onlyHttp"));
 		}
-
-
 		// Safe to downcast at this point.
 		HttpServletRequest request = (HttpServletRequest) servletRequest;
 		HttpServletResponse response = (HttpServletResponse) servletResponse;
+		if(!this.enableCrossFirewall) {//跨站防火墙没有启用
+			//检查来源地址是否被禁止访问
+			if (referHelper.dorefer(request, response)) { //检查来源地址被禁止访问
+				return;
+			}
+			else{//允许访问
+				// Forward the request down the filter chain.
+				filterChain.doFilter(servletRequest, servletResponse);
+				return;
+			}
+		}
+
 
 		if(timingAllowOrigin != null)
 		{
@@ -172,6 +186,8 @@ public class HeaderFilter  implements Filter {
 				DEFAULT_DECORATE_REQUEST);
 
 		if (filterConfig != null) {
+			String enableCrossFirewall_ = filterConfig.getInitParameter("enableCrossFirewall");
+			this.enableCrossFirewall = StringUtil.getBoolean(enableCrossFirewall_, true);
 			String refererDefender_ =  filterConfig.getInitParameter("refererDefender");
 			boolean refererDefender = StringUtil.getBoolean(refererDefender_, false);
 			referHelper = new ReferHelper();
