@@ -1,22 +1,10 @@
 package org.frameworkset.security.session;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
+import com.frameworkset.util.SimpleStringUtil;
+import com.frameworkset.util.StringUtil;
 import org.frameworkset.security.session.domain.App;
 import org.frameworkset.security.session.domain.CrossDomain;
-import org.frameworkset.security.session.impl.HttpSessionImpl;
-import org.frameworkset.security.session.impl.SessionEventImpl;
-import org.frameworkset.security.session.impl.SessionHttpServletRequestWrapper;
-import org.frameworkset.security.session.impl.SessionID;
-import org.frameworkset.security.session.impl.SessionManager;
+import org.frameworkset.security.session.impl.*;
 import org.frameworkset.security.session.statics.AttributeInfo;
 import org.frameworkset.security.session.statics.NullSessionStaticManagerImpl;
 import org.frameworkset.security.session.statics.SessionConfig;
@@ -27,8 +15,14 @@ import org.frameworkset.spi.SPIException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.frameworkset.util.SimpleStringUtil;
-import com.frameworkset.util.StringUtil;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class SessionUtil {
 	private static Logger log = LoggerFactory.getLogger(SessionUtil.class);
@@ -74,8 +68,18 @@ public class SessionUtil {
 			}
 			catch(SPIException e)
 			{
-				log.info("初始化bboss session结果:"+e.getMessage());
-				
+				log.info("初始化bboss session结果:"+e.getMessage(),e);
+
+			}
+			catch(Exception e)
+			{
+				log.info("初始化bboss session结果:"+e.getMessage(),e);
+
+			}
+			catch(Throwable e)
+			{
+				log.info("初始化bboss session结果:"+e.getMessage(),e);
+
 			}
 			finally
 			{
@@ -617,7 +621,7 @@ public class SessionUtil {
 	
 	/**
 	 * 生成签名的sessionID,session对象不存在时创建新的session
-	 * @param sessionId
+	 * @param request
 	 * @return
 	 */
 	public static String signParameterSessionID(HttpServletRequest request){
@@ -626,7 +630,7 @@ public class SessionUtil {
 	
 	/**
 	 * 生成签名的sessionID,session对象不存在时创建新的session
-	 * @param sessionId
+	 * @param request
 	 * @return
 	 */
 	public static String signParameterSessionID(HttpServletRequest request,boolean createSessionIfNotExist){
