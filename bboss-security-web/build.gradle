@@ -24,14 +24,14 @@ sourceSets {
 }
 
 
-project.tasks.compileJava.dependsOn([project(':bboss-security-web-inf').tasks.install,project(':bboss-security').tasks.install,project(':bboss-ticket').tasks.install])
+project.tasks.compileJava.dependsOn([project(':bboss-security-web-inf').tasks.publishToMavenLocal,project(':bboss-security').tasks.publishToMavenLocal,project(':bboss-ticket').tasks.publishToMavenLocal])
 
 dependencies {
-compile project(':bboss-security')
-compile project(':bboss-security-web-inf')
-compile project(':bboss-ticket')
-compile( [group: 'com.bbossgroups', name: 'bboss-hession', version: "${bboss_version}", transitive: true] )
-    compile(
+	api project(':bboss-security')
+	api project(':bboss-security-web-inf')
+	api project(':bboss-ticket')
+	api( [group: 'com.bbossgroups', name: 'bboss-hession', version: "${bboss_version}", transitive: true] )
+	api(
          [group: 'org.ow2.asm', name: 'asm', version: '5.0.3', transitive: false],
             [group: 'com.bbossgroups', name: 'bboss-core', version: "${bboss_version}", transitive: false],
              [group: 'com.bbossgroups', name: 'bboss-mvc', version: "${bboss_version}", transitive: false],
