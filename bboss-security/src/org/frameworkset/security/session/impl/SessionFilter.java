@@ -15,6 +15,7 @@
  */
 package org.frameworkset.security.session.impl;
 
+import com.frameworkset.listener.BSServletRequestListener;
 import org.frameworkset.util.AntPathMatcher;
 import org.frameworkset.util.PathMatcher;
 import org.frameworkset.web.util.UrlPathHelper;
@@ -99,7 +100,7 @@ public class SessionFilter implements Filter {
 			try
 			{
 				mrequestw.touch();
-				
+				BSServletRequestListener.requestReset(mrequestw);
 			    fc.doFilter(mrequestw, response);
 			}
 			finally
