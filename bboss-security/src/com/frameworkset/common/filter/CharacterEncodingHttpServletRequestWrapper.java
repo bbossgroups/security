@@ -2,14 +2,17 @@ package com.frameworkset.common.filter;
 
 import bboss.org.mozilla.intl.chardet.UTF8Convertor;
 import org.frameworkset.util.AttackContext;
+import org.frameworkset.util.AttackException;
 import org.frameworkset.util.ReferHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,6 +35,7 @@ public class CharacterEncodingHttpServletRequestWrapper
     private ReferHelper referHelper;
 	private HttpServletResponse response;
 	private FilterChain chain ;
+	private boolean preHandleParams;
     public CharacterEncodingHttpServletRequestWrapper(FilterChain chain,HttpServletRequest request, HttpServletResponse response, String encoding, boolean checkiemodeldialog, ReferHelper referHelper, boolean ignoreParameterDecoding) {
         super(request);
         this.response = response;
@@ -50,8 +54,109 @@ public class CharacterEncodingHttpServletRequestWrapper
         parameters = new HashMap<String,String[]>();
 //        String _checkiemodeldialog = request.getParameter("_checkiemodeldialog");
 //        if(_checkiemodeldialog != null && _checkiemodeldialog.equals("true"));
-        	this.checkiemodeldialog = checkiemodeldialog; 
-        this.ignoreParameterDecoding = ignoreParameterDecoding;
+        this.checkiemodeldialog = checkiemodeldialog;
+        if(ignoreParameterDecoding)
+            this.ignoreParameterDecoding = ignoreParameterDecoding;
+        else{
+            this.ignoreParameterDecoding = referHelper.ignoreEncodeParameters(request.getRequestURI());
+        }
+
+    }
+
+    public void preHandlerParameters(){
+        Enumeration paramNames = super.getParameterNames();
+        while (paramNames.hasMoreElements()) {
+            String paramName = (String) paramNames.nextElement();
+            String[] paramValues = super.getParameterValues(paramName);
+
+            if(paramValues != null) {
+                if(paramValues.length > 0) {
+                    handlerValues(paramName, paramValues);
+                }
+                else{
+                    this.parameters.put(paramName,paramValues);
+                }
+            }
+        }
+        preHandleParams = true;
+    }
+
+    private String[] handlerValues(String name,String[] tempArray){
+            try {
+
+
+                if ( tempArray == null  || tempArray.length == 0) {
+                    return tempArray;
+                }
+
+                if ( !ignoreParameterDecoding && (oldEncoding == null || isIOS88591(oldEncoding)) )
+                {
+                    String[] clone = new String[tempArray.length];
+
+                    for (int i = 0; i < tempArray.length; i++) {
+                        if ( tempArray[i]!= null) {
+                            byte[] buf = tempArray[i].getBytes("iso-8859-1");
+                            if(checkiemodeldialog && isutf8 && isie && isget )
+                            {
+
+                                String charset = UTF8Convertor.takecharset(buf) ;
+                                if(charset !=null && charset.startsWith("GB"))
+                                {
+
+                                    clone[i] = new String(buf, "GBK");
+
+                                }
+//	                    	else if(charset !=null && charset.startsWith("UTF-8"))
+//	                    		clone[i] = new String(tempArray[i].getBytes("iso-8859-1"), charset);
+//	                    	else if(charset !=null && charset.startsWith("UTF-"))
+//	                    		clone[i] = new String(tempArray[i].getBytes("iso-8859-1"), "UTF-16");
+                                else
+                                    clone[i] = new String(buf, newecoding);
+                            }
+                            else
+                            {
+                                clone[i] = new String(buf, newecoding);
+                            }
+                        }
+                        else
+                        {
+                            clone[i] = tempArray[i];
+                        }
+                    }
+                    AttackContext attackContext = new AttackContext();
+                    attackContext.setRequest(this);
+                    attackContext.setResponse(this.response);
+                    attackContext.setChain(chain);
+                    this.referHelper.wallfilter(name,clone,attackContext);
+                    this.referHelper.sensitiveWallfilter(name,clone,attackContext);
+                    parameters.put(name,clone);
+                    return clone;
+                }
+                else
+                {
+                    AttackContext attackContext = new AttackContext();
+                    attackContext.setRequest(this);
+                    attackContext.setResponse(this.response);
+                    attackContext.setChain(chain);
+                    this.referHelper.wallfilter(name,tempArray,attackContext);
+                    this.referHelper.sensitiveWallfilter(name,tempArray,attackContext);
+                    parameters.put(name,tempArray);
+                    return tempArray;
+                }
+
+            }
+            catch (AttackException e){
+                throw e;
+            }
+            catch (Exception e) {
+                AttackContext attackContext = new AttackContext();
+                attackContext.setRequest(this);
+                attackContext.setResponse(this.response);
+                attackContext.setChain(chain);
+                this.referHelper.wallfilter(name,tempArray,attackContext);
+                parameters.put(name,tempArray);
+                return tempArray ;
+            }
     }
 
     public String getParameter(String name) {
@@ -88,84 +193,91 @@ public class CharacterEncodingHttpServletRequestWrapper
 
    
     public String[] getParameterValues(String name) {
-    	
-    	  
-        try {
-           
-            String[] tempArray = parameters.get(name);
-            if(tempArray != null)
-            	return tempArray; 
-            tempArray = super.getParameterValues(name);
-            if ( tempArray == null  || tempArray.length == 0) {
-                return tempArray;
-            }
-            
-            if ( !ignoreParameterDecoding && (oldEncoding == null || isIOS88591(oldEncoding)) )
-            {
-            	String[] clone = new String[tempArray.length];
-            	
-                for (int i = 0; i < tempArray.length; i++) {
-                    if ( tempArray[i]!= null) {
-                    	byte[] buf = tempArray[i].getBytes("iso-8859-1");
-                		if(checkiemodeldialog && isutf8 && isie && isget )
-                		{
-                			
-	                    	String charset = UTF8Convertor.takecharset(buf) ;
-	                    	if(charset !=null && charset.startsWith("GB"))
-	                    	{
-	                    		
-	                    		clone[i] = new String(buf, "GBK");
-	                    		
-	                    	}
-//	                    	else if(charset !=null && charset.startsWith("UTF-8"))
-//	                    		clone[i] = new String(tempArray[i].getBytes("iso-8859-1"), charset);
-//	                    	else if(charset !=null && charset.startsWith("UTF-"))
-//	                    		clone[i] = new String(tempArray[i].getBytes("iso-8859-1"), "UTF-16");
-	                    	else
-	                    		clone[i] = new String(buf, newecoding);
-                		}
-                		else
-                		{
-                			clone[i] = new String(buf, newecoding);
-                		}
-                    }
-                    else
-                    {
-                    	clone[i] = tempArray[i];
-                    }
-                }
-				AttackContext attackContext = new AttackContext();
-                attackContext.setRequest(this);
-                attackContext.setResponse(this.response);
-				attackContext.setChain(chain);
-                this.referHelper.wallfilter(name,clone,attackContext);
-				this.referHelper.sensitiveWallfilter(name,clone,attackContext);
-                parameters.put(name,clone);
-                return clone;
-            }
-            else
-            {
-				AttackContext attackContext = new AttackContext();
-				attackContext.setRequest(this);
-				attackContext.setResponse(this.response);
-				attackContext.setChain(chain);
-            	this.referHelper.wallfilter(name,tempArray,attackContext);
-				this.referHelper.sensitiveWallfilter(name,tempArray,attackContext);
-            	parameters.put(name,tempArray);
-            	return tempArray;
-            }
-            
-        }
-        catch (Exception e) {
-        	String[] tempArray = super.getParameterValues(name);
-			AttackContext attackContext = new AttackContext();
-			attackContext.setRequest(this);
-			attackContext.setResponse(this.response);
-			attackContext.setChain(chain);
-        	this.referHelper.wallfilter(name,tempArray,attackContext);
-        	parameters.put(name,tempArray);
-            return tempArray ;
-        }
+
+        String[] tempArray = parameters.get(name);
+        if(tempArray != null || this.preHandleParams)
+            return tempArray;
+        tempArray = super.getParameterValues(name);
+        tempArray = this.handlerValues(name,tempArray);
+        return tempArray;
+//        try {
+//
+//            String[] tempArray = parameters.get(name);
+//            if(tempArray != null || this.preHandleParams)
+//            	return tempArray;
+//            tempArray = super.getParameterValues(name);
+//            this.handlerValues(name,tempArray);
+//            if ( tempArray == null  || tempArray.length == 0) {
+//                return tempArray;
+//            }
+//            else
+//
+//            if ( !ignoreParameterDecoding && (oldEncoding == null || isIOS88591(oldEncoding)) )
+//            {
+//            	String[] clone = new String[tempArray.length];
+//
+//                for (int i = 0; i < tempArray.length; i++) {
+//                    if ( tempArray[i]!= null) {
+//                    	byte[] buf = tempArray[i].getBytes("iso-8859-1");
+//                		if(checkiemodeldialog && isutf8 && isie && isget )
+//                		{
+//
+//	                    	String charset = UTF8Convertor.takecharset(buf) ;
+//	                    	if(charset !=null && charset.startsWith("GB"))
+//	                    	{
+//
+//	                    		clone[i] = new String(buf, "GBK");
+//
+//	                    	}
+////	                    	else if(charset !=null && charset.startsWith("UTF-8"))
+////	                    		clone[i] = new String(tempArray[i].getBytes("iso-8859-1"), charset);
+////	                    	else if(charset !=null && charset.startsWith("UTF-"))
+////	                    		clone[i] = new String(tempArray[i].getBytes("iso-8859-1"), "UTF-16");
+//	                    	else
+//	                    		clone[i] = new String(buf, newecoding);
+//                		}
+//                		else
+//                		{
+//                			clone[i] = new String(buf, newecoding);
+//                		}
+//                    }
+//                    else
+//                    {
+//                    	clone[i] = tempArray[i];
+//                    }
+//                }
+//				AttackContext attackContext = new AttackContext();
+//                attackContext.setRequest(this);
+//                attackContext.setResponse(this.response);
+//				attackContext.setChain(chain);
+//                this.referHelper.wallfilter(name,clone,attackContext);
+//				this.referHelper.sensitiveWallfilter(name,clone,attackContext);
+//                parameters.put(name,clone);
+//                return clone;
+//            }
+//            else
+//            {
+//				AttackContext attackContext = new AttackContext();
+//				attackContext.setRequest(this);
+//				attackContext.setResponse(this.response);
+//				attackContext.setChain(chain);
+//            	this.referHelper.wallfilter(name,tempArray,attackContext);
+//				this.referHelper.sensitiveWallfilter(name,tempArray,attackContext);
+//            	parameters.put(name,tempArray);
+//            	return tempArray;
+//            }
+//
+//        }
+//        catch (Exception e) {
+//        	String[] tempArray = super.getParameterValues(name);
+//			AttackContext attackContext = new AttackContext();
+//			attackContext.setRequest(this);
+//			attackContext.setResponse(this.response);
+//			attackContext.setChain(chain);
+//        	this.referHelper.wallfilter(name,tempArray,attackContext);
+//        	parameters.put(name,tempArray);
+//            return tempArray ;
+//        }
     }
     
     

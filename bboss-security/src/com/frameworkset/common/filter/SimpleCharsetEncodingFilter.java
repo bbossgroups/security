@@ -26,7 +26,7 @@ public class SimpleCharsetEncodingFilter  implements Filter{
     private ReferHelper referHelper;
    
     private boolean ignoreParameterDecoding;
-    
+
     public void init(FilterConfig arg0) throws ServletException {
     	
         this.config = arg0;
@@ -38,6 +38,7 @@ public class SimpleCharsetEncodingFilter  implements Filter{
         ignoreParameterDecoding = StringUtil.getBoolean(ignoreParameterDecoding_, true);
         referHelper = new ReferHelper();
         referHelper.setRefererDefender(refererDefender);
+
         initAttackPolicy( config, referHelper);
 
 
@@ -57,6 +58,11 @@ public class SimpleCharsetEncodingFilter  implements Filter{
 
 
     public static void initAttackPolicy(FilterConfig config,ReferHelper referHelper){
+        String encodeParameterWhileList_ = config.getInitParameter("encodeParameterWhileList");
+        if(StringUtil.isNotEmpty(encodeParameterWhileList_)){
+            String[] encodeParameterWhileList = encodeParameterWhileList_.split(",");
+            referHelper.setEncodeParameterWhileList(encodeParameterWhileList);
+        }
         BaseAttackFielterPolicy baseAttackFielterPolicy = null;
         String attackDefenderPolicy_ = config.getInitParameter("attackDefenderPolicy");
         if(attackDefenderPolicy_ == null || attackDefenderPolicy_.trim().equals("")) {
@@ -110,7 +116,7 @@ public class SimpleCharsetEncodingFilter  implements Filter{
                 long attackRuleCacheRefreshInterval = -1l;
                 String attackRuleCacheRefreshInterval_ = config.getInitParameter("attackRuleCacheRefreshInterval");
                 if(SimpleStringUtil.isNotEmpty(attackRuleCacheRefreshInterval_)){
-                    attackRuleCacheRefreshInterval = Long.parseLong(attackDefenderPolicy_) * 1000l;
+                    attackRuleCacheRefreshInterval = Long.parseLong(attackRuleCacheRefreshInterval_) * 1000l;
                 }
                 baseAttackFielterPolicy = new WrapperAttackFielterPolicy(attackRuleCacheRefreshInterval,baseAttackFielterPolicy);
             } catch (InstantiationException e) {
@@ -179,7 +185,7 @@ public class SimpleCharsetEncodingFilter  implements Filter{
                     CharacterEncodingHttpServletResponseWrapper(response, ResponseEncoding);
             CharacterEncodingHttpServletRequestWrapper mrequestw = new
                 CharacterEncodingHttpServletRequestWrapper(fc,request,wresponsew, RequestEncoding,checkiemodeldialog,referHelper,ignoreParameterDecoding);
-
+            mrequestw.preHandlerParameters();
             fc.doFilter(mrequestw, wresponsew);
 //            super.doFilter(mrequestw, wresponsew, fc);
         }
@@ -189,7 +195,8 @@ public class SimpleCharsetEncodingFilter  implements Filter{
         {
         	 CharacterEncodingHttpServletRequestWrapper mrequestw = new
                      CharacterEncodingHttpServletRequestWrapper(fc,request,response, RequestEncoding,checkiemodeldialog,referHelper,ignoreParameterDecoding);
-            fc.doFilter(request,response);
+            mrequestw.preHandlerParameters();
+        	 fc.doFilter(request,response);
 //            super.doFilter(request, response, fc);
         }
         //其他模式
@@ -199,7 +206,7 @@ public class SimpleCharsetEncodingFilter  implements Filter{
                     CharacterEncodingHttpServletResponseWrapper(response, ResponseEncoding);
             CharacterEncodingHttpServletRequestWrapper mrequestw = new
                 CharacterEncodingHttpServletRequestWrapper(fc,request, wresponsew,this.RequestEncoding,checkiemodeldialog,referHelper,ignoreParameterDecoding);
-
+            mrequestw.preHandlerParameters();
             fc.doFilter(mrequestw, wresponsew);
 //            super.doFilter(mrequestw, wresponsew, fc);
         }
