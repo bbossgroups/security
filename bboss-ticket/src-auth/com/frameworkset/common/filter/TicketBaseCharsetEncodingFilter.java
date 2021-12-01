@@ -111,7 +111,7 @@ public abstract class TicketBaseCharsetEncodingFilter extends TicketSessionFilte
                     CharacterEncodingHttpServletResponseWrapper(response, ResponseEncoding);
             CharacterEncodingHttpServletRequestWrapper mrequestw = new
                 CharacterEncodingHttpServletRequestWrapper(fc,request, wresponsew,RequestEncoding,checkiemodeldialog,referHelper,ignoreParameterDecoding);
-
+            mrequestw.preHandlerParameters();
 //            fc.doFilter(mrequestw, wresponsew);
             super.doFilter(mrequestw, wresponsew, fc);
         }
@@ -122,6 +122,7 @@ public abstract class TicketBaseCharsetEncodingFilter extends TicketSessionFilte
         	 CharacterEncodingHttpServletRequestWrapper mrequestw = new
                      CharacterEncodingHttpServletRequestWrapper(fc,request,response, RequestEncoding,checkiemodeldialog,referHelper,ignoreParameterDecoding);
             request.setCharacterEncoding(RequestEncoding);
+            mrequestw.preHandlerParameters();
 //            fc.doFilter(request,response);
             super.doFilter(request, response, fc);
         }
@@ -132,7 +133,7 @@ public abstract class TicketBaseCharsetEncodingFilter extends TicketSessionFilte
                     CharacterEncodingHttpServletResponseWrapper(response, ResponseEncoding);
             CharacterEncodingHttpServletRequestWrapper mrequestw = new
                 CharacterEncodingHttpServletRequestWrapper(fc,request,wresponsew, this.RequestEncoding,checkiemodeldialog,referHelper,ignoreParameterDecoding);
-
+            mrequestw.preHandlerParameters();
 //            fc.doFilter(mrequestw, wresponsew);
             super.doFilter(mrequestw, wresponsew, fc);
         }
