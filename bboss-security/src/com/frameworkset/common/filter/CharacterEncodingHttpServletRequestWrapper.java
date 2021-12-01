@@ -1,16 +1,17 @@
 package com.frameworkset.common.filter;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
-
+import bboss.org.mozilla.intl.chardet.UTF8Convertor;
+import org.frameworkset.util.AttackContext;
 import org.frameworkset.util.ReferHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import bboss.org.mozilla.intl.chardet.UTF8Convertor;
+import javax.servlet.FilterChain;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
+import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CharacterEncodingHttpServletRequestWrapper
     extends HttpServletRequestWrapper{
@@ -29,9 +30,12 @@ public class CharacterEncodingHttpServletRequestWrapper
     private static final String system_encoding = System.getProperty("sun.jnu.encoding");
     public static final String USE_MVC_DENCODE_KEY = "org.frameworkset.web.servlet.handler.HandlerUtils.USE_MVC_DENCODE_KEY";
     private ReferHelper referHelper;
-
-    public CharacterEncodingHttpServletRequestWrapper(HttpServletRequest request, String encoding,boolean checkiemodeldialog,ReferHelper referHelper,boolean ignoreParameterDecoding) {
+	private HttpServletResponse response;
+	private FilterChain chain ;
+    public CharacterEncodingHttpServletRequestWrapper(FilterChain chain,HttpServletRequest request, HttpServletResponse response, String encoding, boolean checkiemodeldialog, ReferHelper referHelper, boolean ignoreParameterDecoding) {
         super(request);
+        this.response = response;
+        this.chain = chain;
 //        this.wallfilterrules = wallfilterrules;
 //        this.wallwhilelist = wallwhilelist;
         this.referHelper = referHelper;
@@ -130,13 +134,23 @@ public class CharacterEncodingHttpServletRequestWrapper
                     	clone[i] = tempArray[i];
                     }
                 }
-                this.referHelper.wallfilter(name,clone);
+				AttackContext attackContext = new AttackContext();
+                attackContext.setRequest(this);
+                attackContext.setResponse(this.response);
+				attackContext.setChain(chain);
+                this.referHelper.wallfilter(name,clone,attackContext);
+				this.referHelper.sensitiveWallfilter(name,clone,attackContext);
                 parameters.put(name,clone);
                 return clone;
             }
             else
             {
-            	this.referHelper.wallfilter(name,tempArray);
+				AttackContext attackContext = new AttackContext();
+				attackContext.setRequest(this);
+				attackContext.setResponse(this.response);
+				attackContext.setChain(chain);
+            	this.referHelper.wallfilter(name,tempArray,attackContext);
+				this.referHelper.sensitiveWallfilter(name,tempArray,attackContext);
             	parameters.put(name,tempArray);
             	return tempArray;
             }
@@ -144,7 +158,11 @@ public class CharacterEncodingHttpServletRequestWrapper
         }
         catch (Exception e) {
         	String[] tempArray = super.getParameterValues(name);
-        	this.referHelper.wallfilter(name,tempArray);
+			AttackContext attackContext = new AttackContext();
+			attackContext.setRequest(this);
+			attackContext.setResponse(this.response);
+			attackContext.setChain(chain);
+        	this.referHelper.wallfilter(name,tempArray,attackContext);
         	parameters.put(name,tempArray);
             return tempArray ;
         }

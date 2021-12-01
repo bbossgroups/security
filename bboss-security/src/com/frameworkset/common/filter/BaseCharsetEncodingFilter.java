@@ -1,19 +1,15 @@
 package com.frameworkset.common.filter;
 
-import java.io.IOException;
-
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.frameworkset.util.StringUtil;
 import org.frameworkset.security.session.impl.SessionFilter;
 import org.frameworkset.util.ReferHelper;
 
-import com.frameworkset.util.StringUtil;
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
+import static com.frameworkset.common.filter.SimpleCharsetEncodingFilter.initAttackPolicy;
 
 public abstract class BaseCharsetEncodingFilter extends SessionFilter{
 
@@ -41,27 +37,8 @@ public abstract class BaseCharsetEncodingFilter extends SessionFilter{
         ignoreParameterDecoding = StringUtil.getBoolean(ignoreParameterDecoding_, false);
         referHelper = new ReferHelper();
         referHelper.setRefererDefender(refererDefender);
-        String wallfilterrules_ = config.getInitParameter("wallfilterrules");
-        String wallwhilelist_ = config.getInitParameter("wallwhilelist");
+        initAttackPolicy( config, referHelper);
         String refererwallwhilelist_ = config.getInitParameter("refererwallwhilelist");
-        
-        String defaultwall = config.getInitParameter("defaultwall");
-        if(StringUtil.isNotEmpty(wallwhilelist_ ))
-        {
-        	String[] wallwhilelist = wallwhilelist_.split(",");
-        	referHelper.setWallwhilelist(wallwhilelist);
-        }
-        if(StringUtil.isNotEmpty(wallfilterrules_))
-        {
-        	String[] wallfilterrules = wallfilterrules_.split(",");
-        	referHelper.setWallfilterrules(wallfilterrules);
-        }
-        else if(defaultwall != null && defaultwall.equals("true"))
-        {
-        	String[] wallfilterrules = ReferHelper.wallfilterrules_default;
-        	referHelper.setWallfilterrules(wallfilterrules);
-        }
-        
         
         if(StringUtil.isNotEmpty(refererwallwhilelist_))
         {
@@ -102,7 +79,8 @@ public abstract class BaseCharsetEncodingFilter extends SessionFilter{
          *  向所有会话cookie 添加“HttpOnly”属性,  解决方案，过滤器中
          */
 //        response.setHeader( "Set-Cookie", "name=value; HttpOnly");
-        //response.setHeader( "Set-Cookie", "name=value;HttpOnly"); 
+        //response.setHeader( "Set-Cookie", "name=value;HttpOnly");
+
         if(referHelper.dorefer(request, response))
         {
         	return;
@@ -122,16 +100,17 @@ public abstract class BaseCharsetEncodingFilter extends SessionFilter{
         	  super.doFilter(request, response, fc);
             return;
         }
+        referHelper.initAttackFielterPolicy();
 //        System.out.println("old request:" + request.getClass());
         //模式0：对请求参数编码，对响应编码
         //      服务器对url不进行编码
         if(mode.equals("0"))
         {
-
-            CharacterEncodingHttpServletRequestWrapper mrequestw = new
-                CharacterEncodingHttpServletRequestWrapper(request, RequestEncoding,checkiemodeldialog,referHelper,ignoreParameterDecoding);
             CharacterEncodingHttpServletResponseWrapper wresponsew = new
-                CharacterEncodingHttpServletResponseWrapper(response, ResponseEncoding);
+                    CharacterEncodingHttpServletResponseWrapper(response, ResponseEncoding);
+            CharacterEncodingHttpServletRequestWrapper mrequestw = new
+                CharacterEncodingHttpServletRequestWrapper(fc,request, wresponsew,RequestEncoding,checkiemodeldialog,referHelper,ignoreParameterDecoding);
+
 //            fc.doFilter(mrequestw, wresponsew);
             super.doFilter(mrequestw, wresponsew, fc);
         }
@@ -140,7 +119,7 @@ public abstract class BaseCharsetEncodingFilter extends SessionFilter{
         else if(mode.equals("1"))
         {
         	 CharacterEncodingHttpServletRequestWrapper mrequestw = new
-                     CharacterEncodingHttpServletRequestWrapper(request, RequestEncoding,checkiemodeldialog,referHelper,ignoreParameterDecoding);
+                     CharacterEncodingHttpServletRequestWrapper(fc,request,response ,RequestEncoding,checkiemodeldialog,referHelper,ignoreParameterDecoding);
             request.setCharacterEncoding(RequestEncoding);
 //            fc.doFilter(request,response);
             super.doFilter(request, response, fc);
@@ -148,10 +127,11 @@ public abstract class BaseCharsetEncodingFilter extends SessionFilter{
         //其他模式
         else
         {
-            CharacterEncodingHttpServletRequestWrapper mrequestw = new
-                CharacterEncodingHttpServletRequestWrapper(request, this.RequestEncoding,checkiemodeldialog,referHelper,ignoreParameterDecoding);
             CharacterEncodingHttpServletResponseWrapper wresponsew = new
-                CharacterEncodingHttpServletResponseWrapper(response, ResponseEncoding);
+                    CharacterEncodingHttpServletResponseWrapper(response, ResponseEncoding);
+            CharacterEncodingHttpServletRequestWrapper mrequestw = new
+                CharacterEncodingHttpServletRequestWrapper(fc,request,wresponsew, this.RequestEncoding,checkiemodeldialog,referHelper,ignoreParameterDecoding);
+
 //            fc.doFilter(mrequestw, wresponsew);
             super.doFilter(mrequestw, wresponsew, fc);
         }
