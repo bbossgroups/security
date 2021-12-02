@@ -31,14 +31,26 @@ import org.slf4j.LoggerFactory;
  */
 public class WrapperAttackFielterPolicy extends BaseAttackFielterPolicy{
 	private Logger logger = LoggerFactory.getLogger(WrapperAttackFielterPolicy.class);
-	private long attackRuleCacheRefreshInterval = 60 * 60 * 1000l;
+	private long webXMLattackRuleCacheRefreshInterval = 60 * 60 * 1000l;
 	private AttackFielterPolicy attackFielterPolicy;
 	private Thread refresh = null;
 	private boolean inited ;
-	public WrapperAttackFielterPolicy(long attackRuleCacheRefreshInterval,AttackFielterPolicy attackFielterPolicy){
+
+	public WrapperAttackFielterPolicy(long webXMLattackRuleCacheRefreshInterval,AttackFielterPolicy attackFielterPolicy){
 		this.attackFielterPolicy = attackFielterPolicy;
-		this.attackRuleCacheRefreshInterval = attackRuleCacheRefreshInterval;
+		this.webXMLattackRuleCacheRefreshInterval = webXMLattackRuleCacheRefreshInterval;
 	}
+
+	@Override
+	public boolean isDisable() {
+		return attackFielterPolicy.isDisable();
+	}
+
+	@Override
+	public Long getAttackRuleCacheRefreshInterval() {
+		return attackFielterPolicy.getAttackRuleCacheRefreshInterval();
+	}
+
 	@Override
 	public void init() {
 		if(inited)
@@ -47,16 +59,24 @@ public class WrapperAttackFielterPolicy extends BaseAttackFielterPolicy{
 			if(inited)
 				return;
 			attackFielterPolicy.init();
-			attackFielterPolicy.load();
-
-			if (attackRuleCacheRefreshInterval > 0) {
+			load();
+			long temp = webXMLattackRuleCacheRefreshInterval;
+			if(attackFielterPolicy.getAttackRuleCacheRefreshInterval() != null && attackFielterPolicy.getAttackRuleCacheRefreshInterval() > 0){
+				temp = attackFielterPolicy.getAttackRuleCacheRefreshInterval() * 1000l;
+			}
+			if (temp > 0) {
+				final long t = temp;
 				refresh = new Thread(new Runnable() {
 					@Override
 					public void run() {
 						while (true) {
+							long temp_i = t;
+							if(attackFielterPolicy.getAttackRuleCacheRefreshInterval() != null && attackFielterPolicy.getAttackRuleCacheRefreshInterval() > 0){
+								temp_i = attackFielterPolicy.getAttackRuleCacheRefreshInterval() * 1000l;
+							}
 							synchronized (this) {
 								try {
-									wait(attackRuleCacheRefreshInterval);
+									wait(temp_i);
 								} catch (InterruptedException e) {
 									logger.warn("", e);
 									break;
@@ -85,8 +105,13 @@ public class WrapperAttackFielterPolicy extends BaseAttackFielterPolicy{
 //		this.xssWallfilterrules = xssWallfilterrules;
 //		this.sensitiveWallwhilelist = sensitiveWallwhilelist;
 //		this.sensitiveWallfilterrules = sensitiveWallfilterrules;
+		try {
+			attackFielterPolicy.load();
+		}
+		catch (Exception e){
+			logger.warn("Load attackFielterPolicy failed:",e);
+		}
 
-		attackFielterPolicy.load();
 	}
 
 	@Override

@@ -32,9 +32,23 @@ public abstract class BaseAttackFielterPolicy implements AttackFielterPolicy {
 	protected String[] xssWallfilterrules;
 	protected String[] sensitiveWallwhilelist;
 	protected String[] sensitiveWallfilterrules;
+	protected Long attackRuleCacheRefreshInterval;
+	protected boolean disable;
 	@Override
 	public void  load(){
 
+	}
+
+	public boolean isDisable() {
+		return disable;
+	}
+
+	/**
+	 * 单位：秒
+	 * @return
+	 */
+	public Long getAttackRuleCacheRefreshInterval(){
+		return attackRuleCacheRefreshInterval;
 	}
 	@Override
 	public void init() {

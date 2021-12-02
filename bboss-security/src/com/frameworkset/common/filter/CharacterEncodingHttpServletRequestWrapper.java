@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
@@ -123,23 +122,28 @@ public class CharacterEncodingHttpServletRequestWrapper
                             clone[i] = tempArray[i];
                         }
                     }
-                    AttackContext attackContext = new AttackContext();
-                    attackContext.setRequest(this);
-                    attackContext.setResponse(this.response);
-                    attackContext.setChain(chain);
-                    this.referHelper.wallfilter(name,clone,attackContext);
-                    this.referHelper.sensitiveWallfilter(name,clone,attackContext);
+
+                    if(!referHelper.isDisableAttackDefender()) {
+                        AttackContext attackContext = new AttackContext();
+                        attackContext.setRequest(this);
+                        attackContext.setResponse(this.response);
+                        attackContext.setChain(chain);
+                        this.referHelper.wallfilter(name, clone, attackContext);
+                        this.referHelper.sensitiveWallfilter(name, clone, attackContext);
+                    }
                     parameters.put(name,clone);
                     return clone;
                 }
                 else
                 {
-                    AttackContext attackContext = new AttackContext();
-                    attackContext.setRequest(this);
-                    attackContext.setResponse(this.response);
-                    attackContext.setChain(chain);
-                    this.referHelper.wallfilter(name,tempArray,attackContext);
-                    this.referHelper.sensitiveWallfilter(name,tempArray,attackContext);
+                    if(!referHelper.isDisableAttackDefender()) {
+                        AttackContext attackContext = new AttackContext();
+                        attackContext.setRequest(this);
+                        attackContext.setResponse(this.response);
+                        attackContext.setChain(chain);
+                        this.referHelper.wallfilter(name, tempArray, attackContext);
+                        this.referHelper.sensitiveWallfilter(name, tempArray, attackContext);
+                    }
                     parameters.put(name,tempArray);
                     return tempArray;
                 }
@@ -149,12 +153,16 @@ public class CharacterEncodingHttpServletRequestWrapper
                 throw e;
             }
             catch (Exception e) {
-                AttackContext attackContext = new AttackContext();
-                attackContext.setRequest(this);
-                attackContext.setResponse(this.response);
-                attackContext.setChain(chain);
-                this.referHelper.wallfilter(name,tempArray,attackContext);
-                parameters.put(name,tempArray);
+                if(!referHelper.isDisableAttackDefender()) {
+                    AttackContext attackContext = new AttackContext();
+                    attackContext.setRequest(this);
+                    attackContext.setResponse(this.response);
+                    attackContext.setChain(chain);
+                    this.referHelper.wallfilter(name, tempArray, attackContext);
+                    this.referHelper.sensitiveWallfilter(name, tempArray, attackContext);
+                }
+                parameters.put(name, tempArray);
+
                 return tempArray ;
             }
     }
