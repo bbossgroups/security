@@ -16,7 +16,6 @@ package com.frameworkset.common.filter;
  */
 
 import org.frameworkset.util.AttackFielterPolicy;
-import org.frameworkset.web.servlet.context.WebApplicationContext;
 
 /**
  * <p>Description: </p>
@@ -27,7 +26,7 @@ import org.frameworkset.web.servlet.context.WebApplicationContext;
  * @version 1.0
  */
 public abstract class BaseAttackFielterPolicy implements AttackFielterPolicy {
-	protected WebApplicationContext context;
+//	protected WebApplicationContext context;
 	protected volatile String[] xssWallwhilelist;
 	protected volatile String[] xssWallfilterrules;
 	protected volatile String[] sensitiveWallwhilelist;
@@ -76,8 +75,8 @@ public abstract class BaseAttackFielterPolicy implements AttackFielterPolicy {
 	}
 	@Override
 	public void init() {
-		if(context == null)
-			context = org.frameworkset.web.servlet.support.WebApplicationContextUtils.getWebApplicationContext();//获取mvc容器实例
+//		if(context == null)
+//			context = org.frameworkset.web.servlet.support.WebApplicationContextUtils.getWebApplicationContext();//获取mvc容器实例
 	}
 
 	@Override
