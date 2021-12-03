@@ -143,4 +143,23 @@ public class WrapperAttackFielterPolicy extends BaseAttackFielterPolicy{
 	public void attackHandle(AttackContext attackContext) throws AttackException {
 		attackFielterPolicy.attackHandle(attackContext);
 	}
+
+	/**
+	 * xss检测
+	 * @return
+	 */
+	@Override
+	public boolean xssCheck(String paramValue,String xssWallRule){
+		return attackFielterPolicy.xssCheck( paramValue, xssWallRule);
+	}
+
+	/**
+	 * 敏感词检测
+	 * @return
+	 */
+	@Override
+	public boolean sensitiveCheck(String paramValue,String sensitiveWallRule){
+		return attackFielterPolicy.sensitiveCheck( paramValue, sensitiveWallRule);
+	}
+
 }
