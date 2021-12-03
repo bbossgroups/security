@@ -35,6 +35,7 @@ public class CharacterEncodingHttpServletRequestWrapper
 	private HttpServletResponse response;
 	private FilterChain chain ;
 	private boolean preHandleParams;
+	private boolean isWhiteUrl;
     public CharacterEncodingHttpServletRequestWrapper(FilterChain chain,HttpServletRequest request, HttpServletResponse response, String encoding, boolean checkiemodeldialog, ReferHelper referHelper, boolean ignoreParameterDecoding) {
         super(request);
         this.response = response;
@@ -59,6 +60,7 @@ public class CharacterEncodingHttpServletRequestWrapper
         else{
             this.ignoreParameterDecoding = referHelper.ignoreEncodeParameters(request.getRequestURI());
         }
+        isWhiteUrl = referHelper.isWhiteUrl(request.getRequestURI());
 
     }
 
@@ -123,7 +125,7 @@ public class CharacterEncodingHttpServletRequestWrapper
                         }
                     }
 
-                    if(!referHelper.isDisableAttackDefender()) {
+                    if(!referHelper.isDisableAttackDefender() && !isWhiteUrl) {
                         AttackContext attackContext = new AttackContext();
                         attackContext.setRequest(this);
                         attackContext.setResponse(this.response);
@@ -136,7 +138,7 @@ public class CharacterEncodingHttpServletRequestWrapper
                 }
                 else
                 {
-                    if(!referHelper.isDisableAttackDefender()) {
+                    if(!referHelper.isDisableAttackDefender()&& !isWhiteUrl) {
                         AttackContext attackContext = new AttackContext();
                         attackContext.setRequest(this);
                         attackContext.setResponse(this.response);
@@ -153,7 +155,7 @@ public class CharacterEncodingHttpServletRequestWrapper
                 throw e;
             }
             catch (Exception e) {
-                if(!referHelper.isDisableAttackDefender()) {
+                if(!referHelper.isDisableAttackDefender()&& !isWhiteUrl) {
                     AttackContext attackContext = new AttackContext();
                     attackContext.setRequest(this);
                     attackContext.setResponse(this.response);

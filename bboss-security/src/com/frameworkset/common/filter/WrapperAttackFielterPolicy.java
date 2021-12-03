@@ -42,6 +42,11 @@ public class WrapperAttackFielterPolicy extends BaseAttackFielterPolicy{
 	}
 
 	@Override
+	public String[] getWhiteUrls() {
+		return attackFielterPolicy.getWhiteUrls();
+	}
+
+	@Override
 	public boolean isDisable() {
 		return attackFielterPolicy.isDisable();
 	}
@@ -60,23 +65,23 @@ public class WrapperAttackFielterPolicy extends BaseAttackFielterPolicy{
 				return;
 			attackFielterPolicy.init();
 			load();
-			long temp = webXMLattackRuleCacheRefreshInterval;
-			if(attackFielterPolicy.getAttackRuleCacheRefreshInterval() != null && attackFielterPolicy.getAttackRuleCacheRefreshInterval() > 0){
-				temp = attackFielterPolicy.getAttackRuleCacheRefreshInterval() * 1000l;
-			}
-			if (temp > 0) {
-				final long t = temp;
+//			long temp = webXMLattackRuleCacheRefreshInterval;
+//			if(attackFielterPolicy.getAttackRuleCacheRefreshInterval() != null && attackFielterPolicy.getAttackRuleCacheRefreshInterval() > 0){
+//				temp = attackFielterPolicy.getAttackRuleCacheRefreshInterval() * 1000l;
+//			}
+			if (webXMLattackRuleCacheRefreshInterval > 0) {
+//				final long t = temp;
 				refresh = new Thread(new Runnable() {
 					@Override
 					public void run() {
 						while (true) {
-							long temp_i = t;
-							if(attackFielterPolicy.getAttackRuleCacheRefreshInterval() != null && attackFielterPolicy.getAttackRuleCacheRefreshInterval() > 0){
-								temp_i = attackFielterPolicy.getAttackRuleCacheRefreshInterval() * 1000l;
-							}
+//							long temp_i = t;
+//							if(attackFielterPolicy.getAttackRuleCacheRefreshInterval() != null && attackFielterPolicy.getAttackRuleCacheRefreshInterval() > 0){
+//								temp_i = attackFielterPolicy.getAttackRuleCacheRefreshInterval() * 1000l;
+//							}
 							synchronized (this) {
 								try {
-									wait(temp_i);
+									wait(webXMLattackRuleCacheRefreshInterval);
 								} catch (InterruptedException e) {
 									logger.warn("", e);
 									break;

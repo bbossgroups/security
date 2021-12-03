@@ -28,15 +28,39 @@ import org.frameworkset.web.servlet.context.WebApplicationContext;
  */
 public abstract class BaseAttackFielterPolicy implements AttackFielterPolicy {
 	protected WebApplicationContext context;
-	protected String[] xssWallwhilelist;
-	protected String[] xssWallfilterrules;
-	protected String[] sensitiveWallwhilelist;
-	protected String[] sensitiveWallfilterrules;
-	protected Long attackRuleCacheRefreshInterval;
-	protected boolean disable;
+	protected volatile String[] xssWallwhilelist;
+	protected volatile String[] xssWallfilterrules;
+	protected volatile String[] sensitiveWallwhilelist;
+	protected volatile String[] sensitiveWallfilterrules;
+	protected volatile Long attackRuleCacheRefreshInterval;
+	protected volatile String[] whiteUrls;
+	protected volatile boolean disable;
 	@Override
 	public void  load(){
 
+	}
+	/**
+	 * xss检测
+	 * @return
+	 */
+	@Override
+	public boolean xssCheck(String paramValue,String xssWallRule){
+		return paramValue.indexOf(xssWallRule) >= 0;
+	}
+
+	/**
+	 * 敏感词检测
+	 * @return
+	 */
+	@Override
+	public boolean sensitiveCheck(String paramValue,String sensitiveWallRule){
+		return paramValue.indexOf(sensitiveWallRule) >= 0;
+	}
+
+
+	@Override
+	public String[] getWhiteUrls() {
+		return whiteUrls;
 	}
 
 	public boolean isDisable() {

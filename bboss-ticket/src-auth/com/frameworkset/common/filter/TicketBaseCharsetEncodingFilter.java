@@ -1,6 +1,7 @@
 package com.frameworkset.common.filter;
 
 import com.frameworkset.util.StringUtil;
+import org.frameworkset.util.AttackException;
 import org.frameworkset.util.ReferHelper;
 import org.frameworkset.web.session.TicketSessionFilter;
 
@@ -102,40 +103,45 @@ public abstract class TicketBaseCharsetEncodingFilter extends TicketSessionFilte
             return;
         }
         referHelper.initAttackFielterPolicy();
+        try {
 //        System.out.println("old request:" + request.getClass());
-        //模式0：对请求参数编码，对响应编码
-        //      服务器对url不进行编码
-        if(mode.equals("0"))
-        {
-            CharacterEncodingHttpServletResponseWrapper wresponsew = new
-                    CharacterEncodingHttpServletResponseWrapper(response, ResponseEncoding);
-            CharacterEncodingHttpServletRequestWrapper mrequestw = new
-                CharacterEncodingHttpServletRequestWrapper(fc,request, wresponsew,RequestEncoding,checkiemodeldialog,referHelper,ignoreParameterDecoding);
-            mrequestw.preHandlerParameters();
+            //模式0：对请求参数编码，对响应编码
+            //      服务器对url不进行编码
+            if (mode.equals("0")) {
+                CharacterEncodingHttpServletResponseWrapper wresponsew = new
+                        CharacterEncodingHttpServletResponseWrapper(response, ResponseEncoding);
+                CharacterEncodingHttpServletRequestWrapper mrequestw = new
+                        CharacterEncodingHttpServletRequestWrapper(fc, request, wresponsew, RequestEncoding, checkiemodeldialog, referHelper, ignoreParameterDecoding);
+                mrequestw.preHandlerParameters();
 //            fc.doFilter(mrequestw, wresponsew);
-            super.doFilter(mrequestw, wresponsew, fc);
-        }
-        //模式1：对请求参数编码，对响应不编码
-        //      服务器对url进行编码
-        else if(mode.equals("1"))
-        {
-        	 CharacterEncodingHttpServletRequestWrapper mrequestw = new
-                     CharacterEncodingHttpServletRequestWrapper(fc,request,response, RequestEncoding,checkiemodeldialog,referHelper,ignoreParameterDecoding);
-            request.setCharacterEncoding(RequestEncoding);
-            mrequestw.preHandlerParameters();
+                super.doFilter(mrequestw, wresponsew, fc);
+            }
+            //模式1：对请求参数编码，对响应不编码
+            //      服务器对url进行编码
+            else if (mode.equals("1")) {
+                CharacterEncodingHttpServletRequestWrapper mrequestw = new
+                        CharacterEncodingHttpServletRequestWrapper(fc, request, response, RequestEncoding, checkiemodeldialog, referHelper, ignoreParameterDecoding);
+                request.setCharacterEncoding(RequestEncoding);
+                mrequestw.preHandlerParameters();
 //            fc.doFilter(request,response);
-            super.doFilter(request, response, fc);
-        }
-        //其他模式
-        else
-        {
-            CharacterEncodingHttpServletResponseWrapper wresponsew = new
-                    CharacterEncodingHttpServletResponseWrapper(response, ResponseEncoding);
-            CharacterEncodingHttpServletRequestWrapper mrequestw = new
-                CharacterEncodingHttpServletRequestWrapper(fc,request,wresponsew, this.RequestEncoding,checkiemodeldialog,referHelper,ignoreParameterDecoding);
-            mrequestw.preHandlerParameters();
+                super.doFilter(request, response, fc);
+            }
+            //其他模式
+            else {
+                CharacterEncodingHttpServletResponseWrapper wresponsew = new
+                        CharacterEncodingHttpServletResponseWrapper(response, ResponseEncoding);
+                CharacterEncodingHttpServletRequestWrapper mrequestw = new
+                        CharacterEncodingHttpServletRequestWrapper(fc, request, wresponsew, this.RequestEncoding, checkiemodeldialog, referHelper, ignoreParameterDecoding);
+                mrequestw.preHandlerParameters();
 //            fc.doFilter(mrequestw, wresponsew);
-            super.doFilter(mrequestw, wresponsew, fc);
+                super.doFilter(mrequestw, wresponsew, fc);
+            }
+        }
+        catch (AttackException e){
+            if(e.getAttackContext().isRedirected())
+                return;
+            else
+                throw e;
         }
     }
 
