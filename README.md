@@ -1,6 +1,14 @@
 ﻿# bboss group website:
 http://www.bbossgroups.com
 
+# 版本构建方法
+
+gradle clean publishToMavenLocal
+
+需要通过gradle构建发布版本,gradle安装配置参考文档：
+
+https://esdoc.bbossgroups.com/#/bboss-build
+
 # bboss group project blog:
 http://yin-bp.iteye.com/
 # 技术交流
