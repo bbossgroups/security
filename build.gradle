@@ -48,9 +48,9 @@ configure(allprojects) { project ->
 	jar {
 		manifest {
 			attributes (
-					'Implementation': version,
-					'Specification-Version': '',
-					'Implementation-Vendor': '',
+					'Implementation': archiveVersion,
+					'Specification-Version': archiveVersion,
+					'Implementation-Vendor': 'bboss',
 					'Implementation-ProductID': project.name,
 					'Compile-Timestamp': new Date().format('yyyy-MM-dd HH:mm:ss'),
 					'Compile-User': DEVELOPER_NAME
