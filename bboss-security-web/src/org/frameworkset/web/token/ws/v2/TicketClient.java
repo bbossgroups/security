@@ -3,13 +3,12 @@
  */
 package org.frameworkset.web.token.ws.v2;
 
-import java.net.MalformedURLException;
-
+import com.caucho.hessian.client.HessianProxyFactory;
+import com.frameworkset.util.SimpleStringUtil;
 import org.frameworkset.security.aes.AESCoder;
 import org.frameworkset.web.token.TokenMessage;
 
-import com.caucho.hessian.client.HessianProxyFactory;
-import com.frameworkset.util.SimpleStringUtil;
+import java.net.MalformedURLException;
 
 /**
  * @author yinbp
@@ -19,7 +18,7 @@ import com.frameworkset.util.SimpleStringUtil;
 public class TicketClient {
 	private String appid = "test";
 	private String secret = "76252a20-b171-4796-a4a4-c89149b725a2";
-//	 String server = "http://10.0.15.223/SanyToken";
+//	 String server = "http://10.0.15.223/sToken";
 	private String server = "http://localhost:90/ticketserver";
 	private String encryptKey = "5e74d37d000000c0";
 	private String  signKey = "5e74d37d000001c0";

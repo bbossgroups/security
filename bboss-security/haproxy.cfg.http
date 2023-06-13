@@ -51,8 +51,8 @@ frontend  main *:80
 backend app
     balance     roundrobin
 #	option httpchk GET /index.html
-	#option httpchk HEAD /SanyPDP/detail.html
-    # option httpchk HEAD /SanyPDP/detail.html HTTP/1.1
+	#option httpchk HEAD /sPDP/detail.html
+    # option httpchk HEAD /sPDP/detail.html HTTP/1.1
 #option httpchk GET /detail.html HTTP/1.1
 #    server  app1 192.168.137.128:80 check
 #    server  app2 192.168.137.129:80 check

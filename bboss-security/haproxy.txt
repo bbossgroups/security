@@ -19,10 +19,10 @@ keepalived.conf配置：
 
 global_defs {
    notification_email {
-     yinbp@sany.com.cn          
+     yin-bp@163.com
    }
-   notification_email_from yinbp@sany.com.cn
-   smtp_server smtp.sany.com.cn
+   notification_email_from yin-bp@163.com
+   smtp_server smtp.163.com
    smtp_connect_timeout 30
    router_id LVS_DEVEL
 }
@@ -89,7 +89,7 @@ service haproxy start|restart|stop
 			
     listen http-in
        bind *:80
-       option httpchk GET /SanyPDP/detail.html HTTP/1.1
+       option httpchk GET /sPDP/detail.html HTTP/1.1
        server webA 10.0.15.38:9081
        server webB 10.25.192.142:8080 
        maxconn 4096
@@ -148,7 +148,7 @@ frontend  main *:80
 backend app
     balance     roundrobin
 #	option httpchk GET /index.html
-	option httpchk HEAD /SanyPDP/detail.html
+	option httpchk HEAD /sPDP/detail.html
 #    server  app1 192.168.137.128:80 check
 #    server  app2 192.168.137.129:80 check
 	server  s1 10.0.15.38:9081  cookie 1 weight 1 check inter 5s rise 2 fall 3

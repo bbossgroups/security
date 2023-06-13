@@ -32,37 +32,37 @@
 			attributeNamespace:共享session应用私有session属性名称命名空间，用来限定应用私有session数据的存储空间  ，如果指定了shareSessionAttrs则必须指定每个应用的attributeNamespace			
 			-->
 			<property name="crossDomain" class="org.frameworkset.security.session.domain.CrossDomain" 
-			    f:rootDomain="sany.com.cn"  
+			    f:rootDomain="s.com.cn"
 			    f:shareSessionAttrs="CREDENTIAL_INDEXS,PRINCIPAL_INDEXS" 
 			    init-method="init">
 			    <property name="domainApps">
 				    <list componentType="bean">
 				        <property class="org.frameworkset.security.session.domain.App"
-				            	f:path="/SanyPDP"
-				            	f:domain="pdp.sany.com.cn" 
-				            	f:attributeNamespace="pdp_sany_com_cn"  
+				            	f:path="/SPDP"
+				            	f:domain="pdp.s.com.cn"
+				            	f:attributeNamespace="pdp_s_com_cn"
 				            	f:currentApp="true"
 				            	init-method="init"
 				            />				        
 				        <property class="org.frameworkset.security.session.domain.App"				            	
 				            	f:path="/g4studio"	
-				            	f:attributeNamespace="g4_sany_com_cn"
-				            	f:domain="g4.sany.com.cn"
+				            	f:attributeNamespace="g4_s_com_cn"
+				            	f:domain="g4.s.com.cn"
 				            	f:currentApp="false"
 				            	init-method="init"
 				            />
 				        
 				        <property class="org.frameworkset.security.session.domain.App"				            	
 				            	f:path="/"	
-				            	f:attributeNamespace="test_sany_com_cn"
-				            	f:domain="test.sany.com.cn"
+				            	f:attributeNamespace="test_s_com_cn"
+				            	f:domain="test.s.com.cn"
 				            	f:currentApp="false"
 				            	init-method="init"
 				            />
 				        <property class="org.frameworkset.security.session.domain.App"				            	
 				            	f:path="/WebRoot"	
-				            	f:attributeNamespace="testpdp_sany_com_cn"
-				            	f:domain="testpdp.sany.com.cn"
+				            	f:attributeNamespace="testpdp_s_com_cn"
+				            	f:domain="testpdp.s.com.cn"
 				            	f:currentApp="false"
 				            	init-method="init"
 				            />

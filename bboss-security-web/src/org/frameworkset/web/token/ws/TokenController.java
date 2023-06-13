@@ -1,8 +1,5 @@
 package org.frameworkset.web.token.ws;
 
-import javax.jws.WebService;
-import javax.servlet.http.HttpServletRequest;
-
 import org.frameworkset.util.annotations.ResponseBody;
 import org.frameworkset.web.token.Ticket;
 import org.frameworkset.web.token.TokenException;
@@ -10,6 +7,9 @@ import org.frameworkset.web.token.TokenHelper;
 import org.frameworkset.web.token.TokenStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.jws.WebService;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * <p>
@@ -190,7 +190,7 @@ public class TokenController implements TokenService {
 	
 	/**
 	 * 获取令牌请求
-	 * http://localhost:8081/SanyPDP/token/getParameterToken.freepage
+	 * http://localhost:8081/sPDP/token/getParameterToken.freepage
 	 * @param request
 	 * @return
 	 * @throws TokenException 
