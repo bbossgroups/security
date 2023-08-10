@@ -12,10 +12,30 @@ https://esdoc.bbossgroups.com/#/bboss-build
 # bboss group project blog:
 http://yin-bp.iteye.com/
 # 技术交流
-bboss session技术交流群：166471103
 
-bboss session微信公众号：bbossgroups
-![bbossgroups](https://static.oschina.net/uploads/space/2017/0617/094201_QhWs_94045.jpg)
+**Elasticsearch技术交流群：21220580,166471282**
+
+<img src="https://esdoc.bbossgroups.com/images/qrcode.jpg"  height="200" width="200"><img src="https://esdoc.bbossgroups.com/images/douyin.png"  height="200" width="200"><img src="https://esdoc.bbossgroups.com/images/wvidio.png"  height="200" width="200">
+
+
+# 支持我们
+
+如果您正在使用bboss，或是想支持我们继续开发，您可以通过如下方式支持我们：
+
+1.Star并向您的朋友推荐或分享
+
+[bboss elasticsearch client](https://gitee.com/bboss/bboss-elastic)🚀
+
+[数据采集&流批一体化处理](https://gitee.com/bboss/bboss-elastic-tran)🚀
+
+2.通过[爱发电 ](https://afdian.net/a/bbossgroups)直接捐赠，或者扫描下面二维码进行一次性捐款赞助，请作者喝一杯咖啡☕️
+
+<img src="https://esdoc.bbossgroups.com/images/alipay.png"  height="200" width="200">
+
+<img src="https://esdoc.bbossgroups.com/images/wchat.png"   height="200" width="200" />
+
+非常感谢您对开源精神的支持！❤您的捐赠将用于bboss社区建设、QQ群年费、网站云服务器租赁费用。
+
 
 
 # bboss 会话共享源码
@@ -70,7 +90,7 @@ http://yin-bp.iteye.com/category/327553
 ## |--bboss-security
 
   bboss会话共享核心工程
-  
+
 ## |--bboss-ticket
 
   bboss令牌统一认证核心工程  
@@ -81,7 +101,7 @@ bboss会话共享监控服务和令牌服务工程
 
 为了方便应用系统集成bboss会话共享功能，准备了两个会话共享demo工程： 
 https://github.com/bbossgroups/sessiondemo
- 
+
 ## |--session 
 
 如果只需要session共享功能，则整合这个工程中的配置文件和jar包到实际项目中即可 
