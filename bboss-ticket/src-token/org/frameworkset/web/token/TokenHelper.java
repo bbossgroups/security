@@ -122,18 +122,18 @@ public class TokenHelper {
 		return tokenService.isEnableToken();
 	}
 	
-	public static void doDTokencheck(ServletRequest request,
+	public static boolean doDTokencheck(ServletRequest request,
 			ServletResponse response) throws IOException, DTokenValidateFailedException
 	{
 		init();
-		tokenFilter.doDTokencheck(request, response);
+		return tokenFilter.doDTokencheck(request, response);
 	}
 	
-	public static void doTicketcheck(ServletRequest request,
+	public static boolean doTicketcheck(ServletRequest request,
 			ServletResponse response) throws IOException, DTokenValidateFailedException
 	{
 		init();
-		tokenFilter.doTicketcheck(request, response);
+		return tokenFilter.doTicketcheck(request, response);
 	}
 
 	public static void destroy() {

@@ -441,7 +441,7 @@ public class TokenFilter implements Filter {
 	}
 	
 	
-	public void doDTokencheck(ServletRequest request,ServletResponse response) throws IOException, DTokenValidateFailedException
+	public boolean doDTokencheck(ServletRequest request,ServletResponse response) throws IOException, DTokenValidateFailedException
 	{
 		_inited();
 		if(!TokenService.assertDTokenSetted(request))
@@ -449,15 +449,17 @@ public class TokenFilter implements Filter {
 			if(request instanceof HttpServletRequest)
 			{
 				sendRedirect((HttpServletRequest) request,(HttpServletResponse) response);
+				return false;
 			}
 			else
 			{
 				throw new DTokenValidateFailedException();
 			}
 		}
+		return true;
 	}
 	
-	public void doTicketcheck(ServletRequest request,ServletResponse response) throws IOException, DTokenValidateFailedException
+	public boolean doTicketcheck(ServletRequest request,ServletResponse response) throws IOException, DTokenValidateFailedException
 	{
 		_inited();
 		if(!TokenService.assertDTokenSetted(request))
@@ -465,22 +467,24 @@ public class TokenFilter implements Filter {
 			if(request instanceof HttpServletRequest)
 			{
 				sendRedirect((HttpServletRequest) request,(HttpServletResponse) response);
+				return false;
 			}
 			else
 			{
 				throw new DTokenValidateFailedException();
 			}
 		}
+		return true;
 	}
 	
-	public static void assertDToken(ServletRequest request,
+	public static boolean assertDToken(ServletRequest request,
 			ServletResponse response, MethodData handlerMethod)
 			throws IOException, DTokenValidateFailedException {
 		if (handlerMethod.getMethodInfo().isRequiredDToken()) {
 			
 			if (!TokenHelper.isEnableToken())
-				return;
-			TokenHelper.doDTokencheck(request, response);
+				return true;
+			return TokenHelper.doDTokencheck(request, response);
 			// if(!memTokenManager.assertDTokenSetted(request))
 			// {
 			// if(request instanceof HttpServletRequest)
@@ -495,9 +499,10 @@ public class TokenFilter implements Filter {
 			// }
 		}
 		else if (handlerMethod.getMethodInfo().isRequireTicket())
-		{			
-			TokenHelper.doTicketcheck(request, response);
+		{
+			return TokenHelper.doTicketcheck(request, response);
 		}
+		return true;
 
 	}
 	
