@@ -10,6 +10,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Projections;
+import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.frameworkset.nosql.mongodb.MongoDB;
 import org.frameworkset.nosql.mongodb.MongoDBHelper;
 import org.frameworkset.security.session.AttributeNamesEnumeration;
@@ -28,9 +33,7 @@ import org.slf4j.LoggerFactory;
 import com.frameworkset.util.SimpleStringUtil;
 import com.frameworkset.util.StringUtil;
 import com.mongodb.BasicDBObject;
-import com.mongodb.DBCollection;
-import com.mongodb.DBObject;
-import com.mongodb.WriteConcern;
+
 
 public class MongDBSessionStore extends BaseSessionStore{
 	
@@ -72,32 +75,41 @@ public class MongDBSessionStore extends BaseSessionStore{
 			String app = itr.next();
 			if(app.endsWith("_sessions"))
 			{
-				DBCollection appsessions = MongoDBUtil.getSessionCollection(app);
-				MongoDB.remove(appsessions,new BasicDBObject("$where",temp),WriteConcern.UNACKNOWLEDGED);
+				MongoCollection<Document> appsessions = MongoDBUtil.getSessionCollection(app);
+				MongoDB.remove(appsessions,new BasicDBObject("$where",temp));
 			}
 		}
 		
 	}
 
 	
-	private DBCollection getAppSessionDBCollection(String appKey)
+	private MongoCollection<Document> getAppSessionDBCollection(String appKey)
 	{
 		
 		 
 		 return MongoDBUtil.getAppSessionDBCollection(appKey);
 	}
-	private DBCollection getConfigSessionDBCollection()
+
+	private MongoCollection<Document> getJOURNALEDAppSessionDBCollection(String appKey)
+	{
+
+		return MongoDBUtil.getJOURNALEDAppSessionDBCollection(appKey);
+	}
+	private MongoCollection<Document> getConfigSessionDBCollection()
 	{
 		
 		return MongoDBUtil.getConfigSessionDBCollection();
 	}
 	public void saveSessionConfig(SessionConfig config)
 	{
-		DBCollection sessionconf = getConfigSessionDBCollection();
+		MongoCollection<Document> sessionconf = getConfigSessionDBCollection();
 		try {	
 		
-			BasicDBObject keys = new BasicDBObject();
-			keys.put("appcode", 1);
+//			BasicDBObject keys = new BasicDBObject();
+//			keys.put("appcode", 1);
+			Bson projectionFields = Projections.fields(
+					Projections.include("appcode"),
+					Projections.excludeId());
 			String cd = "";
 			if(config.getCrossDomain() != null)
 			{
@@ -105,9 +117,9 @@ public class MongDBSessionStore extends BaseSessionStore{
 					// TODO Auto-generated catch block
 				
 			}
-			
-			DBObject object = sessionconf.findOne(new BasicDBObject("appcode",config.getAppcode()) ,keys);
-			BasicDBObject record = new BasicDBObject("appcode",config.getAppcode())
+			Bson bson = Filters.eq("appcode",config.getAppcode());
+			Document object = sessionconf.find(bson ).projection(projectionFields).first();
+			Document record = new Document("appcode",config.getAppcode())
 			 
 			.append("cookiename",config.getCookiename())
 			
@@ -133,15 +145,15 @@ public class MongDBSessionStore extends BaseSessionStore{
 				record.append("createTime", date.getTime());
 				record.append("updateTime", date.getTime());
 				 
-				MongoDB.insert(WriteConcern.UNACKNOWLEDGED,sessionconf,record);
+				MongoDB.insert(sessionconf,record);
 			}
 			else
 			{
 				Date date = new Date();
 				 
 				record.append("updateTime", date.getTime());
-				MongoDB.update(sessionconf, new BasicDBObject("appcode",config.getAppcode()) , 
-						new BasicDBObject("$set",record),WriteConcern.UNACKNOWLEDGED);	
+				MongoDB.updateOne(sessionconf, new BasicDBObject("appcode",config.getAppcode()) ,
+						new BasicDBObject("$set",record));
 			}
 		} catch (Exception e) {
 			log.error("",e);
@@ -158,8 +170,8 @@ public class MongDBSessionStore extends BaseSessionStore{
 	
 		boolean isHttpOnly = StringUtil.hasHttpOnlyMethod()?SessionUtil.getSessionManager().isHttpOnly():false;
 		boolean secure = SessionUtil.getSessionManager().isSecure();
-		DBCollection sessions =getAppSessionDBCollection( sessionBasicInfo.getAppKey());
-		MongoDB.insert(sessions,new BasicDBObject("sessionid",sessionid)
+		MongoCollection<Document> sessions =getAppSessionDBCollection( sessionBasicInfo.getAppKey());
+		MongoDB.insert(sessions,new Document("sessionid",sessionid)
 		.append("creationTime", creationTime)
 		.append("maxInactiveInterval",maxInactiveInterval)
 		.append("lastAccessedTime", lastAccessedTime)
@@ -192,12 +204,18 @@ public class MongDBSessionStore extends BaseSessionStore{
 
 	@Override
 	public Object getAttribute(String appKey,String contextpath,String sessionID, String attribute,Session session) {
-		DBCollection sessions =getAppSessionDBCollection( appKey);
-		BasicDBObject keys = new BasicDBObject();
+		MongoCollection<Document> sessions =getAppSessionDBCollection( appKey);
+//		BasicDBObject keys = new BasicDBObject();
+//		attribute = MongoDBHelper.converterSpecialChar( attribute);
+//		keys.put(attribute, 1);
+
+		// Creates instructions to project two document fields
 		attribute = MongoDBHelper.converterSpecialChar( attribute);
-		keys.put(attribute, 1);
-		
-		DBObject obj = sessions.findOne(new BasicDBObject("sessionid",sessionID).append("_validate", true),keys);
+		Bson projectionFields = Projections.fields(
+				Projections.include(attribute),
+				Projections.excludeId());
+
+		Document obj = sessions.find(new BasicDBObject("sessionid",sessionID).append("_validate", true)).projection(projectionFields).first();
 		if(obj == null)
 			return null;		
 		return SessionUtil.unserial((String)obj.get(attribute));
@@ -227,8 +245,8 @@ public class MongDBSessionStore extends BaseSessionStore{
 	
 	@Override
 	public void updateLastAccessedTime(String appKey,String sessionID, long lastAccessedTime,String lastAccessedUrl,int MaxInactiveInterval) {
-		DBCollection sessions =getAppSessionDBCollection( appKey);
-		MongoDB.update(sessions, new BasicDBObject("sessionid",sessionID).append("_validate", true), new BasicDBObject("$set",new BasicDBObject("lastAccessedTime", lastAccessedTime).append("lastAccessedUrl", lastAccessedUrl).append("lastAccessedHostIP", SimpleStringUtil.getHostIP())),WriteConcern.JOURNAL_SAFE);
+		MongoCollection<Document> sessions =getJOURNALEDAppSessionDBCollection( appKey);
+		MongoDB.updateOne(sessions, new BasicDBObject("sessionid",sessionID).append("_validate", true), new BasicDBObject("$set",new BasicDBObject("lastAccessedTime", lastAccessedTime).append("lastAccessedUrl", lastAccessedUrl).append("lastAccessedHostIP", SimpleStringUtil.getHostIP())));
 //		try
 //		{
 //			WriteResult wr = sessions.update(new BasicDBObject("sessionid",sessionID).append("_validate", true), new BasicDBObject("$set",new BasicDBObject("lastAccessedTime", lastAccessedTime).append("lastAccessedUrl", lastAccessedUrl).append("lastAccessedHostIP", SimpleStringUtil.getHostIP())));
@@ -244,11 +262,14 @@ public class MongDBSessionStore extends BaseSessionStore{
 
 	@Override
 	public long getLastAccessedTime(String appKey,String sessionID) {
-		DBCollection sessions =getAppSessionDBCollection( appKey);
-		BasicDBObject keys = new BasicDBObject();
-		keys.put("lastAccessedTime", 1);
-		
-		DBObject obj = sessions.findOne(new BasicDBObject("sessionid",sessionID),keys);
+		MongoCollection<Document> sessions =getAppSessionDBCollection( appKey);
+//		BasicDBObject keys = new BasicDBObject();
+//		keys.put("lastAccessedTime", 1);
+		Bson projectionFields = Projections.fields(
+				Projections.include("lastAccessedTime"),
+				Projections.excludeId());
+
+		Document obj = sessions.find(new BasicDBObject("sessionid",sessionID)).projection(projectionFields).first();
 		if(obj == null)
 			throw new SessionException("SessionID["+sessionID+"],appKey["+appKey+"] do not exist or is invalidated!" );
 		return (Long)obj.get("lastAccessedTime");
@@ -256,10 +277,10 @@ public class MongDBSessionStore extends BaseSessionStore{
 
 	@Override
 	public String[] getValueNames(String appKey,String contextpath,String sessionID,Map<String,Object> localAttributes) {
-		
-		DBCollection sessions =getAppSessionDBCollection( appKey);
-		
-		DBObject obj = sessions.findOne(new BasicDBObject("sessionid",sessionID));
+
+		MongoCollection<Document> sessions =getAppSessionDBCollection( appKey);
+
+		Document obj = sessions.find(new BasicDBObject("sessionid",sessionID)).first();
 		
 		if(obj == null)
 			throw new SessionException("SessionID["+sessionID+"],appKey["+appKey+"] do not exist or is invalidated!" );
@@ -294,10 +315,10 @@ public class MongDBSessionStore extends BaseSessionStore{
 	
 	@Override
 	public Enumeration getAttributeNames(String appKey,String contextpath,String sessionID,Map<String,Object> localAttributes) {
-		
-		DBCollection sessions =getAppSessionDBCollection( appKey);
-		
-		DBObject obj = sessions.findOne(new BasicDBObject("sessionid",sessionID));
+
+		MongoCollection<Document> sessions =getAppSessionDBCollection( appKey);
+
+		Document obj = sessions.find(new BasicDBObject("sessionid",sessionID)).first();
 		
 		if(obj == null)
 			throw new SessionException("SessionID["+sessionID+"],appKey["+appKey+"] do not exist or is invalidated!" );
@@ -330,7 +351,7 @@ public class MongDBSessionStore extends BaseSessionStore{
 
 	@Override
 	public void invalidate(SimpleHttpSession session,String appKey,String contextpath,String sessionID) {
-		DBCollection sessions = getAppSessionDBCollection( appKey);		
+		MongoCollection<Document> sessions = getAppSessionDBCollection( appKey);
 //		sessions.update(new BasicDBObject("sessionid",sessionID), new BasicDBObject("$set",new BasicDBObject("_validate", false)));
 		MongoDB.remove(sessions,new BasicDBObject("sessionid",sessionID));
 //		return session;
@@ -339,11 +360,14 @@ public class MongDBSessionStore extends BaseSessionStore{
 
 	@Override
 	public boolean isNew(String appKey,String sessionID) {
-		DBCollection sessions =getAppSessionDBCollection( appKey);
-		BasicDBObject keys = new BasicDBObject();
-		keys.put("lastAccessedTime", 1);
-		keys.put("creationTime", 1);
-		DBObject obj = sessions.findOne(new BasicDBObject("sessionid",sessionID),keys);
+		MongoCollection<Document> sessions =getAppSessionDBCollection( appKey);
+//		BasicDBObject keys = new BasicDBObject();
+//		keys.put("lastAccessedTime", 1);
+//		keys.put("creationTime", 1);
+		Bson projectionFields = Projections.fields(
+				Projections.include("lastAccessedTime","creationTime"),
+				Projections.excludeId());
+		Document obj = sessions.find(new BasicDBObject("sessionid",sessionID)).projection(projectionFields).first();
 		
 		if(obj == null)
 			throw new SessionException("SessionID["+sessionID+"],appKey["+appKey+"] do not exist or is invalidated!" );
@@ -354,7 +378,7 @@ public class MongDBSessionStore extends BaseSessionStore{
 
 	@Override
 	public void removeAttribute(SimpleHttpSession session,String appKey,String contextpath,String sessionID, String attribute) {
-		DBCollection sessions = getAppSessionDBCollection( appKey);
+		MongoCollection<Document> sessions = getJOURNALEDAppSessionDBCollection( appKey);
 //		if(SessionHelper.haveSessionListener())
 //		{
 //			List<String> list = new ArrayList<String>();
@@ -369,7 +393,7 @@ public class MongDBSessionStore extends BaseSessionStore{
 		{
 			attribute = MongoDBHelper.converterSpecialChar(attribute);
 //			sessions.update(new BasicDBObject("sessionid",sessionID), new BasicDBObject("$unset",new BasicDBObject(attribute, 1)));
-			MongoDB.update(sessions, new BasicDBObject("sessionid",sessionID), new BasicDBObject("$unset",new BasicDBObject(attribute, 1)));
+			MongoDB.updateOne(sessions, new BasicDBObject("sessionid",sessionID), new BasicDBObject("$unset",new BasicDBObject(attribute, 1)));
 			//sessions.update(new BasicDBObject("sessionid",sessionID), new BasicDBObject("$set",new BasicDBObject(attribute, null)));
 			
 		}
@@ -381,7 +405,7 @@ public class MongDBSessionStore extends BaseSessionStore{
 		
 		if(modifyattributes != null && modifyattributes.size() > 0)
 		{
-			DBCollection sessions = getAppSessionDBCollection(appkey );
+			MongoCollection<Document> sessions = getJOURNALEDAppSessionDBCollection(appkey );
 			Iterator<Entry<String, ModifyValue>> it = modifyattributes.entrySet().iterator();
 			BasicDBObject record = null;//new BasicDBObject("lastAccessedTime", lastAccessedTime).append("lastAccessedUrl", lastAccessedUrl).append("lastAccessedHostIP", SimpleStringUtil.getHostIP())),WriteConcern.JOURNAL_SAFE);
 			String attribute = null;
@@ -450,7 +474,7 @@ public class MongDBSessionStore extends BaseSessionStore{
 			{
 				obj.append("$unset", removerecord);
 			}
-			MongoDB.update(sessions, new BasicDBObject("sessionid",session.getId()), obj);
+			MongoDB.updateOne(sessions, new BasicDBObject("sessionid",session.getId()), obj);
 			
 		}
 		
@@ -459,48 +483,52 @@ public class MongDBSessionStore extends BaseSessionStore{
 	@Override
 	public void addAttribute(SimpleHttpSession session,String appKey,String contextpath,String sessionID, String attribute, Object value) {
 		attribute = MongoDBHelper.converterSpecialChar( attribute);
-		DBCollection sessions = getAppSessionDBCollection( appKey);	
+		MongoCollection<Document> sessions = getJOURNALEDAppSessionDBCollection( appKey);
 //		Session session = getSession(appKey,contextpath, sessionID);
 //		sessions.update(new BasicDBObject("sessionid",sessionID), new BasicDBObject("$set",new BasicDBObject(attribute, value)));
-		MongoDB.update(sessions,new BasicDBObject("sessionid",sessionID), new BasicDBObject("$set",new BasicDBObject(attribute, value)));
+		MongoDB.updateOne(sessions,new BasicDBObject("sessionid",sessionID), new BasicDBObject("$set",new BasicDBObject(attribute, value)));
 //		return session;
 		
 	}
 	
 	public void setMaxInactiveInterval(SimpleHttpSession session, String appKey, String sessionID, long maxInactiveInterval,String contextpath)
 	{
-		DBCollection sessions = getAppSessionDBCollection( appKey);	
+		MongoCollection<Document> sessions = getJOURNALEDAppSessionDBCollection( appKey);
 //		Session session = getSession(appKey,contextpath, sessionID);
 //		sessions.update(new BasicDBObject("sessionid",sessionID), new BasicDBObject("$set",new BasicDBObject(attribute, value)));
-		MongoDB.update(sessions,new BasicDBObject("sessionid",sessionID), new BasicDBObject("$set",new BasicDBObject("maxInactiveInterval", maxInactiveInterval)));
+		MongoDB.updateOne(sessions,new BasicDBObject("sessionid",sessionID), new BasicDBObject("$set",new BasicDBObject("maxInactiveInterval", maxInactiveInterval)));
 	}
 	private Session getSession(String appKey,String contextpath, String sessionid,List<String> attributeNames) {
-		DBCollection sessions =getAppSessionDBCollection( appKey);
-		BasicDBObject keys = new BasicDBObject();
-		keys.put("creationTime", 1);
-		keys.put("maxInactiveInterval", 1);
-		keys.put("lastAccessedTime", 1);
-		keys.put("_validate", 1);
-		keys.put("appKey", 1);
-		keys.put("referip", 1);
-		keys.put("host", 1);
-		keys.put("requesturi",1);
-		keys.put("lastAccessedUrl", 1);
-		keys.put("secure",1);
-		keys.put("httpOnly", 1);
-		keys.put("lastAccessedHostIP", 1);
+		MongoCollection<Document> sessions =getAppSessionDBCollection( appKey);
+		List<String> keys = new ArrayList();
+		keys.add("creationTime");
+		keys.add("maxInactiveInterval");
+		keys.add("lastAccessedTime");
+		keys.add("_validate");
+		keys.add("appKey");
+		keys.add("referip");
+		keys.add("host");
+		keys.add("requesturi");
+		keys.add("lastAccessedUrl");
+		keys.add("secure");
+		keys.add("httpOnly");
+		keys.add("lastAccessedHostIP");
+
+
 //		.append("lastAccessedHostIP", SimpleStringUtil.getHostIP())
 		List<String> copy = new ArrayList<String>(attributeNames);
 		for(int i = 0; attributeNames != null && i < attributeNames.size(); i ++)
 		{
 			String r = MongoDBHelper.converterSpecialChar(attributeNames.get(i));
 			attributeNames.set(i, r);
-			keys.put(r, 1);
+			keys.add(r);
 		}
+
+		Bson projectionFields = Projections.fields(
+				Projections.include(keys),
+				Projections.excludeId());
 		
-		
-		
-		DBObject object = sessions.findOne(new BasicDBObject("sessionid",sessionid).append("_validate", true),keys);
+		Document object = sessions.find(new BasicDBObject("sessionid",sessionid).append("_validate", true)).projection(projectionFields).first();
 		if(object != null)
 		{
 			SimpleSessionImpl session = createSimpleSessionImpl();
@@ -556,32 +584,35 @@ public class MongDBSessionStore extends BaseSessionStore{
 	public SessionConfig getSessionConfig(String appkey) {
 		if(appkey == null || appkey.equals(""))
 			return null;
-		DBCollection sessionconf = getConfigSessionDBCollection();
-		BasicDBObject keys = new BasicDBObject();
-		keys.put("appcode", 1);
-		keys.put("cookiename", 1);
-		keys.put("crossDomain", 1);
-		keys.put("domain", 1);
-		keys.put("scanStartTime", 1);
-		keys.put("sessionListeners", 1);
-		keys.put("sessionscaninterval", 1);
-		keys.put("sessionStore", 1);
-		keys.put("sessionTimeout", 1);
-		keys.put("httpOnly", 1);
-		keys.put("startLifeScan", 1);
-		keys.put("secure", 1);
-		keys.put("monitorAttributes", 1);
-		keys.put("createTime", 1);
-		keys.put("updateTime", 1);
-		keys.put("monitorScope", 1);
-		keys.put("lazystore", 1);
-		keys.put("serialType", 1);
-		keys.put("sessionidGeneratorPlugin", 1);
-		keys.put("storeReadAttributes", 1);
-		
-		 
-		
-		DBObject object = sessionconf.findOne(new BasicDBObject("appcode",appkey) ,keys);
+		MongoCollection<Document>  sessionconf = getConfigSessionDBCollection();
+		List<String> keys = new ArrayList();
+		keys.add("appcode");
+		keys.add("cookiename");
+		keys.add("crossDomain");
+		keys.add("domain");
+		keys.add("scanStartTime");
+		keys.add("sessionListeners");
+		keys.add("sessionscaninterval");
+		keys.add("sessionStore");
+		keys.add("sessionTimeout");
+		keys.add("httpOnly");
+		keys.add("startLifeScan");
+		keys.add("secure");
+		keys.add("monitorAttributes");
+		keys.add("createTime");
+		keys.add("updateTime");
+		keys.add("monitorScope");
+		keys.add("lazystore");
+		keys.add("serialType");
+		keys.add("sessionidGeneratorPlugin");
+		keys.add("storeReadAttributes");
+
+		Bson projectionFields = Projections.fields(
+				Projections.include(keys),
+				Projections.excludeId());
+
+
+		Document object = sessionconf.find(new BasicDBObject("appcode",appkey) ).projection(projectionFields).first();
 		 
 		 
 		 
@@ -630,21 +661,24 @@ public class MongDBSessionStore extends BaseSessionStore{
 	}
 	@Override
 	public Session getSession(String appKey,String contextpath, String sessionid) {
-		DBCollection sessions =getAppSessionDBCollection( appKey);
-		BasicDBObject keys = new BasicDBObject();
-		keys.put("creationTime", 1);
-		keys.put("maxInactiveInterval", 1);
-		keys.put("lastAccessedTime", 1);
-		keys.put("_validate", 1);
-		keys.put("appKey", 1);
-		keys.put("referip", 1);
-		keys.put("host", 1);
-		keys.put("requesturi", 1);
-		keys.put("lastAccessedUrl", 1);
-		keys.put("secure",1);
-		keys.put("httpOnly", 1);
-		keys.put("lastAccessedHostIP", 1);
-		DBObject object = sessions.findOne(new BasicDBObject("sessionid",sessionid).append("_validate", true),keys);
+		MongoCollection<Document>  sessions =getAppSessionDBCollection( appKey);
+		List<String> keys = new ArrayList();
+		keys.add("creationTime");
+		keys.add("maxInactiveInterval");
+		keys.add("lastAccessedTime");
+		keys.add("_validate");
+		keys.add("appKey");
+		keys.add("referip");
+		keys.add("host");
+		keys.add("requesturi");
+		keys.add("lastAccessedUrl");
+		keys.add("secure");
+		keys.add("httpOnly");
+		keys.add("lastAccessedHostIP");
+		Bson projectionFields = Projections.fields(
+				Projections.include(keys),
+				Projections.excludeId());
+		Document object = sessions.find(new BasicDBObject("sessionid",sessionid).append("_validate", true)).projection(projectionFields).first();
 		if(object != null)
 		{
 			SimpleSessionImpl session = createSimpleSessionImpl();

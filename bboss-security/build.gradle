@@ -25,7 +25,7 @@ dependencies {
     api (
            	[group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.36', transitive: true],
             [group: 'com.bbossgroups', name: 'bboss-util', version: "${bboss_version}", transitive: false],
-            [group: 'com.bbossgroups', name: 'bboss-data', version: "${PROJ_BBOSS_DATA_VERSION}", transitive: false],
+            [group: 'com.bbossgroups', name: 'bboss-data', version: "${PROJ_BBOSS_DATA_VERSION}", transitive: true],
             [group: 'com.bbossgroups', name: 'bboss-core', version: "${bboss_version}", transitive: false],
             [group: 'com.bbossgroups', name: 'bboss-persistent', version: "${bboss_version}", transitive: true],
             [group: 'com.bbossgroups', name: 'bboss-mvc', version: "${bboss_version}", transitive: false],
@@ -42,9 +42,7 @@ dependencies {
             [group: 'commons-collections', name: 'commons-collections', version: '3.2.1', transitive: false],
               [group: 'com.fasterxml.uuid', name: 'java-uuid-generator', version: '3.1.2', transitive: false],
                [group: 'org.apache.commons', name: 'commons-pool2', version: '2.4.2', transitive: false],
-               [group: 'redis.clients', name: 'jedis', version: "${jedisversion}", transitive: false],
-                [group: 'org.mongodb', name: 'mongo-java-driver', version: "${mongodbversion}", transitive: false],
-                 
+
     //[group: 'javaee', name: 'javaee-api', version: '5', transitive: false],
     )
     compileOnly(

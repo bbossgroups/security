@@ -1,5 +1,10 @@
 package org.frameworkset.web.token;
 
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Projections;
+import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.frameworkset.nosql.mongodb.MongoDB;
 import org.frameworkset.nosql.mongodb.MongoDBHelper;
 import org.frameworkset.security.KeyCacheUtil;
@@ -8,10 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
+
 import com.mongodb.WriteConcern;
 
 
@@ -22,12 +24,20 @@ public class MongodbTokenStore extends BaseTokenStore{
 //	private final Object checkLock = new Object();
 //	private final Object dualcheckLock = new Object();
 	 
-	private DB db = null;
-	private DBCollection temptokens = null;
-	private DBCollection authtemptokens = null;
+	private MongoDatabase db = null;
+
+	private MongoCollection temptokens = null;
+	private MongoCollection authtemptokens = null;
 //	private DBCollection dualtokens = null;
-	private DBCollection eckeypairs = null;
-	private DBCollection tickets = null;
+	private MongoCollection eckeypairs = null;
+	private MongoCollection tickets = null;
+
+	private MongoDatabase dbJouner = null;
+	private MongoCollection temptokensJouner = null;
+	private MongoCollection authtemptokensJouner = null;
+	//	private DBCollection dualtokens = null;
+	private MongoCollection eckeypairsJouner = null;
+	private MongoCollection ticketsJouner = null;
 //	public void requestStart()
 //	{
 //		if(db != null)
@@ -55,15 +65,20 @@ public class MongodbTokenStore extends BaseTokenStore{
 	public MongodbTokenStore()
 	{
 		db = MongoDBHelper.getDB(MongoDBHelper.defaultMongoDB, "tokendb" );
+		dbJouner = db.withWriteConcern(WriteConcern.JOURNALED);
 		authtemptokens = db.getCollection("authtemptokens");
+		authtemptokensJouner = dbJouner.getCollection("authtemptokens");
 		authtemptokens.createIndex(new BasicDBObject("appid", 1).append("token", 1));
 		temptokens = db.getCollection("temptokens");
+		temptokensJouner = dbJouner.getCollection("temptokens");
 		temptokens.createIndex(new BasicDBObject("token", 1));
 //		dualtokens = db.getCollection("dualtokens");
 //		dualtokens.createIndex(new BasicDBObject("appid", 1));
 		eckeypairs = db.getCollection("eckeypair");
+		eckeypairsJouner = dbJouner.getCollection("eckeypair");
 		eckeypairs.createIndex(new BasicDBObject("appid", 1));
 		tickets = db.getCollection("tickets");
+		ticketsJouner = dbJouner.getCollection("tickets");
 		tickets.createIndex(new BasicDBObject("token", 1));
 	}
 	public void destory()
@@ -95,7 +110,7 @@ public class MongodbTokenStore extends BaseTokenStore{
 		try
 		{
 //			temptokens.remove(new BasicDBObject("$where",temp));
-			MongoDB.remove(temptokens,new BasicDBObject("$where",temp),WriteConcern.UNACKNOWLEDGED);
+			MongoDB.remove(temptokens,new BasicDBObject("$where",temp));
 			
 		}
 		finally
@@ -118,7 +133,7 @@ public class MongodbTokenStore extends BaseTokenStore{
 		try
 		{
 //			authtemptokens.remove(new BasicDBObject("$where",temp));
-			MongoDB.remove(authtemptokens,new BasicDBObject("$where",temp),WriteConcern.UNACKNOWLEDGED);
+			MongoDB.remove(authtemptokens,new BasicDBObject("$where",temp));
 		}
 		finally
 		{
@@ -145,7 +160,7 @@ public class MongodbTokenStore extends BaseTokenStore{
 		try
 		{
 //			this.tickets.remove(new BasicDBObject("$where",wherefun));
-			MongoDB.remove(tickets,new BasicDBObject("$where",wherefun.toString()),WriteConcern.UNACKNOWLEDGED);
+			MongoDB.remove(tickets,new BasicDBObject("$where",wherefun.toString()));
 		}
 		finally
 		{
@@ -262,14 +277,14 @@ public class MongodbTokenStore extends BaseTokenStore{
 //		return token;
 //	}
 	
-	private MemToken totempToken(DBObject object)
+	private MemToken totempToken(Document object)
 	{
 		MemToken token = new MemToken((String)object.get("token"),(Long)object.get("createTime"));
 		token.setLivetime((Long)object.get("livetime"));
 		return token;
 	}
 	
-	private MemToken toauthtempToken(DBObject object)
+	private MemToken toauthtempToken(Document object)
 	{
 		MemToken token = new MemToken((String)object.get("token"),(Long)object.get("createTime"));
 		token.setLivetime((Long)object.get("livetime"));
@@ -288,22 +303,22 @@ public class MongodbTokenStore extends BaseTokenStore{
 	@Override
 	protected MemToken getAuthTempMemToken(String token, String appid) {
 		BasicDBObject dbobject = new BasicDBObject("token", token).append("appid", appid);
-		DBObject tt = authtemptokens.findOne(dbobject);
+		Document tt = (Document) authtemptokens.find(dbobject).first();
 		
 		if(tt == null)
 			return null;
-		MongoDB.remove(this.authtemptokens,dbobject,WriteConcern.JOURNAL_SAFE);
+		MongoDB.remove(this.authtemptokensJouner,dbobject);
 		MemToken token_m = toauthtempToken(tt);		
 		return token_m;
 	}
 	@Override
 	protected MemToken getTempMemToken(String token, String appid) {
 		BasicDBObject dbobject = new BasicDBObject("token", token);
-		DBObject tt = temptokens.findOne(dbobject);
+		Document tt = (Document)temptokens.find(dbobject).first();
 		if(tt != null)
 		{
 //			DBObject tt = cursor.next();
-			MongoDB.remove(temptokens,dbobject,WriteConcern.JOURNAL_SAFE);
+			MongoDB.remove(temptokensJouner,dbobject);
 			MemToken token_m = totempToken(tt);	
 			
 			return token_m;
@@ -359,16 +374,17 @@ public class MongodbTokenStore extends BaseTokenStore{
 //	}
 	
 
-	private void insertDualToken(DBCollection dualtokens,MemToken dualToken)
+	private void insertDualToken(MongoCollection dualtokens,MemToken dualToken)
 	{
-		MongoDB.insert(dualtokens,new BasicDBObject("token",dualToken.getToken())
-		.append("createTime", dualToken.getCreateTime())
-		.append("lastVistTime", dualToken.getLastVistTime())
-		.append("livetime", dualToken.getLivetime())
-		.append("appid", dualToken.getAppid())
-		.append("secret", dualToken.getSecret())
-		.append("signtoken", dualToken.getSigntoken())
-		.append("validate", dualToken.isValidate()));
+		Document basicDBObject = new Document("token",dualToken.getToken())
+				.append("createTime", dualToken.getCreateTime())
+				.append("lastVistTime", dualToken.getLastVistTime())
+				.append("livetime", dualToken.getLivetime())
+				.append("appid", dualToken.getAppid())
+				.append("secret", dualToken.getSecret())
+				.append("signtoken", dualToken.getSigntoken())
+				.append("validate", dualToken.isValidate());
+		MongoDB.insert(dualtokens,basicDBObject);
 	}
 	
 //	private void updateDualToken(MemToken dualToken)
@@ -389,7 +405,7 @@ public class MongodbTokenStore extends BaseTokenStore{
 	public MemToken _genTempToken( ) throws TokenException {
 		String token = this.randomToken();
 		MemToken token_m = new MemToken(token,System.currentTimeMillis());
-		MongoDB.insert(temptokens,new BasicDBObject("token",token_m.getToken()).append("createTime", token_m.getCreateTime()).append("livetime", this.tempTokendualtime).append("validate", true));
+		MongoDB.insert(temptokens,new Document("token",token_m.getToken()).append("createTime", token_m.getCreateTime()).append("livetime", this.tempTokendualtime).append("validate", true));
 		this.signToken(token_m, type_temptoken, null,null,false);
 		return token_m;
 		
@@ -440,8 +456,6 @@ public class MongodbTokenStore extends BaseTokenStore{
 //	}
 	/**
 	 * 创建带认证的临时令牌
-	 * @param string
-	 * @param string2
 	 * @return
 	 * @throws TokenException 
 	 */
@@ -465,14 +479,10 @@ public class MongodbTokenStore extends BaseTokenStore{
 	}
 	@Override
 	protected SimpleKeyPair _getSimpleKey(String appid, String secret, String certAlgorithm) throws TokenException {
-		DBCursor cursor = null;
-		try
-		{
 			String id = appid+":"+certAlgorithm;
-			cursor = eckeypairs.find(new BasicDBObject("appid", id));
-			if(cursor.hasNext())
+			Document value = (Document)eckeypairs.find(new BasicDBObject("appid", id)).first();
+			if(value != null)
 			{
-				DBObject value = cursor.next();
 				return toECKeyPair(value,certAlgorithm);
 				
 			}
@@ -486,14 +496,7 @@ public class MongodbTokenStore extends BaseTokenStore{
 					throw new TokenException(TokenStore.ERROR_CODE_GETKEYPAIRFAILED,e);
 				}
 			}
-		}
-		finally
-		{
-			if(cursor != null)
-			{
-				cursor.close();
-			}
-		}
+
 	}
 //	protected SimpleKeyPair _getKeyPair(String appid,String secret ) throws TokenException
 //	{
@@ -529,20 +532,20 @@ public class MongodbTokenStore extends BaseTokenStore{
 	private void insertECKeyPair(String appid,String secret,SimpleKeyPair keypair)
 	{
 		if(keypair.getPrivateKey()  != null){
-			MongoDB.insert(this.eckeypairs,new BasicDBObject("appid",appid)		
+			MongoDB.insert(this.eckeypairs,new Document("appid",appid)
 			.append("privateKey", keypair.getPrivateKey())
 			.append("createTime", System.currentTimeMillis())
 			.append("publicKey", keypair.getPublicKey()) );
 		}
 		else
 		{
-			MongoDB.insert(this.eckeypairs,new BasicDBObject("appid",appid)		
+			MongoDB.insert(this.eckeypairs,new Document("appid",appid)
 					
 					.append("createTime", System.currentTimeMillis())
 					.append("publicKey", keypair.getPublicKey()) );
 		}
 	}
-	protected SimpleKeyPair toECKeyPair(DBObject value,String certAlgorithm)
+	protected SimpleKeyPair toECKeyPair(Document value,String certAlgorithm)
 	{
 		SimpleKeyPair ECKeyPair = new SimpleKeyPair((String)value.get("privateKey"),(String)value.get("publicKey"),null,null,certAlgorithm == null?KeyCacheUtil.ALGORITHM_RSA:certAlgorithm);
 		return ECKeyPair;
@@ -561,7 +564,7 @@ public class MongodbTokenStore extends BaseTokenStore{
 	private long livetime;
 	private String appid
 		 */
-		MongoDB.insert(this.tickets,new BasicDBObject("appid",ticket.getAppid())		
+		MongoDB.insert(this.tickets,new Document("appid",ticket.getAppid())
 		.append("token", ticket.getToken())
 		.append("ticket", ticket.getTicket())
 		.append("livetime", ticket.getLivetime())
@@ -574,10 +577,13 @@ public class MongodbTokenStore extends BaseTokenStore{
 	{
 		try
 		{
-			BasicDBObject keys = new BasicDBObject();
-			keys.put("lastVistTime", 1);
-			keys.put("livetime", 1);
-			DBObject value = tickets.findOne(new BasicDBObject("token", token),keys);
+//			BasicDBObject keys = new BasicDBObject();
+//			keys.put("lastVistTime", 1);
+//			keys.put("livetime", 1);
+			Bson projectionFields = Projections.fields(
+					Projections.include("lastVistTime","livetime"),
+					Projections.excludeId());
+			Document value = (Document)tickets.find(new BasicDBObject("token", token)).projection(projectionFields).first();
 			if(value != null)
 			{
 				Ticket ticket = new Ticket();
@@ -585,10 +591,10 @@ public class MongodbTokenStore extends BaseTokenStore{
 				ticket.setLivetime((Long)value.get("livetime"));
 				ticket.setLastVistTime( (Long)value.get("lastVistTime"));
 				assertExpiredTicket(ticket,appid,lastVistTime);
-				MongoDB.update(this.tickets,new BasicDBObject("token", token), 
+				MongoDB.updateOne(this.ticketsJouner,new BasicDBObject("token", token),
 													   new BasicDBObject("$set",
 															  			new BasicDBObject("lastVistTime", lastVistTime)
-															  		    ),WriteConcern.JOURNAL_SAFE);
+															  		    ));
 				return true;
 			}
 			return false;
@@ -604,7 +610,7 @@ public class MongodbTokenStore extends BaseTokenStore{
 	protected boolean destroyTicket(String token,String appid)
 	{
 		try {
-			MongoDB.remove(this.tickets,new BasicDBObject("token", token),WriteConcern.JOURNAL_SAFE);			
+			MongoDB.remove(this.ticketsJouner,new BasicDBObject("token", token));
 			return true;
 		} catch (Exception e) {
 			throw new TokenException("destroy ticket["+token+"] of app["+appid+"] failed:",e);
@@ -612,11 +618,10 @@ public class MongodbTokenStore extends BaseTokenStore{
 	}
 	@Override
 	protected Ticket getTicket(String token, String appid) {
-		DBCursor cursor = null;
 		try
 		{
 			long lastVistTime =  System.currentTimeMillis();
-			DBObject value = tickets.findOne(new BasicDBObject("token", token));
+			Document value = (Document)tickets.find(new BasicDBObject("token", token)).first();
 		
 			if(value != null)
 			{
@@ -631,11 +636,10 @@ public class MongodbTokenStore extends BaseTokenStore{
 				assertExpiredTicket(ticket,appid,lastVistTime);
 				if(!this.istempticket(token))
 				{
-					MongoDB.update(tickets,new BasicDBObject("token", token), 
+					MongoDB.updateOne(ticketsJouner,new BasicDBObject("token", token),
 							   new BasicDBObject("$set",
 									  			new BasicDBObject("lastVistTime", lastVistTime)
-									  		    )
-							   			,WriteConcern.UNACKNOWLEDGED);
+									  		    ));
 				}
 				else//一次性票据，获取后立马销毁
 				{
@@ -652,13 +656,7 @@ public class MongodbTokenStore extends BaseTokenStore{
 		catch (Exception e) {
 			throw new TokenException(TokenStore.ERROR_CODE_GETTICKETFAILED,e);
 		}
-		finally
-		{
-			if(cursor != null)
-			{
-				cursor.close();
-			}
-		}
+
 	}
 	
 	

@@ -12,6 +12,12 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
+import com.mongodb.client.model.Projections;
+import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.frameworkset.nosql.mongodb.MongoDB;
 import org.frameworkset.security.session.MongoDBUtil;
 import org.frameworkset.security.session.SessionSerial;
@@ -22,8 +28,7 @@ import org.frameworkset.spi.InitializingBean;
 import com.frameworkset.util.StringUtil;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
+
 import com.mongodb.DBObject;
 
 public class MongoSessionStaticManagerImpl extends BaseSessionStaticManagerImpl implements InitializingBean {
@@ -46,13 +51,13 @@ public class MongoSessionStaticManagerImpl extends BaseSessionStaticManagerImpl 
 		for (String appkey : list) {
 			SessionAPP sessionApp = new SessionAPP();
 
-			DBCollection coll = MongoDBUtil.getSessionCollection(appkey);
+			MongoCollection<Document> coll = MongoDBUtil.getSessionCollection(appkey);
 
 			sessionApp.setAppkey(appkey.substring(0,
 					appkey.indexOf("_sessions")));
 			boolean hasDeletePermission = this.hasDeleteAppPermission(sessionApp.getAppkey(),request);
 			sessionApp.setHasDeletePermission(hasDeletePermission);
-			sessionApp.setSessions(coll.getCount());
+			sessionApp.setSessions(coll.estimatedDocumentCount());
 
 			appList.add(sessionApp);
 
@@ -72,10 +77,10 @@ public class MongoSessionStaticManagerImpl extends BaseSessionStaticManagerImpl 
 
 		 
 		SessionAPP sessionApp = new SessionAPP();
-		DBCollection coll = MongoDBUtil.getSessionCollection(appName +"_sessions");
+		MongoCollection<Document> coll = MongoDBUtil.getSessionCollection(appName +"_sessions");
 		sessionApp.setAppkey(appName);
 		sessionApp.setHasDeletePermission(false);
-		sessionApp.setSessions(coll.getCount());		
+		sessionApp.setSessions(coll.estimatedDocumentCount());
 		return sessionApp;
 	}
 	 
@@ -155,7 +160,7 @@ public class MongoSessionStaticManagerImpl extends BaseSessionStaticManagerImpl 
 		}
 
 		// 获取当前表
-		DBCollection sessions = MongoDBUtil.getAppSessionDBCollection(appKey);
+		MongoCollection<Document> sessions = MongoDBUtil.getAppSessionDBCollection(appKey);
 //		sessions.createIndex(new BasicDBObject("sessionid",1));
 
 		// 查询条件
@@ -234,32 +239,35 @@ public class MongoSessionStaticManagerImpl extends BaseSessionStaticManagerImpl 
 		AttributeInfo[] attributeInfos = sessionConfig == null?null:sessionConfig.getExtendAttributeInfos();
 		String serialType = sessionConfig == null?SessionSerial.SERIAL_TYPE_BBOSS:sessionConfig.getSerialType();
 		// 显示字段
-		BasicDBObject keys = new BasicDBObject();
-		keys.put("appKey", 1);
-		keys.put("sessionid", 1);
-		keys.put("creationTime", 1);
-		keys.put("lastAccessedTime", 1);
-		keys.put("maxInactiveInterval", 1);
-		keys.put("referip", 1);
-		keys.put("_validate", 1);
-		keys.put("host", 1);
-		keys.put("requesturi", 1);
-		keys.put("lastAccessedUrl", 1);
-		keys.put("secure",1);
-		keys.put("httpOnly", 1);
-		keys.put("lastAccessedHostIP", 1);
+		List<String> keys = new ArrayList();
+		keys.add("appKey");
+		keys.add("sessionid");
+		keys.add("creationTime");
+		keys.add("lastAccessedTime");
+		keys.add("maxInactiveInterval");
+		keys.add("referip");
+		keys.add("_validate");
+		keys.add("host");
+		keys.add("requesturi");
+		keys.add("lastAccessedUrl");
+		keys.add("secure");
+		keys.add("httpOnly");
+		keys.add("lastAccessedHostIP");
 		SessionUtil.evalqueryfields(attributeInfos,keys );
-		
+		Bson projectionFields = Projections.fields(
+				Projections.include(keys),
+				Projections.excludeId());
 		@SuppressWarnings("unchecked")
 		Map<String, AttributeInfo> extendAttributes = (Map<String, AttributeInfo>)queryParams.get("extendAttributes");
 		SessionHelper.buildExtendFieldQueryCondition(extendAttributes,    query,serialType);
-		
-		DBCursor cursor = sessions.find(query, keys).skip(page).limit(row)
-				.sort(new BasicDBObject("creationTime", -1));// 1升序，-1降序
-		try {
 
+		FindIterable<Document> findIterable = sessions.find(query).projection(projectionFields).skip(page).limit(row)
+				.sort(new BasicDBObject("creationTime", -1));// 1升序，-1降序
+		MongoCursor<Document> cursor = null;
+		try {
+			cursor = findIterable.cursor();
 			while (cursor.hasNext()) {
-				DBObject dbobject = cursor.next();
+				Document dbobject = cursor.next();
 
 				SessionInfo info = new SessionInfo();
 
@@ -320,7 +328,8 @@ public class MongoSessionStaticManagerImpl extends BaseSessionStaticManagerImpl 
 			 
 			
 		} finally {
-			cursor.close();
+			if(cursor != null)
+				cursor.close();
 		}
 
 		return sessionList;
@@ -331,7 +340,7 @@ public class MongoSessionStaticManagerImpl extends BaseSessionStaticManagerImpl 
 
 		if (!StringUtil.isEmpty(appKey) && !StringUtil.isEmpty(sessionid)) {
 			// 获取当前表
-			DBCollection sessions = MongoDBUtil.getAppSessionDBCollection(appKey);
+			MongoCollection<Document> sessions = MongoDBUtil.getAppSessionDBCollection(appKey);
 //			sessions.createIndex(new BasicDBObject("sessionid", 1));
 
 			// 查询条件
@@ -341,10 +350,10 @@ public class MongoSessionStaticManagerImpl extends BaseSessionStaticManagerImpl 
 				query.append("sessionid", sessionid);
 			}
 
-			// 显示字段
-			BasicDBObject keys = new BasicDBObject();
+//			// 显示字段
+//			BasicDBObject keys = new BasicDBObject();
 
-			DBObject obj = sessions.findOne(query, keys);
+			Document obj = sessions.find(query).first();
 
 			if (obj == null) {
 				return null;
@@ -406,7 +415,7 @@ public class MongoSessionStaticManagerImpl extends BaseSessionStaticManagerImpl 
 	public void removeSessionInfo(String appKey, String sessionid) {
 		if (!StringUtil.isEmpty(appKey) && !StringUtil.isEmpty(sessionid)) {
 
-			DBCollection sessions = MongoDBUtil.getAppSessionDBCollection(appKey);
+			MongoCollection<Document> sessions = MongoDBUtil.getAppSessionDBCollection(appKey);
 //			sessions.createIndex(new BasicDBObject("sessionid",1));
 
 			// 条件
@@ -436,7 +445,7 @@ public class MongoSessionStaticManagerImpl extends BaseSessionStaticManagerImpl 
 	public void removeAllSession(String appKey,String currentappkey,String currentsessionid) {
 		if (!StringUtil.isEmpty(appKey)) {
 
-			DBCollection sessions = MongoDBUtil.getAppSessionDBCollection(appKey);
+			MongoCollection<Document> sessions = MongoDBUtil.getAppSessionDBCollection(appKey);
 
 			// 条件
 			BasicDBObject wheresql = null;
@@ -533,7 +542,7 @@ public class MongoSessionStaticManagerImpl extends BaseSessionStaticManagerImpl 
  
 	@Override
 	public boolean deleteApp(String appKey) throws Exception {
-		DBCollection table = MongoDBUtil.getAppSessionDBCollection(appKey);
+		MongoCollection<Document> table = MongoDBUtil.getAppSessionDBCollection(appKey);
 		table.drop();
 		return true;
 	}

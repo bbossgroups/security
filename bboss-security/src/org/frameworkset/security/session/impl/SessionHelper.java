@@ -24,6 +24,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.bson.Document;
 import org.frameworkset.nosql.mongodb.MongoDBHelper;
 import org.frameworkset.security.session.MongoDBUtil;
 import org.frameworkset.security.session.SessionUtil;
@@ -33,6 +34,8 @@ import com.frameworkset.util.StringUtil;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <p>Title: SessionHelper.java</p> 
@@ -44,7 +47,7 @@ import com.mongodb.DBObject;
  * @version 3.8.0
  */
 public class SessionHelper {
-	
+	private static final Logger logger = LoggerFactory.getLogger(SessionHelper.class);
 	
 	public static void buildExtendFieldQueryCondition(Map<String, AttributeInfo> monitorAttributeArray,  BasicDBObject query,String serialType)
 	{
@@ -114,7 +117,7 @@ public class SessionHelper {
 		
 		
 	}
-	public static List<AttributeInfo> evalqueryfiledsValue(AttributeInfo[] monitorAttributeArray, DBObject dbobject,String serialType)  
+	public static List<AttributeInfo> evalqueryfiledsValue(AttributeInfo[] monitorAttributeArray, Document dbobject, String serialType)
 	{
 		List<AttributeInfo> extendAttrs = null;
 		 
@@ -132,7 +135,7 @@ public class SessionHelper {
 					extendAttrs.add(attrvalue);
 				} catch (CloneNotSupportedException e) {
 					// TODO Auto-generated catch block
-					e.printStackTrace();
+					logger.error("",e);
 				}
 				
 			}
@@ -157,7 +160,7 @@ public class SessionHelper {
 								deserial?SessionUtil.unserial((String) value):value);
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
-						e.printStackTrace();
+						logger.error("",e);
 					}
 				}
 			}
@@ -184,7 +187,7 @@ public class SessionHelper {
 									deserial?SessionUtil.unserial((String) value):value);
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
-						e.printStackTrace();
+						logger.error("",e);
 					}
 				}
 			}

@@ -1,10 +1,13 @@
 package org.frameworkset.security.session;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
+import com.mongodb.WriteConcern;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.MongoIterable;
+import org.bson.Document;
 import org.frameworkset.nosql.mongodb.MongoDB;
 import org.frameworkset.nosql.mongodb.MongoDBHelper;
 import org.frameworkset.spi.BaseApplicationContext;
@@ -14,10 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import com.frameworkset.util.StringUtil;
 import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
-import com.mongodb.Mongo;
 
 public class MongoDBUtil {
 	public static final String defaultMongoDB = "default";
@@ -27,9 +27,10 @@ public class MongoDBUtil {
 	 private static final Object sessionlock = new Object();
 	 private static boolean configdbindexed;
 	 private static boolean initSessionDB;
-	private static DB configdb = null;
+	private static MongoDatabase configdb = null;
 	 private static  Map<String, Object> dbcollectionCache = null;
-	 private static DB sessiondb = null;
+	 private static MongoDatabase sessiondb = null;
+	private static MongoDatabase jonersafesessiondb = null;
 	 private static  boolean closeDB;
 	private static Logger log = LoggerFactory.getLogger(MongoDBUtil.class);
 	private static BaseApplicationContext context = DefaultApplicationContext.getApplicationContext("mongodb.xml");
@@ -46,6 +47,7 @@ public class MongoDBUtil {
 				MongoDB mongoClient = MongoDBHelper.getMongoClient(MongoDBHelper.defaultMongoDB);
 				dbcollectionCache = new HashMap<String,Object>();
 				sessiondb = mongoClient.getDB( "sessiondb" );
+				jonersafesessiondb = sessiondb.withWriteConcern(WriteConcern.JOURNALED);
 				configdb = mongoClient.getDB( "sessionconfdb" );
 			}
 			finally
@@ -57,25 +59,35 @@ public class MongoDBUtil {
 	public static Set<String> getSessionDBCollectionNames()
 	{
 		initSessionDB();
-		return sessiondb.getCollectionNames();
+		MongoIterable<String> names = sessiondb.listCollectionNames();
+
+		Set<String> set = new HashSet<>();
+		names.into(set);
+//		Iterator<String> iterator = names.iterator();
+//		while (iterator.hasNext()){
+//			set.add(iterator.next());
+//		}
+		return  set;
 	}
 	
-	public static DBCollection getSessionCollection(String app)
+	public static MongoCollection<Document> getSessionCollection(String app)
 	{
 		initSessionDB();
 		return sessiondb.getCollection(app);
 	}
-	public static Mongo getMongoClient(String name)
+	public static MongoClient getMongoClient(String name)
 	{
+		MongoDB mongoDB = null;
 		if(StringUtil.isEmpty(name))
 		{
-			return context.getTBeanObject(defaultMongoDB, Mongo.class);
+			mongoDB = context.getTBeanObject(defaultMongoDB, MongoDB.class);
 		}
 		else
-			return context.getTBeanObject(name, Mongo.class);
+			mongoDB = context.getTBeanObject(name, MongoDB.class);
+		return mongoDB == null?null:mongoDB.getMongo();
 	}
-	
-	public static Mongo getMongoClient()
+
+	public static MongoClient getMongoClient()
 	{
 		return getMongoClient(null);
 	}
@@ -114,11 +126,11 @@ public class MongoDBUtil {
 		return appKey+"_sessions";
 	}
 	
-	public static DBCollection getAppSessionDBCollection(String appKey)
+	public static MongoCollection<Document> getAppSessionDBCollection(String appKey)
 	{
 		initSessionDB();
 		String tablename = getAppSessionTableName( appKey);
-		 DBCollection sessions = sessiondb.getCollection(tablename);
+		MongoCollection<Document> sessions = sessiondb.getCollection(tablename);
 //		 sessions.ensureIndex("sessionid");
 		 String idxname = tablename+":sessionid";
 		 if(!dbcollectionCache.containsKey(idxname))
@@ -130,16 +142,34 @@ public class MongoDBUtil {
 		 
 		 return sessions;
 	}
-	
-	public static DB getDB(String poolname,String dbname)
+
+	public static MongoCollection<Document> getJOURNALEDAppSessionDBCollection(String appKey)
+	{
+		initSessionDB();
+		String tablename = getAppSessionTableName( appKey);
+		MongoCollection<Document> sessions = jonersafesessiondb.withWriteConcern( WriteConcern.JOURNALED).getCollection(tablename);
+//		 sessions.ensureIndex("sessionid");
+		String idxname = tablename+":sessionid";
+		if(!dbcollectionCache.containsKey(idxname))
+		{
+			dbcollectionCache.put(idxname, ovalue);
+			sessions.createIndex(new BasicDBObject( "sessionid" , 1 ));
+
+		}
+
+		return sessions;
+	}
+
+
+	public static MongoDatabase getDB(String poolname, String dbname)
 	{
 		return MongoDBHelper.getMongoClient(poolname).getDB( dbname );
 	}
 	
-	public static DBCollection getConfigSessionDBCollection()
+	public static MongoCollection<Document>  getConfigSessionDBCollection()
 	{
 		initSessionDB();
-		DBCollection sessionconf = configdb.getCollection("sessionconf");
+		MongoCollection<Document>  sessionconf = configdb.getCollection("sessionconf");
 //		 sessions.ensureIndex("sessionid");
 		if(!configdbindexed)
 		{
@@ -149,7 +179,7 @@ public class MongoDBUtil {
 		return sessionconf;
 	}
 	
-	public static Map<String,Object> toMap(DBObject object,boolean deserial) {
+	public static Map<String,Object> toMap(Document object,boolean deserial) {
 
 		Set set = object.keySet();
 		if (set != null && set.size() > 0) {

@@ -156,14 +156,14 @@ public class SessionUtil {
 		return datas;
 	}
 	
-	public static void evalqueryfields(AttributeInfo[] monitorAttributeArray, Map keys)
+	public static void evalqueryfields(AttributeInfo[] monitorAttributeArray, List<String> keys)
 	{
 		 
 		if(monitorAttributeArray != null && monitorAttributeArray.length > 0)
 		{
 			for(AttributeInfo attr:monitorAttributeArray)
 			{
-				keys.put(attr.getName(), 1);
+				keys.add(attr.getName());
 				 
 				
 			}
