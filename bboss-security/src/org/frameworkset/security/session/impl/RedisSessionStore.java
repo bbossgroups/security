@@ -799,8 +799,7 @@ public class RedisSessionStore extends BaseSessionStore{
 						if(temp != null)
 							attributes.put(temp, SessionUtil.unserial((String)value));
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						log.error("",e);
 					}
 				}
 				session.setAttributes(attributes);
@@ -893,8 +892,7 @@ public class RedisSessionStore extends BaseSessionStore{
 //					if(temp != null)
 //						attributes.put(temp, SessionHelper.unserial((String)value));
 //				} catch (Exception e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
+//					log.error("",e);
 //				}
 //			}
 //			session.setAttributes(attributes);
