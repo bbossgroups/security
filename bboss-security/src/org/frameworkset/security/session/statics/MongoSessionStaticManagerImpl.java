@@ -29,7 +29,6 @@ import com.frameworkset.util.StringUtil;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 
-import com.mongodb.DBObject;
 
 public class MongoSessionStaticManagerImpl extends BaseSessionStaticManagerImpl implements InitializingBean {
 	
