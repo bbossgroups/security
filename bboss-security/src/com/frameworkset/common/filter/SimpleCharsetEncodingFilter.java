@@ -23,6 +23,7 @@ public class SimpleCharsetEncodingFilter  implements Filter{
     private String ResponseEncoding = null;
     private String mode = "0";
     private boolean checkiemodeldialog;
+    private boolean postCharsetConvert=true;
 
     private ReferHelper referHelper;
    
@@ -35,6 +36,8 @@ public class SimpleCharsetEncodingFilter  implements Filter{
         this.ResponseEncoding = config.getInitParameter("ResponseEncoding");
         String refererDefender_ =  config.getInitParameter("refererDefender");
         boolean refererDefender = StringUtil.getBoolean(refererDefender_, false);
+        String postCharsetConvert_ =  config.getInitParameter("postCharsetConvert");
+        postCharsetConvert = StringUtil.getBoolean(postCharsetConvert_, true);
         String ignoreParameterDecoding_ =  config.getInitParameter("ignoreParameterDecoding");
         ignoreParameterDecoding = StringUtil.getBoolean(ignoreParameterDecoding_, true);
         referHelper = new ReferHelper();
@@ -185,7 +188,8 @@ public class SimpleCharsetEncodingFilter  implements Filter{
                 CharacterEncodingHttpServletResponseWrapper wresponsew = new
                         CharacterEncodingHttpServletResponseWrapper(response, ResponseEncoding);
                 CharacterEncodingHttpServletRequestWrapper mrequestw = new
-                        CharacterEncodingHttpServletRequestWrapper(fc, request, wresponsew, RequestEncoding, checkiemodeldialog, referHelper, ignoreParameterDecoding);
+                        CharacterEncodingHttpServletRequestWrapper(fc, request, wresponsew, RequestEncoding, 
+                        checkiemodeldialog, referHelper, ignoreParameterDecoding,postCharsetConvert);
                 mrequestw.preHandlerParameters();
                 fc.doFilter(mrequestw, wresponsew);
 //            super.doFilter(mrequestw, wresponsew, fc);
@@ -194,7 +198,8 @@ public class SimpleCharsetEncodingFilter  implements Filter{
             //      服务器对url进行编码
             else if (mode.equals("1")) {
                 CharacterEncodingHttpServletRequestWrapper mrequestw = new
-                        CharacterEncodingHttpServletRequestWrapper(fc, request, response, RequestEncoding, checkiemodeldialog, referHelper, ignoreParameterDecoding);
+                        CharacterEncodingHttpServletRequestWrapper(fc, request, response, RequestEncoding,
+                        checkiemodeldialog, referHelper, ignoreParameterDecoding,postCharsetConvert);
                 mrequestw.preHandlerParameters();
                 fc.doFilter(request, response);
 //            super.doFilter(request, response, fc);
@@ -204,7 +209,8 @@ public class SimpleCharsetEncodingFilter  implements Filter{
                 CharacterEncodingHttpServletResponseWrapper wresponsew = new
                         CharacterEncodingHttpServletResponseWrapper(response, ResponseEncoding);
                 CharacterEncodingHttpServletRequestWrapper mrequestw = new
-                        CharacterEncodingHttpServletRequestWrapper(fc, request, wresponsew, this.RequestEncoding, checkiemodeldialog, referHelper, ignoreParameterDecoding);
+                        CharacterEncodingHttpServletRequestWrapper(fc, request, wresponsew, 
+                        this.RequestEncoding, checkiemodeldialog, referHelper, ignoreParameterDecoding,postCharsetConvert);
                 mrequestw.preHandlerParameters();
                 fc.doFilter(mrequestw, wresponsew);
 //            super.doFilter(mrequestw, wresponsew, fc);

@@ -26,7 +26,8 @@ public class CharacterEncodingHttpServletRequestWrapper
     private boolean isie = false;
     
     private boolean isget = false;
-    
+    private boolean isPost = false;
+    private boolean postCharsetConvert=true;
     private boolean isutf8 = false;
     private boolean checkiemodeldialog;
     private static final String system_encoding = System.getProperty("sun.jnu.encoding");
@@ -36,8 +37,12 @@ public class CharacterEncodingHttpServletRequestWrapper
 	private FilterChain chain ;
 	private boolean preHandleParams;
 	private boolean isWhiteUrl;
-    public CharacterEncodingHttpServletRequestWrapper(FilterChain chain,HttpServletRequest request, HttpServletResponse response, String encoding, boolean checkiemodeldialog, ReferHelper referHelper, boolean ignoreParameterDecoding) {
+    public CharacterEncodingHttpServletRequestWrapper(FilterChain chain,HttpServletRequest request, HttpServletResponse response,
+                                                      String encoding, boolean checkiemodeldialog,
+                                                      ReferHelper referHelper, 
+                                                      boolean ignoreParameterDecoding,boolean postCharsetConvert) {
         super(request);
+        this.postCharsetConvert = postCharsetConvert;
         this.response = response;
         this.chain = chain;
 //        this.wallfilterrules = wallfilterrules;
@@ -47,7 +52,15 @@ public class CharacterEncodingHttpServletRequestWrapper
         if(agent != null)
         	isie = agent.contains("MSIE ");
         String method = this.getMethod();
-        isget = method !=null && method.equals("GET");
+        if(method != null) {
+            if(method.equals("GET")) {
+                isget = true;
+            }
+            else if(method.equals("POST")){
+                isPost = true;
+            }
+        }
+        
         this.newecoding = encoding != null ? encoding:system_encoding;
         isutf8 = newecoding.toLowerCase().equals("utf-8");
         this.oldEncoding = request.getCharacterEncoding();
@@ -93,10 +106,11 @@ public class CharacterEncodingHttpServletRequestWrapper
                 if ( !ignoreParameterDecoding && (oldEncoding == null || isIOS88591(oldEncoding)) )
                 {
                     String[] clone = new String[tempArray.length];
-
+                    String oValue = null;
                     for (int i = 0; i < tempArray.length; i++) {
-                        if ( tempArray[i]!= null) {
-                            byte[] buf = tempArray[i].getBytes("iso-8859-1");
+                        oValue = tempArray[i];
+                        if ( oValue!= null) {
+                            byte[] buf = oValue.getBytes("iso-8859-1");
                             if(checkiemodeldialog && isutf8 && isie && isget )
                             {
 
@@ -108,20 +122,30 @@ public class CharacterEncodingHttpServletRequestWrapper
 
                                 }
 //	                    	else if(charset !=null && charset.startsWith("UTF-8"))
-//	                    		clone[i] = new String(tempArray[i].getBytes("iso-8859-1"), charset);
+//	                    		clone[i] = new String(oValue.getBytes("iso-8859-1"), charset);
 //	                    	else if(charset !=null && charset.startsWith("UTF-"))
-//	                    		clone[i] = new String(tempArray[i].getBytes("iso-8859-1"), "UTF-16");
+//	                    		clone[i] = new String(oValue.getBytes("iso-8859-1"), "UTF-16");
                                 else
                                     clone[i] = new String(buf, newecoding);
                             }
                             else
                             {
-                                clone[i] = new String(buf, newecoding);
+                                if(!isPost) {
+                                    clone[i] = new String(buf, newecoding);
+                                }
+                                else{
+                                    if(!postCharsetConvert) {
+                                        clone[i] = oValue;
+                                    }
+                                    else {
+                                        clone[i] = new String(buf, newecoding);
+                                    }
+                                }
                             }
                         }
                         else
                         {
-                            clone[i] = tempArray[i];
+                            clone[i] = oValue;
                         }
                     }
 
@@ -210,150 +234,11 @@ public class CharacterEncodingHttpServletRequestWrapper
         tempArray = super.getParameterValues(name);
         tempArray = this.handlerValues(name,tempArray);
         return tempArray;
-//        try {
-//
-//            String[] tempArray = parameters.get(name);
-//            if(tempArray != null || this.preHandleParams)
-//            	return tempArray;
-//            tempArray = super.getParameterValues(name);
-//            this.handlerValues(name,tempArray);
-//            if ( tempArray == null  || tempArray.length == 0) {
-//                return tempArray;
-//            }
-//            else
-//
-//            if ( !ignoreParameterDecoding && (oldEncoding == null || isIOS88591(oldEncoding)) )
-//            {
-//            	String[] clone = new String[tempArray.length];
-//
-//                for (int i = 0; i < tempArray.length; i++) {
-//                    if ( tempArray[i]!= null) {
-//                    	byte[] buf = tempArray[i].getBytes("iso-8859-1");
-//                		if(checkiemodeldialog && isutf8 && isie && isget )
-//                		{
-//
-//	                    	String charset = UTF8Convertor.takecharset(buf) ;
-//	                    	if(charset !=null && charset.startsWith("GB"))
-//	                    	{
-//
-//	                    		clone[i] = new String(buf, "GBK");
-//
-//	                    	}
-////	                    	else if(charset !=null && charset.startsWith("UTF-8"))
-////	                    		clone[i] = new String(tempArray[i].getBytes("iso-8859-1"), charset);
-////	                    	else if(charset !=null && charset.startsWith("UTF-"))
-////	                    		clone[i] = new String(tempArray[i].getBytes("iso-8859-1"), "UTF-16");
-//	                    	else
-//	                    		clone[i] = new String(buf, newecoding);
-//                		}
-//                		else
-//                		{
-//                			clone[i] = new String(buf, newecoding);
-//                		}
-//                    }
-//                    else
-//                    {
-//                    	clone[i] = tempArray[i];
-//                    }
-//                }
-//				AttackContext attackContext = new AttackContext();
-//                attackContext.setRequest(this);
-//                attackContext.setResponse(this.response);
-//				attackContext.setChain(chain);
-//                this.referHelper.wallfilter(name,clone,attackContext);
-//				this.referHelper.sensitiveWallfilter(name,clone,attackContext);
-//                parameters.put(name,clone);
-//                return clone;
-//            }
-//            else
-//            {
-//				AttackContext attackContext = new AttackContext();
-//				attackContext.setRequest(this);
-//				attackContext.setResponse(this.response);
-//				attackContext.setChain(chain);
-//            	this.referHelper.wallfilter(name,tempArray,attackContext);
-//				this.referHelper.sensitiveWallfilter(name,tempArray,attackContext);
-//            	parameters.put(name,tempArray);
-//            	return tempArray;
-//            }
-//
-//        }
-//        catch (Exception e) {
-//        	String[] tempArray = super.getParameterValues(name);
-//			AttackContext attackContext = new AttackContext();
-//			attackContext.setRequest(this);
-//			attackContext.setResponse(this.response);
-//			attackContext.setChain(chain);
-//        	this.referHelper.wallfilter(name,tempArray,attackContext);
-//        	parameters.put(name,tempArray);
-//            return tempArray ;
-//        }
+
     }
     
     
     
-    
-//    public String[] getParameterValues(String name) {
-//    	
-//  	  
-//        try {
-//        	
-//            
-//            if(parameters == null)
-//        	{
-//        		synchronized(lock)
-//        		{
-//        			if(parameters == null)
-//        			{
-//        				parameters = new HashMap<String,String[]>();
-//        			}
-//        		}
-//        	}
-//            String[] tempArray = parameters.get(name);
-//            if(tempArray != null)
-//            	return tempArray; 
-//            tempArray = super.getParameterValues(name);
-//            if ( tempArray == null  || tempArray.length == 0) {
-//                return tempArray;
-//            }
-//            
-//            if ( (oldEncoding == null || isIOS88591(oldEncoding)) )
-//            {
-//            	String[] clone = new String[tempArray.length];
-//            	Boolean userdecode = (Boolean)this.getAttribute(USE_MVC_DENCODE_KEY);
-//                for (int i = 0; i < tempArray.length; i++) {
-//                    if ( tempArray[i]!= null) {
-//                    	if(userdecode == null || !userdecode.booleanValue())
-//                    	{
-//                    		clone[i] = new String(tempArray[i].getBytes("iso-8859-1"), newecoding);
-//                    	}
-//                    	else
-//                    	{
-//                    		clone[i] = new String(tempArray[i].getBytes("iso-8859-1"), "UTF-8");
-////                    		clone[i] = URLEncoder.encode(tempArray[i],"UTF-8") ;
-//                    		clone[i] = URLEncoder.encode(clone[i], "UTF-8") ;
-//                    	}
-//                    }
-//                    else
-//                    {
-//                    	clone[i] = tempArray[i];
-//                    }
-//                }
-//                parameters.put(name,clone);
-//                return clone;
-//            }
-//            else
-//            {
-//            	parameters.put(name,tempArray);
-//            	return tempArray;
-//            }
-//            
-//        }
-//        catch (Exception e) {
-//            e.printStackTrace();
-//            return super.getParameterValues(name) ;
-//        }
-//    }
 
     private boolean isIOS88591(String endcoding) {
         endcoding = endcoding.toLowerCase();
