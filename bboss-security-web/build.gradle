@@ -32,14 +32,14 @@ dependencies {
 	api project(':bboss-ticket')
 	api( [group: 'com.bbossgroups', name: 'bboss-hession', version: "${bboss_version}", transitive: true] )
 	api(
-         [group: 'org.ow2.asm', name: 'asm', version: '5.0.3', transitive: false],
+         [group: 'org.ow2.asm', name: 'asm', version: '9.6', transitive: false],
             [group: 'com.bbossgroups', name: 'bboss-core', version: "${bboss_version}", transitive: false],
              [group: 'com.bbossgroups', name: 'bboss-mvc', version: "${bboss_version}", transitive: false],
                [group: 'com.bbossgroups', name: 'bboss-util', version: "${bboss_version}", transitive: false],
            
                [group: 'com.bbossgroups', name: 'bboss-velocity', version: "${bboss_version}", transitive: false],
-             [group: 'cglib', name: 'cglib-nodep', version: '3.1', transitive: false],
-              [group: 'org.apache.commons', name: 'commons-pool2', version: '2.4.2', transitive: false],
+             [group: 'cglib', name: 'cglib-nodep', version: '3.3.0', transitive: false],
+              [group: 'org.apache.commons', name: 'commons-pool2', version: '2.12.0', transitive: false],
                 [group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: "${jacksonversion}",transitive: false],
             [group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: "${jacksonversion}",transitive: false],
             [group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: "${jacksondatabaindversion}",transitive: false],
