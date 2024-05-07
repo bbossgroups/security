@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletRequest;
  * </p>
  * 
  * <p>
- * Company: 三一集团
+ * Company: bboss
  * </p>
  * 
  * @Date 2012-8-27 上午11:43:42
