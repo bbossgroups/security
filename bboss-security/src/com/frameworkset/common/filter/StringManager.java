@@ -24,6 +24,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * An internationalization / localization helper class which reduces
@@ -181,7 +182,7 @@ public class StringManager {
     // --------------------------------------------------------------
 
     private static final Map<String, Map<Locale,StringManager>> managers =
-            new Hashtable<String, Map<Locale,StringManager>>();
+            new ConcurrentHashMap<String, Map<Locale,StringManager>>();
 
 
     /**

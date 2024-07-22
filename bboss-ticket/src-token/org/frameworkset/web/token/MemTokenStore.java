@@ -7,17 +7,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.frameworkset.security.ecc.SimpleKeyPair;
 
 import com.mongodb.BasicDBObject;
 
 public class MemTokenStore extends BaseTokenStore{
-	private  Map<String,MemToken> temptokens = new HashMap<String,MemToken>();
-	private  Map<String,MemToken> authtemptokens = new HashMap<String,MemToken>();
-	private  Map<String,MemToken> dualtokens = new HashMap<String,MemToken>();
-	private  Map<String,Ticket> tickets = new HashMap<String,Ticket>();
-	private  Map<String,SimpleKeyPair> keypairs = new HashMap<String,SimpleKeyPair>();
+	private  Map<String,MemToken> temptokens = new ConcurrentHashMap<String,MemToken>();
+	private  Map<String,MemToken> authtemptokens = new ConcurrentHashMap<String,MemToken>();
+	private  Map<String,MemToken> dualtokens = new ConcurrentHashMap<String,MemToken>();
+	private  Map<String,Ticket> tickets = new ConcurrentHashMap<String,Ticket>();
+	private  Map<String,SimpleKeyPair> keypairs = new ConcurrentHashMap<String,SimpleKeyPair>();
 	private final Object checkLock = new Object();
 	private final Object dualcheckLock = new Object();
 	private final Object authtempcheckLock = new Object();

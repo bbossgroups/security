@@ -17,6 +17,7 @@ package org.frameworkset.security.ecc;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * <p>Title: ECCHelper.java</p> 
@@ -33,8 +34,8 @@ public class ECCHelper {
 	public static final String  ECC_BC = "BCECIES";	
 	public static final String  RSA = "RSA";
 	public static final String  BCRSA = "BCRSA";
-	private static Map<String,String> ecccoderClasses = new HashMap<String,String>();
-	private static Map<String,ECCCoderInf> ecccoders = new HashMap<String,ECCCoderInf>();
+	private static Map<String,String> ecccoderClasses = new ConcurrentHashMap<String,String>();
+	private static Map<String,ECCCoderInf> ecccoders = new ConcurrentHashMap<String,ECCCoderInf>();
 	static 
 	{
 		ecccoderClasses.put(ECC_Flexi, "org.frameworkset.security.ecc.FlexiECCCoder");

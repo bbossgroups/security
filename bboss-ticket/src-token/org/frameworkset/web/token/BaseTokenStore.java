@@ -9,6 +9,7 @@ import java.security.Key;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 //import com.mongodb.DBObject;
@@ -771,7 +772,7 @@ public abstract class BaseTokenStore implements TokenStore {
 		//_getSimpleKey(appid,secret,false, KeyCacheUtil.ALGORITHM_RSA);
 		return _getSimpleKey(appid,secret,true, KeyCacheUtil.ALGORITHM_RSA);
 	}
-	private Map<String,SimpleKeyPair> simpleKeyPairCache = new HashMap<String,SimpleKeyPair>();
+	private Map<String,SimpleKeyPair> simpleKeyPairCache = new ConcurrentHashMap<String,SimpleKeyPair>();
 	public  SimpleKeyPair getKeyPair(String appid,String secret,boolean validateapp) throws TokenException
 	{
 		//_getSimpleKey(appid,secret,false, KeyCacheUtil.ALGORITHM_RSA);

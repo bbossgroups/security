@@ -17,6 +17,7 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -34,11 +35,11 @@ import io.jsonwebtoken.impl.crypto.MacProvider;
  * @Date:2016-11-14 16:27:26
  */
 public abstract class KeyCacheUtil {
-	protected static Map<String,Key> PrivateKeyIndex = new HashMap<String,Key>();
-	protected static Map<String,Key> keyIndex = new HashMap<String,Key>();
-	protected static Map<String,Key> ECPublicKeyIndex = new HashMap<String,Key>();
-	protected static Map<String,SimpleKeyPair> PrivateKeyPairIndex = new HashMap<String,SimpleKeyPair>();
-	protected static Map<String,SimpleKeyPair> ECPublicKeyPairIndex = new HashMap<String,SimpleKeyPair>();
+	protected static Map<String,Key> PrivateKeyIndex = new ConcurrentHashMap<String,Key>();
+	protected static Map<String,Key> keyIndex = new ConcurrentHashMap<String,Key>();
+	protected static Map<String,Key> ECPublicKeyIndex = new ConcurrentHashMap<String,Key>();
+	protected static Map<String,SimpleKeyPair> PrivateKeyPairIndex = new ConcurrentHashMap<String,SimpleKeyPair>();
+	protected static Map<String,SimpleKeyPair> ECPublicKeyPairIndex = new ConcurrentHashMap<String,SimpleKeyPair>();
 	public static final String ALGORITHM_RSA = "RSA";
 	/** 指定key的大小 */
 	private static int KEYSIZE = 1024;
