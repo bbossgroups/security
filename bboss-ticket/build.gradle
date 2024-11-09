@@ -27,6 +27,7 @@ sourceSets {
 dependencies {
 	api project(':bboss-security')
 	api( 'io.jsonwebtoken:jjwt:0.7.0' )
+    compileOnly 'javax.jws:javax.jws-api:1.1'
 	api (
            // [group: 'org.slf4j', name: 'slf4j-api', version: '1.7.32', transitive: false],
            //	[group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.32', transitive: false],

@@ -51,7 +51,7 @@ dependencies {
      compileOnly(
     	 [group: 'javax.servlet', name: 'javax.servlet-api', version: "3.0.1", transitive: false],
     )
-    
+    compileOnly 'javax.jws:javax.jws-api:1.1'
  
 }
   
