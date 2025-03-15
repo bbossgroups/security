@@ -120,3 +120,8 @@ http://yin-bp.iteye.com/blog/1080824
 The BBoss Framework is released under version 2.0 of the [Apache License][].
 
 [Apache License]: http://www.apache.org/licenses/LICENSE-2.0
+
+
+# Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=bbossgroups/security&type=Date)](https://star-history.com/#bbossgroups/security&Date)
