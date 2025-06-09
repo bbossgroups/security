@@ -52,7 +52,7 @@ public class SimpleSessionImpl implements Session{
 			{
 				if(assertValidate == null)
 				{
-					assertValidate = new Boolean(this.isValidate());
+					assertValidate = this.isValidate();
 				}
 			}
 			

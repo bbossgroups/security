@@ -40,7 +40,7 @@ public abstract class BaseSessionStaticManagerImpl implements SessionStaticManag
 	/**
 	 * 判断用户是有使用app的session管理权限
 	 * @param app 
-	 * @param currentapp
+	 * @param request
 	 * @return
 	 */
 	public boolean hasMonitorPermission(String app,HttpServletRequest request)
