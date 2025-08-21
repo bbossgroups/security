@@ -32,7 +32,7 @@ dependencies {
 	api project(':bboss-ticket')
 	api( [group: 'com.bbossgroups', name: 'bboss-hession', version: "${bboss_version}", transitive: true] )
 	api(
-         [group: 'org.ow2.asm', name: 'asm', version: '9.6', transitive: false],
+         [group: 'org.ow2.asm', name: 'asm', version: asm, transitive: false],
             [group: 'com.bbossgroups', name: 'bboss-core', version: "${bboss_version}", transitive: false],
              [group: 'com.bbossgroups', name: 'bboss-mvc', version: "${bboss_version}", transitive: false],
                [group: 'com.bbossgroups', name: 'bboss-util', version: "${bboss_version}", transitive: false],
