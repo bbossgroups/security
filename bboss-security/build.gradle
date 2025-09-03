@@ -38,7 +38,7 @@ dependencies {
             [group: 'com.bbossgroups', name: 'bboss-mvc', version: "${bboss_version}", transitive: false],
              [group: 'com.bbossgroups', name: 'bboss-velocity', version: "${bboss_version}", transitive: false],
               [group: 'oro', name: 'oro', version: '2.0.8', transitive: false],
-              [group: 'commons-lang', name: 'commons-lang', version: '2.6', transitive: false],
+//              [group: 'commons-lang', name: 'commons-lang', version: '2.6', transitive: false],
             [group: 'org.ow2.asm', name: 'asm', version: asm, transitive: false],
             [group: 'org.ow2.asm', name: 'asm-util', version: asm, transitive: false],
             [group: 'org.ow2.asm', name: 'asm-analysis', version: asm, transitive: false],

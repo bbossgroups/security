@@ -15,22 +15,22 @@ public interface TokenStore {
 	/**
 	 * 令牌校验成功
 	 */
-	public static final Integer token_request_validateresult_ok = new Integer(1);
+	public static final Integer token_request_validateresult_ok = 1;
 	/**
 	 * 令牌校验失败
 	 */
-	public static final Integer token_request_validateresult_fail = new Integer(0);
+	public static final Integer token_request_validateresult_fail = 0;
 	/**
 	 * 无令牌状态，这个状态配合控制器方法的AssertDToken注解和jsp页面上的AssertDTokenTag一起使用，如果控制器方法AssertDToken注解或者jsp页面设置了AssertDTokenTag标签，则要求必须使用令牌
 	 * 如果客户端没有传输令牌，则拒绝请求。
 	 * AssertDToken和AssertDTokenTag主要用来防止客户端把令牌去掉后欺骗服务器进行访问
 	 */
-	public static final Integer token_request_validateresult_nodtoken = new Integer(2);
+	public static final Integer token_request_validateresult_nodtoken = 2;
 	
-	public static final Integer token_request_validateresult_notenabletoken = new Integer(3);
-	public static final Integer token_request_validateresult_expired = new Integer(4);
-	public static final Integer token_request_validateresult_invalidated = new Integer(5);
-	public static final Integer token_request_validateresult_notexist = new Integer(6);
+	public static final Integer token_request_validateresult_notenabletoken = 3;
+	public static final Integer token_request_validateresult_expired = 4;
+	public static final Integer token_request_validateresult_invalidated = 5;
+	public static final Integer token_request_validateresult_notexist = 6;
 	
 	public static final String temptoken_param_name = "_dt_token_";
 	public static final String ticket_param_name = "_dt_ticket_";
@@ -130,14 +130,14 @@ public interface TokenStore {
 	public void setValidateApplication(ValidateApplication validateApplication) ;
 	/**
 	 * 销毁令牌票据ticket
-	 * @param token
+	 * @param ticket
 	 * @param appid
 	 * @param secret
 	 */
 	public boolean destroyTicket(String ticket,String appid,String secret) throws TokenException;
 	/**
 	 * 刷新令牌票据ticket有效时间，如果ticket已经失效则抛出异常
-	 * @param token
+	 * @param ticket
 	 * @param appid
 	 * @param secret
 	 */
