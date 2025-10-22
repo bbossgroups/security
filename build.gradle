@@ -8,7 +8,6 @@ configure(allprojects) { project ->
 	version = PROJ_VERSION
 	ext.bboss_version = BBOSS_PROJ_VERSION
 	ext.mongodbversion = mongodbversion
-	ext.jacksonversion = jacksonversion
 	apply plugin: "java"
 	apply plugin: "maven-publish"
 	apply plugin: "eclipse"
