@@ -83,7 +83,7 @@ public class WrapperAttackFielterPolicy extends BaseAttackFielterPolicy{
 								try {
 									wait(webXMLattackRuleCacheRefreshInterval);
 								} catch (InterruptedException e) {
-									logger.warn("", e);
+								 
 									break;
 								}
 							}
